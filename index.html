@@ -333,7 +333,8 @@
       .title-wrap {
         text-align: left;
         width: 100%;
-        padding-left: clamp(60px, 10vw, 120px); /* Increased minimum padding to prevent clipping */
+        padding-left: clamp(60px, 18vw, 260px);
+        padding-right: clamp(40px, 8vw, 120px);
       }
 
       .title {
@@ -358,14 +359,60 @@
         background-clip: text;
       }
 
+      /* Hero Eyebrow Label */
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 16px;
+        border-radius: 40px;
+        border: 1px solid rgba(var(--s2-gold-rgb), 0.3);
+        background: rgba(var(--s2-gold-rgb), 0.08);
+        margin-bottom: 28px;
+        opacity: 0;
+      }
+      .hero-eyebrow-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-main);
+        box-shadow: 0 0 8px var(--accent-main);
+        animation: eyebrowPulse 2s ease-in-out infinite;
+      }
+      @keyframes eyebrowPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.7); }
+      }
+      .hero-eyebrow-text {
+        font-family: var(--font-accent);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent-main);
+      }
+
       /* Hero Tagline */
       .hero-tagline {
         font-family: system-ui, -apple-system, sans-serif;
-        font-size: clamp(18px, 2.5vw, 28px);
+        font-size: clamp(17px, 2.2vw, 24px);
         font-weight: 400;
         color: rgba(255, 255, 255, 0.6);
-        margin-top: 40px;
+        margin-top: 36px;
         opacity: 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .hero-tagline::before {
+        content: '';
+        display: inline-block;
+        width: 32px;
+        height: 2px;
+        background: var(--accent-main);
+        flex-shrink: 0;
+        opacity: 0.6;
+        border-radius: 2px;
       }
       .light-mode .hero-tagline {
         color: rgba(0, 0, 0, 0.6);
@@ -380,6 +427,9 @@
         color: #0369a1;
         border-bottom-color: rgba(3, 105, 161, 0.5);
       }
+
+
+
 
       /* ── TURING QUOTE TRIGGER ── */
       .quote-trigger {
@@ -3551,6 +3601,10 @@
         <canvas id="brain"></canvas>
         <div class="ui">
           <div class="title-wrap">
+            <div class="hero-eyebrow">
+              <div class="hero-eyebrow-dot"></div>
+              <span class="hero-eyebrow-text">Artificial Intelligence · Introduction</span>
+            </div>
             <div class="title">
               <span class="t1">NEURAL</span>
               <span class="t2">NETWORKS</span>
@@ -3560,8 +3614,9 @@
               We didn't program intelligence — we
               <span class="trained">trained</span> it.
             </div>
-          </div>
-        </div>
+
+
+
 
         <!-- Turing Quote Trigger -->
         <div class="quote-trigger" id="quoteTrigger" onclick="showQuote()">
@@ -5449,6 +5504,13 @@
       }
 
 
+      // Eyebrow badge fade-in
+      gsap.fromTo(
+        ".hero-eyebrow",
+        { opacity: 0, y: -16 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.05 }
+      );
+
       // Animate "NEURAL"
       gsap.from(".t1 span", {
         duration: 1.2,
@@ -5482,6 +5544,9 @@
           delay: 1.0,
         }
       );
+
+
+
 
       // Turing Quote trigger fade-in (the pill button)
       gsap.fromTo(
