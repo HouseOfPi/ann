@@ -176,10 +176,11 @@
         position: absolute;
         top: 0;
         left: 0;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start; /* Better for scrolling content than center */
         align-items: center;
         opacity: 0;
         visibility: hidden;
@@ -214,6 +215,14 @@
         flex-direction: column;
         gap: 6px;
         box-shadow: -15px 0 45px rgba(0, 0, 0, 0.4);
+      }
+      .side-nav-panel::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, rgba(var(--s2-gold-rgb), 0.05), transparent);
+        pointer-events: none;
+        border-radius: inherit;
       }
 
       .side-nav-panel.open {
@@ -387,10 +396,12 @@
         padding-bottom: 50px; /* Reduced to avoid overlapping with top-left menu */
       }
       .title-wrap {
-        text-align: left;
+        text-align: center;
         width: 100%;
-        padding-left: clamp(60px, 18vw, 260px);
-        padding-right: clamp(40px, 8vw, 120px);
+        padding: 0 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       .title {
@@ -1495,6 +1506,199 @@
         background: rgba(var(--s2-gold-rgb), 0.1);
         color: var(--s2-gold);
       }
+      .s3-pill {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+        position: relative;
+        z-index: 1;
+      }
+      .s3-pill:hover { 
+        transform: translateY(-4px) scale(1.05); 
+        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+      }
+      .s3-pill::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        background: inherit;
+        filter: blur(8px);
+        opacity: 0;
+        z-index: -1;
+        transition: opacity 0.3s;
+      }
+      .s3-pill:hover::after { opacity: 0.6; }
+
+      /* Pill popups */
+      .s3-pill-popup-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        display: none;
+        background: rgba(0,0,0,0.4);
+        backdrop-filter: blur(4px);
+        transition: all 0.3s;
+      }
+      .s3-pill-popup-overlay.open { display: block; }
+      .s3-pill-popup {
+        position: fixed;
+        z-index: 501;
+        width: clamp(300px, 36vw, 460px);
+        background: rgba(6, 8, 20, 0.97);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        overflow: hidden; /* Clips the top-accent line to match the rounded corners */
+        padding: 28px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+        pointer-events: none;
+        transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.2,0.8,0.2,1);
+      }
+      .s3-pill-popup.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+      .s3-pill-popup::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        border-radius: 20px 20px 0 0;
+      }
+      .s3-pill-popup.popup-purple::before { background: linear-gradient(90deg, #06b6d4, #818cf8); }
+      .s3-pill-popup.popup-gold::before   { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+      .s3-pp-close {
+        position: absolute; top: 16px; right: 16px;
+        background: rgba(255,255,255,0.07);
+        border: none; width: 30px; height: 30px;
+        border-radius: 50%; color: rgba(255,255,255,0.5);
+        font-size: 14px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s;
+        z-index: 10;
+      }
+      .s3-pp-close:hover { 
+        background: #ff4757; 
+        color: #fff; 
+        transform: rotate(90deg) scale(1.1);
+      }
+      .s3-pp-eyebrow {
+        font-size: 12px; font-weight: 800; letter-spacing: 3px;
+        text-transform: uppercase; margin-bottom: 12px;
+        opacity: 0; transform: translateY(10px);
+      }
+      .popup-purple .s3-pp-eyebrow { color: #67e8f9; }
+      .popup-gold   .s3-pp-eyebrow { color: #fbbf24; }
+      .s3-pp-title {
+        font-family: var(--font-heading);
+        font-size: clamp(20px, 2.5vw, 32px);
+        font-weight: 800; color: #f0f6ff;
+        margin-bottom: 14px; line-height: 1.2;
+        opacity: 0; transform: translateY(15px);
+      }
+      .s3-pp-body {
+        font-size: 17px; line-height: 1.75;
+        color: rgba(255,255,255,0.72);
+        opacity: 0; transform: translateY(20px);
+      }
+      .s3-pp-body strong { color: #f0f6ff; }
+      .s3-pp-stat-row {
+        display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;
+        opacity: 0; transform: translateY(25px);
+      }
+      
+      .s3-pill-popup.open .s3-pp-eyebrow { animation: s3FadeUp 0.4s forwards 0.1s; }
+      .s3-pill-popup.open .s3-pp-title { animation: s3FadeUp 0.4s forwards 0.2s; }
+      .s3-pill-popup.open .s3-pp-body { animation: s3FadeUp 0.4s forwards 0.3s; }
+      .s3-pill-popup.open .s3-pp-stat-row { animation: s3FadeUp 0.4s forwards 0.4s; }
+      .s3-pill-popup.open .s3-pp-divider { animation: s3FadeUp 0.4s forwards 0.35s; }
+      .s3-pill-popup.open .s3-pp-quote { animation: s3FadeUp 0.4s forwards 0.5s; }
+
+      @keyframes s3FadeUp {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .s3-pp-stat {
+        flex: 1; min-width: 100px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px; padding: 12px 14px;
+      }
+      .s3-pp-stat-val {
+        font-size: 20px; font-weight: 800; line-height: 1;
+        margin-bottom: 4px;
+      }
+      .popup-purple .s3-pp-stat-val { color: #67e8f9; }
+      .popup-gold   .s3-pp-stat-val { color: #fbbf24; }
+      .s3-pp-stat-lbl {
+        font-size: 10px; color: rgba(255,255,255,0.45);
+        font-weight: 600; letter-spacing: 0.5px;
+      }
+      .s3-pp-divider {
+        height: 1px; background: rgba(255,255,255,0.07);
+        margin: 14px 0;
+      }
+      .s3-pp-quote {
+        font-style: italic; font-size: 12.5px;
+        color: rgba(255,255,255,0.55);
+        border-left: 2px solid rgba(255,255,255,0.15);
+        padding-left: 12px; margin-top: 12px;
+        line-height: 1.7;
+      }
+      /* Light mode overrides */
+      .light-mode .s3-pill-popup {
+        background: rgba(255,255,255,0.97);
+        border-color: rgba(0,0,0,0.07);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+      }
+      .light-mode .s3-pp-title { color: #111827; }
+      .light-mode .s3-pp-body  { color: rgba(0,0,0,0.65); }
+      .light-mode .s3-pp-body strong { color: #111827; }
+      .light-mode .s3-pp-stat  { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08); }
+      .light-mode .s3-pp-stat-lbl { color: rgba(0,0,0,0.4); }
+      .light-mode .s3-pp-close { background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); }
+      .light-mode .s3-pp-close:hover { background: rgba(0,0,0,0.1); color: #000; }
+      .light-mode .s3-pp-divider { background: rgba(0,0,0,0.07); }
+      .light-mode .s3-pp-quote { color: rgba(0,0,0,0.45); border-left-color: rgba(0,0,0,0.12); }
+      .light-mode .popup-purple .s3-pp-eyebrow { color: #0891b2; }
+      .light-mode .popup-gold   .s3-pp-eyebrow { color: #b45309; }
+      .light-mode .popup-purple .s3-pp-stat-val { color: #0891b2; }
+      .light-mode .popup-gold   .s3-pp-stat-val { color: #b45309; }
+
+      /* Historic event styles for popups */
+      .historic-event-section {
+        margin-top:20px; 
+        padding:15px; 
+        background:rgba(255,191,0,0.03); 
+        border-radius:10px; 
+        border-left:2px solid var(--s2-gold);
+      }
+      .light-mode .historic-event-section {
+        background:rgba(180, 83, 9, 0.03);
+      }
+      .historic-event-label {
+        color:var(--s2-gold); 
+        display:block; 
+        margin-bottom:4px; 
+        font-size:10px; 
+        letter-spacing:1.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .historic-event-title {
+        color: #f0f6ff; 
+        display:block; 
+        margin-bottom:8px;
+        font-family: var(--font-heading);
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .light-mode .historic-event-title {
+        color: #1f2937;
+      }
 
       /* RIGHT: Interactive Glass Panels */
       .s3-data-col {
@@ -1531,52 +1735,37 @@
 
       .s3-glass-card {
         background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        padding: 30px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-        transition: all 0.3s ease;
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 24px;
+        cursor: pointer;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
       }
-      .s3-glass-card:hover {
-        background: rgba(255, 255, 255, 0.07);
-        border-color: rgba(var(--s2-gold-rgb), 0.35);
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      }
-      .light-mode .s3-glass-card {
-        background: rgba(0, 0, 0, 0.02);
-        border-color: rgba(0, 0, 0, 0.05);
-      }
-      .light-mode .s3-glass-card:hover {
-        background: rgba(0, 0, 0, 0.04);
-        border-color: rgba(var(--s2-gold-rgb), 0.4);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
-      }
-
-      /* Card Glow Effect */
       .s3-glass-card::before {
-        content: "";
+        content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle,
-          rgba(var(--s2-gold-rgb), 0.1) 0%,
-          transparent 60%
-        );
+        inset: 0;
+        background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1), transparent 80%);
         opacity: 0;
-        transition: opacity 0.5s ease;
+        transition: opacity 0.5s;
         pointer-events: none;
       }
-      .s3-glass-card:hover::before {
-        opacity: 1;
+      .s3-glass-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(var(--s2-gold-rgb), 0.4);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
       }
+      .s3-glass-card:hover::before { opacity: 1; }
+      
+      .s3-glass-card.active {
+        background: rgba(var(--s2-gold-rgb), 0.08);
+        border-color: var(--s2-gold);
+        box-shadow: 0 0 30px rgba(var(--s2-gold-rgb), 0.2);
+      }
+
 
       .timeline-year {
         font-family: var(--font-accent);
@@ -1680,6 +1869,8 @@
         padding: 30px;
         max-width: 600px;
         width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1750,37 +1941,30 @@
         text-align: center;
       }
       .modal-facts {
-        list-style: none;
-        padding: 0;
+        list-style: decimal;
+        padding-left: 24px;
         margin: 16px 0 0;
         display: flex;
         flex-direction: column;
-        gap: 9px;
+        gap: 12px;
         width: 100%;
         text-align: left;
       }
       .modal-facts li {
         font-family: var(--font-body);
-        font-size: 13.5px;
+        font-size: 17px;
         color: var(--s2-text);
-        line-height: 1.5;
-        padding-left: 20px;
-        position: relative;
-        opacity: 0.82;
+        line-height: 1.6;
+        opacity: 0.9;
+        display: list-item;
       }
-      .modal-facts li::before {
-        content: "→";
-        position: absolute;
-        left: 0;
-        color: var(--s2-gold);
-        font-size: 11px;
-        top: 2px;
+      .modal-facts li::marker {
+        color: var(--accent-main);
+        font-weight: 700;
+        font-family: var(--font-accent);
       }
 
       /* ── S3 GLASS CARD EXPANSION ── */
-      .s3-glass-card {
-        cursor: pointer;
-      }
       .s3-card-expand-hint {
         display: inline-flex;
         align-items: center;
@@ -1814,20 +1998,18 @@
         margin-top: 0;
       }
       .s3-glass-card.expanded .s3-card-detail {
-        max-height: 300px;
+        max-height: 1500px;
         opacity: 1;
         margin-top: 10px;
+        overflow: visible;
       }
       .s3-card-detail p {
-        font-size: 13px;
+        font-size: 14px;
         line-height: 1.75;
-        opacity: 0.75;
+        color: rgba(255,255,255,0.7);
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         padding-top: 12px;
         margin: 0;
-      }
-      .light-mode .s3-card-detail p {
-        border-top-color: rgba(0, 0, 0, 0.07);
       }
 
       /* --------------- FIFTH SLIDE: Nature Built It First --------------- */
@@ -3546,11 +3728,33 @@
         border: none;
         display: block;
       }
+      /* ─── PREMIUM UI ELEMENTS ─── */
+      .premium-header {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .premium-header .year-badge {
+        font-family: var(--font-accent);
+        font-weight: 800;
+        font-size: 11px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--accent-main);
+        margin-bottom: 10px;
+        background: var(--accent-dim);
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
     </style>
   </head>
   <body class="light-mode">
     <!-- ── 08. TOP-LEVEL UI COMPONENTS ────────────────────────────────────────── -->
-    <!-- New Hamburger Menu & Side Settings -->
     <button class="menu-toggle" id="menuToggle" onclick="toggleSettings()" title="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -3563,31 +3767,6 @@
           <button class="settings-btn mode-btn-dark" onclick="setMode('dark')">Dark</button>
         </div>
       </div>
-
-      <div class="settings-group">
-        <div class="settings-label">Visual Style</div>
-        <div class="settings-btns">
-          <button class="settings-btn active style-btn-modern" onclick="setStyle('modern')">Modern</button>
-          <button class="settings-btn style-btn-classic" onclick="setStyle('classic')">Classic</button>
-          <button class="settings-btn style-btn-vercel" onclick="setStyle('vercel')">Vercel</button>
-          <button class="settings-btn style-btn-apple" onclick="setStyle('apple')">Apple</button>
-          <button class="settings-btn style-btn-linear" onclick="setStyle('linear')">Linear</button>
-          <button class="settings-btn style-btn-stripe" onclick="setStyle('stripe')">Stripe</button>
-        </div>
-      </div>
-
-      <div class="settings-group">
-        <div class="settings-label">Accent Color</div>
-        <div class="settings-swatches">
-           <button class="settings-swatch active" data-accent="cyan" style="background:#06b6d4" onclick="setAccent('cyan')" title="Cyan"></button>
-           <button class="settings-swatch" data-accent="gold" style="background:#cba855" onclick="setAccent('gold')" title="Gold"></button>
-           <button class="settings-swatch" data-accent="violet" style="background:#7c3aed" onclick="setAccent('violet')" title="Violet"></button>
-           <button class="settings-swatch" data-accent="rose" style="background:#f43f5e" onclick="setAccent('rose')" title="Rose"></button>
-           <button class="settings-swatch" data-accent="emerald" style="background:#10b981" onclick="setAccent('emerald')" title="Emerald"></button>
-           <button class="settings-swatch" data-accent="orange" style="background:#f97316" onclick="setAccent('orange')" title="Orange"></button>
-        </div>
-      </div>
-
       <div class="settings-group">
         <div class="settings-label">Hero Background</div>
         <div class="settings-btns settings-bg-btns">
@@ -3613,54 +3792,24 @@
       </div>
     </div>
 
-
     <nav class="side-nav-panel" id="sideNav">
       <div class="nav-ribbon" id="navRibbon" onclick="toggleSideNav(event)">
         <div class="ribbon-line"></div>
         <div class="ribbon-text">Quick Nav</div>
       </div>
-
       <div class="side-nav-header">Jump To Slide</div>
-      
-      <div class="nav-item active" onclick="goToSlide(0)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">01. Neural Intro</span>
-      </div>
-      
-      <div class="nav-item" onclick="goToSlide(1)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">02. Historical Context</span>
-      </div>
-      
-      <div class="nav-item" onclick="goToSlide(2)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">03. Pioneer: Hinton</span>
-      </div>
-      
-      <div class="nav-item" onclick="goToSlide(3)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">04. The Convergence</span>
-      </div>
-      
-      <div class="nav-item" onclick="goToSlide(4)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">05. Bio-Inspiration</span>
-      </div>
-      
-      <div class="nav-item" onclick="goToSlide(5)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">06. Iterative Learning</span>
-      </div>
-
-      <div class="nav-item" onclick="goToSlide(6)">
-        <div class="nav-dot"></div>
-        <span class="nav-label">07. ANN Architecture</span>
-      </div>
+      <div class="nav-item active" onclick="goToSlide(0)"><span class="nav-label">01. Neural Intro</span></div>
+      <div class="nav-item" onclick="goToSlide(1)"><span class="nav-label">02. Historical Context</span></div>
+      <div class="nav-item" onclick="goToSlide(2)"><span class="nav-label">03. Pioneer: Hinton</span></div>
+      <div class="nav-item" onclick="goToSlide(3)"><span class="nav-label">04. The Convergence</span></div>
+      <div class="nav-item" onclick="goToSlide(4)"><span class="nav-label">05. Bio-Inspiration</span></div>
+      <div class="nav-item" onclick="goToSlide(5)"><span class="nav-label">06. Iterative Learning</span></div>
+      <div class="nav-item" onclick="goToSlide(6)"><span class="nav-label">07. ANN Architecture</span></div>
     </nav>
-
 
     <div class="nav-arrows">
       <button id="prevBtn" class="nav-arrow" disabled>&larr;</button>
+      <div id="slideCounter" style="display:none;">1 / 7</div>
       <button id="nextBtn" class="nav-arrow">&rarr;</button>
     </div>
 
@@ -3737,16 +3886,14 @@
 
       <!-- SLIDE 02: HISTORICAL CONTEXT (DARTMOUTH 1956) -->
       <section class="slide-two" id="slideTwo">
-        <div class="s2-header">
-          <span class="year">1956</span>
-          <span class="dot">•</span>
-          <span class="text" style="font-family: var(--font-heading)"
-            >Dartmouth Conference</span
-          >
-          <span class="dot">•</span>
-          <span class="text" style="font-family: var(--font-heading)"
-            >The Birth of AI</span
-          >
+        <div class="s2-header premium-header" style="margin-top: 30px; margin-bottom: 20px;">
+           <div style="display:flex; align-items:center; gap:20px;">
+             <span class="year">1956</span>
+             <span class="dot">•</span>
+             <span class="text" style="font-family: var(--font-heading)">Dartmouth Conference</span>
+             <span class="dot">•</span>
+             <span class="text" style="font-family: var(--font-heading)">The Birth of AI</span>
+           </div>
         </div>
 
         <div class="s2-content">
@@ -3830,8 +3977,8 @@
                 on AI, he didn't.
               </div>
               <div class="s3-badges">
-                <span class="s3-pill s3-pill-purple">Godfather of AI</span>
-                <span class="s3-pill s3-pill-gold">Nobel Prize 2024</span>
+                <span class="s3-pill s3-pill-purple" onclick="openPillPopup('godfather', event)">Godfather of AI ↗</span>
+                <span class="s3-pill s3-pill-gold"   onclick="openPillPopup('nobel', event)">Nobel Prize 2024 ↗</span>
               </div>
             </div>
           </div>
@@ -3845,96 +3992,32 @@
 
             <div class="s3-cards-grid">
               <!-- Card 1 -->
-              <div class="s3-glass-card" onclick="toggleCard(this)">
+              <div class="s3-glass-card" onclick="openS3CardPopup(0)">
                 <div class="s3-card-year">1986</div>
                 <div class="s3-card-title">Backpropagation</div>
-                <div class="s3-card-desc">
-                  Made training multi-layer neural networks highly practical,
-                  unlocking modern AI computation.
-                </div>
-                <div class="s3-card-expand-hint">
-                  Details <span class="s3-card-expand-indicator">▼</span>
-                </div>
-                <div class="s3-card-detail">
-                  <p>
-                    Hinton, Rumelhart & Williams published this landmark paper
-                    in <em>Nature</em> (1986). By calculating each weight's
-                    contribution to the prediction error and adjusting all
-                    weights simultaneously via gradient descent, backpropagation
-                    turned deep network training from theory into practice — it
-                    remains the foundational algorithm powering every modern AI
-                    system.
-                  </p>
-                </div>
+                <div class="s3-card-desc">Made training multi-layer neural networks highly practical, unlocking modern AI computation.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
               </div>
-
               <!-- Card 2 -->
-              <div class="s3-glass-card" onclick="toggleCard(this)">
+              <div class="s3-glass-card" onclick="openS3CardPopup(1)">
                 <div class="s3-card-year">2012</div>
                 <div class="s3-card-title">AlexNet Triumph</div>
-                <div class="s3-card-desc">
-                  Shattered ImageNet benchmark records with Deep CNNs, proving
-                  that deep learning works at a massive scale.
-                </div>
-                <div class="s3-card-expand-hint">
-                  Details <span class="s3-card-expand-indicator">▼</span>
-                </div>
-                <div class="s3-card-detail">
-                  <p>
-                    AlexNet had 8 layers and 60 million parameters, trained on
-                    two GTX 580 GPUs. It cut ImageNet top-5 error from 26.2% to
-                    15.3% — a gap so enormous it stunned the research community.
-                    It popularised ReLU activations, dropout regularisation, and
-                    GPU-accelerated training, igniting the deep learning
-                    revolution overnight.
-                  </p>
-                </div>
+                <div class="s3-card-desc">Shattered ImageNet benchmark records with Deep CNNs, proving deep learning works at scale.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
               </div>
-
               <!-- Card 3 -->
-              <div class="s3-glass-card" onclick="toggleCard(this)">
+              <div class="s3-glass-card" onclick="openS3CardPopup(2)">
                 <div class="s3-card-year">2018</div>
                 <div class="s3-card-title">Turing Award</div>
-                <div class="s3-card-desc">
-                  Honored with the "Nobel Prize of Computing" alongside Bengio
-                  and LeCun for creating deep neural networks.
-                </div>
-                <div class="s3-card-expand-hint">
-                  Details <span class="s3-card-expand-indicator">▼</span>
-                </div>
-                <div class="s3-card-detail">
-                  <p>
-                    The $1M ACM Turing Award was shared with Yoshua Bengio and
-                    Yann LeCun — collectively dubbed the "Godfathers of Deep
-                    Learning." The citation recognised their "conceptual and
-                    engineering breakthroughs that have made deep neural
-                    networks a critical component of computing," spanning
-                    decades of work that most dismissed as fringe science.
-                  </p>
-                </div>
+                <div class="s3-card-desc">Honored with the "Nobel Prize of Computing" for creating deep neural networks.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
               </div>
-
               <!-- Card 4 -->
-              <div class="s3-glass-card" onclick="toggleCard(this)">
+              <div class="s3-glass-card" onclick="openS3CardPopup(3)">
                 <div class="s3-card-year">2024</div>
                 <div class="s3-card-title">Nobel Prize</div>
-                <div class="s3-card-desc">
-                  Awarded the Nobel Prize in Physics for foundational
-                  discoveries enabling deep machine learning.
-                </div>
-                <div class="s3-card-expand-hint">
-                  Details <span class="s3-card-expand-indicator">▼</span>
-                </div>
-                <div class="s3-card-detail">
-                  <p>
-                    Shared with John Hopfield, the Nobel Prize in Physics cited
-                    "foundational discoveries that enable machine learning with
-                    artificial neural networks." Notably, Hinton had left Google
-                    just months earlier in 2023 — stating he wanted the freedom
-                    to speak openly about the existential risks posed by the
-                    very technology he helped build.
-                  </p>
-                </div>
+                <div class="s3-card-desc">Awarded the Nobel Prize in Physics for foundational discoveries enabling deep machine learning.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
               </div>
             </div>
           </div>
@@ -3944,12 +4027,10 @@
 
       <!-- SLIDE 04: THE THREE PILLARS (DATA, COMPUTE, ALGORITHMS) -->
       <section class="slide-four" id="slideFour">
-        <div class="s4-header">
-          <h2 class="s4-title">So What Changed?</h2>
-          <div class="s4-subtitle">
-            Three things converged in the last decade that completely
-            transformed AI.
-          </div>
+        <div class="s4-header premium-header">
+           <div class="year-badge">EVOLUTION</div>
+           <h2 class="s4-title">So, What Changed?</h2>
+           <p class="s4-subtitle">Three factors that converged to enable the modern AI era</p>
         </div>
 
         <div class="s4-layout">
@@ -4060,7 +4141,10 @@
           </div>
 
           <!-- Title -->
-          <h2 class="s5-title">Nature Built It First.</h2>
+          <div class="premium-header">
+            <div class="year-badge">BIOLOGY</div>
+            <h2 class="s5-title" style="margin-top:0;">Nature Built It First.</h2>
+          </div>
           <div class="s5-subtitle">We just reverse-engineered the idea.</div>
 
           <!-- Two-column visual area -->
@@ -4100,19 +4184,21 @@
       <!-- SLIDE 06: ITERATIVE LEARNING (HOW AI TRAINS) -->
       <section class="slide-six" id="slideSix">
         <div class="s6-content">
-          <div class="s6-kicker">How does AI actually learn?</div>
-          <h2 class="s6-title">The Same Way You Learned What a Dog Is.</h2>
-          <div class="s6-subtitle">Machine learning isn't magic—it's iterative correction.</div>
+          <div class="premium-header">
+            <div class="year-badge">LEARNING</div>
+            <h2 class="s6-title" style="margin-top:0;">The Same Way You Learned What a Dog Is.</h2>
+            <div class="s6-subtitle">Machine learning isn't magic—it's iterative correction.</div>
+          </div>
 
           <div class="s6-comparison-grid">
             <!-- Headers -->
-            <div class="s6-headers-row">
-              <div class="s6-col-header">
+            <div class="s6-headers-row" style="justify-content: center; gap: 40px;">
+              <div class="s6-col-header" style="flex: 0 1 auto; width: 400px; justify-content: center;">
                 <span class="s6-header-icon">👶</span>
                 <span class="s6-child-color">How a Child Learns</span>
               </div>
               <div class="s6-approx">≈</div>
-              <div class="s6-col-header s6-col-header-ai">
+              <div class="s6-col-header s6-col-header-ai" style="flex: 0 1 auto; width: 400px; justify-content: center;">
                 <span class="s6-header-icon">🤖</span>
                 <span class="s6-ai-color">How an AI Trains</span>
               </div>
@@ -4230,6 +4316,56 @@
         <div id="modalIntro" class="modal-intro">Intro text</div>
         <ul id="modalFacts" class="modal-facts"></ul>
       </div>
+    </div>
+
+    <!-- Pill Popups (Godfather of AI / Nobel Prize 2024) -->
+    <div class="s3-pill-popup-overlay" id="pillPopupOverlay" onclick="closePillPopup()"></div>
+    <div class="s3-pill-popup popup-purple" id="pillPopupGodfather">
+      <button class="s3-pp-close" onclick="closePillPopup()">✕</button>
+      <div class="s3-pp-eyebrow">Legacy & Recognition</div>
+      <div class="s3-pp-title">The Godfather of Deep Learning</div>
+      <div class="s3-pp-body">
+        Through <strong>two AI winters</strong> — when funding dried up, careers collapsed, and the entire field was written off as a dead end — Hinton kept going. For nearly <strong>30 years</strong> he was considered an eccentric fringe researcher by mainstream computer science.
+        <div class="s3-pp-divider"></div>
+        His conviction: the brain is the only proof of concept we need. If biology can do it, we can engineer it. He bet his entire career on that idea.
+      </div>
+      <div class="s3-pp-stat-row">
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">30+</div>
+          <div class="s3-pp-stat-lbl">years of persistence</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">2×</div>
+          <div class="s3-pp-stat-lbl">AI winters survived</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">3</div>
+          <div class="s3-pp-stat-lbl">Godfathers of Deep Learning</div>
+        </div>
+      </div>
+      <div class="s3-pp-quote">"I have always been convinced that the only way to get artificial intelligence to work is to do what the brain does." — Geoffrey Hinton</div>
+    </div>
+
+    <div class="s3-pill-popup popup-gold" id="pillPopupNobel">
+      <button class="s3-pp-close" onclick="closePillPopup()">✕</button>
+      <div class="s3-pp-eyebrow">Nobel Prize in Physics · 2024</div>
+      <div class="s3-pp-title">Physics Recognises Machine Learning</div>
+      <div class="s3-pp-body">
+        Shared with <strong>John Hopfield</strong>, the Royal Swedish Academy cited "foundational discoveries and inventions that enable machine learning with artificial neural networks." It was the first time the Nobel in Physics was awarded for AI research.
+        <div class="s3-pp-divider"></div>
+        Why <em>Physics?</em> Hopfield Networks and Boltzmann Machines are grounded in <strong>statistical mechanics</strong> — the same mathematics used to describe atoms and magnets. The Nobel committee recognised that the physics of information is the physics of intelligence.
+      </div>
+      <div class="s3-pp-stat-row">
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">2024</div>
+          <div class="s3-pp-stat-lbl">Nobel Prize in Physics</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">11M</div>
+          <div class="s3-pp-stat-lbl">SEK prize (~$1M USD)</div>
+        </div>
+      </div>
+      <div class="s3-pp-quote">"He showed a willingness to go against the scientific consensus — and he was right." — Nobel Committee, 2024</div>
     </div>
 
     <!-- CPU vs GPU Animation Modal -->
@@ -4943,7 +5079,6 @@
             "Led AlexNet — won ImageNet 2012 by a record-breaking margin",
             "ACM Turing Award shared with LeCun & Bengio (2018)",
             "Nobel Prize in Physics (2024) shared with John Hopfield",
-            "Left Google (2023) to speak freely about existential AI risks",
           ],
         },
       };
@@ -4960,8 +5095,98 @@
         document.getElementById("pioneerModal").classList.add("active");
       }
 
-      function toggleCard(card) {
-        card.classList.toggle("expanded");
+      const s3CardData = [
+        {
+          year: "1986",
+          title: "Backpropagation",
+          body: "Hinton, Rumelhart & Williams published this landmark paper in <em>Nature</em> (1986). By calculating each weight's contribution to the prediction error and adjusting all weights simultaneously via gradient descent, backpropagation turned deep network training from theory into practice — it remains the foundational algorithm powering every modern AI system."
+        },
+        {
+          year: "2012",
+          title: "AlexNet Triumph",
+          body: "<p>AlexNet had 8 layers and 60 million parameters, trained on two GTX 580 GPUs. It cut ImageNet top-5 error from 26.2% to 15.3% — a gap so enormous it stunned the research community. It popularised ReLU activations, dropout regularisation, and GPU-accelerated training, igniting the deep learning revolution overnight.</p><div class='historic-event-section'><span class='historic-event-label'>Historical Insight</span><strong class='historic-event-title'>The $44M Hotel Room Auction</strong>After AlexNet, Hinton incorporated <em>DNNresearch Inc.</em> — a company of exactly <strong>3 people</strong>: himself, Alex Krizhevsky, and Ilya Sutskever. They ran a secret sealed-bid auction in a Toronto hotel room. Baidu, Microsoft, and DeepMind competed fiercely. <strong>Google won — paying $44 million</strong> just to hire the trio. It remains the most legendary talent acquisition in AI history.</div>"
+        },
+        {
+          year: "2018",
+          title: "Turing Award",
+          body: "The $1M ACM Turing Award was shared with Yoshua Bengio and Yann LeCun — collectively dubbed the 'Godfathers of Deep Learning.' The citation recognised their 'conceptual and engineering breakthroughs that have made deep neural networks a critical component of computing,' spanning decades of work that most dismissed as fringe science."
+        },
+        {
+          year: "2024",
+          title: "Nobel Prize",
+          body: "Shared with John Hopfield, the Nobel Prize in Physics cited 'foundational discoveries that enable machine learning with artificial neural networks.' Hinton's win was particularly historic as it recognized the profound impact of neural networks on physics and science at large, moving the field into the absolute scientific mainstream."
+        }
+      ];
+
+      function openS3CardPopup(index) {
+        closePillPopup(); // Close any currently open popup first
+        const data = s3CardData[index];
+        const popup = document.getElementById("pillPopupGodfather");
+        const titleEl = popup.querySelector(".s3-pp-title");
+        const bodyEl = popup.querySelector(".s3-pp-body");
+        const eyebrowEl = popup.querySelector(".s3-pp-eyebrow");
+
+        eyebrowEl.innerText = data.year;
+        titleEl.innerText = data.title;
+        bodyEl.innerHTML = data.body;
+
+        // Reset and center for card usage
+        popup.style.left = "50%";
+        popup.style.top = "50%";
+        popup.style.bottom = "auto";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.width = "clamp(320px, 50vw, 600px)";
+
+        // Hide stats for these cards
+        const stats = popup.querySelector(".s3-pp-stat-row");
+        if (stats) stats.style.display = "none";
+
+        const overlay = document.getElementById("pillPopupOverlay");
+        overlay.classList.add("open");
+        
+        // Force a brief delay to ensure the browser registers the removal and 
+        // addition of the class for CSS animations to trigger
+        setTimeout(() => {
+          popup.classList.add("open");
+          _activePillPopup = popup;
+        }, 10);
+      }
+
+      function openPillPopup(key, event) {
+        event.stopPropagation();
+        closePillPopup();
+
+        const popup   = document.getElementById(PILL_POPUPS[key]);
+        const overlay = document.getElementById('pillPopupOverlay');
+        if (!popup) return;
+
+        // Position popup near the pill that was clicked
+        const pill = event.currentTarget;
+        const pr   = pill.getBoundingClientRect();
+        const vw   = window.innerWidth;
+        const vh   = window.innerHeight;
+
+        // Try to place it above the pill, centered
+        const popupW = Math.min(460, vw * 0.36, vw - 40);
+        let left = pr.left + pr.width / 2 - popupW / 2;
+        left = Math.max(16, Math.min(left, vw - popupW - 16));
+
+        let top = pr.top - 12; // will open upward
+        popup.style.width  = popupW + 'px';
+        popup.style.left   = left + 'px';
+        popup.style.bottom = (vh - top) + 'px';
+        popup.style.top    = 'auto';
+        popup.style.transform = ''; // Clear card-centered transform
+        
+        // Ensure stats row is visible for pills
+        const stats = popup.querySelector(".s3-pp-stat-row");
+        if (stats) stats.style.display = "flex";
+
+        overlay.classList.add('open');
+        setTimeout(() => {
+          popup.classList.add('open');
+          _activePillPopup = popup;
+        }, 10);
       }
 
       function switchS4Tab(index) {
@@ -5481,6 +5706,10 @@
         // Trigger entrance animations for the incoming slide
         incoming.classList.add("in-view");
 
+        // Update progress bar & counter
+        const progress = ((index + 1) / presentationSections.length) * 100;
+        document.getElementById("slideCounter").innerText = `${index + 1} / ${presentationSections.length}`;
+
         // Update navigation buttons
         document.getElementById("prevBtn").disabled = currentSlideIdx === 0;
         document.getElementById("nextBtn").disabled =
@@ -5494,26 +5723,9 @@
         .getElementById("nextBtn")
         .addEventListener("click", () => goToSlide(currentSlideIdx + 1));
 
-      window.addEventListener(
-        "wheel",
-        (e) => {
-          if (
-            document.getElementById("cgdOverlay").classList.contains("active")
-          )
-            return;
-          e.preventDefault();
-          if (isSlideAnimating) return;
-
-          const isHorizontalScroll = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-          const delta = isHorizontalScroll ? e.deltaX : e.deltaY;
-
-          if (Math.abs(delta) < 15) return;
-
-          if (delta > 0) goToSlide(currentSlideIdx + 1);
-          else if (delta < 0) goToSlide(currentSlideIdx - 1);
-        },
-        { passive: false }
-      );
+      // Scroll listener returned with debounce protection
+      // REMOVED slide-change-on-scroll to allow vertical scrolling within slides
+      // as per user request "Do not let mouse scroll lead to page change"
 
       window.addEventListener(
         "keydown",
@@ -5784,7 +5996,23 @@
           b.classList.toggle("active", b.classList.contains(`mode-btn-${mode}`))
         );
         applyAccentVars();
+
+        // Sync theme into the ANN iframe
+        const annFrame = document.querySelector(".s7-iframe");
+        if (annFrame && annFrame.contentWindow) {
+          annFrame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+        }
       }
+
+      // Push current theme to iframe once it loads
+      (function () {
+        const annFrame = document.querySelector(".s7-iframe");
+        if (!annFrame) return;
+        annFrame.addEventListener("load", () => {
+          const mode = document.body.classList.contains("light-mode") ? "light" : "dark";
+          annFrame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+        });
+      })();
 
       function toggleMode() {
         const currentMode = document.body.classList.contains("light-mode") ? "light" : "dark";
@@ -5879,10 +6107,41 @@
         }
       });
 
+      // Slide 3 Card Spotlight Effect
+      document.querySelectorAll('.s3-glass-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        });
+      });
+
+
       // Initialise accent vars on load (light mode default)
       applyAccentVars();
-    </script>
+      // Initial progress bar logic removed per user request
 
+      // ── Pill popups (Godfather of AI / Nobel Prize 2024) ─────────────────────
+      const PILL_POPUPS = {
+        godfather: 'pillPopupGodfather',
+        nobel:     'pillPopupNobel',
+      };
+      let _activePillPopup = null;
+
+
+      function closePillPopup() {
+        if (_activePillPopup) {
+          _activePillPopup.classList.remove('open');
+          _activePillPopup = null;
+        }
+        document.getElementById('pillPopupOverlay').classList.remove('open');
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closePillPopup();
+      });
     </script>
   </body>
 </html>
