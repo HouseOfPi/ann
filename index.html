@@ -407,9 +407,10 @@
       .title {
         font-family: var(--font-heading);
         font-weight: 800;
-        font-size: clamp(50px, 10vw, 120px);
-        line-height: 0.95;
-        letter-spacing: -2px;
+        font-size: clamp(44px, 8.4vw, 104px);
+        line-height: 1.04;
+        letter-spacing: -1.5px;
+        margin: 6px 0 4px;
       }
       .t1 {
         display: block;
@@ -424,18 +425,21 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        padding-bottom: 0.08em; /* prevent descender clipping on gradient text */
       }
 
       /* Hero Eyebrow Label */
       .hero-eyebrow {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 7px 16px;
+        gap: 12px;
+        padding: 8px 20px;
         border-radius: 40px;
         border: 1px solid rgba(var(--s2-gold-rgb), 0.3);
         background: rgba(var(--s2-gold-rgb), 0.08);
-        margin-bottom: 50px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        margin-bottom: 72px;
         opacity: 0;
       }
       .hero-eyebrow-dot {
@@ -462,23 +466,24 @@
       /* Hero Tagline */
       .hero-tagline {
         font-family: system-ui, -apple-system, sans-serif;
-        font-size: clamp(17px, 2.2vw, 24px);
-        font-weight: 400;
-        color: rgba(255, 255, 255, 0.6);
-        margin-top: 60px;
+        font-size: clamp(16px, 2vw, 22px);
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.62);
+        margin-top: 56px;
         opacity: 0;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
+        letter-spacing: 0.2px;
       }
       .hero-tagline::before {
         content: '';
         display: inline-block;
-        width: 32px;
+        width: 40px;
         height: 2px;
         background: var(--accent-main);
         flex-shrink: 0;
-        opacity: 0.6;
+        opacity: 0.7;
         border-radius: 2px;
       }
       .light-mode .hero-tagline {
@@ -639,28 +644,81 @@
         color: rgba(0, 0, 0, 0.5);
         border-top-color: rgba(0, 0, 0, 0.06);
       }
-      .hero-followup-line {
-        margin-top: 70px;
-        font-family: var(--font-body);
-        font-size: 14px;
-        font-style: italic;
-        color: rgba(255, 255, 255, 0.45);
-        border-left: 2px solid rgba(var(--s2-gold-rgb), 0.3);
-        padding-left: 15px;
-        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.4s;
+      /* ── HERO: slide number corner label ── */
+      .hero-slide-num {
+        position: absolute;
+        top: 34px;
+        right: clamp(32px, 6vw, 90px);
+        font-family: var(--font-accent);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 3.5px;
+        color: rgba(255, 255, 255, 0.16);
+        z-index: 20;
+        user-select: none;
+        animation: fadeIn 1s ease forwards 2.2s;
         opacity: 0;
-        transform: translateY(10px);
       }
-      .light-mode .hero-followup-line {
-        color: rgba(0, 0, 0, 0.45);
+      .light-mode .hero-slide-num { color: rgba(0, 0, 0, 0.12); }
+
+      /* ── HERO: thin accent rule below title ── */
+      .hero-rule {
+        width: 64px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent-main) 50%, transparent);
+        margin: 44px auto 0;
+        animation: heroRuleFade 1s ease forwards 1s;
+        opacity: 0;
       }
-      .hero-followup-line span {
+      @keyframes heroRuleFade {
+        from { opacity: 0; width: 20px; }
+        to   { opacity: 0.55; width: 64px; }
+      }
+
+      /* ── HERO: editorial quote strip — bottom-left ── */
+      .hero-quote-float {
+        position: absolute;
+        bottom: 48px;
+        left: clamp(60px, 8vw, 130px);
+        max-width: 480px;
+        display: flex;
+        gap: 18px;
+        align-items: stretch;
+        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.6s;
+        opacity: 0;
+        z-index: 20;
+        pointer-events: none;
+      }
+      /* thin left accent bar */
+      .hqf-bar {
+        width: 2px;
+        border-radius: 2px;
+        background: linear-gradient(to bottom, var(--accent-main), rgba(var(--s2-gold-rgb), 0.1));
+        flex-shrink: 0;
+      }
+      .hqf-body { display: flex; flex-direction: column; gap: 7px; }
+      .hqf-text {
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-style: italic;
+        line-height: 1.72;
+        color: rgba(255, 255, 255, 0.48);
+        margin: 0;
+      }
+      .light-mode .hqf-text { color: rgba(0, 0, 0, 0.42); }
+      .hqf-author {
+        font-family: var(--font-body);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
         color: var(--accent-main);
-        font-weight: 600;
-        font-style: normal;
-        margin-left: 8px;
-        font-size: 12px;
+        opacity: 0.8;
       }
+
+      /* keep for legacy reference */
+      .hero-followup-line { display: none; }
+      .hero-chips, .hero-chip { display: none; }
 
 
 
@@ -1527,6 +1585,13 @@
         opacity: 1;
         transform: translateY(0) scale(1);
         pointer-events: auto;
+      }
+      .s3-pill-popup::-webkit-scrollbar {
+        display: none;
+      }
+      .s3-pill-popup {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
       }
       .s3-pill-popup::before {
         content: '';
@@ -2406,6 +2471,10 @@
       @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(14px); }
         to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
       }
 
       .s4-detail-content::-webkit-scrollbar { width: 4px; }
@@ -3943,25 +4012,39 @@
       <!-- SLIDE 01: NEURAL NETWORK INTRO (HERO) -->
       <section class="scene">
         <canvas id="brain"></canvas>
+
+        <!-- Corner slide number -->
+        <div class="hero-slide-num">01 &nbsp;/&nbsp; 07</div>
+
         <div class="ui">
           <div class="title-wrap">
             <div class="hero-eyebrow">
               <div class="hero-eyebrow-dot"></div>
               <span class="hero-eyebrow-text">Artificial Intelligence · Introduction</span>
             </div>
+
             <div class="title">
               <span class="t1">NEURAL</span>
               <span class="t2">NETWORKS</span>
             </div>
+
+            <!-- Thin accent rule -->
+            <div class="hero-rule"></div>
 
             <div class="hero-tagline">
               We didn't program intelligence — we
               <span class="trained">trained</span> it.
             </div>
 
-            <div class="hero-followup-line" style="margin-top: 40px;">
-              "If a machine can think, it might think more intelligently than we do, and then where should we be?" <span>— Alan Turing, 1951</span>
-            </div>
+          </div>
+        </div>
+
+        <!-- Turing quote — editorial bottom-left strip -->
+        <div class="hero-quote-float">
+          <div class="hqf-bar"></div>
+          <div class="hqf-body">
+            <p class="hqf-text">"If a machine can think, it might think more intelligently than we do, and then where should we be?"</p>
+            <span class="hqf-author">Alan Turing &nbsp;·&nbsp; 1951</span>
           </div>
         </div>
       </section>
@@ -5723,6 +5806,10 @@
       presentationSections[0].style.transform = "scale(1)";
 
       function goToSlide(index) {
+        // Auto-close quick nav on selection
+        const nav = document.getElementById("sideNav");
+        if (nav) nav.classList.remove("open");
+
         if (
           index < 0 ||
           index >= presentationSections.length ||
