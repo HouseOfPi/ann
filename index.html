@@ -2043,7 +2043,6 @@
         overflow: hidden;
       }
 
-      /* Subtle animated neural-network grid background */
       .s5-bg {
         position: absolute; inset: 0; z-index: 0;
         background:
@@ -2057,49 +2056,113 @@
           radial-gradient(circle at 80% 60%, rgba(168,85,247,0.06) 0%, transparent 50%);
       }
 
-      .s5-content { 
-        position: relative; 
-        z-index: 1; 
-        display: flex; 
-        flex-direction: column; 
-        height: 100%; 
-        padding: 5vh clamp(100px, 8vw, 140px) 4vh; /* Increased left padding for safety */
+      .s5-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 6vh clamp(60px, 6vw, 110px) 3vh;
+        gap: 0;
       }
 
-      /* Top bar: kicker + stats */
-      .s5-top-row {
+      /* ── Compact header band ── */
+      .s5-header {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
-        width: 100%;
-        margin-bottom: 12px;
+        gap: 32px;
+        flex-shrink: 0;
+        margin-bottom: 24px;
       }
+      .s5-header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* Kicker row: glowing dot + label + separator + subtitle all on one line */
       .s5-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         font-family: var(--font-accent);
-        font-size: clamp(9px, 1vw, 12px);
+        font-size: clamp(8px, 0.8vw, 10px);
         font-weight: 700;
-        letter-spacing: 5px;
+        letter-spacing: 4px;
         text-transform: uppercase;
-        color: var(--accent-main);
+        color: rgba(6,182,212,0.75);
+        line-height: 1;
       }
+      .s5-kicker::before {
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent-main);
+        box-shadow: 0 0 10px rgba(6,182,212,0.7), 0 0 20px rgba(6,182,212,0.35);
+        flex-shrink: 0;
+      }
+      .s5-kicker-sep {
+        width: 1px;
+        height: 11px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 1px;
+        flex-shrink: 0;
+      }
+      .s5-kicker-sub {
+        font-family: var(--font-body);
+        font-size: clamp(10px, 0.9vw, 12px);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        text-transform: none;
+        color: rgba(255,255,255,0.38);
+        font-style: italic;
+      }
+      .light-mode .s5-kicker { color: rgba(6,182,212,0.9); }
+      .light-mode .s5-kicker-sub { color: rgba(0,0,0,0.38); }
+
+      /* Title: white base + gradient accent on key word */
+      .s5-title {
+        font-family: var(--font-heading);
+        font-size: clamp(38px, 4.6vw, 62px);
+        font-weight: 800;
+        font-style: italic;
+        color: var(--text-main);
+        line-height: 1.0;
+        margin: 0;
+        letter-spacing: -0.01em;
+      }
+      .s5-title-accent {
+        background: var(--text-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .s5-subtitle { display: none; }
+
+      /* Stats pills */
       .s5-stat-pills {
         display: flex;
-        gap: 12px;
+        gap: 10px;
+        flex-shrink: 0;
+        align-self: center;
       }
       .s5-pill {
-        padding: 10px 20px;
-        border-radius: 14px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(255,255,255,0.03);
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(6,182,212,0.18);
+        background: rgba(6,182,212,0.05);
         text-align: left;
-        min-width: 150px;
+        min-width: 130px;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         display: flex;
         flex-direction: column;
         justify-content: center;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 20px rgba(0,0,0,0.2);
       }
       .s5-pill::before {
         content: '';
@@ -2110,13 +2173,13 @@
         border-radius: 3px 0 0 3px;
       }
       .light-mode .s5-pill {
-        background: rgba(255,255,255,0.7);
-        border-color: rgba(0,0,0,0.08);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        background: rgba(255,255,255,0.75);
+        border-color: rgba(6,182,212,0.2);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
       }
       .s5-pill-value {
         font-family: var(--font-heading);
-        font-size: clamp(24px, 3vw, 36px);
+        font-size: clamp(20px, 2.4vw, 30px);
         font-weight: 800;
         font-style: italic;
         background: var(--text-gradient);
@@ -2127,38 +2190,27 @@
       }
       .s5-pill-label {
         font-family: var(--font-accent);
-        font-size: 8.5px;
+        font-size: 8px;
         font-weight: 700;
         color: rgba(255,255,255,0.4);
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        margin-top: 5px;
+        margin-top: 4px;
       }
       .light-mode .s5-pill-label { color: rgba(0,0,0,0.45); }
 
-      /* Title block */
-      .s5-title {
-        font-family: var(--font-heading);
-        font-size: clamp(42px, 5.5vw, 72px);
-        font-weight: 800;
-        font-style: italic;
-        color: var(--text-main);
-        line-height: 1.05;
-        margin-bottom: 4px;
-      }
-      .s5-subtitle {
-        font-family: var(--font-body);
-        font-size: clamp(14px, 1.5vw, 19px);
-        color: rgba(255,255,255,0.5);
-        font-style: italic;
+      /* Divider between header and visuals */
+      .s5-rule {
+        height: 1px;
+        flex-shrink: 0;
+        background: linear-gradient(to right, rgba(6,182,212,0.35), rgba(168,85,247,0.2), transparent);
         margin-bottom: 28px;
       }
-      .light-mode .s5-subtitle { color: rgba(0,0,0,0.45); }
 
       /* Main visual area: two columns */
       .s5-visual-row {
         display: flex;
-        gap: 32px;
+        gap: 48px;
         flex: 1;
         min-height: 0;
         align-items: stretch;
@@ -2171,7 +2223,7 @@
         gap: 16px;
         min-height: 0;
       }
-      
+
       .s5-col-header {
         font-family: var(--font-accent);
         font-size: 10px;
@@ -2182,32 +2234,31 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-bottom: 2px;
+        flex-shrink: 0;
       }
       .s5-col-header::after {
         content: '';
         flex: 1;
         height: 1px;
-        background: linear-gradient(to right, rgba(var(--s2-gold-rgb), 0.3), transparent);
+        background: linear-gradient(to right, rgba(6,182,212,0.3), transparent);
       }
+
       .s5-img-frame, .s5-brain-card {
-        width: 100%;
-        aspect-ratio: 1.5;
-        border-radius: 16px;
+        flex: 1;
+        min-height: 0;
+        border-radius: 14px;
         overflow: hidden;
         border: 1px solid rgba(255,255,255,0.1);
-        background: rgba(255,255,255,0.03);
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.3);
       }
       .s5-img-frame img, .s5-brain-card img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        padding: 0;
       }
       .s5-img-frame {
         background: #fff;
@@ -2215,32 +2266,22 @@
       .s5-brain-card {
         background: #060a18;
       }
-      .s5-img-caption {
-        font-family: var(--font-accent);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        text-align: center;
-        padding: 8px 0 4px;
+      .light-mode .s5-img-frame {
+        border-color: rgba(0,0,0,0.1);
+        background: #fff;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
       }
-      .s5-img-caption .cap-primary {
-        color: var(--accent-main);
-      }
-      .s5-img-caption .cap-dim {
-        color: rgba(255,255,255,0.4);
-      }
-      .light-mode .s5-img-caption .cap-dim { color: rgba(0,0,0,0.38); }
 
-      /* Insight card — replaces plain italic text */
+      /* Insight card */
       .s5-insight-card {
         border-radius: 10px;
         border: 1px solid rgba(255,255,255,0.08);
         background: rgba(255,255,255,0.04);
-        padding: 14px 18px;
+        padding: 10px 14px;
         display: flex;
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
+        flex-shrink: 0;
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
       }
@@ -2249,37 +2290,28 @@
         background: rgba(34,211,238,0.04);
       }
       .s5-insight-icon {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1;
         flex-shrink: 0;
-        margin-top: 2px;
+        margin-top: 1px;
         opacity: 0.85;
       }
       .s5-insight-text {
         font-family: var(--font-body);
-        font-size: clamp(13px, 1.15vw, 15px);
+        font-size: clamp(12px, 1.05vw, 14px);
         font-style: italic;
         color: rgba(255,255,255,0.65);
-        line-height: 1.65;
+        line-height: 1.55;
         margin: 0;
       }
       .light-mode .s5-insight-text { color: rgba(0,0,0,0.55); }
-
-
-
-      /* Neuron frame: white bg in both modes for diagram clarity */
-      .light-mode .s5-img-frame {
-        border-color: rgba(0,0,0,0.1);
-        background: #fff;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-      }
 
       /* Bottom accent bar */
       .s5-accent-bar {
         height: 3px;
         background: var(--text-gradient);
         border-radius: 2px;
-        margin-top: 12px;
+        margin-top: 10px;
         flex-shrink: 0;
       }
 
@@ -4277,9 +4309,16 @@
         <div class="s5-bg"></div>
         <div class="s5-content">
 
-          <!-- Top row: kicker + stat pills -->
-          <div class="s5-top-row">
-            <div class="s5-kicker">The Biological Inspiration</div>
+          <!-- Compact header: title left, stats right -->
+          <div class="s5-header">
+            <div class="s5-header-left">
+              <div class="s5-kicker">
+                The Biological Inspiration
+                <span class="s5-kicker-sep"></span>
+                <span class="s5-kicker-sub">We just reverse-engineered the idea.</span>
+              </div>
+              <h2 class="s5-title">Nature Built It <span class="s5-title-accent">First.</span></h2>
+            </div>
             <div class="s5-stat-pills">
               <div class="s5-pill">
                 <div class="s5-pill-value">86B</div>
@@ -4292,17 +4331,13 @@
             </div>
           </div>
 
-          <!-- Title -->
-          <div class="premium-header">
-            <div class="year-badge">BIOLOGY</div>
-            <h2 class="s5-title" style="margin-top:0;">Nature Built It First.</h2>
-          </div>
-          <div class="s5-subtitle">We just reverse-engineered the idea.</div>
+          <!-- Divider -->
+          <div class="s5-rule"></div>
 
           <!-- Two-column visual area -->
           <div class="s5-visual-row">
-            
-            <!-- Left Component: Micro -->
+
+            <!-- Left: Micro -->
             <div class="s5-neuron-col">
               <div class="s5-col-header">Micro: The Cell</div>
               <div class="s5-img-frame">
@@ -4314,7 +4349,7 @@
               </div>
             </div>
 
-            <!-- Right Component: Macro -->
+            <!-- Right: Macro -->
             <div class="s5-brain-col">
               <div class="s5-col-header">Macro: The Architecture</div>
               <div class="s5-brain-card">
