@@ -72,16 +72,10 @@ body{font-family:'Inter',sans-serif}
 .app{display:block}
 .main-area{width:100%!important;height:100vh}
 
-/* ── Left hover panel ── */
-.left-trigger-zone{
-  position:fixed;left:0;top:0;
-  width:15px;height:100vh;z-index:999;
-}
-
-/* The panel: normally only the ribbon peek (40px) is visible */
-.left-panel{
+/* The panel: normally only the ribbon peek (32px) is visible */
+.ctrl-panel{
   position:fixed;
-  left:-230px; /* 270px wide − 40px ribbon = 230px hidden, 40px peek */
+  left:-238px; /* 270px wide - 32px ribbon = 238px hidden */
   top:50%;
   transform:translateY(-50%);
   width:270px;
@@ -101,24 +95,36 @@ body{font-family:'Inter',sans-serif}
   box-shadow:var(--glass-shadow);
 }
 
-/* Fully expand on hover */
-.left-trigger-zone:hover~.left-panel,
-.left-panel:hover{
+/* Open state only via .open class (clicked) */
+.ctrl-panel.open{
   left:0;
   box-shadow:30px 0 80px rgba(0,0,0,0.2);
 }
 
 /* Ribbon tab — always visible on the right edge of the panel */
 .lp-ribbon{
-  width:40px;
+  width:32px;
   flex-shrink:0;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:12px;
-  padding:20px 0;
-  order:2; /* sits at right edge */
+  gap:10px;
+  padding:15px 0;
+  order:2; /* sits at right edge now */
+  height:auto;
+  align-self:center;
+  background:var(--sb-bg);
+  border:1px solid var(--sb-border);
+  border-left:none;
+  border-radius:0 12px 12px 0;
+  cursor:pointer;
+  transition: all 0.2s;
+}
+.lp-ribbon:hover{
+  background: rgba(129, 140, 248, 0.15);
+  width:36px;
+  margin-right: -4px;
 }
 .lp-ribbon-dot{
   width:6px;height:6px;border-radius:50%;
@@ -135,8 +141,8 @@ body{font-family:'Inter',sans-serif}
   text-orientation:mixed;
   transform:rotate(180deg);
   font-family:'Inter',sans-serif;
-  font-size:9px;font-weight:800;
-  letter-spacing:3px;text-transform:uppercase;
+  font-size:8.5px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
   color:#818cf8;
   white-space:nowrap;
 }
@@ -298,10 +304,10 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="sl-row"><span class="sl-lbl">Hidden layers</span>
           <div class="counter">
             <button class="counter-btn" onclick="stepCounter('sl-layers',-1)">−</button>
-            <input type="number" class="counter-val" id="lv" value="2" min="1" max="4" oninput="typeCounter('sl-layers',this,false)" onblur="typeCounter('sl-layers',this,true)">
+            <input type="number" class="counter-val" id="lv" value="3" min="1" max="4" oninput="typeCounter('sl-layers',this,false)" onblur="typeCounter('sl-layers',this,true)">
             <button class="counter-btn" onclick="stepCounter('sl-layers',1)">+</button>
           </div>
-          <input type="hidden" id="sl-layers" min="1" max="4" value="2">
+          <input type="hidden" id="sl-layers" min="1" max="4" value="3">
         </div>
         <div class="sl-row"><span class="sl-lbl">Hidden nodes</span>
           <div class="counter">
@@ -381,11 +387,10 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
   <div id="mat-panel"></div>
 
   <!-- ── Left hover panel ── -->
-  <div class="left-trigger-zone"></div>
-  <div class="left-panel">
+  <div class="ctrl-panel">
 
     <!-- Ribbon (always visible) -->
-    <div class="lp-ribbon">
+    <div class="lp-ribbon" onclick="toggleLeftPanel()">
       <div class="lp-ribbon-dot"></div>
       <span class="lp-ribbon-text">Neural Control Center</span>
       <div class="lp-ribbon-dot"></div>
@@ -411,7 +416,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
       <span class="lp-lbl">Hidden layers</span>
       <div class="counter">
         <button class="counter-btn" onclick="stepCounter('sl-layers',-1)">−</button>
-        <input type="number" class="counter-val" id="lv2" value="2" min="1" max="4"
+        <input type="number" class="counter-val" id="lv2" value="3" min="1" max="4"
           oninput="document.getElementById('lv').value=this.value;typeCounter('sl-layers',this,false)"
           onblur="document.getElementById('lv').value=this.value;typeCounter('sl-layers',this,true)">
         <button class="counter-btn" onclick="stepCounter('sl-layers',1)">+</button>
@@ -464,7 +469,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
     </button>
 
     </div><!-- /lp-body -->
-  </div><!-- /left-panel -->
+  </div><!-- /ctrl-panel -->
 </div>
 
 <script>
@@ -547,8 +552,8 @@ function makeImgDrawSVG(imgUrl, accent){
 
 const VEHICLE_DATA = [
   {
-    id:'car', label:'Sedan', emoji:'🚗', color:'#3b82f6',
-    imgUrl:'images/car.png',
+    id:'car', label:'Car', emoji:'🚗', color:'#3b82f6',
+    imgUrl:'car.png',
     pixels:[.05,.55,.60,.05, .70,.85,.85,.72, .88,.92,.90,.88, .60,.20,.20,.62],
     R:[.05,.20,.22,.05, .22,.30,.30,.24, .28,.32,.30,.28, .18,.08,.08,.20],
     G:[.05,.42,.48,.05, .55,.70,.70,.58, .72,.78,.74,.72, .50,.15,.15,.52],
@@ -558,7 +563,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'truck', label:'Truck', emoji:'🚚', color:'#f59e0b',
-    imgUrl:'images/truck.png',
+    imgUrl:'truck.png',
     pixels:[.90,.90,.50,.10, .92,.95,.80,.85, .92,.95,.88,.88, .65,.65,.22,.65],
     R:[.96,.96,.58,.12, .98,.99,.90,.92, .98,.99,.94,.94, .72,.72,.28,.72],
     G:[.72,.72,.38,.08, .75,.78,.62,.68, .75,.78,.70,.70, .50,.50,.18,.50],
@@ -567,8 +572,8 @@ const VEHICLE_DATA = [
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
-    id:'motorcycle', label:'Moto', emoji:'🏍️', color:'#10b981',
-    imgUrl:'images/motorcycle.png',
+    id:'motorcycle', label:'Bike', emoji:'🏍️', color:'#10b981',
+    imgUrl:'motorcycle.png',
     pixels:[.00,.30,.30,.00, .10,.88,.88,.10, .15,.60,.60,.15, .50,.15,.15,.50],
     R:[.00,.05,.05,.00, .05,.12,.12,.05, .06,.10,.10,.06, .08,.05,.05,.08],
     G:[.00,.42,.42,.00, .14,.95,.95,.14, .20,.78,.78,.20, .62,.20,.20,.62],
@@ -578,7 +583,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'bus', label:'Bus', emoji:'🚌', color:'#ec4899',
-    imgUrl:'images/bus.png',
+    imgUrl:'bus.png',
     pixels:[.88,.88,.88,.88, .92,.75,.75,.92, .92,.80,.80,.92, .68,.20,.20,.68],
     R:[.96,.96,.96,.96, .99,.85,.85,.99, .99,.90,.90,.99, .78,.28,.28,.78],
     G:[.12,.12,.12,.12, .14,.10,.10,.14, .14,.12,.12,.14, .10,.05,.05,.10],
@@ -588,7 +593,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'ambulance', label:'Ambulance', emoji:'🚑', color:'#ef4444',
-    imgUrl:'images/ambulance.png',
+    imgUrl:'ambulance.png',
     pixels:[.95,.95,.95,.95, .98,.60,.60,.98, .90,.85,.85,.90, .55,.30,.30,.55],
     R:[.98,.98,.98,.98, .99,.75,.75,.99, .95,.90,.90,.95, .70,.40,.40,.70],
     G:[.95,.95,.95,.95, .98,.50,.50,.98, .88,.82,.82,.88, .48,.25,.25,.48],
@@ -598,7 +603,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'bicycle', label:'Bicycle', emoji:'🚲', color:'#06b6d4',
-    imgUrl:'images/bicycle.png',
+    imgUrl:'bicycle.png',
     pixels:[.00,.10,.10,.00, .05,.45,.45,.05, .30,.70,.70,.30, .55,.20,.20,.55],
     R:[.00,.08,.08,.00, .04,.35,.35,.04, .22,.55,.55,.22, .42,.15,.15,.42],
     G:[.00,.12,.12,.00, .06,.50,.50,.06, .35,.72,.72,.35, .58,.22,.22,.58],
@@ -608,7 +613,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'scooter', label:'Scooter', emoji:'🛵', color:'#8b5cf6',
-    imgUrl:'images/scooter.png',
+    imgUrl:'scooter.png',
     pixels:[.00,.20,.20,.00, .15,.72,.72,.15, .25,.58,.58,.25, .48,.12,.12,.48],
     R:[.00,.18,.18,.00, .12,.65,.65,.12, .20,.50,.50,.20, .40,.10,.10,.40],
     G:[.00,.22,.22,.00, .16,.75,.75,.16, .28,.60,.60,.28, .50,.14,.14,.50],
@@ -618,7 +623,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'suv', label:'SUV', emoji:'🚙', color:'#14b8a6',
-    imgUrl:'images/suv.png',
+    imgUrl:'suv.png',
     pixels:[.10,.60,.62,.10, .75,.88,.88,.75, .85,.92,.92,.85, .62,.25,.25,.62],
     R:[.08,.48,.50,.08, .60,.72,.72,.60, .70,.78,.78,.70, .50,.18,.18,.50],
     G:[.12,.58,.60,.12, .72,.85,.85,.72, .82,.90,.90,.82, .60,.22,.22,.60],
@@ -1125,14 +1130,14 @@ function updateStats(layers,acts){
 
 // === Classification input panel ===============================
 function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
-  const CELL = demoType==='mnist' ? Math.max(4,Math.min(12,Math.floor(120/mnistSize))) : Math.max(8,Math.min(26,Math.floor(120/vehSize)));
+  const CELL = demoType==='mnist' ? Math.max(6,Math.min(18,Math.floor(180/mnistSize))) : Math.max(12,Math.min(45,Math.floor(180/vehSize)));
   const COLS = demoType==='mnist' ? mnistSize : vehSize, ROWS = demoType==='mnist' ? mnistSize : vehSize;
   const GRID_W=COLS*CELL, GRID_H=ROWS*CELL;
-  const IMG_W = (demoType === 'mnist' ? 110 : 130);
-  const IMG_H = (demoType === 'mnist' ? 110 : 100);
+  const IMG_W = (demoType === 'mnist' ? 160 : 190);
+  const IMG_H = (demoType === 'mnist' ? 160 : 145);
   const currentVSP = pos[0].length > 1 ? pos[0][1].y - pos[0][0].y : 20;
   const PILL_W=44, PILL_H=Math.max(6, Math.min(18, currentVSP - 1)), PILL_R=Math.min(5, PILL_H/2);
-  const panelLeft=10+centerOffset;
+  const panelLeft=60+centerOffset;
 
   const dispN=Math.min(nInput, pos[0].length);
   // For MNIST: downsample 5×5=25 pixels to 16 values for the flat vector
@@ -1149,25 +1154,32 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
   const lastNodeY=pos[0][Math.min(dispN-1, pos[0].length-1)].y;
   const nodeSpanCenter=(firstNodeY+lastNodeY)/2;
 
-  const imgY=Math.max(50, nodeSpanCenter - Math.max(IMG_H,GRID_H)/2);
-  const gridY=imgY;
-  const gridX=panelLeft+IMG_W+40;
-  const flatX=gridX+GRID_W+80;
+  const stackWidth = Math.max(IMG_W, GRID_W);
+  const centerX = panelLeft + stackWidth/2;
+  const imgX = centerX - IMG_W/2;
+  const gridX = centerX - GRID_W/2;
+  
+  const totalStackH = IMG_H + 70 + GRID_H + 45; // img + gap + grid + button area
+  const startY = Math.max(55, nodeSpanCenter - totalStackH/2);
+  
+  const imgY = startY;
+  const gridY = imgY + IMG_H + 70;
+  const flatX = centerX + stackWidth/2 + 55;
 
   const g=el('g',{class:'demo-panel-left'});
 
-  g.appendChild(el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:12,
+  g.appendChild(el('rect',{x:imgX,y:imgY,width:IMG_W,height:IMG_H,rx:12,
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'}));
   const vGroup=el('g',{});
   if (demoType === 'mnist' && veh.samples) {
     const img = _el('image', {
-      x: panelLeft, y: imgY, width: IMG_W, height: IMG_H,
+      x: imgX, y: imgY, width: IMG_W, height: IMG_H,
       href: veh.samples[veh.currentSample].b64,
       preserveAspectRatio: 'xMidYMid meet'
     });
     vGroup.appendChild(img);
-    vGroup.appendChild(_el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:12,fill:'none',stroke:veh.color,'stroke-width':'1.8'}));
+    vGroup.appendChild(_el('rect',{x:imgX,y:imgY,width:IMG_W,height:IMG_H,rx:12,fill:'none',stroke:veh.color,'stroke-width':'1.8'}));
   } else if (pixelMatrixView) {
     // Dense pixel matrix: render the actual image then overlay a grid of lines
     // so it reads as a matrix while the image content is still visible
@@ -1177,12 +1189,12 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
     const pmClipId='pm-'+Math.random().toString(36).slice(2,7);
     const pmDefs=_el('defs',{});
     const pmClip=_el('clipPath',{id:pmClipId});
-    pmClip.appendChild(_el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:10}));
+    pmClip.appendChild(_el('rect',{x:imgX,y:imgY,width:IMG_W,height:IMG_H,rx:10}));
     pmDefs.appendChild(pmClip);
     vGroup.appendChild(pmDefs);
 
     // 1. Actual vehicle image underneath
-    veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
+    veh.drawSVG(vGroup,imgX,imgY,IMG_W,IMG_H,isDark,colorMode);
 
     // 2. Dense grid overlay — thin lines create the matrix cell appearance
     const gridG=_el('g',{'clip-path':`url(#${pmClipId})`,'pointer-events':'none'});
@@ -1190,25 +1202,25 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
 
     // vertical lines
     for(let c=1;c<MAT;c++){
-      const x2=panelLeft+c*cellW;
+      const x2=imgX+c*cellW;
       gridG.appendChild(_el('line',{x1:x2,y1:imgY,x2:x2,y2:imgY+IMG_H,stroke:lineCol,'stroke-width':'0.5'}));
     }
     // horizontal lines
     for(let r=1;r<MAT;r++){
       const y2=imgY+r*cellH;
-      gridG.appendChild(_el('line',{x1:panelLeft,y1:y2,x2:panelLeft+IMG_W,y2:y2,stroke:lineCol,'stroke-width':'0.5'}));
+      gridG.appendChild(_el('line',{x1:imgX,y1:y2,x2:imgX+IMG_W,y2:y2,stroke:lineCol,'stroke-width':'0.5'}));
     }
     vGroup.appendChild(gridG);
 
     // 3. Border
-    vGroup.appendChild(_el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:10,fill:'none',stroke:veh.color,'stroke-width':'1.8'}));
+    vGroup.appendChild(_el('rect',{x:imgX,y:imgY,width:IMG_W,height:IMG_H,rx:10,fill:'none',stroke:veh.color,'stroke-width':'1.8'}));
   } else if (veh.drawSVG) {
-    veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
+    veh.drawSVG(vGroup,imgX,imgY,IMG_W,IMG_H,isDark,colorMode);
   }
   g.appendChild(vGroup);
 
   if(lineMode==='dynamic'){
-    const sc=el('rect',{x:panelLeft+2,y:imgY+2,width:IMG_W-4,height:3,rx:1,
+    const sc=el('rect',{x:imgX+2,y:imgY+2,width:IMG_W-4,height:3,rx:1,
       fill:veh.color,opacity:'0','pointer-events':'none'});
     sc.appendChild(smil('animate',{attributeName:'y',
       values:[imgY+2,imgY+2,imgY+IMG_H-5,imgY+IMG_H-5].join(';'),
@@ -1219,10 +1231,22 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
     g.appendChild(sc);
   }
 
-  const btnY=imgY+IMG_H+8;
+  // Directional arrow between image and grid
+  const arrowGap = (gridY - (imgY + IMG_H));
+  const arrowLine = el('line', {
+    x1: centerX, y1: imgY + IMG_H + 12,
+    x2: centerX, y2: gridY - 14,
+    stroke: isDark ? 'rgba(99,102,241,0.4)' : 'rgba(79,70,229,0.3)',
+    'stroke-width': '2',
+    'marker-end': 'url(#arrowHead)',
+    'stroke-dasharray': '4 4'
+  });
+  g.appendChild(arrowLine);
+
+  const btnY=gridY+GRID_H+15;
   const fo=document.createElementNS(SVG_NS,'foreignObject');
-  fo.setAttribute('x',panelLeft); fo.setAttribute('y',btnY);
-  fo.setAttribute('width',IMG_W); fo.setAttribute('height',28);
+  fo.setAttribute('x',imgX); fo.setAttribute('y',btnY);
+  fo.setAttribute('width',IMG_W); fo.setAttribute('height',30);
   const btn=document.createElement('button');
   btn.textContent='Next Image';
   btn.style.cssText=`width:100%;height:28px;border-radius:7px;border:none;
@@ -1275,8 +1299,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
           // Only show value text for vehicle grid (MNIST cells too small)
           if(demoType!=='mnist' && (!colorMode || ch===2)){
             const bright=v>.5;
-            const tv=el('text',{x:cx2+CELL/2,y:cy2+CELL/2+3.5,'text-anchor':'middle',
-              'font-family':'JetBrains Mono,monospace','font-size':'8','font-weight':'600',
+            const tv=el('text',{x:cx2+CELL/2,y:cy2+CELL/2+4,'text-anchor':'middle',
+              'font-family':'JetBrains Mono,monospace','font-size':'10.5','font-weight':'700',
               fill:bright?'#0f172a':(isDark?'rgba(240,244,255,.9)':'rgba(240,244,255,.9)')});
             tv.textContent=v.toFixed(2);
             g.appendChild(tv);
@@ -1435,32 +1459,30 @@ function drawClassPanel(svg,veh,pos,NODE_R,H,tc,tArrRaw){
 
     const baseColor = isDark?'#475569':'#94a3b8';
     
-    const tArr = Math.min(0.94, tArrRaw).toFixed(5);
-    const tArr2 = Math.min(0.95, tArrRaw + 0.04).toFixed(5);
-    const tArr3 = Math.min(0.95, tArrRaw + 0.08).toFixed(5);
+    const t0 = Math.min(0.85, tArrRaw);
+    const tA = t0.toFixed(5);
+    const tA2 = (t0 + 0.01).toFixed(5);
+    const tA3 = (t0 + 0.02).toFixed(5);
+    const tHold = (t0 + (1.0 - t0) * 0.75).toFixed(5);
+    const tFade = (t0 + (1.0 - t0) * 0.92).toFixed(5);
 
     const gHigh = el('g', {opacity: lineMode==='dynamic' ? '0' : (isW?'1':'0')});
     if(lineMode==='dynamic' && isW){
       const opAnim = smil('animate',{
         attributeName:'opacity',
         values:loopAnim ? `0;0;1;1;0;0` : `0;0;1;1`,
-        keyTimes:loopAnim ? `0;${tArr};${tArr2};.96;.99;1` : `0;${tArr};${tArr2};1`,
+        keyTimes:loopAnim ? `0;${tA};${tA2};${tHold};${tFade};1` : `0;${tA};${tA2};1`,
         dur:`${tc}s`, repeatCount:rep, fill:fz
       });
       gHigh.appendChild(opAnim);
     }
 
-    const emoBase = el('text',{x:panelX+2,y:y+5,'font-size':'13',opacity:'.45'});
-    emoBase.textContent=v2.emoji; svg.appendChild(emoBase);
-    const emoHigh = el('text',{x:panelX+2,y:y+5,'font-size':'13',opacity:'1'});
-    emoHigh.textContent=v2.emoji; gHigh.appendChild(emoHigh);
-
-    const lblBase = el('text',{x:panelX+22,y:y+5,'font-family':'Inter,sans-serif','font-size':'11','font-weight':'500',fill:baseColor});
+    const lblBase = el('text',{x:panelX+2,y:y+5,'font-family':'Inter,sans-serif','font-size':'11','font-weight':'500',fill:baseColor});
     lblBase.textContent=v2.label; svg.appendChild(lblBase);
-    const lblHigh = el('text',{x:panelX+22,y:y+5,'font-family':'Inter,sans-serif','font-size':'11','font-weight':'700',fill:v2.color});
+    const lblHigh = el('text',{x:panelX+2,y:y+5,'font-family':'Inter,sans-serif','font-size':'11','font-weight':'700',fill:v2.color});
     lblHigh.textContent=v2.label; gHigh.appendChild(lblHigh);
 
-    const barX=panelX+22+68;
+    const barX=panelX+2+75;
     svg.appendChild(el('rect',{x:barX,y:y-5.5,width:BAR_W,height:BAR_H,rx:5.5,fill:isDark?'rgba(30,41,59,.6)':'rgba(203,213,225,.35)'}));
 
     const fillW=Math.max(2,BAR_W*conf);
@@ -1469,14 +1491,14 @@ function drawClassPanel(svg,veh,pos,NODE_R,H,tc,tArrRaw){
       bf.appendChild(smil('animate',{
         attributeName:'width',
         values:loopAnim ? `0;0;${fillW.toFixed(1)};${fillW.toFixed(1)};0;0` : `0;0;${fillW.toFixed(1)};${fillW.toFixed(1)}`,
-        keyTimes:loopAnim ? `0;${tArr};${tArr3};.95;.98;1` : `0;${tArr};${tArr3};1`,
+        keyTimes:loopAnim ? `0;${tA2};${tA3};${tHold};${tFade};1` : `0;${tA2};${tA3};1`,
         dur:`${tc}s`, repeatCount:rep, fill:fz
       }));
     } else if (lineMode==='dynamic' && !isW) {
       bf.appendChild(smil('animate',{
         attributeName:'width',
         values:loopAnim ? `0;0;${fillW.toFixed(1)};${fillW.toFixed(1)};0;0` : `0;0;${fillW.toFixed(1)};${fillW.toFixed(1)}`,
-        keyTimes:loopAnim ? `0;${tArr};${tArr3};.95;.98;1` : `0;${tArr};${tArr3};1`,
+        keyTimes:loopAnim ? `0;${tA2};${tA3};${tHold};${tFade};1` : `0;${tA2};${tA3};1`,
         dur:`${tc}s`, repeatCount:rep, fill:fz
       }));
       bf.setAttribute("opacity", "0.45");
@@ -1827,8 +1849,10 @@ function buildNetwork(keepWeights=false){
   }
 
   const outActs=acts[total-1];
-  const tExt = demoMode ? (colorMode ? layerDur * 4.5 : layerDur * 1.5) : (simplifiedMode ? layerDur * 0.8 : 0);
-  const tc = nSeg*layerDur+layerDur*.8 + tExt;
+  const tPrep = demoMode ? layerDur * 1.5 : 0;
+  const tWait = demoMode ? (colorMode ? layerDur * 6.0 : layerDur * 5.0) : (simplifiedMode ? layerDur * 0.8 : 0);
+  const tc = tPrep + nSeg*layerDur + layerDur*0.2 + tWait;
+  const tExt = tPrep; // Alias for other components
   pc=0; rep=loopAnim?'indefinite':'1';
 
   const maxN=Math.max(...layers);
@@ -1836,8 +1860,8 @@ function buildNetwork(keepWeights=false){
   const VSP=Math.max(NODE_R*2+1,Math.min(62,Math.floor(680/(maxN+1))));
   const autoHideLabels=maxN>50;
   const PAD_Y=78;
-  const PAD_X=demoMode?480:(simplifiedMode?380:90);
-  const RIGHT_PAD=demoMode?240:(simplifiedMode?180:70);
+  const PAD_X=demoMode?440:(simplifiedMode?420:120);
+  const RIGHT_PAD=demoMode?200:(simplifiedMode?160:100);
   const mainArea=document.querySelector('.main-area');
   const availW=mainArea?mainArea.clientWidth:window.innerWidth;
   const availH=mainArea?mainArea.clientHeight:window.innerHeight;
@@ -1847,8 +1871,8 @@ function buildNetwork(keepWeights=false){
   const contentH=VSP*(maxN+1)+PAD_Y*2;
   const centerOffset=Math.max(0,Math.floor((availW-contentW)/2));
   const centerOffsetY=(demoMode||simplifiedMode)?0:Math.max(0,Math.floor((availH-contentH)/2));
-  const W=availW;
-  const H=Math.max(availH,contentH);
+  const W=Math.max(availW, contentW);
+  const H=Math.max(availH, contentH);
 
   if(flyAnimTl){flyAnimTl.kill();flyAnimTl=null;}
   const svg=document.getElementById('nn-svg');
@@ -1871,10 +1895,13 @@ function buildNetwork(keepWeights=false){
   fmDot.appendChild(el('feMergeNode',{in:'SourceGraphic'}));
   glowDot.appendChild(fmDot);defs.appendChild(glowDot);
 
-  // Soft ripple glow for expanding rings
   const glowRipple=el('filter',{id:'glow-ripple',x:'-60%',y:'-60%',width:'220%',height:'220%'});
   glowRipple.appendChild(el('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'6'}));
   defs.appendChild(glowRipple);
+
+  const arrow=el('marker',{id:'arrowHead',viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'4',markerHeight:'4',orient:'auto'});
+  arrow.appendChild(el('path',{d:'M 0 0 L 10 5 L 0 10 z',fill:isDark?'#6366f1':'#4f46e5'}));
+  defs.appendChild(arrow);
   if(gradEdges){
     for(let li=0;li<total-1;li++){
       const c1=getNode(li,total),c2=getNode(li+1,total);
@@ -1923,7 +1950,7 @@ function buildNetwork(keepWeights=false){
   if(lineMode==='dynamic'){
     for(let li=0;li<nSeg;li++){
       const dc=getNode(Math.min(li+1,total-1),total).stroke;
-      const ws = tExt + li*layerDur, wd=layerDur;
+      const ws = tPrep + li*layerDur, wd=layerDur;
       const connCount = pos[li].length * pos[li+1].length;
       svg._dotConnCount=connCount;
       const strThreshold = connCount > 150 ? 0.15 : connCount > 60 ? 0.06 : connCount > 20 ? 0.02 : 0;
@@ -2039,19 +2066,13 @@ function buildNetwork(keepWeights=false){
         }
         svg.appendChild(core);
 
-        if(li===0 && !autoHideLabels){
-          if(demoMode && ni < (demoType==='mnist'?activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels.length : activeData[demoVehicleIdx].pixels.length)){
-            const pv= (demoType==='mnist' ? activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels[ni] : activeData[demoVehicleIdx].pixels[ni]);
-            const pvl=el('text',{x,y:y-r-4,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'7.5','font-weight':'600',fill:activeData[demoVehicleIdx].color,opacity:'.7'});
-            pvl.textContent=pv.toFixed(2);svg.appendChild(pvl);
-          } else if (!demoMode) {
+        if(li===0 && !autoHideLabels && !demoMode){
             const val=acts[0][ni]||0;
             const pillW=32, pillH=15;
             svg.appendChild(el('line',{x1:x-r-25,y1:y,x2:x-r-2,y2:y,stroke:col.stroke,'stroke-width':1.5,opacity:'.3'}));
             svg.appendChild(el('rect',{x:x-r-10-pillW,y:y-pillH/2,width:pillW,height:pillH,rx:4,fill:isDark?'rgba(15,23,42,.6)':'#f8fafc',stroke:col.stroke,'stroke-width':'1',opacity:'.8'}));
             const pvl=el('text',{x:x-r-10-pillW/2,y:y+3,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'8','font-weight':'700',fill:isDark?'#cbd5e1':'#334155'});
             pvl.textContent=val.toFixed(2);svg.appendChild(pvl);
-          }
         }
 
         const hn=el('circle',{cx:x,cy:y,r:Math.max(r+5,8),fill:'transparent',style:'cursor:pointer'});
@@ -2087,7 +2108,7 @@ function buildNetwork(keepWeights=false){
     }
   }
 
-  const tArr = (tExt + nSeg * layerDur) / tc;
+  const tArr = (tPrep + nSeg * layerDur) / tc;
   if(demoMode) drawClassPanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc, tArr);
 
   svg.appendChild(labelsLayer);
@@ -2151,6 +2172,20 @@ function applyTheme(mode) {
 window.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'SET_THEME') {
     applyTheme(e.data.mode);
+  }
+});
+
+function toggleLeftPanel(ev){
+  if(ev) ev.stopPropagation();
+  const panel = document.querySelector('.ctrl-panel');
+  if (panel) panel.classList.toggle('open');
+}
+
+// Close panel if clicking outside
+document.addEventListener('click', (e) => {
+  const panel = document.querySelector('.ctrl-panel');
+  if (panel && panel.classList.contains('open') && !panel.contains(e.target)) {
+    panel.classList.remove('open');
   }
 });
 </script>
