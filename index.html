@@ -2244,10 +2244,34 @@
         position: relative;
         box-shadow: 0 12px 40px rgba(0,0,0,0.3);
       }
-      .s5-img-frame img, .s5-brain-card img {
+      .s5-img-frame img, .s5-img-frame video, .s5-brain-card img, .s5-brain-card video {
         width: 100%;
         height: 100%;
         object-fit: contain;
+      }
+      .s5-video-btn {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 10;
+      }
+      .s5-video-btn:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: scale(1.05);
       }
       .s5-img-frame {
         background: #fff;
@@ -4328,8 +4352,9 @@
             <!-- Left: Micro -->
             <div class="s5-neuron-col">
               <div class="s5-col-header">Micro: The Cell</div>
-              <div class="s5-img-frame">
-                <img src="assets/neuron_diagram.png" alt="Biological neuron diagram" />
+              <div class="s5-img-frame" style="background:#000;">
+                <video id="neuronVideo" src="assets/Neuron%20Firing.mp4" loop playsinline title="Biological neuron firing"></video>
+                <button id="neuronPlayBtn" class="s5-video-btn" onclick="toggleNeuronVideo(event)" aria-label="Play/Pause Video">▶</button>
               </div>
               <div class="s5-insight-card">
                 <div class="s5-insight-icon">⚡</div>
@@ -6189,6 +6214,31 @@
       let s6CurrentStep = 0;
       const s6TotalSteps = 6;
 
+      function playRevealSound() {
+        if (!window.AudioContext && !window.webkitAudioContext) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        
+        const osc = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        
+        // A soft, high-pitched sine wave (glassy/digital feel)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+        osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.08); // Slide up to A6
+        
+        // Envelope: quick attack, slow fade
+        gainNode.gain.setValueAtTime(0, ctx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        
+        osc.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.5);
+      }
+
       function s6Step(delta) {
         const newStep = Math.max(
           0,
@@ -6196,6 +6246,7 @@
         );
         if (newStep === s6CurrentStep) return;
 
+        const oldStep = s6CurrentStep;
         s6CurrentStep = newStep;
 
         const slide = document.getElementById("slideSix");
@@ -6228,6 +6279,10 @@
         // PHASE 3: Concluding Insight (Step 7)
         if (s6CurrentStep >= 7) {
           slide.classList.add("show-footer");
+          if (oldStep < 7) {
+            // Synchronize with the 0.4s CSS transition delay on `.s6-footer-insight`
+            setTimeout(playRevealSound, 400);
+          }
         }
       }
 
@@ -6266,6 +6321,20 @@
       })();
 
 
+
+      function toggleNeuronVideo(e) {
+        if (e) e.stopPropagation();
+        const vid = document.getElementById('neuronVideo');
+        const btn = document.getElementById('neuronPlayBtn');
+        if (vid.paused) {
+          vid.muted = false; // Ensure sound is unmuted when user initiates playback
+          vid.play();
+          btn.textContent = '⏸';
+        } else {
+          vid.pause();
+          btn.textContent = '▶';
+        }
+      }
 
       function toggleSideNav(e) {
         if (e) e.stopPropagation();
