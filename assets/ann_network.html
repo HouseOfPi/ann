@@ -1865,11 +1865,12 @@ function buildNetwork(keepWeights=false){
   const layoutW=demoMode?Math.max(availW,PAD_X+RIGHT_PAD+(total-1)*90):availW;
   const xStep=Math.min(220,Math.max(90,(layoutW-PAD_X-RIGHT_PAD)/Math.max(1,total-1)));
   const contentW=PAD_X+xStep*(total-1)+RIGHT_PAD;
-  const contentH=VSP*(maxN+1)+PAD_Y*2;
   const centerOffset=Math.max(0,Math.floor((availW-contentW)/2));
-  const centerOffsetY=Math.max(0,Math.floor((availH-contentH)/2));
+  // Balance visual top (labels at centerOffsetY+13) and visual bottom (last node at PAD_Y+centerOffsetY+VSP*maxN)
+  // Solving: centerOffsetY+13 = availH - (PAD_Y + centerOffsetY + VSP*maxN)  →  2*cOY = availH - PAD_Y - VSP*maxN - 13
+  const centerOffsetY=Math.max(0,Math.floor((availH-PAD_Y-VSP*maxN-13)/2));
   const W=Math.max(availW, contentW);
-  const H=Math.max(availH, contentH);
+  const H=Math.max(availH, PAD_Y+centerOffsetY+VSP*maxN+45);
 
   if(flyAnimTl){flyAnimTl.kill();flyAnimTl=null;}
   const svg=document.getElementById('nn-svg');
