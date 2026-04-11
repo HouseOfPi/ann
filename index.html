@@ -5273,22 +5273,22 @@
         {
           year: "1986",
           title: "Backpropagation",
-          body: "Hinton, Rumelhart & Williams published this landmark paper in <em>Nature</em> (1986). By calculating each weight's contribution to the prediction error and adjusting all weights simultaneously via gradient descent, backpropagation turned deep network training from theory into practice — it remains the foundational algorithm powering every modern AI system."
+          body: "<p>Learning is about adjustment. When a neural network makes an error, it doesn't restart; it <strong>learns</strong>. If its output is incorrect, the system calculates exactly how much each internal connection contributed to that mistake.</p><p>Backpropagation is the mathematical process that works <strong>backwards through the network</strong> to nudge every connection in a better direction. By repeating this process millions of times, a network that initially knew nothing eventually develops sophisticated pattern recognition. <em>This remains the fundamental engine of all modern AI.</em></p>"
         },
         {
           year: "2012",
           title: "AlexNet Triumph",
-          body: "<p>AlexNet had 8 layers and 60 million parameters, trained on two GTX 580 GPUs. It cut ImageNet top-5 error from 26.2% to 15.3% — a gap so enormous it stunned the research community. It popularised ReLU activations, dropout regularisation, and GPU-accelerated training, igniting the deep learning revolution overnight.</p><div class='historic-event-section'><span class='historic-event-label'>Historical Insight</span><strong class='historic-event-title'>The $44M Hotel Room Auction</strong>After AlexNet, Hinton incorporated <em>DNNresearch Inc.</em> — a company of exactly <strong>3 people</strong>: himself, Alex Krizhevsky, and Ilya Sutskever. They ran a secret sealed-bid auction in a Toronto hotel room. Baidu, Microsoft, and DeepMind competed fiercely. <strong>Google won — paying $44 million</strong> just to hire the trio. It remains the most legendary talent acquisition in AI history.</div>"
+          body: "<p>The ImageNet competition was the ultimate test for computer vision, challenging AI to identify objects across 1.2 million images. For years, progress was stagnant, with most systems failing to identify 1 in 4 images correctly.</p><p>In 2012, AlexNet shattered expectations. By utilizing a deep neural network, it <strong>halved the error rate overnight</strong>. This gap was so significant that it proved deep learning wasn't just another theory—it was the future of computing.</p><div class='historic-event-section'><span class='historic-event-label'>Historical Impact</span><strong class='historic-event-title'>A Strategic Industry Shift</strong>The victory sparked a global tech race. Recognizing the potential, Google acquired Hinton's three-person startup for <strong>$44 million</strong> following a high-stakes bidding war. This moment marked the transition of deep learning from an academic curiosity into a multi-billion dollar industrial standard.</div>"
         },
         {
           year: "2018",
           title: "Turing Award",
-          body: "The $1M ACM Turing Award was shared with Yoshua Bengio and Yann LeCun — collectively dubbed the 'Godfathers of Deep Learning.' The citation recognised their 'conceptual and engineering breakthroughs that have made deep neural networks a critical component of computing,' spanning decades of work that most dismissed as fringe science."
+          body: "<p>The ACM Turing Award is the highest honor in computer science—the equivalent of a Nobel Prize. In 2018, it was awarded jointly to <strong>Geoffrey Hinton</strong>, <strong>Yoshua Bengio</strong>, and <strong>Yann LeCun</strong>.</p><p>The three researchers had spent decades championing neural networks while the rest of the field considered them a technological dead end. They faced rejected papers and dried-up funding, but their stubborn persistence eventually paid off.</p><p>The award recognized the breakthroughs that turned deep neural networks into the backbone of the modern world, vindicating thirty years of conviction.</p>"
         },
         {
           year: "2024",
-          title: "Nobel Prize",
-          body: "Shared with John Hopfield, the Nobel Prize in Physics cited 'foundational discoveries that enable machine learning with artificial neural networks.' Hinton's win was particularly historic as it recognized the profound impact of neural networks on physics and science at large, moving the field into the absolute scientific mainstream."
+          title: "Nobel Prize in Physics",
+          body: "<p>In 2024, the Nobel Committee broke tradition by awarding the <strong>Nobel Prize in Physics</strong> for work on artificial neural networks.</p><p>Hinton shared the prize with <strong>John Hopfield</strong>. The citation acknowledged their <em>\"foundational discoveries that enable machine learning with artificial neural networks.\"</em></p><p>This win signaled that neural networks are more than just software; they reveal profound truths about how information, memory, and learning operate at a fundamental level—placing AI research alongside the greatest discoveries in scientific history.</p>"
         }
       ];
 
@@ -5309,7 +5309,7 @@
         popup.style.top = "50%";
         popup.style.bottom = "auto";
         popup.style.transform = "translate(-50%, -50%)";
-        popup.style.width = "clamp(320px, 50vw, 600px)";
+        popup.style.width = "clamp(340px, 52vw, 640px)";
 
         // Hide stats for these cards
         const stats = popup.querySelector(".s3-pp-stat-row");
