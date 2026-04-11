@@ -591,16 +591,16 @@
         flex-direction: column;
         align-items: center;
       }
-      /* Left-align hero content over the Ball in Dual mode */
+      /* Left-align hero content in Dual mode */
       .ui.ui-left {
-        align-items: center;
-        padding-left: 0;
+        align-items: flex-start;
+        padding-left: 8vw;
       }
       .ui.ui-left .title-wrap {
-        width: 100%;
-        max-width: 100%;
-        text-align: center;
-        align-items: center;
+        width: auto;
+        max-width: 45%;
+        text-align: left;
+        align-items: flex-start;
       }
       @media (max-width: 768px) {
         .ui.ui-left {
@@ -5465,18 +5465,18 @@
         });
 
         // ── ANN nodes (right side, compressed) ──
-        // ── ANN nodes (full width) ──
+        // ── ANN nodes (Right aligned) ──
         dualAnnNodes = []; dualAnnPulses = [];
         const isMobile = BW < 768;
-        const layers = isMobile ? [3, 4, 4, 3] : [3, 5, 7, 5, 3];
+        const layers = isMobile ? [3, 4, 3] : [3, 5, 5, 3];
         dualAnnLayerCount = layers.length;
         
-        // ANN occupies most of the screen symmetrically
-        const annLeft = isMobile ? BW * 0.1 : BW * 0.15;
-        const annRight = isMobile ? BW * 0.9 : BW * 0.85;
+        // ANN occupies the right 45% of the screen
+        const annLeft = isMobile ? BW * 0.55 : BW * 0.55;
+        const annRight = BW * 0.96;
         const totalW = annRight - annLeft;
         const spacingX = totalW / (layers.length - 1);
-        const nodeSpacingY = isMobile ? 50 : 65;
+        const nodeSpacingY = isMobile ? 48 : 58;
 
         layers.forEach((count, li) => {
           const totalH = (count - 1) * nodeSpacingY;
@@ -5504,11 +5504,11 @@
         const palette = isDark ? annLayerColors.dark : annLayerColors.light;
 
         // ═══════════════════════════════════════
-        //  3D Ball (Centered behind text & ANN)
+        //  3D Ball (Right Side, behind ANN)
         // ═══════════════════════════════════════
-        const ballCx = BW * 0.5, ballCy = BH * 0.45;
+        const ballCx = BW * 0.755, ballCy = BH * 0.45;
         const rotX = bt * 0.0018, rotY = bt * 0.0025;
-        const baseRadius = Math.min(BW * 0.5, BH) * 0.35;
+        const baseRadius = Math.min(BW * 0.35, BH) * 0.35;
         const bPulse = 0.92 + Math.sin(bt * 0.006) * 0.08;
         const bRadius = baseRadius * bPulse;
 
