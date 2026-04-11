@@ -5072,7 +5072,7 @@
       function setHeroBg(mode) {
         heroBg = mode;
         synapseNodes = []; synapseParticles2 = [];
-        nexusNodes = []; streamParticles = []; stormNodes = []; ballNodes = []; annNodes = [];
+        nexusNodes = []; streamParticles = []; stormNodes = []; ballNodes = []; annNodes = []; annPulses = []; annParticles = [];
         bx.clearRect(0, 0, BW, BH);
         document.querySelectorAll('.bg-btn').forEach(b =>
           b.classList.toggle('active', b.dataset.bg === mode));
@@ -5421,28 +5421,37 @@
         });
       }
       
-      let annNodes = [];
-      let annPulses = [];
+      /* ── L. ARCHITECT — Professional ANN Visualization ─────────────────── */
+      let annNodes = [], annPulses = [], annParticles = [], annLayerCount = 0;
+      const annLayerColors = {
+        dark:  ['#a78bfa','#60a5fa','#22d3ee','#34d399','#818cf8'],
+        light: ['#7c3aed','#3b82f6','#0891b2','#059669','#4f46e5'],
+      };
+
       function initAnn() {
-        annNodes = [];
-        annPulses = [];
+        annNodes = []; annPulses = []; annParticles = [];
         const isMobile = BW < 768;
-        const layers = isMobile ? [4, 5, 4] : [4, 7, 7, 4];
-        const spacingX = isMobile ? BW * 0.22 : BW * 0.16;
-        const spacingY = isMobile ? 70 : 85;
-        const startX = (BW - (layers.length - 1) * spacingX) / 2;
+        const layers = isMobile ? [3, 5, 5, 3] : [3, 5, 7, 5, 3];
+        annLayerCount = layers.length;
+        const totalW = isMobile ? BW * 0.65 : BW * 0.50;
+        const spacingX = totalW / (layers.length - 1);
+        const startX = (BW - totalW) / 2;
+        const nodeSpacingY = isMobile ? 55 : 68;
         
-        layers.forEach((count, i) => {
-          const startY = (BH - (count - 1) * spacingY) / 2;
+        layers.forEach((count, li) => {
+          const totalH = (count - 1) * nodeSpacingY;
+          const startY = (BH - totalH) / 2;
           for (let j = 0; j < count; j++) {
             annNodes.push({
-              x: startX + i * spacingX,
-              y: startY + j * spacingY,
-              layer: i,
+              x: startX + li * spacingX,
+              y: startY + j * nodeSpacingY,
+              layer: li,
               idx: j,
-              r: isMobile ? 7 : 10,
+              r: isMobile ? 8 : 11,
               offset: Math.random() * Math.PI * 2,
-              baseY: startY + j * spacingY
+              baseX: startX + li * spacingX,
+              baseY: startY + j * nodeSpacingY,
+              activation: 0,
             });
           }
         });
@@ -5451,153 +5460,205 @@
       function drawAnn() {
         if (!annNodes.length) initAnn();
         const time = Date.now() * 0.001;
-        
-        // Dynamic node positioning (subtle floating)
+        const isDark = !isLightMode;
+        const palette = isDark ? annLayerColors.dark : annLayerColors.light;
+
+        // ── 1. Subtle node floating ──
         annNodes.forEach(n => {
-           n.y = n.baseY + Math.sin(time * 1.5 + n.offset) * 4;
+          n.y = n.baseY + Math.sin(time * 0.9 + n.offset) * 3.5;
+          n.x = n.baseX + Math.cos(time * 0.7 + n.offset * 1.3) * 2;
+          const dxM = mouse.x - n.x, dyM = mouse.y - n.y;
+          const mDist = Math.sqrt(dxM * dxM + dyM * dyM);
+          if (mDist < 150) n.activation = Math.min(1, n.activation + 0.05);
+          n.activation *= 0.965;
         });
 
-        // Chance to spawn a pulse
-        if (Math.random() < 0.15) {
-            // Find a random node in layer 0 to start
-            const layer0 = annNodes.filter(n => n.layer === 0);
-            if(layer0.length > 0) {
-              const startNode = layer0[Math.floor(Math.random() * layer0.length)];
-              const layer1 = annNodes.filter(n => n.layer === 1);
-              if(layer1.length > 0) {
-                  const endNode = layer1[Math.floor(Math.random() * layer1.length)];
-                  annPulses.push({
-                    startPath: [startNode, endNode],
-                    progress: 0,
-                    speed: 0.015 + Math.random() * 0.01,
-                    currentColor: isLightMode ? '#0ea5e9' : '#38bdf8'
-                  });
-              }
+        // ── 2. Spawn pulses ──
+        if (Math.random() < 0.08 && annPulses.length < 12) {
+          const layer0 = annNodes.filter(n => n.layer === 0);
+          if (layer0.length) {
+            const sn = layer0[Math.floor(Math.random() * layer0.length)];
+            const layer1 = annNodes.filter(n => n.layer === 1);
+            if (layer1.length) {
+              const en = layer1[Math.floor(Math.random() * layer1.length)];
+              const pc = palette[Math.floor(Math.random() * palette.length)];
+              annPulses.push({
+                from: sn, to: en,
+                progress: 0,
+                speed: 0.01 + Math.random() * 0.008,
+                trail: [],
+                color: pc,
+              });
+              sn.activation = 1;
             }
+          }
         }
-        
-        // Connections: draw first so they appear behind nodes
+
+        // ── 3. Draw connections ──
         annNodes.forEach(n1 => {
           annNodes.forEach(n2 => {
-            if (n2.layer === n1.layer + 1) {
-              const distY = Math.abs(n1.y - n2.y);
-              // Fade out lines that connect far-away nodes vertically for a cleaner look
-              const alphaBase = Math.max(0, 1 - distY / 400); 
-              
-              const wave = (Math.sin(time * 2 + (n1.x + n1.y) * 0.005) + 1) / 2;
-              bx.lineWidth = 1.0 + wave * 0.5;
-              const alpha = (0.05 + wave * 0.15) * alphaBase;
-              
-              // Gradient for connections
-              const grad = bx.createLinearGradient(n1.x, n1.y, n2.x, n2.y);
-              if (isLightMode) {
-                 grad.addColorStop(0, `rgba(14,165,233,${alpha})`);
-                 grad.addColorStop(1, `rgba(56,189,248,${alpha})`);
-              } else {
-                 grad.addColorStop(0, `rgba(52,211,153,${alpha})`); // emerald
-                 grad.addColorStop(1, `rgba(56,189,248,${alpha})`); // sky
-              }
+            if (n2.layer !== n1.layer + 1) return;
+            const distY = Math.abs(n1.baseY - n2.baseY);
+            const maxReach = annLayerCount > 4 ? 340 : 380;
+            const alphaFalloff = Math.max(0, 1 - distY / maxReach);
+            if (alphaFalloff <= 0) return;
 
-              bx.strokeStyle = grad;
-              bx.beginPath(); bx.moveTo(n1.x, n1.y); bx.lineTo(n2.x, n2.y);
-              bx.stroke();
-            }
+            const actBoost = Math.max(n1.activation, n2.activation);
+            const baseAlpha = isDark ? 0.12 : 0.10;
+            const alpha = (baseAlpha + actBoost * 0.25) * alphaFalloff;
+            bx.lineWidth = 0.8 + actBoost * 1.5;
+
+            const c1 = palette[n1.layer % palette.length];
+            const c2 = palette[n2.layer % palette.length];
+            const grad = bx.createLinearGradient(n1.x, n1.y, n2.x, n2.y);
+            grad.addColorStop(0, hexToRgba(c1, alpha));
+            grad.addColorStop(1, hexToRgba(c2, alpha));
+            bx.strokeStyle = grad;
+
+            bx.beginPath();
+            bx.moveTo(n1.x, n1.y);
+            bx.lineTo(n2.x, n2.y);
+            bx.stroke();
           });
         });
 
-        // Draw and update pulses
+        // ── 4. Update and draw pulses ──
         for (let i = annPulses.length - 1; i >= 0; i--) {
-            let p = annPulses[i];
-            p.progress += p.speed;
-            
-            if (p.progress >= 1) {
-                // Move to next layer or die
-                const n2 = p.startPath[1];
-                const nextLayerStr = annNodes.filter(n => n.layer === n2.layer + 1);
-                if (nextLayerStr.length > 0) {
-                     p.startPath[0] = n2;
-                     p.startPath[1] = nextLayerStr[Math.floor(Math.random() * nextLayerStr.length)];
-                     p.progress = 0;
-                } else {
-                     annPulses.splice(i, 1);
-                     continue;
-                }
-            }
-            
-            const n1 = p.startPath[0];
-            const n2 = p.startPath[1];
-            
-            // Easing
-            const easeP = p.progress < 0.5 ? 2 * p.progress * p.progress : 1 - Math.pow(-2 * p.progress + 2, 2) / 2;
+          const p = annPulses[i];
+          p.progress += p.speed;
 
-            const px = n1.x + (n2.x - n1.x) * easeP;
-            const py = n1.y + (n2.y - n1.y) * easeP;
-            
-            bx.beginPath();
-            bx.arc(px, py, isLightMode ? 2.5 : 3.5, 0, Math.PI * 2);
-            bx.fillStyle = p.currentColor;
-            if(!isLightMode) {
-                bx.shadowBlur = 15;
-                bx.shadowColor = p.currentColor;
+          if (p.progress >= 1) {
+            p.to.activation = Math.min(1, p.to.activation + 0.7);
+            const nextLayer = annNodes.filter(n => n.layer === p.to.layer + 1);
+            if (nextLayer.length) {
+              p.from = p.to;
+              p.to = nextLayer[Math.floor(Math.random() * nextLayer.length)];
+              p.progress = 0;
+            } else {
+              annPulses.splice(i, 1);
+              continue;
             }
-            bx.fill();
-            bx.shadowBlur = 0;
-            
-            // Pulse trail
-            bx.beginPath();
-            bx.moveTo(px, py);
-            const tailP = Math.max(0, easeP - 0.15);
-            const tailX = n1.x + (n2.x - n1.x) * tailP;
-            const tailY = n1.y + (n2.y - n1.y) * tailP;
-            bx.lineTo(tailX, tailY);
-            bx.strokeStyle = p.currentColor;
-            bx.lineWidth = 2;
-            bx.stroke();
+          }
+
+          const n1 = p.from, n2 = p.to;
+          const t = p.progress;
+          const px = n1.x + (n2.x - n1.x) * t;
+          const py = n1.y + (n2.y - n1.y) * t;
+
+          // Trail
+          p.trail.push({x: px, y: py});
+          if (p.trail.length > 10) p.trail.shift();
+
+          if (p.trail.length > 1) {
+            for (let ti = 1; ti < p.trail.length; ti++) {
+              const trailAlpha = (ti / p.trail.length) * 0.6;
+              const width = (ti / p.trail.length) * 2.5;
+              bx.beginPath();
+              bx.moveTo(p.trail[ti-1].x, p.trail[ti-1].y);
+              bx.lineTo(p.trail[ti].x, p.trail[ti].y);
+              bx.strokeStyle = hexToRgba(p.color, trailAlpha);
+              bx.lineWidth = width;
+              bx.stroke();
+            }
+          }
+
+          // Pulse head with glow
+          bx.beginPath();
+          bx.arc(px, py, isDark ? 4 : 3, 0, Math.PI * 2);
+          bx.fillStyle = p.color;
+          if (isDark) {
+            bx.shadowBlur = 18;
+            bx.shadowColor = p.color;
+          }
+          bx.fill();
+          // Bright core
+          bx.beginPath();
+          bx.arc(px, py, 1.5, 0, Math.PI * 2);
+          bx.fillStyle = 'rgba(255,255,255,0.9)';
+          bx.fill();
+          bx.shadowBlur = 0;
         }
 
-        // Nodes: stylized modern glass/neon circles
+        // ── 5. Draw nodes ──
         annNodes.forEach(n => {
-          const hoverPulse = (Math.sin(time * 3 + n.offset) + 1) / 2;
-          
-          bx.beginPath();
-          bx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-          
-          if (isLightMode) {
-              bx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-              bx.fill();
-              bx.lineWidth = 2;
-              bx.strokeStyle = '#0ea5e9';
-              bx.stroke();
-          } else {
-              // Glassy dark nodes
-              bx.fillStyle = 'rgba(10, 15, 30, 0.8)';
-              bx.fill();
-              bx.lineWidth = 1.5;
-              
-              // Dynamic glowing border
-              const grad = bx.createLinearGradient(n.x - n.r, n.y - n.r, n.x + n.r, n.y + n.r);
-              grad.addColorStop(0, '#34d399'); // emerald
-              grad.addColorStop(1, '#38bdf8'); // sky
-              bx.strokeStyle = grad;
-              
-              if (hoverPulse > 0.5) {
-                 bx.shadowBlur = 10 + hoverPulse * 15;
-                 bx.shadowColor = 'rgba(56,189,248,0.6)';
-              } else {
-                 bx.shadowBlur = 5;
-                 bx.shadowColor = 'rgba(52,211,153,0.3)';
-              }
-              
-              bx.stroke();
-              bx.shadowBlur = 0;
-              
-              // Inner glowing dot
-              bx.beginPath();
-              bx.arc(n.x, n.y, n.r * 0.3 + hoverPulse, 0, Math.PI * 2);
-              bx.fillStyle = 'rgba(255,255,255,0.7)';
-              bx.fill();
+          const pulse = (Math.sin(time * 2.5 + n.offset) + 1) / 2;
+          const act = n.activation;
+          const nodeR = n.r + act * 2;
+          const layerColor = palette[n.layer % palette.length];
+
+          // Outer glow
+          if (isDark) {
+            const glowR = nodeR + 10 + act * 12;
+            const glow = bx.createRadialGradient(n.x, n.y, nodeR * 0.5, n.x, n.y, glowR);
+            glow.addColorStop(0, hexToRgba(layerColor, 0.08 + act * 0.15));
+            glow.addColorStop(1, hexToRgba(layerColor, 0));
+            bx.beginPath();
+            bx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+            bx.fillStyle = glow;
+            bx.fill();
           }
+
+          // Main node body with radial gradient
+          bx.beginPath();
+          bx.arc(n.x, n.y, nodeR, 0, Math.PI * 2);
+
+          if (isDark) {
+            const gFill = bx.createRadialGradient(n.x - nodeR * 0.3, n.y - nodeR * 0.3, 0, n.x, n.y, nodeR);
+            gFill.addColorStop(0, hexToRgba(layerColor, 0.20 + act * 0.25));
+            gFill.addColorStop(1, 'rgba(8,12,24,0.92)');
+            bx.fillStyle = gFill;
+            bx.fill();
+
+            bx.lineWidth = 1.5 + act * 1.2;
+            bx.strokeStyle = hexToRgba(layerColor, 0.55 + act * 0.4 + pulse * 0.05);
+            if (act > 0.15) {
+              bx.shadowBlur = 10 + act * 15;
+              bx.shadowColor = layerColor;
+            }
+            bx.stroke();
+            bx.shadowBlur = 0;
+          } else {
+            bx.fillStyle = '#fff';
+            bx.fill();
+            bx.lineWidth = 2 + act * 1.2;
+            bx.strokeStyle = hexToRgba(layerColor, 0.7 + act * 0.3);
+            bx.stroke();
+          }
+
+          // Inner bright core
+          const coreR = nodeR * 0.28 + pulse * 1.2 + act * 1.5;
+          bx.beginPath();
+          bx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
+          bx.fillStyle = isDark
+            ? `rgba(255,255,255,${0.55 + act * 0.35 + pulse * 0.1})`
+            : hexToRgba(layerColor, 0.75 + act * 0.25);
+          bx.fill();
         });
+
+        // ── 6. Layer labels ──
+        const labelNames = annLayerCount === 5
+          ? ['INPUT', 'HIDDEN', 'HIDDEN', 'HIDDEN', 'OUTPUT']
+          : ['INPUT', 'HIDDEN', 'HIDDEN', 'OUTPUT'];
+        const layerXs = {};
+        annNodes.forEach(n => { layerXs[n.layer] = n.baseX; });
+
+        bx.font = `600 ${BW < 768 ? 7 : 9}px "Exo 2", system-ui, sans-serif`;
+        bx.textAlign = 'center';
+        const labelY = annNodes.reduce((max, n) => Math.max(max, n.baseY), 0) + 45;
+        Object.keys(layerXs).forEach((l, idx) => {
+          const lx = layerXs[l];
+          const label = labelNames[idx] || '';
+          bx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.22)';
+          bx.fillText(label, lx, labelY);
+        });
+      }
+
+      // Utility: hex color to rgba string
+      function hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1,3), 16);
+        const g = parseInt(hex.slice(3,5), 16);
+        const b = parseInt(hex.slice(5,7), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
       }
 
       /* ── K. NEURAL (original logic, extracted) ─────────────────────────────── */
