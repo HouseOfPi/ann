@@ -3010,297 +3010,7 @@
         padding: 0;
         overflow: hidden;
       }
-      .s6-content {
-        padding: 6vh 8vw 4vh;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-      }
-      .s6-kicker {
-        font-family: var(--font-accent);
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 5px;
-        text-transform: uppercase;
-        color: var(--accent-main);
-        margin-bottom: 12px;
-      }
-      .s6-title {
-        font-family: var(--font-heading);
-        font-size: clamp(32px, 4.5vw, 58px);
-        font-weight: 800;
-        font-style: italic;
-        color: var(--text-main);
-        line-height: 1.1;
-        margin-bottom: 8px;
-      }
-      .s6-subtitle {
-        font-family: var(--font-body);
-        font-size: clamp(14px, 1.5vw, 19px);
-        color: rgba(255, 255, 255, 0.45);
-        font-style: italic;
-        margin-bottom: 16px;
-      }
-      .light-mode .s6-subtitle { color: rgba(0, 0, 0, 0.42); }
 
-      .s6-comparison-grid {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        width: 100%;
-        margin: 0 auto;
-        padding-bottom: 60px; /* Reduced from 100px */
-        transition: all 0.7s ease;
-      }
-
-      .s6-headers-row {
-        display: flex;
-        justify-content: center;
-        gap: 0;
-        margin: 0 auto 12px auto; /* Reduced from 20px */
-        width: 100%;
-        max-width: 1100px; /* Optional cap */
-        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-      }
-      .slide-six.phase-ai .s6-headers-row {
-        gap: 20px;
-      }
-
-      .s6-col-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 8px;
-        font-family: var(--font-accent);
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        flex: 0 0 520px;
-        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-      }
-      .slide-six.phase-ai .s6-col-header {
-        flex: 1;
-      }
-      .s6-col-header-ai {
-        width: 0;
-        flex-basis: 0;
-        max-height: 0;
-        opacity: 0;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        border-width: 0;
-      }
-      .slide-six.phase-ai .s6-col-header-ai {
-        width: auto;
-        max-height: 100px;
-        opacity: 1;
-        padding: 12px;
-        border-width: 1px;
-      }
-      .light-mode .s6-col-header {
-        background: rgba(0, 0, 0, 0.02);
-        border-color: rgba(0, 0, 0, 0.08);
-      }
-      .s6-header-icon { font-size: 18px; }
-      .s6-child-color { color: #facc15; }
-      .s6-ai-color { color: #22d3ee; }
-      .s6-approx { 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        font-size: 20px; 
-        opacity: 0; 
-        width: 60px;
-        flex-shrink: 0;
-        overflow: hidden;
-        transition: all 0.7s ease;
-      }
-      .slide-six.phase-ai .s6-approx { opacity: 0.5; }
-
-      .s6-rows-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        flex: 1;
-        overflow-y: auto;
-        padding-right: 10px;
-        width: 100%;
-        margin: 0 auto;
-      }
-      .s6-row {
-        display: flex;
-        justify-content: center;
-        gap: 0;
-        align-items: stretch;
-        width: 100%;
-        margin: 0 auto;
-        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-      }
-      .slide-six.phase-ai .s6-row {
-        gap: 20px;
-      }
-
-      .s6-card {
-        padding: 14px 18px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-left-width: 4px;
-        border-radius: 6px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), flex 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-        opacity: 0;
-        transform: scale(0.95) translateX(-10px);
-        flex: 0 0 520px;
-      }
-      .slide-six.phase-ai .s6-card { flex: 1; }
-      
-      .s6-card-right {
-        width: 0;
-        flex-basis: 0;
-        max-height: 0;
-        opacity: 0;
-        padding: 0;
-        margin: 0;
-        overflow: hidden;
-        border-width: 0;
-        transform: scale(0.95) translateX(10px);
-      }
-      .slide-six.phase-ai .s6-card-right {
-        width: auto;
-        max-height: 200px;
-        opacity: 0; /* Wait for individual card animation to override */
-        padding: 14px 18px;
-        border-left-width: 4px;
-        border-right-width: 1px;
-        border-top-width: 1px;
-        border-bottom-width: 1px;
-      }
-      
-      .slide-six .s6-card.active { opacity: 1; transform: scale(1) translateX(0); }
-
-      .light-mode .s6-card {
-        background: rgba(0, 0, 0, 0.015);
-        border-color: rgba(0, 0, 0, 0.05);
-      }
-      .s6-card:hover {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: rgba(255, 255, 255, 0.15);
-      }
-      .light-mode .s6-card:hover { background: rgba(0, 0, 0, 0.03); }
-
-      .s6-card-title {
-        font-family: var(--font-heading);
-        font-size: 14px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 4px;
-      }
-      .s6-card-desc {
-        font-family: var(--font-body);
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.5);
-        line-height: 1.4;
-      }
-      .light-mode .s6-card-desc { color: rgba(0, 0, 0, 0.5); }
-
-      .s6-connector {
-        width: 60px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent-main);
-        flex-shrink: 0;
-        opacity: 0;
-        transform: scale(0) rotate(-45deg);
-        overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .slide-six.phase-ai .s6-connector {
-        opacity: 0; /* Still hidden until .active added */
-      }
-      .slide-six .s6-connector.active { opacity: 1; transform: scale(1) rotate(0deg); }
-      .s6-connector svg { width: 22px; height: 22px; }
-
-      /* Color variants for rows */
-      .s6-row-1 .s6-card { border-left-color: #a855f7; }
-      .s6-row-2 .s6-card { border-left-color: #3b82f6; }
-      .s6-row-3 .s6-card { border-left-color: #ef4444; }
-      .s6-row-4 .s6-card { border-left-color: #f97316; }
-      .s6-row-5 .s6-card { border-left-color: #10b981; }
-
-      .s6-footer-insight {
-        margin-top: 28px;
-        padding-top: 24px;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-        text-align: center;
-        font-family: var(--font-body);
-        font-size: 19px;
-        color: rgba(255, 255, 255, 0.85);
-        line-height: 1.5;
-        font-style: italic;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: all 0.6s ease 0.4s;
-      }
-      .slide-six.show-footer .s6-footer-insight { opacity: 1; transform: translateY(0); }
-      .s6-footer-highlight { color: #facc15; font-weight: 600; font-style: normal; }
-      .s6-footer-accent { color: #22d3ee; font-weight: 600; font-style: normal; }
-      .light-mode .s6-footer-insight {
-        border-top-color: rgba(0, 0, 0, 0.08);
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      /* Control buttons for the step-by-step reveal */
-      .s6-controls {
-        position: absolute;
-        bottom: 5vh;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 12px;
-        z-index: 15;
-      }
-      .s6-btn {
-        padding: 10px 22px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 6px;
-        color: var(--text-main);
-        font-family: var(--font-accent);
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        cursor: pointer;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .s6-btn:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: var(--accent-main);
-        transform: translateY(-2px);
-      }
-      .s6-btn:active:not(:disabled) { transform: translateY(0); }
-      .s6-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-      .light-mode .s6-btn {
-        background: rgba(0, 0, 0, 0.03);
-        border-color: rgba(0, 0, 0, 0.1);
-      }
-      .light-mode .s6-btn {
-        background: rgba(0, 0, 0, 0.03);
-        border-color: rgba(0, 0, 0, 0.1);
-      }
 
       /* ---------- CPU vs GPU Animation Modal ---------- */
       .gpu-demo-btn {
@@ -4871,113 +4581,7 @@
         </div>
       </section>
 
-      <!-- SLIDE 06: ITERATIVE LEARNING (HOW AI TRAINS) -->
-      <section class="slide-six" id="slideSix">
-        <div class="s6-content">
-          <div class="premium-header">
-            <div class="year-badge">LEARNING</div>
-            <h2 class="s6-title" style="margin-top:0;">Machine learning isn't magic—it's iterative correction.</h2>
-          </div>
 
-          <div class="s6-comparison-grid">
-            <!-- Headers -->
-            <div class="s6-headers-row">
-              <div class="s6-col-header">
-                <span class="s6-header-icon">👶</span>
-                <span class="s6-child-color">How a Child Learns</span>
-              </div>
-              <div class="s6-approx">≈</div>
-              <div class="s6-col-header s6-col-header-ai">
-                <span class="s6-header-icon">🤖</span>
-                <span class="s6-ai-color">How an AI Trains</span>
-              </div>
-            </div>
-
-            <!-- Comparison Rows -->
-            <div class="s6-rows-container">
-              <!-- Row 1 -->
-              <div class="s6-row s6-row-1" id="s6-row-1">
-                <div class="s6-card">
-                  <div class="s6-card-title s6-child-color">Point & Say</div>
-                  <div class="s6-card-desc">Parents pointed at a dog and said 'dog.' No definition needed.</div>
-                </div>
-                <div class="s6-connector">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </div>
-                <div class="s6-card s6-card-right">
-                  <div class="s6-card-title s6-ai-color">Input</div>
-                  <div class="s6-card-desc">Feed the network an image as pixel numbers. No labels inside.</div>
-                </div>
-              </div>
-
-              <!-- Row 2 -->
-              <div class="s6-row s6-row-2" id="s6-row-2">
-                <div class="s6-card">
-                  <div class="s6-card-title s6-child-color">Got It Wrong</div>
-                  <div class="s6-card-desc">You saw a cat and called it a dog. They corrected you.</div>
-                </div>
-                <div class="s6-connector">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </div>
-                <div class="s6-card s6-card-right">
-                  <div class="s6-card-title s6-ai-color">Forward Pass</div>
-                  <div class="s6-card-desc">Network makes a guess. Predicts 'Cat.' Wrong answer.</div>
-                </div>
-              </div>
-
-              <!-- Row 3 -->
-              <div class="s6-row s6-row-3" id="s6-row-3">
-                <div class="s6-card">
-                  <div class="s6-card-title s6-child-color">Corrected Again</div>
-                  <div class="s6-card-desc">You saw a horse and called it a big dog. Corrected again.</div>
-                </div>
-                <div class="s6-connector">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </div>
-                <div class="s6-card s6-card-right">
-                  <div class="s6-card-title s6-ai-color">Calculate Error</div>
-                  <div class="s6-card-desc">Compare prediction vs correct answer. Measure the loss.</div>
-                </div>
-              </div>
-
-              <!-- Row 4 -->
-              <div class="s6-row s6-row-4" id="s6-row-4">
-                <div class="s6-card">
-                  <div class="s6-card-title s6-child-color">Brain Adjusted</div>
-                  <div class="s6-card-desc">Each time, brain quietly rewired. Started noticing dog features.</div>
-                </div>
-                <div class="s6-connector">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </div>
-                <div class="s6-card s6-card-right">
-                  <div class="s6-card-title s6-ai-color">Backpropagation</div>
-                  <div class="s6-card-desc">Go back and fix connections. Strengthen right, weaken wrong.</div>
-                </div>
-              </div>
-
-              <!-- Row 5 -->
-              <div class="s6-row s6-row-5" id="s6-row-5">
-                <div class="s6-card">
-                  <div class="s6-card-title s6-child-color">You Just Knew</div>
-                  <div class="s6-card-desc">Spot any dog, even one never seen. You learned the pattern.</div>
-                </div>
-                <div class="s6-connector">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </div>
-                <div class="s6-card s6-card-right">
-                  <div class="s6-card-title s6-ai-color">Trained Model</div>
-                  <div class="s6-card-desc">After 1000s of examples it generalizes. Recognizes new dogs.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="s6-footer-insight">
-              AI doesn't just store data. <span class="s6-footer-highlight">It generalizes</span> — exactly like your brain did. <span class="s6-footer-accent">That's the whole point.</span>
-            </div>
-          </div>
-        </div>
-
-      </section>
 
 
 
@@ -5018,8 +4622,7 @@
 
             <!-- Left: Micro -->
             <div class="s5-neuron-col">
-              <div class="s5-col-header">Micro: The Cell</div>
-              <div class="s5-img-frame" style="background:#000;">
+                <div class="s5-img-frame" style="background:#000;">
                 <video id="neuronVideo" src="assets/Neuron%20Firing.mp4" loop playsinline title="Biological neuron firing" style="cursor: pointer;" onclick="toggleNeuronVideo(event)"></video>
                 <button id="neuronPlayBtn" class="s5-video-btn" onclick="toggleNeuronVideo(event)" aria-label="Play/Pause Video">▶</button>
               </div>
@@ -5031,7 +4634,7 @@
 
             <!-- Right: Macro -->
             <div class="s5-brain-col">
-              <div class="s5-col-header">Macro: The Architecture</div>
+              
               <div class="s5-brain-card">
                 <img src="assets/brain_network.png" alt="Neural network visualization" />
               </div>
@@ -5860,8 +5463,8 @@
         dualAnnLayerCount = layers.length;
         
         // ANN occupies the right 45% of the screen
-        const annLeft = isMobile ? BW * 0.55 : BW * 0.55;
-        const annRight = BW * 0.96;
+        const annLeft = isMobile ? BW * 0.58 : BW * 0.60;
+        const annRight = BW * 0.94;
         const totalW = annRight - annLeft;
         const spacingX = totalW / (layers.length - 1);
         const nodeSpacingY = isMobile ? 48 : 58;
@@ -5894,7 +5497,7 @@
         // ═══════════════════════════════════════
         //  3D Ball (Right Side, behind ANN)
         // ═══════════════════════════════════════
-        const ballCx = BW * 0.755, ballCy = BH * 0.5;
+        const ballCx = BW * 0.775, ballCy = BH * 0.5;
         const rotX = bt * 0.0018, rotY = bt * 0.0025;
         const baseRadius = Math.min(BW * 0.35, BH) * 0.35;
         const bPulse = 0.92 + Math.sin(bt * 0.006) * 0.08;
@@ -7066,7 +6669,7 @@
         'slideOne': 'Neural Intro',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
-        'slideSix': 'Iterative Learning',
+
         'slideFive': 'Bio-Inspiration',
         'slideSeven': 'ANN Architecture',
         'slideFour': 'The Convergence',
@@ -7077,7 +6680,7 @@
         { id: 'slideOne', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
-        { id: 'slideSix', enabled: true },
+
         { id: 'slideFive', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideSeven', enabled: true },
@@ -7554,101 +7157,7 @@
         }
       });
 
-      // Slide 6 "How AI Learns" Stepper Logic
-      let s6CurrentStep = 0;
-      let soundEnabled = true;
 
-      function toggleSound() {
-        soundEnabled = document.getElementById('soundToggle').checked;
-      }
-
-      function playRevealSound() {
-        if (!soundEnabled) return;
-        const audio = new Audio('assets/click_sound.wav');
-        audio.volume = 0.8;
-        audio.play().catch(e => console.warn('Reveal sound playback failed:', e));
-      }
-
-      function s6Step(delta) {
-        const newStep = Math.max(
-          0,
-          Math.min(s6TotalSteps + 1, s6CurrentStep + delta)
-        );
-        if (newStep === s6CurrentStep) return;
-
-        const oldStep = s6CurrentStep;
-        s6CurrentStep = newStep;
-
-        const slide = document.getElementById("slideSix");
-
-        // RESET: all hidden by default
-        document.querySelectorAll("#slideSix .s6-card, #slideSix .s6-connector").forEach((el) => el.classList.remove("active"));
-        slide.classList.remove("all-revealed", "phase-ai", "phase-child", "show-footer");
-
-        // PHASE 1: Child learning (Steps 1-5)
-        if (s6CurrentStep > 0 && s6CurrentStep <= 5) {
-          slide.classList.add("phase-child");
-          for (let i = 1; i <= s6CurrentStep; i++) {
-            const row = document.getElementById(`s6-row-${i}`);
-            if (row) row.querySelector(".s6-card:not(.s6-card-right)").classList.add("active");
-          }
-        }
-
-        // PHASE 2: AI Comparison (Step 6)
-        if (s6CurrentStep >= 6) {
-          slide.classList.add("phase-ai");
-          
-          // Show all child cards
-          document.querySelectorAll("#slideSix .s6-card:not(.s6-card-right)").forEach(c => c.classList.add("active"));
-          
-          // Show all AI cards and connectors
-          document.querySelectorAll("#slideSix .s6-card-right, #slideSix .s6-connector").forEach((el) => el.classList.add("active"));
-          slide.classList.add("all-revealed");
-        }
-
-        // PHASE 3: Concluding Insight (Step 7)
-        if (s6CurrentStep >= 7) {
-          slide.classList.add("show-footer");
-          if (oldStep < 7) {
-            // Synchronize with the 0.4s CSS transition delay on `.s6-footer-insight`
-            setTimeout(playRevealSound, 400);
-          }
-        }
-      }
-
-      // Interaction listeners for Slide 6
-      (function initS6Interactions() {
-        const slide = document.getElementById("slideSix");
-        
-        // Handle clicks: Advance forward
-        slide.addEventListener("click", () => {
-          if (s6CurrentStep > 6) return; // Already finished (step 7)
-          s6Step(1);
-        });
-
-        // Handle wheel: Scroll up for back, scroll down for forward
-        let lastWheelTime = 0;
-        slide.addEventListener("wheel", (e) => {
-          const now = Date.now();
-          if (now - lastWheelTime < 300) return; // Debounce
-          
-          if (e.deltaY > 0) {
-            // Scroll down -> Forward
-            if (s6CurrentStep <= 6) {
-                s6Step(1);
-                lastWheelTime = now;
-                e.preventDefault();
-            }
-          } else if (e.deltaY < 0) {
-            // Scroll up -> Back
-            if (s6CurrentStep > 0) {
-                s6Step(-1);
-                lastWheelTime = now;
-                e.preventDefault();
-            }
-          }
-        }, { passive: false });
-      })();
 
 
 
