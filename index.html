@@ -2913,6 +2913,307 @@
       .light-mode .s4-detail-body p { color: rgba(0, 0, 0, 0.72); }
 
 
+      /* --------------- SIXTH SLIDE: How AI Learns --------------- */
+      .slide-six {
+        background: var(--bg);
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      .s6-content {
+        padding: 6vh 8vw 4vh;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+      .s6-kicker {
+        font-family: var(--font-accent);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--accent-main);
+        margin-bottom: 12px;
+      }
+      .s6-title {
+        font-family: var(--font-heading);
+        font-size: clamp(32px, 4.5vw, 58px);
+        font-weight: 800;
+        font-style: italic;
+        color: var(--text-main);
+        line-height: 1.1;
+        margin-bottom: 8px;
+      }
+      .s6-subtitle {
+        font-family: var(--font-body);
+        font-size: clamp(14px, 1.5vw, 19px);
+        color: rgba(255, 255, 255, 0.45);
+        font-style: italic;
+        margin-bottom: 16px;
+      }
+      .light-mode .s6-subtitle { color: rgba(0, 0, 0, 0.42); }
+
+      .s6-comparison-grid {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        margin: 0 auto;
+        padding-bottom: 60px; /* Reduced from 100px */
+        transition: all 0.7s ease;
+      }
+
+      .s6-headers-row {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        margin: 0 auto 12px auto; /* Reduced from 20px */
+        width: 100%;
+        max-width: 1100px; /* Optional cap */
+        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .slide-six.phase-ai .s6-headers-row {
+        gap: 20px;
+      }
+
+      .s6-col-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        font-family: var(--font-accent);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        flex: 0 0 520px;
+        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .slide-six.phase-ai .s6-col-header {
+        flex: 1;
+      }
+      .s6-col-header-ai {
+        width: 0;
+        flex-basis: 0;
+        max-height: 0;
+        opacity: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        border-width: 0;
+      }
+      .slide-six.phase-ai .s6-col-header-ai {
+        width: auto;
+        max-height: 100px;
+        opacity: 1;
+        padding: 12px;
+        border-width: 1px;
+      }
+      .light-mode .s6-col-header {
+        background: rgba(0, 0, 0, 0.02);
+        border-color: rgba(0, 0, 0, 0.08);
+      }
+      .s6-header-icon { font-size: 18px; }
+      .s6-child-color { color: #facc15; }
+      .s6-ai-color { color: #22d3ee; }
+      .s6-approx { 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-size: 20px; 
+        opacity: 0; 
+        width: 60px;
+        flex-shrink: 0;
+        overflow: hidden;
+        transition: all 0.7s ease;
+      }
+      .slide-six.phase-ai .s6-approx { opacity: 0.5; }
+
+      .s6-rows-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .s6-row {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        align-items: stretch;
+        width: 100%;
+        margin: 0 auto;
+        transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .slide-six.phase-ai .s6-row {
+        gap: 20px;
+      }
+
+      .s6-card {
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left-width: 4px;
+        border-radius: 6px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), flex 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+        opacity: 0;
+        transform: scale(0.95) translateX(-10px);
+        flex: 0 0 520px;
+      }
+      .slide-six.phase-ai .s6-card { flex: 1; }
+      
+      .s6-card-right {
+        width: 0;
+        flex-basis: 0;
+        max-height: 0;
+        opacity: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        border-width: 0;
+        transform: scale(0.95) translateX(10px);
+      }
+      .slide-six.phase-ai .s6-card-right {
+        width: auto;
+        max-height: 200px;
+        opacity: 0; /* Wait for individual card animation to override */
+        padding: 14px 18px;
+        border-left-width: 4px;
+        border-right-width: 1px;
+        border-top-width: 1px;
+        border-bottom-width: 1px;
+      }
+      
+      .slide-six .s6-card.active { opacity: 1; transform: scale(1) translateX(0); }
+
+      .light-mode .s6-card {
+        background: rgba(0, 0, 0, 0.015);
+        border-color: rgba(0, 0, 0, 0.05);
+      }
+      .s6-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+      .light-mode .s6-card:hover { background: rgba(0, 0, 0, 0.03); }
+
+      .s6-card-title {
+        font-family: var(--font-heading);
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      .s6-card-desc {
+        font-family: var(--font-body);
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.4;
+      }
+      .light-mode .s6-card-desc { color: rgba(0, 0, 0, 0.5); }
+
+      .s6-connector {
+        width: 60px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-main);
+        flex-shrink: 0;
+        opacity: 0;
+        transform: scale(0) rotate(-45deg);
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .slide-six.phase-ai .s6-connector {
+        opacity: 0; /* Still hidden until .active added */
+      }
+      .slide-six .s6-connector.active { opacity: 1; transform: scale(1) rotate(0deg); }
+      .s6-connector svg { width: 22px; height: 22px; }
+
+      /* Color variants for rows */
+      .s6-row-1 .s6-card { border-left-color: #a855f7; }
+      .s6-row-2 .s6-card { border-left-color: #3b82f6; }
+      .s6-row-3 .s6-card { border-left-color: #ef4444; }
+      .s6-row-4 .s6-card { border-left-color: #f97316; }
+      .s6-row-5 .s6-card { border-left-color: #10b981; }
+
+      .s6-footer-insight {
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        text-align: center;
+        font-family: var(--font-body);
+        font-size: 19px;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.5;
+        font-style: italic;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.6s ease 0.4s;
+      }
+      .slide-six.show-footer .s6-footer-insight { opacity: 1; transform: translateY(0); }
+      .s6-footer-highlight { color: #facc15; font-weight: 600; font-style: normal; }
+      .s6-footer-accent { color: #22d3ee; font-weight: 600; font-style: normal; }
+      .light-mode .s6-footer-insight {
+        border-top-color: rgba(0, 0, 0, 0.08);
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      /* Control buttons for the step-by-step reveal */
+      .s6-controls {
+        position: absolute;
+        bottom: 5vh;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+        z-index: 15;
+      }
+      .s6-btn {
+        padding: 10px 22px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        color: var(--text-main);
+        font-family: var(--font-accent);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .s6-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--accent-main);
+        transform: translateY(-2px);
+      }
+      .s6-btn:active:not(:disabled) { transform: translateY(0); }
+      .s6-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+      .light-mode .s6-btn {
+        background: rgba(0, 0, 0, 0.03);
+        border-color: rgba(0, 0, 0, 0.1);
+      }
+      .light-mode .s6-btn {
+        background: rgba(0, 0, 0, 0.03);
+        border-color: rgba(0, 0, 0, 0.1);
+      }
+
       /* ---------- CPU vs GPU Animation Modal ---------- */
       .gpu-demo-btn {
         display: inline-flex;
@@ -3947,250 +4248,215 @@
         border: none;
         display: block;
       }
-      /* ─── BACKPROPAGATION EXAMPLE POPUP ───────────────────────────────────── */
-      .s6-backprop-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        margin-top: 10px;
-        padding: 5px 11px;
-        background: rgba(34,211,238,0.08);
-        border: 1px solid rgba(34,211,238,0.25);
-        border-radius: 20px;
-        color: var(--accent-main);
-        font-family: var(--font-body);
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        cursor: pointer;
-        transition: background 0.2s, border-color 0.2s, transform 0.2s;
-      }
-      .s6-backprop-btn:hover {
-        background: rgba(34,211,238,0.16);
-        border-color: rgba(34,211,238,0.45);
-        transform: translateY(-1px);
-      }
-      .s6-backprop-btn svg {
-        width: 11px; height: 11px;
-        stroke: currentColor; fill: none;
-        stroke-width: 2.5;
-        stroke-linecap: round; stroke-linejoin: round;
-      }
-      .light-mode .s6-backprop-btn {
-        background: rgba(3,105,161,0.06);
-        border-color: rgba(3,105,161,0.2);
-        color: #0369a1;
-      }
-
-      /* Large popup overlay */
-      .s6-bp-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.65);
-        z-index: 600;
-        backdrop-filter: blur(4px);
-      }
-      .s6-bp-overlay.open { display: block; }
-
-      /* Large popup panel */
-      .s6-bp-popup {
-        position: fixed;
-        z-index: 601;
-        left: 50%; top: 50%;
-        transform: translate(-50%, -50%) scale(0.96);
-        width: clamp(520px, 72vw, 860px);
-        max-height: 88vh;
-        overflow-y: auto;
-        background: linear-gradient(165deg, rgba(14,20,42,0.99) 0%, rgba(6,9,20,0.99) 100%);
-        backdrop-filter: blur(40px) saturate(180%);
-        -webkit-backdrop-filter: blur(40px) saturate(180%);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 22px;
-        padding: 36px 40px 32px;
-        box-shadow: 0 40px 100px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2,0.8,0.2,1);
-        scrollbar-width: none;
-      }
-      .s6-bp-popup::-webkit-scrollbar { display: none; }
-      .s6-bp-popup::before {
-        content: '';
+      /* ─── SLIDE 08: FOOTBALL ROBOT (TRAINING ANALOGY) ─────────────────────── */
+      .slide-eight {
+        background: var(--bg);
         position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 2px;
-        border-radius: 22px 22px 0 0;
-        background: linear-gradient(90deg, #06b6d4, #818cf8);
+        top: 0;
+        left: 0;
+        padding: 0;
+        overflow: hidden;
       }
-      .s6-bp-popup.open {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-        pointer-events: auto;
-      }
-      .light-mode .s6-bp-popup {
-        background: linear-gradient(165deg, rgba(248,250,252,0.99), rgba(241,245,249,0.99));
-        border-color: rgba(0,0,0,0.1);
-        box-shadow: 0 40px 100px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8);
-      }
-
-      .s6-bp-close {
-        position: absolute; top: 16px; right: 16px;
-        background: rgba(255,255,255,0.07);
-        border: none; width: 32px; height: 32px;
-        border-radius: 50%; color: rgba(255,255,255,0.5);
-        font-size: 15px; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.2s; z-index: 10;
-      }
-      .s6-bp-close:hover { background: #ff4757; color: #fff; }
-      .light-mode .s6-bp-close { background: rgba(0,0,0,0.06); color: rgba(0,0,0,0.4); }
-      .light-mode .s6-bp-close:hover { background: #ff4757; color: #fff; }
-
-      .s6-bp-eyebrow {
-        font-family: var(--font-accent);
-        font-size: 10px; font-weight: 700;
-        letter-spacing: 3px; text-transform: uppercase;
-        color: #67e8f9; margin-bottom: 6px;
-        opacity: 0; animation: none;
-      }
-      .s6-bp-popup.open .s6-bp-eyebrow { animation: s3FadeUp 0.4s forwards 0.05s; }
-
-      .s6-bp-title {
-        font-family: var(--font-heading);
-        font-size: clamp(22px, 3vw, 32px);
-        font-weight: 800; font-style: italic;
-        color: var(--text-main);
-        margin: 0 0 6px;
-        opacity: 0;
-      }
-      .s6-bp-popup.open .s6-bp-title { animation: s3FadeUp 0.4s forwards 0.12s; }
-      .light-mode .s6-bp-title { color: #111827; }
-
-      .s6-bp-subtitle {
-        font-size: 14px;
-        color: rgba(240,246,255,0.45);
-        margin-bottom: 28px;
-        line-height: 1.5;
-        opacity: 0;
-      }
-      .s6-bp-popup.open .s6-bp-subtitle { animation: s3FadeUp 0.4s forwards 0.18s; }
-      .light-mode .s6-bp-subtitle { color: rgba(0,0,0,0.45); }
-
-      /* 4-step flow inside popup */
-      .s6-bp-steps {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
-        align-items: start;
-        gap: 0;
-        margin-bottom: 28px;
-        opacity: 0;
-      }
-      .s6-bp-popup.open .s6-bp-steps { animation: s3FadeUp 0.5s forwards 0.25s; }
-
-      .s6-bp-step {
+      .s8-content {
+        padding: 5vh 6vw 4vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        padding: 0 8px;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
       }
-      .s6-bp-step-icon {
-        width: 56px; height: 56px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 24px;
-        background: rgba(34,211,238,0.07);
-        border: 1.5px solid rgba(34,211,238,0.22);
-        margin-bottom: 10px;
+      .s8-intro {
+        font-family: var(--font-body);
+        font-size: clamp(14px, 1.6vw, 18px);
+        color: rgba(240,246,255,0.55);
+        max-width: 720px;
+        text-align: center;
+        margin-bottom: 3.5vh;
+        line-height: 1.6;
+      }
+      .light-mode .s8-intro { color: rgba(0,0,0,0.5); }
+
+      .s8-timeline {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0;
+        width: 100%;
+        max-width: 1200px;
         position: relative;
+        flex: 1;
+        padding-top: 2vh;
       }
-      .s6-bp-step-icon::after {
-        content: attr(data-num);
+
+      /* Connecting line behind steps */
+      .s8-timeline::before {
+        content: '';
         position: absolute;
-        top: -6px; right: -6px;
-        width: 18px; height: 18px;
+        top: 54px;
+        left: 12%;
+        right: 12%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(34,211,238,0.3) 20%, rgba(34,211,238,0.3) 80%, transparent);
+        z-index: 0;
+      }
+      .light-mode .s8-timeline::before {
+        background: linear-gradient(90deg, transparent, rgba(3,105,161,0.2) 20%, rgba(3,105,161,0.2) 80%, transparent);
+      }
+
+      .s8-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+        position: relative;
+        z-index: 1;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+      .s8-step.s8-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .s8-step-icon {
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
-        background: var(--accent-main);
-        color: #07101f;
-        font-family: var(--font-accent);
-        font-size: 8px; font-weight: 900;
-        display: flex; align-items: center; justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 16px;
+        position: relative;
+        background: rgba(34,211,238,0.08);
+        border: 2px solid rgba(34,211,238,0.25);
+        box-shadow: 0 0 20px rgba(34,211,238,0.08);
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
       }
-      .light-mode .s6-bp-step-icon {
+      .s8-step:hover .s8-step-icon {
+        border-color: rgba(34,211,238,0.5);
+        box-shadow: 0 0 30px rgba(34,211,238,0.15);
+      }
+      .light-mode .s8-step-icon {
         background: rgba(3,105,161,0.06);
-        border-color: rgba(3,105,161,0.18);
+        border-color: rgba(3,105,161,0.2);
+        box-shadow: 0 0 20px rgba(3,105,161,0.05);
       }
-      .light-mode .s6-bp-step-icon::after { color: #fff; }
 
-      .s6-bp-step-title {
+      .s8-step-number {
+        font-family: var(--font-accent);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--accent-main);
+        margin-bottom: 8px;
+        opacity: 0.7;
+      }
+
+      .s8-step-title {
         font-family: var(--font-heading);
-        font-size: 13px; font-weight: 700;
+        font-size: clamp(14px, 1.5vw, 18px);
+        font-weight: 700;
         color: var(--text-main);
-        margin-bottom: 5px;
-      }
-      .light-mode .s6-bp-step-title { color: #111827; }
-
-      .s6-bp-step-desc {
-        font-size: 12px;
-        color: rgba(240,246,255,0.45);
-        line-height: 1.55;
-      }
-      .light-mode .s6-bp-step-desc { color: rgba(0,0,0,0.45); }
-
-      .s6-bp-arrow {
-        display: flex; align-items: center;
-        padding-top: 14px; color: rgba(34,211,238,0.4);
-      }
-      .s6-bp-arrow svg {
-        width: 18px; height: 18px;
-        stroke: currentColor; fill: none;
-        stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-      }
-      .light-mode .s6-bp-arrow { color: rgba(3,105,161,0.3); }
-
-      /* Divider */
-      .s6-bp-divider {
-        height: 1px;
-        background: rgba(255,255,255,0.07);
-        margin: 0 0 20px;
-        opacity: 0;
-      }
-      .s6-bp-popup.open .s6-bp-divider { animation: s3FadeUp 0.4s forwards 0.3s; }
-      .light-mode .s6-bp-divider { background: rgba(0,0,0,0.06); }
-
-      /* Insight box */
-      .s6-bp-insight {
-        padding: 16px 22px;
-        background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(129,140,248,0.06));
-        border: 1px solid rgba(34,211,238,0.12);
-        border-radius: 12px;
-        font-size: 14px;
-        color: rgba(240,246,255,0.65);
-        line-height: 1.65;
+        margin-bottom: 8px;
         text-align: center;
-        opacity: 0;
       }
-      .s6-bp-popup.open .s6-bp-insight { animation: s3FadeUp 0.5s forwards 0.35s; }
-      .light-mode .s6-bp-insight { background: rgba(3,105,161,0.04); border-color: rgba(3,105,161,0.1); color: rgba(0,0,0,0.55); }
-      .s6-bp-insight strong { color: var(--accent-main); font-weight: 600; }
-      .light-mode .s6-bp-insight strong { color: #0369a1; }
 
-      .s6-bp-loop {
-        display: inline-flex; align-items: center; gap: 5px;
-        margin-top: 10px;
-        padding: 3px 12px; border-radius: 20px;
+      .s8-step-desc {
+        font-family: var(--font-body);
+        font-size: clamp(12px, 1.2vw, 14px);
+        color: rgba(240,246,255,0.5);
+        text-align: center;
+        line-height: 1.55;
+        max-width: 180px;
+      }
+      .light-mode .s8-step-desc { color: rgba(0,0,0,0.45); }
+
+      /* Chevron arrows between steps */
+      .s8-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: 18px;
+        min-width: 28px;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 0.6s ease 0.3s;
+      }
+      .s8-arrow.s8-visible { opacity: 0.4; }
+      .s8-arrow svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--accent-main);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Result highlight card at bottom */
+      .s8-result {
+        margin-top: auto;
+        padding: 20px 32px;
+        background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(52,211,153,0.06));
+        border: 1px solid rgba(34,211,238,0.15);
+        border-radius: 14px;
+        text-align: center;
+        max-width: 700px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+      .s8-result.s8-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .light-mode .s8-result {
+        background: linear-gradient(135deg, rgba(3,105,161,0.04), rgba(5,150,105,0.04));
+        border-color: rgba(3,105,161,0.12);
+      }
+      .s8-result-text {
+        font-family: var(--font-body);
+        font-size: clamp(14px, 1.4vw, 17px);
+        color: rgba(240,246,255,0.7);
+        line-height: 1.6;
+      }
+      .light-mode .s8-result-text { color: rgba(0,0,0,0.6); }
+      .s8-result-highlight {
+        color: var(--accent-main);
+        font-weight: 600;
+      }
+
+      /* Loop indicator */
+      .s8-loop-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        padding: 4px 14px;
+        border-radius: 20px;
         background: var(--accent-dim);
         font-family: var(--font-accent);
-        font-size: 9px; font-weight: 700;
-        letter-spacing: 2px; color: var(--accent-main);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--accent-main);
       }
-      .s6-bp-loop svg {
-        width: 12px; height: 12px;
-        stroke: currentColor; fill: none; stroke-width: 2;
-        animation: s6BpSpin 3s linear infinite;
+      .s8-loop-badge svg {
+        width: 14px;
+        height: 14px;
+        stroke: var(--accent-main);
+        fill: none;
+        stroke-width: 2;
+        animation: s8-spin 3s linear infinite;
       }
-      @keyframes s6BpSpin { to { transform: rotate(360deg); } }
+      @keyframes s8-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
 
       /* ─── PREMIUM UI ELEMENTS ─── */
       .premium-header {
@@ -4323,7 +4589,7 @@
 
     <div class="nav-arrows">
       <button id="prevBtn" class="nav-arrow" disabled>&larr;</button>
-      <div id="slideCounter" style="display:none;">1 / 7</div>
+      <div id="slideCounter" style="display:none;">1 / 8</div>
       <button id="nextBtn" class="nav-arrow">&rarr;</button>
     </div>
 
@@ -4515,6 +4781,97 @@
         </div>
       </section>
 
+      <!-- SLIDE 06: ITERATIVE LEARNING (HOW AI TRAINS) -->
+      <section class="slide-six" id="slideSix">
+        <div class="s6-content">
+          <div class="premium-header">
+            <div class="year-badge">LEARNING</div>
+            <h2 class="s6-title" style="margin-top:0;">Machine learning isn't magic—it's iterative correction.</h2>
+          </div>
+
+          <div class="s6-comparison-grid">
+            <!-- Headers -->
+            <div class="s6-headers-row">
+              <div class="s6-col-header">
+                <span class="s6-header-icon">👶</span>
+                <span class="s6-child-color">How a Child Learns</span>
+              </div>
+              <div class="s6-approx">≈</div>
+              <div class="s6-col-header s6-col-header-ai">
+                <span class="s6-header-icon">🤖</span>
+                <span class="s6-ai-color">How an AI Trains</span>
+              </div>
+            </div>
+
+            <!-- Comparison Rows -->
+            <div class="s6-rows-container">
+              <!-- Row 1 -->
+              <div class="s6-row s6-row-1" id="s6-row-1">
+                <div class="s6-card">
+                  <div class="s6-card-title s6-child-color">Point & Say</div>
+                  <div class="s6-card-desc">Parents pointed at a dog and said 'dog.' No definition needed.</div>
+                </div>
+                <div class="s6-connector">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+                <div class="s6-card s6-card-right">
+                  <div class="s6-card-title s6-ai-color">Input</div>
+                  <div class="s6-card-desc">Feed the network an image as pixel numbers. No labels inside.</div>
+                </div>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="s6-row s6-row-2" id="s6-row-2">
+                <div class="s6-card">
+                  <div class="s6-card-title s6-child-color">Got It Wrong</div>
+                  <div class="s6-card-desc">You saw a cat and called it a dog. They corrected you.</div>
+                </div>
+                <div class="s6-connector">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+                <div class="s6-card s6-card-right">
+                  <div class="s6-card-title s6-ai-color">Forward Pass</div>
+                  <div class="s6-card-desc">Network makes a guess. Predicts 'Cat.' Wrong answer.</div>
+                </div>
+              </div>
+
+              <!-- Row 3 -->
+              <div class="s6-row s6-row-3" id="s6-row-3">
+                <div class="s6-card">
+                  <div class="s6-card-title s6-child-color">Corrected Again</div>
+                  <div class="s6-card-desc">You saw a horse and called it a big dog. Corrected again.</div>
+                </div>
+                <div class="s6-connector">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+                <div class="s6-card s6-card-right">
+                  <div class="s6-card-title s6-ai-color">Calculate Error</div>
+                  <div class="s6-card-desc">Compare prediction vs correct answer. Measure the loss.</div>
+                </div>
+              </div>
+
+              <!-- Row 4 -->
+              <div class="s6-row s6-row-4" id="s6-row-4">
+                <div class="s6-card">
+                  <div class="s6-card-title s6-child-color">Brain Adjusted</div>
+                  <div class="s6-card-desc">Each time, brain quietly rewired. Started noticing dog features.</div>
+                </div>
+                <div class="s6-connector">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </div>
+                <div class="s6-card s6-card-right">
+                  <div class="s6-card-title s6-ai-color">Backpropagation</div>
+                  <div class="s6-card-desc">Go back and fix connections. Strengthen right, weaken wrong.</div>
+                </div>
+              </div>
+
+              <!-- Row 5 -->
+              <div class="s6-row s6-row-5" id="s6-row-5">
+                <div class="s6-card">
+                  <div class="s6-card-title s6-child-color">You Just Knew</div>
+                  <div class="s6-card-desc">Spot any dog, even one never seen. You learned the pattern.</div>
+                </div>
+                <div class="s6-connector">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </div>
                 <div class="s6-card s6-card-right">
@@ -4708,60 +5065,77 @@
       </section>
 
 
-    </div>
+      <!-- SLIDE 08: FOOTBALL ROBOT (TRAINING ANALOGY) -->
+      <section class="slide-eight" id="slideEight">
+        <div class="s8-content">
+          <div class="premium-header" style="margin-bottom: 24px;">
+            <div class="year-badge">TRAINING</div>
+            <h2 style="font-family: var(--font-heading); font-size: clamp(28px, 4vw, 52px); font-weight: 800; font-style: italic; color: var(--text-main); margin: 0;">Learning Without Rules</h2>
+          </div>
 
-    <!-- ── BACKPROPAGATION EXAMPLE POPUP ─────────────────────────────────────── -->
-    <div class="s6-bp-overlay" id="s6BpOverlay" onclick="closeBackpropExample()"></div>
-    <div class="s6-bp-popup" id="s6BpPopup">
-      <button class="s6-bp-close" onclick="closeBackpropExample()">✕</button>
+          <p class="s8-intro">
+            Imagine building a robot to play football — without programming it with any rules on how to play. Instead, it learns entirely through training.
+          </p>
 
-      <div class="s6-bp-eyebrow">Real-World Analogy</div>
-      <h2 class="s6-bp-title">The Football Robot</h2>
-      <p class="s6-bp-subtitle">
-        Imagine building a robot to play football — without programming it with any rules. No tactics, no rulebook. It learns entirely through repetition and feedback.
-      </p>
+          <div class="s8-timeline">
+            <!-- Step 1 -->
+            <div class="s8-step" data-s8-delay="0">
+              <div class="s8-step-icon">⚽</div>
+              <div class="s8-step-number">01</div>
+              <div class="s8-step-title">Takes Action</div>
+              <div class="s8-step-desc">The robot moves, passes, or shoots — with no prior knowledge of what's right or wrong.</div>
+            </div>
 
-      <div class="s6-bp-steps">
-        <!-- Step 1 -->
-        <div class="s6-bp-step">
-          <div class="s6-bp-step-icon" data-num="1">⚽</div>
-          <div class="s6-bp-step-title">Takes Action</div>
-          <div class="s6-bp-step-desc">The robot moves, passes, or shoots — with no prior knowledge of right or wrong.</div>
-        </div>
-        <div class="s6-bp-arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
-        <!-- Step 2 -->
-        <div class="s6-bp-step">
-          <div class="s6-bp-step-icon" data-num="2">📡</div>
-          <div class="s6-bp-step-title">Gets Feedback</div>
-          <div class="s6-bp-step-desc">Each action is scored — good move or bad? Did it lead closer to the goal?</div>
-        </div>
-        <div class="s6-bp-arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
-        <!-- Step 3 -->
-        <div class="s6-bp-step">
-          <div class="s6-bp-step-icon" data-num="3">🔗</div>
-          <div class="s6-bp-step-title">Adjusts Connections</div>
-          <div class="s6-bp-step-desc">Score a goal? Strengthen those neural paths. Miss? Weaken them. The network rewires itself.</div>
-        </div>
-        <div class="s6-bp-arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
-        <!-- Step 4 -->
-        <div class="s6-bp-step">
-          <div class="s6-bp-step-icon" data-num="4">🏆</div>
-          <div class="s6-bp-step-title">Improves Over Time</div>
-          <div class="s6-bp-step-desc">After thousands of attempts, the robot recognises which actions lead to success.</div>
-        </div>
-      </div>
+            <div class="s8-arrow" data-s8-delay="100">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
 
-      <div class="s6-bp-divider"></div>
+            <!-- Step 2 -->
+            <div class="s8-step" data-s8-delay="200">
+              <div class="s8-step-icon">📡</div>
+              <div class="s8-step-number">02</div>
+              <div class="s8-step-title">Gets Feedback</div>
+              <div class="s8-step-desc">Each action receives feedback — was that move good or bad? Did it lead closer to the goal?</div>
+            </div>
 
-      <div class="s6-bp-insight">
-        No one wrote the rules. Through thousands of cycles of <strong>action → feedback → adjustment</strong>, the network discovered them on its own — exactly what backpropagation does inside every neural network.
-        <div>
-          <span class="s6-bp-loop">
-            <svg viewBox="0 0 24 24"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-            REPEAT × 1000s
-          </span>
+            <div class="s8-arrow" data-s8-delay="300">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="s8-step" data-s8-delay="400">
+              <div class="s8-step-icon">🔗</div>
+              <div class="s8-step-number">03</div>
+              <div class="s8-step-title">Adjusts Connections</div>
+              <div class="s8-step-desc">Good action? Strengthen those neural connections. Bad action? Weaken them. The network rewires itself.</div>
+            </div>
+
+            <div class="s8-arrow" data-s8-delay="500">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="s8-step" data-s8-delay="600">
+              <div class="s8-step-icon">🏆</div>
+              <div class="s8-step-number">04</div>
+              <div class="s8-step-title">Recognizes Patterns</div>
+              <div class="s8-step-desc">Over time, the robot learns which actions lead to better outcomes — and performance improves.</div>
+            </div>
+          </div>
+
+          <div class="s8-result" data-s8-delay="900">
+            <div class="s8-result-text">
+              No one taught it the rules. Through thousands of iterations of <span class="s8-result-highlight">action → feedback → adjustment</span>, the network discovered them on its own.
+            </div>
+            <div class="s8-loop-badge">
+              <svg viewBox="0 0 24 24"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              REPEAT × 1000s
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+
     </div>
 
     <!-- ── 11. MODAL COMPONENTS ────────────────────────────────────────────────── -->
@@ -6595,16 +6969,20 @@
         'slideOne': 'Neural Intro',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
+        'slideSix': 'Iterative Learning',
         'slideFive': 'Bio-Inspiration',
         'slideSeven': 'ANN Architecture',
-        'slideFour': 'The Convergence'
+        'slideFour': 'The Convergence',
+        'slideEight': 'Training Analogy'
       };
 
       let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || [
         { id: 'slideOne', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
+        { id: 'slideSix', enabled: true },
         { id: 'slideFive', enabled: true },
+        { id: 'slideEight', enabled: true },
         { id: 'slideSeven', enabled: true },
         { id: 'slideFour', enabled: true }
       ];
@@ -6760,6 +7138,11 @@
         }, 0.1);
 
         incoming.classList.add("in-view");
+
+        // Trigger slide 8 staggered entrance
+        if (incoming.id === 'slideEight') {
+          setTimeout(() => animateSlideEight(), 400);
+        }
 
         // Update UI
         const progress = ((index + 1) / activeSlides.length) * 100;
@@ -7082,16 +7465,101 @@
         }
       });
 
+      // Slide 6 "How AI Learns" Stepper Logic
+      let s6CurrentStep = 0;
       let soundEnabled = true;
+
       function toggleSound() {
         soundEnabled = document.getElementById('soundToggle').checked;
       }
+
       function playRevealSound() {
         if (!soundEnabled) return;
         const audio = new Audio('assets/click_sound.wav');
         audio.volume = 0.8;
         audio.play().catch(e => console.warn('Reveal sound playback failed:', e));
       }
+
+      function s6Step(delta) {
+        const newStep = Math.max(
+          0,
+          Math.min(s6TotalSteps + 1, s6CurrentStep + delta)
+        );
+        if (newStep === s6CurrentStep) return;
+
+        const oldStep = s6CurrentStep;
+        s6CurrentStep = newStep;
+
+        const slide = document.getElementById("slideSix");
+
+        // RESET: all hidden by default
+        document.querySelectorAll("#slideSix .s6-card, #slideSix .s6-connector").forEach((el) => el.classList.remove("active"));
+        slide.classList.remove("all-revealed", "phase-ai", "phase-child", "show-footer");
+
+        // PHASE 1: Child learning (Steps 1-5)
+        if (s6CurrentStep > 0 && s6CurrentStep <= 5) {
+          slide.classList.add("phase-child");
+          for (let i = 1; i <= s6CurrentStep; i++) {
+            const row = document.getElementById(`s6-row-${i}`);
+            if (row) row.querySelector(".s6-card:not(.s6-card-right)").classList.add("active");
+          }
+        }
+
+        // PHASE 2: AI Comparison (Step 6)
+        if (s6CurrentStep >= 6) {
+          slide.classList.add("phase-ai");
+          
+          // Show all child cards
+          document.querySelectorAll("#slideSix .s6-card:not(.s6-card-right)").forEach(c => c.classList.add("active"));
+          
+          // Show all AI cards and connectors
+          document.querySelectorAll("#slideSix .s6-card-right, #slideSix .s6-connector").forEach((el) => el.classList.add("active"));
+          slide.classList.add("all-revealed");
+        }
+
+        // PHASE 3: Concluding Insight (Step 7)
+        if (s6CurrentStep >= 7) {
+          slide.classList.add("show-footer");
+          if (oldStep < 7) {
+            // Synchronize with the 0.4s CSS transition delay on `.s6-footer-insight`
+            setTimeout(playRevealSound, 400);
+          }
+        }
+      }
+
+      // Interaction listeners for Slide 6
+      (function initS6Interactions() {
+        const slide = document.getElementById("slideSix");
+        
+        // Handle clicks: Advance forward
+        slide.addEventListener("click", () => {
+          if (s6CurrentStep > 6) return; // Already finished (step 7)
+          s6Step(1);
+        });
+
+        // Handle wheel: Scroll up for back, scroll down for forward
+        let lastWheelTime = 0;
+        slide.addEventListener("wheel", (e) => {
+          const now = Date.now();
+          if (now - lastWheelTime < 300) return; // Debounce
+          
+          if (e.deltaY > 0) {
+            // Scroll down -> Forward
+            if (s6CurrentStep <= 6) {
+                s6Step(1);
+                lastWheelTime = now;
+                e.preventDefault();
+            }
+          } else if (e.deltaY < 0) {
+            // Scroll up -> Back
+            if (s6CurrentStep > 0) {
+                s6Step(-1);
+                lastWheelTime = now;
+                e.preventDefault();
+            }
+          }
+        }, { passive: false });
+      })();
 
 
 
@@ -7177,18 +7645,17 @@
         if (e.key === 'Escape') closePillPopup();
       });
 
-      // ── Backpropagation Example Popup ──
-      function openBackpropExample() {
-        document.getElementById('s6BpOverlay').classList.add('open');
-        setTimeout(() => document.getElementById('s6BpPopup').classList.add('open'), 10);
+      // ── Slide 8: Football Robot staggered entrance ──
+      function animateSlideEight() {
+        const els = document.querySelectorAll('#slideEight [data-s8-delay]');
+        els.forEach(el => {
+          el.classList.remove('s8-visible');
+        });
+        els.forEach(el => {
+          const delay = parseInt(el.getAttribute('data-s8-delay')) || 0;
+          setTimeout(() => el.classList.add('s8-visible'), delay);
+        });
       }
-      function closeBackpropExample() {
-        document.getElementById('s6BpPopup').classList.remove('open');
-        document.getElementById('s6BpOverlay').classList.remove('open');
-      }
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeBackpropExample();
-      });
 
       // Init dynamic nav components
       renderQuickNav();
