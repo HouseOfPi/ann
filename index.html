@@ -4040,11 +4040,19 @@
         padding: 0;
         overflow: hidden;
       }
-      .s7-iframe {
+      .s7-iframe, .premium-iframe {
         width: 100%;
         height: 100%;
         border: none;
         display: block;
+      }
+      .slide-robot-football {
+        background: var(--bg);
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 0;
+        overflow: hidden;
       }
       /* ─── SLIDE 08: FOOTBALL ROBOT (TRAINING ANALOGY) ─────────────────────── */
       .slide-eight {
@@ -4579,6 +4587,16 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- SLIDE 04: ROBOT FOOTBALL TRAINING DEMO -->
+      <section class="slide-robot-football" id="slideRobotFootball">
+        <iframe
+          class="premium-iframe"
+          src="assets/robot-football.html"
+          title="Robot Football Training Simulation"
+          allowtransparency="true"
+        ></iframe>
       </section>
 
 
@@ -6669,22 +6687,32 @@
         'slideOne': 'Neural Intro',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
-
+        'slideRobotFootball': 'Training Demo',
         'slideFive': 'Bio-Inspiration',
         'slideSeven': 'ANN Architecture',
         'slideFour': 'The Convergence',
         'slideEight': 'Training Analogy'
       };
 
-      let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || [
+      const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
+        { id: 'slideRobotFootball', enabled: true },
         { id: 'slideFive', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideSeven', enabled: true },
         { id: 'slideFour', enabled: true }
       ];
+
+      let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || DEFAULT_SLIDE_STATE;
+
+      // Merge new slides from default state if they are missing in localStorage
+      DEFAULT_SLIDE_STATE.forEach((def, defIdx) => {
+        if (!slideState.find(s => s.id === def.id)) {
+          slideState.splice(defIdx, 0, { ...def });
+        }
+      });
 
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
@@ -7124,20 +7152,21 @@
         );
         applyAccentVars();
 
-        // Sync theme into the ANN iframe
-        const annFrame = document.querySelector(".s7-iframe");
-        if (annFrame && annFrame.contentWindow) {
-          annFrame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
-        }
+        // Sync theme into all child iframes
+        document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
+          if (frame.contentWindow) {
+            frame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+          }
+        });
       }
 
-      // Push current theme to iframe once it loads
+      // Push current theme to iframes once they load
       (function () {
-        const annFrame = document.querySelector(".s7-iframe");
-        if (!annFrame) return;
-        annFrame.addEventListener("load", () => {
-          const mode = document.body.classList.contains("light-mode") ? "light" : "dark";
-          annFrame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+        document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
+          frame.addEventListener("load", () => {
+            const mode = document.body.classList.contains("light-mode") ? "light" : "dark";
+            frame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+          });
         });
       })();
 
