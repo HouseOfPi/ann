@@ -6680,12 +6680,14 @@
         { id: 'slideOne', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
-
         { id: 'slideFive', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideSeven', enabled: true },
         { id: 'slideFour', enabled: true }
       ];
+
+      // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
+      slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
       function saveSlideState() {
         localStorage.setItem('ann_slide_state', JSON.stringify(slideState));
