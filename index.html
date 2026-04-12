@@ -736,16 +736,7 @@
         color: var(--accent-main);
         font-weight: 800;
       }
-      .hero-tagline::before {
-        content: '';
-        display: inline-block;
-        width: 40px;
-        height: 2px;
-        background: var(--accent-main);
-        flex-shrink: 0;
-        opacity: 0.7;
-        border-radius: 2px;
-      }
+
       .light-mode .hero-tagline {
         color: rgba(0, 0, 0, 0.6);
       }
@@ -924,45 +915,7 @@
 
 
       /* ── HERO: editorial quote strip — bottom-left ── */
-      .hero-quote-float {
-        position: absolute;
-        bottom: 48px;
-        left: clamp(60px, 8vw, 130px);
-        max-width: 480px;
-        display: flex;
-        gap: 18px;
-        align-items: stretch;
-        animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.6s;
-        opacity: 0;
-        z-index: 20;
-        pointer-events: none;
-      }
-      /* thin left accent bar */
-      .hqf-bar {
-        width: 2px;
-        border-radius: 2px;
-        background: linear-gradient(to bottom, var(--accent-main), rgba(var(--s2-gold-rgb), 0.1));
-        flex-shrink: 0;
-      }
-      .hqf-body { display: flex; flex-direction: column; gap: 7px; }
-      .hqf-text {
-        font-family: var(--font-body);
-        font-size: 13px;
-        font-style: italic;
-        line-height: 1.72;
-        color: rgba(255, 255, 255, 0.48);
-        margin: 0;
-      }
-      .light-mode .hqf-text { color: rgba(0, 0, 0, 0.42); }
-      .hqf-author {
-        font-family: var(--font-body);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--accent-main);
-        opacity: 0.8;
-      }
+
 
       /* keep for legacy reference */
       .hero-followup-line { display: none; }
@@ -4366,14 +4319,7 @@
           </div>
         </div>
 
-        <!-- Turing quote — editorial bottom-left strip -->
-        <div class="hero-quote-float">
-          <div class="hqf-bar"></div>
-          <div class="hqf-body">
-            <p class="hqf-text">"If a machine can think, it might think more intelligently than we do, and then where should we be?"</p>
-            <span class="hqf-author">Alan Turing &nbsp;·&nbsp; 1951</span>
-          </div>
-        </div>
+
       </section>
 
       <!-- SLIDE 02: HISTORICAL CONTEXT (DARTMOUTH 1956) -->
