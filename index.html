@@ -749,62 +749,51 @@
       }
       .light-mode .hero-tagline { color: rgba(0,0,0,0.55); }
 
-      /* Hero meta row — episode + python badge */
+      /* Hero meta row */
       .hero-meta {
         display: flex;
         align-items: center;
-        gap: 20px;
         margin-top: 32px;
         opacity: 0;
       }
-      .hero-meta-ep {
-        font-family: var(--font-accent);
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
-      }
-      .light-mode .hero-meta-ep { color: rgba(0,0,0,0.35); }
-      .hero-meta-sep {
-        width: 24px;
-        height: 1px;
-        background: rgba(255,255,255,0.2);
-      }
-      .light-mode .hero-meta-sep { background: rgba(0,0,0,0.15); }
 
-      .python-tag {
+      .hero-scratch-label {
         display: inline-flex;
         align-items: center;
-        margin-top: 0;
-        opacity: 0;
+        gap: 12px;
+        padding: 9px 22px 9px 16px;
+        background: linear-gradient(135deg, rgba(34,211,238,0.08) 0%, rgba(52,211,153,0.05) 100%);
+        border: 1px solid rgba(34,211,238,0.2);
+        border-radius: 8px;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        transition: border-color 0.3s, background 0.3s;
       }
-
-      .python-badge {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 7px 16px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 6px;
-        backdrop-filter: blur(12px);
+      .hero-scratch-label:hover {
+        border-color: rgba(34,211,238,0.4);
+        background: linear-gradient(135deg, rgba(34,211,238,0.12) 0%, rgba(52,211,153,0.08) 100%);
       }
-
-      .python-icon {
-        font-size: 14px;
+      .hero-scratch-icon {
+        font-size: 15px;
+        filter: drop-shadow(0 0 6px rgba(34,211,238,0.4));
+      }
+      .hero-scratch-text {
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        color: rgba(255,255,255,0.7);
+      }
+      .hero-scratch-text strong {
         color: var(--accent-main);
+        font-weight: 700;
       }
-
-      .python-label {
-        font-family: var(--font-accent);
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--text-main);
-        opacity: 0.9;
+      .light-mode .hero-scratch-label {
+        background: linear-gradient(135deg, rgba(3,105,161,0.06) 0%, rgba(5,150,105,0.04) 100%);
+        border-color: rgba(3,105,161,0.18);
       }
+      .light-mode .hero-scratch-text { color: rgba(0,0,0,0.55); }
+      .light-mode .hero-scratch-text strong { color: #0369a1; }
       
       .python-label strong {
         color: var(--accent-main);
@@ -1005,9 +994,9 @@
       .hero-divider {
         display: none; /* shown only in Dual mode via JS class */
         position: absolute;
-        left: 49%;
-        top: 15%;
-        height: 70%;
+        left: 55%;
+        top: 12%;
+        height: 76%;
         width: 1px;
         background: linear-gradient(to bottom, transparent, rgba(34,211,238,0.12) 30%, rgba(34,211,238,0.12) 70%, transparent);
         z-index: 5;
@@ -4698,8 +4687,6 @@
       <section class="scene" id="slideOne">
         <canvas id="brain"></canvas>
 
-        <!-- Vertical divider accent between text zone and canvas zone -->
-        <div class="hero-divider"></div>
 
         <div class="ui ui-left">
           <div class="title-wrap">
@@ -4714,16 +4701,11 @@
               <span class="t2">NETWORKS</span>
             </div>
 
-            <div class="hero-rule"></div>
 
             <div class="hero-meta">
-              <span class="hero-meta-ep">Episode 01</span>
-              <div class="hero-meta-sep"></div>
-              <div class="python-tag">
-                <div class="python-badge">
-                  <span class="python-icon">⚡</span>
-                  <span class="python-label">Built with <strong>Python</strong></span>
-                </div>
+              <div class="hero-scratch-label">
+                <span class="hero-scratch-icon">⚡</span>
+                <span class="hero-scratch-text">Neural networks from scratch with <strong>Python</strong></span>
               </div>
             </div>
 
@@ -7371,12 +7353,6 @@
         delay: 0.38,
       });
 
-      // Rule line draw in
-      gsap.fromTo(
-        ".hero-rule",
-        { opacity: 0, scaleX: 0, transformOrigin: "left center" },
-        { opacity: 1, scaleX: 1, duration: 0.7, ease: "power2.out", delay: 0.9 }
-      );
 
       // Tagline fade-in
       gsap.fromTo(
