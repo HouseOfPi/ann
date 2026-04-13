@@ -683,7 +683,7 @@
 
     <div id="nn-panel">
       <div id="nn-top-bar" style="flex-direction:column; align-items:flex-start;">
-        <h2>Agent Intelligence</h2>
+        <h2>Neural Network</h2>
         <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:8px;">
           <div class="selected-robot">
             <button class="robot-btn active" onclick="setActiveTeam(0)">Red</button>
@@ -711,7 +711,7 @@
       <div id="speed-control">
         <button id="pause-btn" onclick="togglePause()" title="Pause / Resume">⏸︎</button>
         <span>Cycle speed:</span>
-        <input type="range" min="0.3" max="2" step="0.1" value="1.1" id="speedSlider">
+        <input type="range" min="0.3" max="2" step="0.1" value="1.1" id="speedSlider" autocomplete="off">
         <span id="speedVal">1.1x</span>
       </div>
     </div>
@@ -773,15 +773,14 @@ function resizeNNCanvas() {
 resizeNNCanvas();
 window.addEventListener('resize', resizeNNCanvas);
 
+// Force slider to default value on every load, ignore any browser-cached value
+const _speedSlider = document.getElementById('speedSlider');
+_speedSlider.value = 1.1;
 let simSpeed = 1.1;
+document.getElementById('speedVal').textContent = '1.1x';
+
 document.getElementById('speedSlider').addEventListener('input', e => {
   simSpeed = parseFloat(e.target.value);
-  document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
-});
-
-// Force sync on load (prevents browser caching old slider values)
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('speedSlider').value = simSpeed;
   document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
 });
 
@@ -809,13 +808,13 @@ let cumulativeReward = [0, 0];
 // Simple 3-layer NN: 8 inputs -> 6 hidden (ReLU) -> 4 outputs (tanh)
 //
 // INPUTS:  ball_dx, ball_dy, ball_vx, ball_vy, goal_dx, goal_dy, teammate_dx, teammate_dy
-// OUTPUTS: move_x, move_y, kick_power, pass_tendency
+// OUTPUTS: forward, backward, left, right, kick
 //
 // Each robot has its own weights that get adjusted via a simplified
 // policy-gradient-like rule: reward * eligibility trace
 
-const NN_IN = 8, NN_HID1 = 10, NN_HID2 = 8, NN_OUT = 4;
-const LEARN_RATE = 0.03;
+const NN_IN = 8, NN_HID1 = 10, NN_HID2 = 8, NN_OUT = 5;
+const LEARN_RATE = 0.08;
 
 function createNN() {
   const nn = {
@@ -829,30 +828,30 @@ function createNN() {
     eligibility1: [], eligibility2: [], eligibility3: [],
   };
 
-  // Xavier initialization for 2 hidden layers
+  // He initialization (better for ReLU layers) with non-zero biases to break symmetry
   for (let i = 0; i < NN_HID1; i++) {
     nn.w1[i] = []; nn.eligibility1[i] = [];
     for (let j = 0; j < NN_IN; j++) {
-      nn.w1[i][j] = (Math.random() - 0.5) * Math.sqrt(2 / NN_IN);
+      nn.w1[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_IN);
       nn.eligibility1[i][j] = 0;
     }
-    nn.b1[i] = 0;
+    nn.b1[i] = (Math.random() - 0.3) * 0.3; // slight positive bias to keep ReLU neurons alive
   }
   for (let i = 0; i < NN_HID2; i++) {
     nn.w2[i] = []; nn.eligibility2[i] = [];
     for (let j = 0; j < NN_HID1; j++) {
-      nn.w2[i][j] = (Math.random() - 0.5) * Math.sqrt(2 / NN_HID1);
+      nn.w2[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_HID1);
       nn.eligibility2[i][j] = 0;
     }
-    nn.b2[i] = 0;
+    nn.b2[i] = (Math.random() - 0.3) * 0.3;
   }
   for (let i = 0; i < NN_OUT; i++) {
     nn.w3[i] = []; nn.eligibility3[i] = [];
     for (let j = 0; j < NN_HID2; j++) {
-      nn.w3[i][j] = (Math.random() - 0.5) * Math.sqrt(2 / NN_HID2);
+      nn.w3[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_HID2);
       nn.eligibility3[i][j] = 0;
     }
-    nn.b3[i] = 0;
+    nn.b3[i] = (Math.random() - 0.5) * 0.5; // more varied output biases for different starting behaviors
   }
   return nn;
 }
@@ -871,11 +870,11 @@ function nnForward(nn, inputs) {
     for (let j = 0; j < NN_HID1; j++) sum += nn.w2[i][j] * nn.lastHidden1[j];
     nn.lastHidden2[i] = Math.max(0, sum);
   }
-  // Output (tanh)
+  // Output (tanh + small exploration noise)
   for (let i = 0; i < NN_OUT; i++) {
     let sum = nn.b3[i];
     for (let j = 0; j < NN_HID2; j++) sum += nn.w3[i][j] * nn.lastHidden2[j];
-    nn.lastOutputs[i] = Math.tanh(sum);
+    nn.lastOutputs[i] = Math.tanh(sum) + (Math.random() - 0.5) * 0.08;
   }
 
   // Trace updates for all layers
@@ -897,8 +896,8 @@ function nnForward(nn, inputs) {
   return nn.lastOutputs;
 }
 
-const W_CLAMP = 3.0;  // max absolute weight value
-const GRAD_CLIP = 0.05; // max per-step delta
+const W_CLAMP = 4.0;  // max absolute weight value
+const GRAD_CLIP = 0.12; // max per-step delta
 
 function nnUpdate(nn, reward) {
   const lr = LEARN_RATE * Math.max(-1, Math.min(1, reward)); // clip reward
@@ -1177,7 +1176,7 @@ function robotThink(r) {
   ];
 
   const outputs = nnForward(r.nn, inputs);
-  // outputs: [move_x, move_y, kick_power, trick_tendency]
+  // outputs: [forward, backward, left, right, kick]
 
   const dBall = dist(r, ball);
   r.possession = dBall < r.r + ball.r + 12;
@@ -1213,8 +1212,15 @@ function robotThink(r) {
     ? 0.55 * simSpeed   // sprint — both robots rush the boundary ball
     : 0.28 * simSpeed;
   const nnAccel = 0.12 * simSpeed; // slightly more individual NN influence
-  r.vx += (toBallX * baseAccel) + (outputs[0] * nnAccel) + (repX * simSpeed);
-  r.vy += (toBallY * baseAccel) + (outputs[1] * nnAccel) + (repY * simSpeed);
+  // forward/backward are relative to the goal direction (teamSign: +1 = goal on right, -1 = goal on left)
+  const fwd = Math.max(0, outputs[0]);   // forward  (toward opponent goal)
+  const bwd = Math.max(0, outputs[1]);   // backward (away from opponent goal)
+  const lft = Math.max(0, outputs[2]);   // left     (up on screen)
+  const rgt = Math.max(0, outputs[3]);   // right    (down on screen)
+  const nnX = (fwd - bwd) * r.teamSign;  // teamSign flips direction per team
+  const nnY = (rgt - lft);               // positive = down, negative = up
+  r.vx += (toBallX * baseAccel) + (nnX * nnAccel) + (repX * simSpeed);
+  r.vy += (toBallY * baseAccel) + (nnY * nnAccel) + (repY * simSpeed);
 
   // Speed cap — raise it during boundary sprint
   const speedCap = ballAtBoundary ? MAX_SPEED * 1.6 * simSpeed : MAX_SPEED * simSpeed;
@@ -1226,8 +1232,8 @@ function robotThink(r) {
 
   // --- Kick Logic ---
   if (dBall < r.r + ball.r + 6 && r.kickCooldown <= 0) {
-    const kickPower = (outputs[2] + 1) / 2;
-    const trickTend = outputs[3];
+    const kickPower = (outputs[4] + 1) / 2;
+    const trickTend = 0.2; // fixed low trick tendency (simplified)
     const goalAngle = Math.atan2(H / 2 - ball.y, goalX - ball.x);
 
     if (ballAtBoundary) {
@@ -1535,13 +1541,9 @@ function drawRobot(r) {
   fctx.fillStyle = r.color;
   fctx.beginPath(); fctx.arc(Math.sin(Date.now()*0.004)*2.5,-32-bb,2,0,Math.PI*2); fctx.fill();
 
-  // Action label above robot
-  if (r.lastAction !== 'idle') {
-    fctx.fillStyle = '#ffffffaa';
-    fctx.font = '8px sans-serif';
-    fctx.textAlign = 'center';
-    fctx.fillText(r.lastAction.toUpperCase(), 0, -38 - bb);
-  }
+
+
+
 
   fctx.restore();
 }
@@ -1581,7 +1583,7 @@ function drawFieldScene() {
 
 // ======================== DRAW NEURAL NETWORK ========================
 const INPUT_LABELS = ['ball dx', 'ball dy', 'ball vx', 'ball vy', 'goal dx', 'goal dy', 'opp dx', 'opp dy'];
-const OUTPUT_LABELS = ['move X', 'move Y', 'kick', 'pass'];
+const OUTPUT_LABELS = ['forward', 'backward', 'left', 'right', 'kick'];
 
 const INPUT_DESCRIPTIONS = [
   'How far left or right is the ball from me? Negative = ball is to my left, Positive = ball is to my right.',
@@ -1594,10 +1596,11 @@ const INPUT_DESCRIPTIONS = [
   'Where is the opponent robot up/down? Together with opp dx, tells me exactly where my opponent is.',
 ];
 const OUTPUT_DESCRIPTIONS = [
-  'Should I move left or right? -1 = go left, +1 = go right. The brain decides this based on all 8 inputs.',
-  'Should I move up or down? -1 = go up, +1 = go down. Combined with move X, this controls my direction.',
-  'How hard should I kick the ball? Higher value = stronger kick. Only matters when I am touching the ball.',
-  'Should I try a trick move? Higher value = more likely to attempt a skill move instead of a normal play.',
+  'How much should I run toward the opponent\'s goal? Higher value = sprint forward faster. This is how the robot attacks.',
+  'How much should I run back toward my own goal? Higher value = retreat faster. This is how the robot defends.',
+  'How much should I move to the left side of the field? Higher value = move left more. Helps dodge opponents or position better.',
+  'How much should I move to the right side of the field? Higher value = move right more. Helps dodge opponents or position better.',
+  'How hard should I kick the ball? Higher value = stronger kick. Only works when the robot is close enough to touch the ball.',
 ];
 
 let lastNodePositions = null;

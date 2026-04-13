@@ -6673,14 +6673,21 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 3;
+      let currentSlideIdx = 0;
       let isSlideAnimating = false;
 
-      // Set default slide (page 4) as active on load
-      presentationSections[3].classList.add("active-slide");
-      presentationSections[3].style.opacity = "1";
-      presentationSections[3].style.visibility = "visible";
-      presentationSections[3].style.transform = "scale(1)";
+      // Set default slide (page 1) as active on load
+      presentationSections[0].classList.add("active-slide");
+      presentationSections[0].style.opacity = "1";
+      presentationSections[0].style.visibility = "visible";
+      presentationSections[0].style.transform = "scale(1)";
+
+      // Trigger title animation if we are starting on the 1st page
+      if (currentSlideIdx === 0) {
+        setTimeout(() => {
+          if (typeof animateSlideOneTitle === 'function') animateSlideOneTitle();
+        }, 500);
+      }
 
       // --- Dynamic Slide Management ---
       const SLIDE_METADATA = {
@@ -6869,6 +6876,11 @@
 
         incoming.classList.add("in-view");
 
+        // Re-trigger slideOne title animation when navigating to it
+        if (incoming.id === 'slideOne') {
+          setTimeout(() => animateSlideOneTitle(), 400);
+        }
+
         // Trigger slide 8 staggered entrance
         if (incoming.id === 'slideEight') {
           setTimeout(() => animateSlideEight(), 400);
@@ -6959,47 +6971,43 @@
       }
 
 
-      // Eyebrow badge slide down
-      gsap.fromTo(
-        ".hero-eyebrow",
-        { opacity: 0, y: -14 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", delay: 0.05 }
-      );
+      // SlideOne title entrance animation — callable on demand
+      function animateSlideOneTitle() {
+        // Reset all elements to invisible first
+        gsap.set(".hero-eyebrow", { opacity: 0, y: -14 });
+        gsap.set(".t1 span", { opacity: 0, y: 55 });
+        gsap.set(".t2 span", { opacity: 0, y: 55 });
+        gsap.set(".hero-tagline", { opacity: 0, y: 18, filter: "blur(6px)" });
+        gsap.set(".hero-meta", { opacity: 0, y: 12 });
 
-      // Animate "NEURAL"
-      gsap.from(".t1 span", {
-        duration: 1.1,
-        y: 55,
-        opacity: 0,
-        ease: "power4.out",
-        stagger: 0.045,
-        delay: 0.2,
-      });
+        // Eyebrow badge slide down
+        gsap.to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", delay: 0.05 });
 
-      // Animate "NETWORKS"
-      gsap.from(".t2 span", {
-        duration: 1.1,
-        y: 55,
-        opacity: 0,
-        ease: "power4.out",
-        stagger: 0.045,
-        delay: 0.38,
-      });
+        // Animate "NEURAL"
+        gsap.to(".t1 span", {
+          duration: 1.1, y: 0, opacity: 1,
+          ease: "power4.out", stagger: 0.045, delay: 0.2,
+        });
 
+        // Animate "NETWORKS"
+        gsap.to(".t2 span", {
+          duration: 1.1, y: 0, opacity: 1,
+          ease: "power4.out", stagger: 0.045, delay: 0.38,
+        });
 
-      // Tagline fade-in
-      gsap.fromTo(
-        ".hero-tagline",
-        { opacity: 0, y: 18, filter: "blur(6px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out", delay: 1.0 }
-      );
+        // Tagline fade-in
+        gsap.to(".hero-tagline", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out", delay: 1.0 });
 
-      // Meta row + python badge fade in together
-      gsap.fromTo(
-        ".hero-meta",
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 1.3 }
-      );
+        // Meta row + python badge
+        gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 1.3 });
+      }
+
+      // Don't auto-fire — set everything visible as a fallback, animation plays on slide entry
+      gsap.set(".hero-eyebrow", { opacity: 0 });
+      gsap.set(".t1 span", { opacity: 0 });
+      gsap.set(".t2 span", { opacity: 0 });
+      gsap.set(".hero-tagline", { opacity: 0 });
+      gsap.set(".hero-meta", { opacity: 0 });
 
       // Divider fade in (dual mode only)
       if (document.querySelector('.hero-divider.visible')) {
