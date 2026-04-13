@@ -117,6 +117,7 @@
 
   /* Agent Intelligence panel */
   #nn-panel {
+    position: relative;
     background: var(--bg-panel);
     border: 1px solid var(--border-ui);
     border-radius: 12px;
@@ -238,6 +239,23 @@
     flex: 1;
     min-height: 0;
   }
+  #nn-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(10, 14, 30, 0.94);
+    border: 1px solid rgba(148, 88, 228, 0.6);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font: 11px/1.4 'Inter', sans-serif;
+    color: #e2e8f0;
+    max-width: 280px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  #nn-tooltip .tt-label { color: #c4a0ff; font-weight: 700; font-size: 11px; }
+  #nn-tooltip .tt-desc  { color: #94a3b8; font-size: 10px; margin-top: 2px; }
   #nn-bottom-bar {
     display: flex;
     gap: 14px;
@@ -333,6 +351,59 @@
     grid-template-columns: 1fr 0.8fr 1.2fr; /* Optimized widths */
     background: rgba(0,0,0,0.05);
   }
+  #feed-info-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(77, 208, 225, 0.4);
+    background: rgba(77, 208, 225, 0.1);
+    color: #4dd0e1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 6px;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  #feed-info-btn:hover {
+    background: rgba(77, 208, 225, 0.25);
+    border-color: #4dd0e1;
+    transform: scale(1.1);
+  }
+  #feed-help {
+    padding: 10px 14px;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border-ui);
+    background: rgba(77, 208, 225, 0.04);
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 14px;
+    border-bottom: none;
+    transition: max-height 0.35s ease, padding 0.35s ease, border-bottom 0.35s ease;
+  }
+  #feed-help.open {
+    max-height: 300px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-ui);
+  }
+  #feed-help p { margin: 0 0 6px; }
+  #feed-help p:last-child { margin-bottom: 0; }
+  #feed-help ul {
+    margin: 4px 0 8px 0;
+    padding-left: 16px;
+    list-style: none;
+  }
+  #feed-help li { margin: 2px 0; }
+  #feed-help li::before { content: '• '; }
+  #feed-help .help-good { color: #10b981; }
+  #feed-help .help-bad  { color: #f87171; }
+  #feed-help b { color: var(--text-bright); }
+
   .et-col {
     padding: 14px 16px;
     display: flex;
@@ -441,6 +512,27 @@
     color: #ffffff55;
   }
   #speed-control input { width: 90px; accent-color: #4a9eff; }
+  #pause-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(74, 158, 255, 0.4);
+    background: rgba(74, 158, 255, 0.12);
+    color: #4a9eff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s;
+  }
+  #pause-btn:hover {
+    background: rgba(74, 158, 255, 0.3);
+    border-color: #4a9eff;
+    transform: scale(1.1);
+  }
+  #pause-btn.playing { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.12); }
+  #pause-btn.playing:hover { background: rgba(16, 185, 129, 0.3); border-color: #10b981; }
 
   /* --- Legend --- */
   #legend {
@@ -545,10 +637,24 @@
     <div id="feed-panel">
       <div id="feed-panel-header">
         <h2>How the Robot Learns</h2>
+        <button id="feed-info-btn" onclick="document.getElementById('feed-help').classList.toggle('open')" title="What is this?">ℹ</button>
         <div class="feed-tabs">
-          <button class="r-tab red active" onclick="switchFeedRobot(0)">● Red</button>
-          <button class="r-tab blue" onclick="switchFeedRobot(1)">● Blue</button>
+          <button class="r-tab red active" onclick="setActiveTeam(0)">● Red</button>
+          <button class="r-tab blue" onclick="setActiveTeam(1)">● Blue</button>
         </div>
+      </div>
+
+      <!-- Help text -->
+      <div id="feed-help">
+        <p>🤖 <b>No human is teaching the robot!</b> The game has a built-in "referee" — simple rules coded in advance that automatically judge each action:</p>
+        <ul>
+          <li><span class="help-good">Score a goal → +3.0 points</span></li>
+          <li><span class="help-good">Shot on target → +0.8 points</span></li>
+          <li><span class="help-good">Trick kick works → +1.0 points</span></li>
+          <li><span class="help-bad">Concede a goal → −2.5 points</span></li>
+          <li><span class="help-bad">Shot goes wide → −0.4 points</span></li>
+        </ul>
+        <p>The robot tries random actions, sees whether the score goes up or down, and gradually figures out what works. This is called <b>Reinforcement Learning</b> — learning by trial and error, just like a child learning to ride a bike.</p>
       </div>
 
       <!-- 3-column event table -->
@@ -580,13 +686,14 @@
         <h2>Agent Intelligence</h2>
         <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:8px;">
           <div class="selected-robot">
-            <button class="robot-btn active" onclick="selectRobot(0)">Red</button>
-            <button class="robot-btn" onclick="selectRobot(1)">Blue</button>
+            <button class="robot-btn active" onclick="setActiveTeam(0)">Red</button>
+            <button class="robot-btn" onclick="setActiveTeam(1)">Blue</button>
           </div>
           <span id="epoch-counter">Epoch: 0</span>
         </div>
       </div>
       <canvas id="nn-canvas"></canvas>
+      <div id="nn-tooltip"><span class="tt-label"></span><div class="tt-desc"></div></div>
       <div class="nn-label">Sensory Inputs &rarr; Deep Reasoning &rarr; Physical Actions</div>
     </div>
 
@@ -602,9 +709,10 @@
       </div>
       <canvas id="field"></canvas>
       <div id="speed-control">
+        <button id="pause-btn" onclick="togglePause()" title="Pause / Resume">⏸︎</button>
         <span>Cycle speed:</span>
-        <input type="range" min="0.3" max="2" step="0.1" value="0.7" id="speedSlider">
-        <span id="speedVal">0.7x</span>
+        <input type="range" min="0.3" max="2" step="0.1" value="1.1" id="speedSlider">
+        <span id="speedVal">1.1x</span>
       </div>
     </div>
   </div>
@@ -665,9 +773,15 @@ function resizeNNCanvas() {
 resizeNNCanvas();
 window.addEventListener('resize', resizeNNCanvas);
 
-let simSpeed = 0.7;
+let simSpeed = 1.1;
 document.getElementById('speedSlider').addEventListener('input', e => {
   simSpeed = parseFloat(e.target.value);
+  document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
+});
+
+// Force sync on load (prevents browser caching old slider values)
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('speedSlider').value = simSpeed;
   document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
 });
 
@@ -909,14 +1023,33 @@ function explainReward(reason, amount) {
 let lastEvents    = [null, null];
 let activeFeedRobot = 0;
 
-function switchFeedRobot(idx) {
+function setActiveTeam(idx) {
+  selectedRobot = idx;
   activeFeedRobot = idx;
+  
+  // Update Learning Feed tabs
   document.querySelectorAll('.r-tab').forEach((btn, i) => {
     btn.classList.toggle('active', i === idx);
   });
+  
+  // Update NN Panel buttons
+  document.querySelectorAll('.robot-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+
+  // Re-render Learning content
   if (lastEvents[idx]) renderFeedPanel(lastEvents[idx]);
+  else {
+    // Reset to "waiting" state if no event
+    document.getElementById('et-action').innerHTML = "Warming up..";
+    document.getElementById('et-reward').innerHTML = "—";
+    document.getElementById('et-lesson').textContent = "Waiting for first move..";
+  }
   updateScoreBar();
 }
+
+function switchFeedRobot(idx) { setActiveTeam(idx); } // Alias for safety
+function selectRobot(idx)     { setActiveTeam(idx); } // Alias for safety
 
 function giveReward(robotIdx, reasonKey, amount) {
   const r = robots[robotIdx];
@@ -1450,6 +1583,25 @@ function drawFieldScene() {
 const INPUT_LABELS = ['ball dx', 'ball dy', 'ball vx', 'ball vy', 'goal dx', 'goal dy', 'opp dx', 'opp dy'];
 const OUTPUT_LABELS = ['move X', 'move Y', 'kick', 'pass'];
 
+const INPUT_DESCRIPTIONS = [
+  'How far left or right is the ball from me? Negative = ball is to my left, Positive = ball is to my right.',
+  'How far up or down is the ball from me? Negative = ball is above me, Positive = ball is below me.',
+  'Is the ball moving left or right? Negative = moving left, Positive = moving right. Close to 0 = barely moving.',
+  'Is the ball moving up or down? Negative = moving up, Positive = moving down. Close to 0 = barely moving.',
+  'How far am I from the goal I need to score in? Bigger number = farther away from the goal.',
+  'Am I lined up with the goal vertically? 0 = perfectly centered, otherwise I need to move up or down.',
+  'Where is the opponent robot left/right? Helps me avoid them or plan around them.',
+  'Where is the opponent robot up/down? Together with opp dx, tells me exactly where my opponent is.',
+];
+const OUTPUT_DESCRIPTIONS = [
+  'Should I move left or right? -1 = go left, +1 = go right. The brain decides this based on all 8 inputs.',
+  'Should I move up or down? -1 = go up, +1 = go down. Combined with move X, this controls my direction.',
+  'How hard should I kick the ball? Higher value = stronger kick. Only matters when I am touching the ball.',
+  'Should I try a trick move? Higher value = more likely to attempt a skill move instead of a normal play.',
+];
+
+let lastNodePositions = null;
+
 // Layer palette: purple → blue → cyan → pink
 const NN_LAYER_COLORS = [
   { r: 148, g: 88,  b: 228 },  // purple  — inputs
@@ -1641,27 +1793,110 @@ function drawNN() {
     nctx.textBaseline = 'top';
     nctx.fillText(hdr, colX[i], 6);
   });
+
+  // Store node positions for tooltip hit-testing
+  lastNodePositions = { nodes, NODE_R, layers };
 }
+
+// ======================== NN TOOLTIP ========================
+const nnTooltip = document.getElementById('nn-tooltip');
+const nnPanel   = nnCanvas.parentElement;
+
+nnCanvas.addEventListener('mousemove', e => {
+  if (!lastNodePositions) return;
+  const { nodes, NODE_R, layers } = lastNodePositions;
+  const rect = nnCanvas.getBoundingClientRect();
+  const scaleX = nnCanvas.width / rect.width;
+  const scaleY = nnCanvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  let hit = null;
+  for (let l = 0; l < layers.length; l++) {
+    for (let i = 0; i < nodes[l].length; i++) {
+      const dx = mx - nodes[l][i].x, dy = my - nodes[l][i].y;
+      if (dx * dx + dy * dy <= (NODE_R + 4) * (NODE_R + 4)) {
+        hit = { layer: l, index: i };
+        break;
+      }
+    }
+    if (hit) break;
+  }
+
+  if (hit) {
+    let label, desc;
+    if (hit.layer === 0) {
+      label = INPUT_LABELS[hit.index];
+      desc  = INPUT_DESCRIPTIONS[hit.index];
+    } else if (hit.layer === 3) {
+      label = OUTPUT_LABELS[hit.index];
+      desc  = OUTPUT_DESCRIPTIONS[hit.index];
+    } else {
+      label = `Hidden Layer ${hit.layer} — Neuron ${hit.index + 1}`;
+      desc  = 'This is part of the robot\'s "thinking" process. It combines clues from the inputs to find patterns — like "the ball is close AND the goal is to my right, so I should move right." It learns which clues matter most over time.';
+    }
+    nnTooltip.querySelector('.tt-label').textContent = label;
+    nnTooltip.querySelector('.tt-desc').textContent  = desc;
+    nnTooltip.style.opacity = '1';
+
+    // Position tooltip below the node, not on top of it
+    const panelRect = nnPanel.getBoundingClientRect();
+    const rect = nnCanvas.getBoundingClientRect();
+    const scaleXInv = rect.width / nnCanvas.width;
+    const scaleYInv = rect.height / nnCanvas.height;
+    const nodeScreenX = rect.left - panelRect.left + nodes[hit.layer][hit.index].x * scaleXInv;
+    const nodeScreenY = rect.top - panelRect.top + nodes[hit.layer][hit.index].y * scaleYInv;
+    const ttW = 290;
+
+    // Place below the node with some offset
+    let tx = nodeScreenX - ttW / 2;
+    let ty = nodeScreenY + NODE_R * scaleYInv + 10;
+
+    // If tooltip goes below panel, show above the node instead
+    if (ty + 80 > panelRect.height) {
+      ty = nodeScreenY - NODE_R * scaleYInv - 60;
+    }
+    // Keep within horizontal bounds
+    if (tx < 4) tx = 4;
+    if (tx + ttW > panelRect.width - 4) tx = panelRect.width - ttW - 4;
+
+    nnTooltip.style.left = tx + 'px';
+    nnTooltip.style.top  = ty + 'px';
+  } else {
+    nnTooltip.style.opacity = '0';
+  }
+});
+
+nnCanvas.addEventListener('mouseleave', () => {
+  nnTooltip.style.opacity = '0';
+});
 
 
 // ======================== ROBOT SELECTION ========================
-function selectRobot(idx) {
-  selectedRobot = idx;
-  document.querySelectorAll('.robot-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === idx);
-  });
-
-}
+// Logic consolidated into setActiveTeam above
 
 // ======================== MAIN LOOP ========================
+let paused = false;
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('pause-btn');
+  btn.textContent = paused ? '▶' : '⏸︎';
+  btn.classList.toggle('playing', paused);
+  btn.title = paused ? 'Resume' : 'Pause';
+}
+
 function loop() {
-  update();
+  if (!paused) {
+    update();
+  }
   drawFieldScene();
   drawNN();
   requestAnimationFrame(loop);
 }
 
 window.addEventListener('keydown', e => {
+  if (e.key === ' ') { e.preventDefault(); togglePause(); }
   if (e.key === 'r' || e.key === 'R') {
     resetAfterGoal();
     spawnParticles(W/2, H/2, '#4ade80', 30);
