@@ -6673,14 +6673,14 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 0;
+      let currentSlideIdx = 3;
       let isSlideAnimating = false;
 
-      // Set first slide as active on load
-      presentationSections[0].classList.add("active-slide");
-      presentationSections[0].style.opacity = "1";
-      presentationSections[0].style.visibility = "visible";
-      presentationSections[0].style.transform = "scale(1)";
+      // Set default slide (page 4) as active on load
+      presentationSections[3].classList.add("active-slide");
+      presentationSections[3].style.opacity = "1";
+      presentationSections[3].style.visibility = "visible";
+      presentationSections[3].style.transform = "scale(1)";
 
       // --- Dynamic Slide Management ---
       const SLIDE_METADATA = {

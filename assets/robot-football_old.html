@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Robot Football — Neural Network Training Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -41,7 +44,7 @@
     background: var(--bg-page);
     display: flex;
     flex-direction: column;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     color: var(--text-main);
     min-height: 100vh;
     padding-bottom: 20px;
@@ -51,9 +54,9 @@
   }
   header {
     text-align: center;
-    padding: 18px 0 14px;
-    background: var(--bg-item);
-    border-bottom: 1px solid var(--border-ui);
+    padding: 24px 0 20px;
+    background: transparent;
+    border-bottom: none;
     margin-bottom: 16px;
     position: relative;
   }
@@ -81,12 +84,13 @@
     border-color: var(--accent);
   }
   h1 {
-    font-size: 18px;
+    font-size: 26px;
     font-weight: 800;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--text-bright);
     margin: 0;
+    text-shadow: 0 0 20px var(--accent-glow);
   }
   .subtitle {
     font-size: 11px;
@@ -101,112 +105,111 @@
     display: flex;
     flex: 1;
     width: 100%;
-    gap: 12px;
-    padding: 0 14px;
+    max-width: 1800px;
+    margin: 40px auto;
+    gap: 60px;
+    padding: 0 4%;
     align-items: flex-start;
   }
 
-  /* Left column: NN + Analytics stacked */
-  #left-column {
-    flex: 1;
+  /* Left column: Field & Scoreboard */
+  #field-column {
+    flex: 2.2;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 40px; /* More breathing room between scoreboard and field */
+    padding-bottom: 40px;
+    align-items: center;
   }
 
-  /* Agent Intelligence panel */
+  /* Right column: Intelligence Sidebar */
+  #sidebar-column {
+    flex: 0.8;
+    min-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Shared Card Style for Sidebar */
+  .sidebar-card {
+    background: rgba(13, 23, 42, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(126, 184, 247, 0.15);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  /* Agent Intelligence panel container */
   #nn-panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-ui);
-    border-radius: 12px;
-    padding: 14px 14px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    box-shadow: var(--shadow);
-  }
-
-  /* Right: Field — 2/3 width */
-  #right-content {
-    flex: 2;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-bottom: 20px;
+    gap: 16px;
   }
 
   /* --- Field --- */
   #field-wrap {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-ui);
-    border-radius: 12px;
-    padding: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    box-shadow: var(--shadow);
+    gap: 24px;
+    width: 100%;
   }
   #scoreboard {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     align-items: center;
+    padding: 10px 40px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.05);
   }
   .score {
-    font-size: 20px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 26px;
     font-weight: 800;
-    padding: 6px 24px;
-    border-radius: 8px;
-    letter-spacing: 1px;
-    min-width: 120px;
+    padding: 8px 30px;
+    border-radius: 12px;
+    letter-spacing: 2px;
+    min-width: 160px;
     text-align: center;
-    border: 1px solid var(--border-ui);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-shadow: 0 0 15px currentColor;
   }
-  .score.red { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: rgba(231, 76, 60, 0.3); }
-  .score.blue { background: rgba(52, 152, 219, 0.15); color: #3498db; border-color: rgba(52, 152, 219, 0.3); }
-  .score-sep { color: var(--text-dim); font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; }
+  .score.red { color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.05); }
+  .score.blue { color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.05); }
+  .score-sep { color: rgba(255,255,255,0.1); font-weight: 300; font-size: 14px; text-transform: uppercase; letter-spacing: 4px; }
+  
   canvas#field {
-    border-radius: 10px;
-    box-shadow: 0 0 50px #00000088;
+    border-radius: 16px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 4px rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
   }
 
   #nn-top-bar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border-ui);
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   #nn-top-bar h2 {
-    font-size: 10px;
-    color: var(--accent);
+    font-size: 11px;
+    color: #94a3b8;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  #nn-top-bar h2::before {
-    content: '';
-    display: block;
-    width: 3px; height: 12px;
-    background: linear-gradient(180deg, var(--accent), #2a6e7a);
-    border-radius: 2px;
+    letter-spacing: 3px;
+    font-weight: 800;
+    margin: 0;
   }
   #epoch-counter {
     font-size: 10px;
-    color: var(--text-dim);
-    background: var(--bg-item);
-    border: 1px solid var(--border-ui);
-    border-radius: 5px;
-    padding: 3px 9px;
-    letter-spacing: 0.5px;
+    color: #7eb8f7;
+    background: rgba(126, 184, 247, 0.1);
+    border: 1px solid rgba(126, 184, 247, 0.2);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-weight: 700;
   }
   .selected-robot {
     display: flex;
@@ -270,167 +273,176 @@
     align-self: center;
   }
 
-  /* ── Training Analytics (Polished 3-Column Design) ── */
-  #feed-panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-ui);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  #feed-panel-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border-ui);
-    background: rgba(0,0,0,0.1);
-  }
-  #feed-panel-header::before {
-    content: '';
-    display: block;
-    width: 3px; height: 14px;
-    background: #4dd0e1;
-    border-radius: 20px;
-    box-shadow: 0 0 10px rgba(77, 208, 225, 0.4);
-  }
-  #feed-panel-header h2 {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--text-bright);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-  }
-
-  .feed-tabs {
-    display: flex;
-    gap: 6px;
-    margin-left: auto;
-    background: rgba(0,0,0,0.3);
-    padding: 3px;
-    border-radius: 100px;
-  }
-  .r-tab {
-    padding: 4px 12px;
-    border-radius: 100px;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
+  /* ── Training Analytics (below Agent Intelligence) ── */
+  .feed-panel {
     background: transparent;
-    color: #64748b;
-    text-transform: uppercase;
-  }
-  .r-tab.red.active  { background: rgba(231, 76, 60, 0.15); color: #f87171; border-color: rgba(231, 76, 60, 0.2); }
-  .r-tab.blue.active { background: rgba(52, 152, 219, 0.15); color: #60a5fa; border-color: rgba(52, 152, 219, 0.2); }
-
-  #event-table {
-    display: grid;
-    grid-template-columns: 1fr 0.8fr 1.2fr; /* Optimized widths */
-    background: rgba(0,0,0,0.05);
-  }
-  .et-col {
-    padding: 14px 16px;
+  /* ── How the Robot Learns Panel ── */
+  .learning-panel {
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    border-right: 1px solid var(--border-ui);
-    min-width: 0;
+    gap: 24px;
   }
-  .et-col:last-child { border-right: none; }
-  .et-header {
-    font-size: 8.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #64748b;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    white-space: nowrap;
+  .learning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    padding: 0;
   }
-  .et-body {
-    font-size: 11.5px;
-    color: var(--text-bright);
-    line-height: 1.5;
-    font-weight: 500;
-  }
-  .et-body .rdot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: baseline;
-    box-shadow: 0 0 8px currentColor;
-  }
-  
-  .reward-pts {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .reward-pts.pos { color: #10b981; }
-  .reward-pts.neg { color: #f87171; }
-  .reward-verdict {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .reward-verdict.pos { color: #059669; }
-  .reward-verdict.neg { color: #b91c1c; }
-
-  #score-bar-wrap {
-    padding: 10px 14px;
+  .learning-title {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0,0,0,0.15);
-  }
-  #bar-robot-name {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 800;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    min-width: 40px;
+    color: #4dd0e1;
+    letter-spacing: 2px;
   }
-  #score-bar {
+  .title-bar {
+    width: 4px;
+    height: 20px;
+    background: #4dd0e1;
+    border-radius: 20px;
+    box-shadow: 0 0 12px rgba(77, 208, 225, 0.6);
+  }
+  .team-switcher {
+    display: flex;
+    background: rgba(0,0,0,0.3);
+    border-radius: 100px;
+    padding: 4px;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .team-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .team-btn .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #64748b;
+  }
+  .team-btn.red.active { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+  .team-btn.red.active .dot { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+  .team-btn.blue.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
+  .team-btn.blue.active .dot { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+
+  .learning-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1.2fr;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .learning-col {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+  .learning-col.divider {
+    border-left: 1px solid rgba(255,255,255,0.08);
+  }
+  .col-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+  }
+  .col-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--text-bright);
+  }
+  .robot-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .robot-dot.red { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+  .robot-dot.blue { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+
+  .reward-box { flex-direction: column; gap: 4px; }
+  .reward-large {
+    font-size: 28px;
+    font-weight: 800;
+    color: #10b981;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+  }
+  .reward-sub {
+    font-size: 12px;
+    color: #059669;
+    font-weight: 600;
+  }
+  .lesson-text {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .learning-footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 10px 16px;
+  }
+  .footer-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    min-width: 44px;
+  }
+  .footer-label.red { color: #f87171; }
+  .footer-label.blue { color: #60a5fa; }
+  
+  .footer-progress-wrap {
     flex: 1;
-    height: 5px;
+    height: 6px;
     background: rgba(255,255,255,0.05);
     border-radius: 10px;
     overflow: hidden;
   }
-  #score-bar-fill {
+  .footer-progress {
     height: 100%;
-    width: 0%;
-    border-radius: 10px;
     transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    background: #10b981;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
   }
-  #score-bar-fill.neg { background: #f87171; box-shadow: 0 0 10px rgba(248, 113, 113, 0.4); }
-  #bar-total {
+  .footer-progress.red { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+  .footer-progress.blue { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+  
+  .footer-score {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 800;
-    white-space: nowrap;
-    min-width: 50px;
+    color: #10b981;
+    min-width: 60px;
     text-align: right;
-  }
-  #bar-total.pos { color: #10b981; }
-  #bar-total.neg { color: #f87171; }
-
-
-
-  @keyframes feedIn { from { opacity: 0; } to { opacity: 1; } }
+  } { opacity: 1; } }
 
   /* --- Speed control --- */
   #speed-control {
@@ -458,9 +470,9 @@
   /* --- Theory Section --- */
   #theory-section {
     width: 100%;
-    max-width: 1100px;
-    margin: 40px auto 80px; /* added substantial bottom margin */
-    padding: 0 16px;
+    max-width: 1800px;
+    margin: 60px auto 100px;
+    padding: 0 3%;
   }
   .theory-title {
     font-size: 14px;
@@ -481,15 +493,20 @@
   }
   .theory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
   .theory-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border-ui);
-    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    padding: 24px;
+    transition: all 0.3s ease;
+  }
+  .theory-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(74, 158, 255, 0.3);
+    transform: translateY(-4px);
   }
   .theory-card h3 {
     font-size: 12px;
@@ -524,58 +541,109 @@
     color: var(--accent);
     font-weight: 700;
   }
+  /* --- NN Tooltip --- */
+  #nn-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(13, 23, 42, 0.95);
+    border: 1px solid rgba(126, 184, 247, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    color: #e2e8f0;
+    font-size: 11px;
+    line-height: 1.5;
+    max-width: 240px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 9999;
+    backdrop-filter: blur(8px);
+    display: none;
+    animation: tooltipFade 0.2s ease-out;
+  }
+  @keyframes tooltipFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .tooltip-title { color: #7eb8f7; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; display: block; font-size: 9px; letter-spacing: 1px; }
+  .tooltip-highlight { color: #facc15; font-weight: 600; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Robot Football — Neural Network Training</h1>
-  <p class="subtitle">Watch robots learn through reinforcement: actions are judged, rewards adjust weights in real-time</p>
-  <button id="theme-toggle" onclick="toggleTheme()">
-    <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
-  </button>
 </header>
+
+<div id="nn-tooltip"></div>
 
 <div id="main-container">
 
-  <!-- Left Sidebar: Brain -->
-  <!-- Left column: Training Analytics + Agent Intelligence -->
-  <div id="left-column">
+  <!-- Left: Field Section -->
+  <div id="field-column">
+    <div id="field-wrap">
+      <div id="scoreboard">
+        <div class="score red" id="scoreRed">RED 0</div>
+        <div class="score-sep">vs</div>
+        <div class="score blue" id="scoreBlue">BLUE 0</div>
+      </div>
+      <canvas id="field"></canvas>
+      <div id="speed-control">
+        <span>Cycle speed:</span>
+        <input type="range" min="0.3" max="2" step="0.1" value="1.2" id="speedSlider">
+        <span id="speedVal">1.2x</span>
+      </div>
+    </div>
+  </div>
 
-    <div id="feed-panel">
-      <div id="feed-panel-header">
-        <h2>How the Robot Learns</h2>
-        <div class="feed-tabs">
-          <button class="r-tab red active" onclick="switchFeedRobot(0)">● Red</button>
-          <button class="r-tab blue" onclick="switchFeedRobot(1)">● Blue</button>
+  <!-- Right: Intelligence Sidebar (Analytics + Neural Network) -->
+  <div id="sidebar-column">
+    
+    <!-- HOW THE ROBOT LEARNS PANEL -->
+    <div class="learning-panel sidebar-card">
+      <div class="learning-header">
+        <div class="learning-title">
+          <span class="title-bar"></span>
+          HOW THE ROBOT LEARNS
+        </div>
+        <div class="team-switcher">
+          <button class="team-btn red active" onclick="switchFeedTab('red')">
+            <span class="dot"></span> RED
+          </button>
+          <button class="team-btn blue" onclick="switchFeedTab('blue')">
+            <span class="dot"></span> BLUE
+          </button>
         </div>
       </div>
 
-      <!-- 3-column event table -->
-      <div id="event-table">
-        <div class="et-col">
-          <div class="et-header">⚡ Action</div>
-          <div class="et-body" id="et-action" style="color:var(--text-dim); font-style:italic">Warming up…</div>
+      <div class="learning-grid">
+        <!-- ACTION -->
+        <div class="learning-col">
+          <div class="col-label">⚡ ACTION</div>
+          <div id="ev-action-box" class="col-content">
+            <span id="ev-action-dot" class="robot-dot red"></span>
+            <span id="ev-action-text">Waiting for action..</span>
+          </div>
         </div>
-        <div class="et-col">
-          <div class="et-header">📊 Reward</div>
-          <div class="et-body" id="et-reward">—</div>
+        <!-- REWARD -->
+        <div class="learning-col divider">
+          <div class="col-label">📊 REWARD</div>
+          <div class="col-content reward-box">
+            <div id="ev-reward-val" class="reward-large">—</div>
+            <div id="ev-reward-verdict" class="reward-sub">—</div>
+          </div>
         </div>
-        <div class="et-col">
-          <div class="et-header">🧠 Learns</div>
-          <div class="et-body" id="et-lesson" style="color:var(--text-dim); font-style:italic">Waiting for first move…</div>
+        <!-- LEARNS -->
+        <div class="learning-col divider">
+          <div class="col-label">🧠 LEARNS</div>
+          <div id="ev-lesson-text" class="col-content lesson-text">AI is observing the field...</div>
         </div>
       </div>
 
-      <!-- Compact performance bar -->
-      <div id="score-bar-wrap">
-        <span id="bar-robot-name">Red</span>
-        <div id="score-bar"><div id="score-bar-fill"></div></div>
-        <span id="bar-total">0</span>
+      <div class="learning-footer">
+        <div id="footer-team-label" class="footer-label red">RED</div>
+        <div class="footer-progress-wrap">
+          <div id="footer-progress-bar" class="footer-progress red" style="width:0%"></div>
+        </div>
+        <div id="footer-score-val" class="footer-score red">+0.0</div>
       </div>
     </div>
 
-    <div id="nn-panel">
+    <!-- NEURAL NETWORK PANEL -->
+    <div id="nn-panel" class="sidebar-card">
       <div id="nn-top-bar" style="flex-direction:column; align-items:flex-start;">
         <h2>Agent Intelligence</h2>
         <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:8px;">
@@ -590,23 +658,6 @@
       <div class="nn-label">Sensory Inputs &rarr; Deep Reasoning &rarr; Physical Actions</div>
     </div>
 
-  </div>
-
-  <!-- Right: Field -->
-  <div id="right-content">
-    <div id="field-wrap">
-      <div id="scoreboard">
-        <div class="score red" id="scoreRed">RED 0</div>
-        <div class="score-sep">vs</div>
-        <div class="score blue" id="scoreBlue">BLUE 0</div>
-      </div>
-      <canvas id="field"></canvas>
-      <div id="speed-control">
-        <span>Cycle speed:</span>
-        <input type="range" min="0.3" max="2" step="0.1" value="0.7" id="speedSlider">
-        <span id="speedVal">0.7x</span>
-      </div>
-    </div>
   </div>
 
 </div>
@@ -645,8 +696,8 @@ const fctx = fieldCanvas.getContext('2d');
 const nnCanvas = document.getElementById('nn-canvas');
 const nctx = nnCanvas.getContext('2d');
 
-// Field: dynamic width based on right column
-const W = Math.min(840, window.innerWidth * 0.62);
+// Field: dynamic width
+const W = Math.min(1200, window.innerWidth * 0.55);
 const H = W * 0.6;
 fieldCanvas.width = W;
 fieldCanvas.height = H;
@@ -665,10 +716,87 @@ function resizeNNCanvas() {
 resizeNNCanvas();
 window.addEventListener('resize', resizeNNCanvas);
 
-let simSpeed = 0.7;
+let simSpeed = 1.2;
 document.getElementById('speedSlider').addEventListener('input', e => {
   simSpeed = parseFloat(e.target.value);
   document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
+});
+
+// NN Interactive Help Tooltip
+nnCanvas.addEventListener('mousemove', e => {
+  if (!latestNNNodes) return;
+  const rect = nnCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const tooltip = document.getElementById('nn-tooltip');
+  
+  const inputNodes = latestNNNodes[0];
+  const outputNodes = latestNNNodes[3];
+  const NODE_R = 15;
+
+  let hoveredLayerIdx = -1; // 0 for input, 3 for output
+  let hoveredNodeIdx = -1;
+
+  // Check inputs
+  for (let i = 0; i < inputNodes.length; i++) {
+    if (Math.hypot(mx - inputNodes[i].x, my - inputNodes[i].y) < NODE_R + 5) {
+      hoveredLayerIdx = 0; hoveredNodeIdx = i; break;
+    }
+  }
+  // Check outputs if no input hovered
+  if (hoveredLayerIdx === -1) {
+    for (let i = 0; i < outputNodes.length; i++) {
+      if (Math.hypot(mx - outputNodes[i].x, my - outputNodes[i].y) < NODE_R + 5) {
+        hoveredLayerIdx = 3; hoveredNodeIdx = i; break;
+      }
+    }
+  }
+
+  if (hoveredLayerIdx !== -1) {
+    if (hoveredLayerIdx === 0) {
+      const descriptions = [
+        "Calculates the <span class='tooltip-highlight'>left/right distance</span> to the ball relative to the robot's current position.",
+        "Calculates the <span class='tooltip-highlight'>up/down distance</span> to the ball relative to the robot's current position.",
+        "Dials into the <span class='tooltip-highlight'>horizontal speed</span> of the ball to predict where it will roll next.",
+        "Dials into the <span class='tooltip-highlight'>vertical speed</span> of the ball to predict where it will roll next.",
+        "A relative <span class='tooltip-highlight'>GPS coordinate</span> pointing directly toward the center of the target scoring zone.",
+        "A relative <span class='tooltip-highlight'>GPS coordinate</span> pointing directly toward the center of the target scoring zone.",
+        "Proximity sensor that measures <span class='tooltip-highlight'>how close the opponent is</span>, allowing the AI to dodge or block.",
+        "Proximity sensor that measures <span class='tooltip-highlight'>how close the opponent is</span>, allowing the AI to dodge or block."
+      ];
+
+      tooltip.innerHTML = `
+        <span class="tooltip-title">Sensory Input: ${INPUT_LABELS[hoveredNodeIdx]}</span>
+        ${descriptions[hoveredNodeIdx]}
+        <br><br>
+        The physical world is converted into <span class="tooltip-highlight">percentages</span> for the brain.
+      `;
+    } else {
+      const descriptions = [
+        "The <span class='tooltip-highlight'>horizontal motor power</span>. Positive values push Right, negative values push Left.",
+        "The <span class='tooltip-highlight'>vertical motor power</span>. Positive values push Down, negative values push Up.",
+        "The <span class='tooltip-highlight'>strike intensity</span>. If this value crosses a threshold, the robot kicks the ball.",
+        "The <span class='tooltip-highlight'>strategic weight</span>. High values signal the robot to prioritise passing or team support."
+      ];
+
+      tooltip.innerHTML = `
+        <span class="tooltip-title">Physical Action: ${OUTPUT_LABELS[hoveredNodeIdx]}</span>
+        ${descriptions[hoveredNodeIdx]}
+        <br><br>
+        These numbers are converted into <span class="tooltip-highlight">physical forces</span> applied to the robot.
+      `;
+    }
+    
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY + 15) + 'px';
+    tooltip.style.display = 'block';
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+nnCanvas.addEventListener('mouseleave', () => {
+  document.getElementById('nn-tooltip').style.display = 'none';
 });
 
 // ======================== PHYSICS ========================
@@ -685,6 +813,7 @@ const GOAL_D = 16;
 const REST = 0.6;
 
 let scoreRed = 0, scoreBlue = 0;
+let isGoalScored = false;
 let goalFlash = 0, goalFlashColor = '';
 let particles = [];
 let epoch = 0;
@@ -851,6 +980,7 @@ let robots = [
 ];
 
 function resetAfterGoal() {
+  isGoalScored = false;
   ball = createBall();
   ball.vx = (Math.random() - 0.5) * 1;
   ball.vy = (Math.random() - 0.5) * 0.5;
@@ -875,47 +1005,34 @@ function explainReward(reason, amount) {
     'GOAL_SCORED':      {
       action: 'Scored a goal!',
       verdict: pos ? 'Great job!' : 'Lucky shot',
-      lesson: 'Will repeat this move.'
+      lesson: 'The robot remembers what it did and will try to repeat this winning move next time.'
     },
     'GOAL_CONCEDED':    {
-      action: 'Conceded a goal',
+      action: 'Let the other team score',
       verdict: 'That hurt!',
-      lesson: 'Will defend better next time.'
+      lesson: 'The robot learns it was in the wrong position and will try to defend better next time.'
     },
     'SHOT_ON_TARGET':   {
-      action: 'Shot on target',
+      action: 'Shot headed toward the goal',
       verdict: 'Good aim!',
-      lesson: 'Will aim this way more often.'
+      lesson: 'The robot learns this kick angle works well and will aim like this more often.'
     },
     'SHOT_WIDE':        {
-      action: 'Shot missed goal',
+      action: 'Shot missed the goal',
       verdict: 'Wasted chance',
-      lesson: 'Will adjust aim next shot.'
+      lesson: 'The robot learns this kick direction was wrong and will adjust its aim.'
     },
     'SUCCESSFUL_TRICK': {
       action: 'Pulled off a trick kick!',
       verdict: 'Fancy!',
-      lesson: 'Creative moves pay off!'
+      lesson: 'The robot learns that creative moves can pay off and may try them again.'
     },
   };
   return map[reason] || {
     action: reason,
     verdict: pos ? 'Good' : 'Bad',
-    lesson: pos ? 'Will do more of this.' : 'Will avoid this.'
+    lesson: pos ? 'The robot will try to do more of this.' : 'The robot will try to avoid this.'
   };
-}
-
-// Per-robot event storage and active feed tab
-let lastEvents    = [null, null];
-let activeFeedRobot = 0;
-
-function switchFeedRobot(idx) {
-  activeFeedRobot = idx;
-  document.querySelectorAll('.r-tab').forEach((btn, i) => {
-    btn.classList.toggle('active', i === idx);
-  });
-  if (lastEvents[idx]) renderFeedPanel(lastEvents[idx]);
-  updateScoreBar();
 }
 
 function giveReward(robotIdx, reasonKey, amount) {
@@ -926,53 +1043,59 @@ function giveReward(robotIdx, reasonKey, amount) {
   const { action, verdict, lesson } = explainReward(reasonKey, amount);
   const entry = { robotIdx, robot: ROBOT_NAMES[robotIdx], color: r.color, amount, action, verdict, lesson };
 
-  // Store per robot and render if it's the active tab
-  lastEvents[robotIdx] = entry;
-  if (robotIdx === activeFeedRobot) renderFeedPanel(entry);
-  updateScoreBar();
+  // Update "Latest Event" card (always, regardless of selected robot)
+  updateLatestEvent(entry);
+
+
 }
 
-function renderFeedPanel(entry) {
-  const pos  = entry.amount >= 0;
-  const sign = pos ? '+' : '';
-  const dot  = `<span class="rdot" style="background:${entry.color}"></span>`;
+let teamScores = [0, 0];
+let viewedTeam = 'red';
+const lastEvents = { red: null, blue: null };
 
-  // Column 1 — Action
-  document.getElementById('et-action').innerHTML =
-    `${dot}<b>${entry.robot}</b> ${entry.action}`;
-  document.getElementById('et-action').style.fontStyle = 'normal';
-  document.getElementById('et-action').style.color = '';
+function updatePanelUI(team) {
+  const entry = lastEvents[team];
+  const score = teamScores[team === 'red' ? 0 : 1];
+  
+  const footerLabel = document.getElementById('footer-team-label');
+  footerLabel.textContent = team.toUpperCase();
+  footerLabel.className = `footer-label ${team}`;
+  
+  const progress = Math.min(100, Math.max(0, (score / 20) * 100)); // Normalized to 20 pts
+  document.getElementById('footer-progress-bar').style.width = progress + '%';
+  document.getElementById('footer-score-val').textContent = (score >= 0 ? '+' : '') + score.toFixed(1);
 
-  // Column 2 — Reward (big number + verdict label)
-  const pts   = `${sign}${entry.amount.toFixed(1)}`;
-  const cls   = pos ? 'pos' : 'neg';
-  document.getElementById('et-reward').innerHTML =
-    `<div class="reward-pts ${cls}">${pts}</div>` +
-    `<div class="reward-verdict ${cls}">${entry.verdict}</div>`;
+  if (!entry) {
+    document.getElementById('ev-action-text').textContent = "Waiting for action..";
+    document.getElementById('ev-reward-val').textContent = "—";
+    document.getElementById('ev-reward-verdict').textContent = "—";
+    document.getElementById('ev-lesson-text').textContent = "AI is observing the field...";
+    return;
+  }
 
-  // Column 3 — Lesson
-  document.getElementById('et-lesson').textContent = entry.lesson;
-  document.getElementById('et-lesson').style.fontStyle = 'normal';
-  document.getElementById('et-lesson').style.color = '';
+  document.getElementById('ev-action-dot').className = `robot-dot ${team}`;
+  document.getElementById('ev-action-text').textContent = entry.action;
+
+  const sign = entry.amount >= 0 ? '+' : '';
+  const rewardVal = document.getElementById('ev-reward-val');
+  rewardVal.textContent = `${sign}${entry.amount.toFixed(1)}`;
+  rewardVal.style.color = entry.amount >= 0 ? '#10b981' : '#f87171';
+  
+  const verdict = document.getElementById('ev-reward-verdict');
+  verdict.textContent = entry.verdict;
+  verdict.style.color = entry.amount >= 0 ? '#059669' : '#b91c1c';
+
+  document.getElementById('ev-lesson-text').textContent = entry.lesson;
 }
 
-// updateLatestEvent kept as alias for compatibility
-function updateLatestEvent(entry) { renderFeedPanel(entry); }
+function updateLatestEvent(entry) {
+  const team = entry.robotIdx === 0 ? 'red' : 'blue';
+  lastEvents[team] = entry;
+  teamScores[entry.robotIdx] += entry.amount;
 
-let peakReward = 10;
-function updateScoreBar() {
-  const total = cumulativeReward[activeFeedRobot];
-  const fill  = document.getElementById('score-bar-fill');
-  peakReward  = Math.max(peakReward, Math.abs(total));
-  peakReward  = peakReward * 0.9998 + 10 * 0.0002;
-  const pct   = Math.min(Math.abs(total) / peakReward * 100, 100);
-  fill.className   = total >= 0 ? 'pos' : 'neg';
-  fill.style.width = pct + '%';
-  const sign = total >= 0 ? '+' : '';
-  const barTotal = document.getElementById('bar-total');
-  barTotal.textContent = `${sign}${total.toFixed(1)}`;
-  barTotal.className   = total >= 0 ? 'pos' : 'neg';
-  document.getElementById('bar-robot-name').textContent = ROBOT_NAMES[activeFeedRobot];
+  if (viewedTeam === team) {
+    updatePanelUI(team);
+  }
 }
 
 
@@ -1176,10 +1299,12 @@ function robotThink(r) {
 
 // ======================== GOALS ========================
 function checkGoals() {
+  if (isGoalScored) return false;
   const gt = (H - GOAL_W) / 2;
   const gb = gt + GOAL_W;
   if (ball.y > gt && ball.y < gb) {
     if (ball.x - ball.r <= GOAL_D) {
+      isGoalScored = true;
       scoreBlue++;
       document.getElementById('scoreBlue').textContent = 'BLUE ' + scoreBlue;
       goalFlash = 40; goalFlashColor = '#3498db';
@@ -1193,6 +1318,7 @@ function checkGoals() {
       return true;
     }
     if (ball.x + ball.r >= W - GOAL_D) {
+      isGoalScored = true;
       scoreRed++;
       document.getElementById('scoreRed').textContent = 'RED ' + scoreRed;
       goalFlash = 40; goalFlashColor = '#e74c3c';
@@ -1458,6 +1584,7 @@ const NN_LAYER_COLORS = [
   { r: 240, g:  80, b: 160 },  // pink    — outputs
 ];
 
+let latestNNNodes = null;
 function drawNN() {
   const cw = nnCanvas.width, ch = nnCanvas.height;
   const isDark = document.body.getAttribute('data-theme') !== 'light';
@@ -1486,13 +1613,13 @@ function drawNN() {
   const usableW = cw - PAD_L - PAD_R;
   const colX = layers.map((_, i) => PAD_L + (usableW / (layers.length - 1)) * i);
 
-  // Node Y positions — pure vertical column
   const nodes = layers.map((n, l) => {
     const spacing = Math.min(NODE_R * 2.7, (ch - PAD_T - PAD_B) / n);
     const totalH  = (n - 1) * spacing;
     const startY  = PAD_T + (ch - PAD_T - PAD_B - totalH) / 2;
     return Array.from({ length: n }, (_, i) => ({ x: colX[l], y: startY + i * spacing }));
   });
+  latestNNNodes = nodes;
 
   // --- 1. Draw connections (behind nodes) ---
   const connLayerPairs = [
@@ -1650,7 +1777,15 @@ function selectRobot(idx) {
   document.querySelectorAll('.robot-btn').forEach((btn, i) => {
     btn.classList.toggle('active', i === idx);
   });
+  switchFeedTab(idx === 0 ? 'red' : 'blue');
+}
 
+function switchFeedTab(team) {
+  viewedTeam = team;
+  document.querySelectorAll('.team-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.classList.contains(team));
+  });
+  updatePanelUI(team);
 }
 
 // ======================== MAIN LOOP ========================
@@ -1669,16 +1804,24 @@ window.addEventListener('keydown', e => {
 });
 
 // --- LIGHT/DARK THEME ---
-function toggleTheme() {
+function toggleTheme(explicitMode) {
   const body = document.body;
-  const isLight = body.getAttribute('data-theme') === 'light';
-  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  const currentMode = body.getAttribute('data-theme');
+  const targetMode = explicitMode || (currentMode === 'light' ? 'dark' : 'light');
+  
+  body.setAttribute('data-theme', targetMode);
   
   const icon = document.getElementById('theme-icon');
   const text = document.getElementById('theme-text');
-  icon.textContent = isLight ? '🌙' : '☀️';
-  text.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+  icon.textContent = targetMode === 'light' ? '☀️' : '🌙';
+  text.textContent = targetMode === 'light' ? 'Light Mode' : 'Dark Mode';
 }
+
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'SET_THEME') {
+    toggleTheme(event.data.mode);
+  }
+});
 
 ball.vx = 1.2; 
 ball.vy = 0.5;
