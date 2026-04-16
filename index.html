@@ -5037,7 +5037,7 @@
     <!-- ── 12. SCRIPTS & LOGIC ─────────────────────────────────────────────── -->
     <script>
       /* ── A. CORE CANVAS ENGINE & BRAIN ANIMATION ── */
-      let isLightMode = true; // used by drawBrain canvas — managed by setMode()
+      let isLightMode = false; // used by drawBrain canvas — managed by setMode()
 
       const bc = document.getElementById("brain"),
         bx = bc.getContext("2d");
@@ -7127,7 +7127,7 @@
         "theme-apple",
       ];
       const stylePresets = {
-        modern: { cls: "", defaultAccent: "cyan" },
+        modern: { cls: "", defaultAccent: "gold" },
         classic: { cls: "theme-classic", defaultAccent: "gold" },
         linear: { cls: "theme-linear", defaultAccent: "violet" },
         vercel: { cls: "theme-vercel", defaultAccent: "cyan" },
@@ -7135,7 +7135,7 @@
         apple: { cls: "theme-apple", defaultAccent: "cyan" },
       };
 
-      let currentAccent = "cyan";
+      let currentAccent = "gold";
       let currentStyle = "modern";
 
       function applyAccentVars() {
@@ -7285,8 +7285,11 @@
       });
 
 
-      // Initialise accent vars on load (light mode default)
-      applyAccentVars();
+      // Initialise theme/accent on load
+      setMode(isLightMode ? 'light' : 'dark');
+      setStyle(currentStyle);
+      setAccent(currentAccent);
+      
       // Initial progress bar logic removed per user request
 
       // ── Pill popups (Godfather of AI / Nobel Prize 2024) ─────────────────────
@@ -7306,7 +7309,28 @@
       }
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closePillPopup();
+        // Close popups/modals
+        if (e.key === 'Escape') {
+          closePillPopup();
+          if (typeof closeModal === 'function') closeModal();
+          if (typeof closeGpuDemo === 'function') closeGpuDemo();
+          if (typeof closeCpuGpuComparison === 'function') closeCpuGpuComparison();
+        }
+
+        // Navigation keys: Right, Down, PageDown, Space -> Next
+        if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            goToSlide(currentSlideIdx + 1);
+          }
+        } 
+        // Navigation keys: Left, Up, PageUp -> Previous
+        else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            goToSlide(currentSlideIdx - 1);
+          }
+        }
       });
 
       // ── Slide 8: Football Robot staggered entrance ──
