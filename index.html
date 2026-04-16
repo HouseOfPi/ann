@@ -4446,7 +4446,6 @@
         </div>
 
         <!-- Slide counter — top right -->
-        <div class="hero-slide-num">01 &nbsp;/&nbsp; 08</div>
       </section>
 
       <!-- SLIDE 02: HISTORICAL CONTEXT (DARTMOUTH 1956) -->
@@ -5514,11 +5513,12 @@
         const layers = isMobile ? [3, 4, 3] : [3, 5, 5, 3];
         dualAnnLayerCount = layers.length;
         
-        const annLeft = isMobile ? BW * 0.60 : BW * 0.68; // More clearance for title
-        const annRight = isMobile ? BW * 0.96 : BW * 0.95;
-        const totalW = annRight - annLeft;
+        const centerX = BW * 0.75;
+        const annSpread = isMobile ? BW * 0.30 : Math.min(BW * 0.35, 500);
+        const annLeft = centerX - annSpread / 2;
+        const totalW = annSpread;
         const spacingX = totalW / (layers.length - 1);
-        const nodeSpacingY = isMobile ? 42 : 54;
+        const nodeSpacingY = isMobile ? 42 : Math.min(54, BH * 0.06);
 
         layers.forEach((count, li) => {
           const totalH = (count - 1) * nodeSpacingY;
@@ -5548,9 +5548,11 @@
         // ═══════════════════════════════════════
         //  3D Ball (Right Side, behind ANN)
         // ═══════════════════════════════════════
-        const ballCx = BW * 0.775, ballCy = BH * 0.5;
+        const isMob = BW < 768;
+        const annSpreadDraw = isMob ? BW * 0.30 : Math.min(BW * 0.35, 500);
+        const ballCx = BW * 0.75, ballCy = BH * 0.5;
         const rotX = bt * 0.0018, rotY = bt * 0.0025;
-        const baseRadius = Math.min(BW * 0.35, BH) * 0.35;
+        const baseRadius = annSpreadDraw * 0.45;
         const bPulse = 0.92 + Math.sin(bt * 0.006) * 0.08;
         const bRadius = baseRadius * bPulse;
 
