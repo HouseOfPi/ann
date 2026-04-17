@@ -367,90 +367,179 @@
         color: rgba(0, 0, 0, 0.45);
       }
 
-      /* ── Dynamic Nav & Drag-Drop: Premium Overhaul ── */
+      /* ── Dynamic Nav & Drag-Drop: Modern Reorder UX ── */
       #dynamicNavItems {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-bottom: 24px;
+        gap: 6px;
+        margin-bottom: 20px;
         padding: 0 4px;
+        position: relative;
       }
       .nav-item {
         position: relative;
         display: flex;
         align-items: center;
-        gap: 14px;
-        padding: 12px 16px;
-        border-radius: 12px;
+        gap: 10px;
+        padding: 10px 10px 10px 6px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-        background: rgba(255, 255, 255, 0.02);
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         user-select: none;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(4px);
+        touch-action: none;
+        will-change: transform;
+        transition:
+          transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+          background 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.18s ease;
       }
       .nav-item:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.15);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        background: rgba(255, 255, 255, 0.055);
+        border-color: rgba(255, 255, 255, 0.14);
       }
       .nav-item.active {
-        background: rgba(var(--s2-gold-rgb), 0.08);
-        border: 1px solid rgba(var(--s2-gold-rgb), 0.3);
-        box-shadow: 0 0 15px rgba(var(--s2-gold-rgb), 0.1);
+        background: rgba(var(--s2-gold-rgb), 0.09);
+        border-color: rgba(var(--s2-gold-rgb), 0.45);
+        box-shadow:
+          0 0 0 1px rgba(var(--s2-gold-rgb), 0.15),
+          0 6px 18px -6px rgba(var(--s2-gold-rgb), 0.28);
       }
-      .nav-item.active .nav-label {
-        color: var(--s2-gold);
-        font-weight: 600;
+      .nav-item.active .nav-label,
+      .nav-item.active .nav-number { color: var(--s2-gold); }
+      .nav-item.active .nav-label { font-weight: 600; }
+      .nav-item.disabled { opacity: 0.4; }
+      .nav-item.disabled .nav-label { text-decoration: line-through; }
+      .nav-item.dragging-source {
+        opacity: 0.18;
+        transition: opacity 0.15s ease;
       }
-      .nav-item.disabled {
-        opacity: 0.25;
-        border-color: transparent;
-      }
-      .nav-item.disabled .nav-label {
-        text-decoration: line-through;
-        opacity: 0.6;
-      }
-      .drag-handle {
-        cursor: grab;
-        color: rgba(255, 255, 255, 0.15);
-        display: flex;
-        align-items: center;
-        transition: color 0.3s;
-      }
-      .nav-item:hover .drag-handle {
-        color: var(--s2-gold);
-      }
-      .nav-item.dragging {
-        opacity: 0.6;
-        background: rgba(var(--s2-gold-rgb), 0.15);
-        transform: scale(1.02);
-        border: 1px solid var(--s2-gold);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        z-index: 100;
-      }
-      .nav-item.drag-over {
-        border-bottom: 2px solid var(--s2-gold);
-      }
-      .visibility-toggle {
-        margin-left: auto;
-        opacity: 0.3;
-        transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-        padding: 6px;
-        display: flex;
+      .nav-move-up {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        border: 0;
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.5);
         border-radius: 6px;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
       }
-      .nav-item:hover .visibility-toggle {
-        opacity: 0.8;
-      }
-      .visibility-toggle:hover {
-        opacity: 1 !important;
-        background: rgba(255,255,255,0.1);
+      .nav-move-up:hover {
         color: var(--s2-gold);
-        transform: scale(1.1);
+        background: rgba(var(--s2-gold-rgb), 0.12);
+        transform: translateY(-1px);
       }
+      .nav-move-up:active { transform: translateY(0); }
+      .nav-move-up:disabled {
+        opacity: 0.25;
+        cursor: not-allowed;
+        transform: none;
+        background: transparent;
+      }
+      .nav-item.just-moved {
+        animation: navMoveFlash 0.5s ease;
+      }
+      @keyframes navMoveFlash {
+        0%   { background: rgba(var(--s2-gold-rgb), 0.22); border-color: var(--s2-gold); }
+        100% {}
+      }
+      .nav-number {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.42);
+        min-width: 22px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
+      }
+      .nav-label {
+        flex: 1;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.88);
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .nav-visibility {
+        background: transparent;
+        border: 0;
+        padding: 6px;
+        border-radius: 6px;
+        color: rgba(255, 255, 255, 0.32);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+        flex-shrink: 0;
+      }
+      .nav-item:hover .nav-visibility,
+      .nav-item.disabled .nav-visibility { opacity: 1; }
+      .nav-visibility:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--s2-gold);
+      }
+
+      /* Floating ghost while dragging */
+      .nav-ghost {
+        position: fixed;
+        pointer-events: none;
+        z-index: 10000;
+        transform: rotate(-0.6deg) scale(1.03);
+        box-shadow:
+          0 22px 55px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(var(--s2-gold-rgb), 0.5);
+        background: rgba(var(--s2-gold-rgb), 0.1) !important;
+        border-color: rgba(var(--s2-gold-rgb), 0.55) !important;
+        backdrop-filter: blur(12px);
+      }
+      .nav-ghost .nav-visibility { opacity: 0 !important; }
+
+      /* Drop-position indicator line */
+      .nav-drop-indicator {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--s2-gold), transparent);
+        border-radius: 2px;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(0);
+        transition:
+          opacity 0.15s ease,
+          transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 0 14px rgba(var(--s2-gold-rgb), 0.7);
+      }
+      .nav-drop-indicator.visible { opacity: 1; }
+      .nav-drop-indicator::before,
+      .nav-drop-indicator::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 6px;
+        height: 6px;
+        background: var(--s2-gold);
+        border-radius: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 0 8px var(--s2-gold);
+      }
+      .nav-drop-indicator::before { left: -3px; }
+      .nav-drop-indicator::after { right: -3px; }
+
+      body.is-reordering-nav { cursor: grabbing !important; }
+      body.is-reordering-nav * { cursor: grabbing !important; }
       .nav-reset-btn {
         margin-top: auto;
         padding: 18px;
@@ -554,10 +643,23 @@
         background-color: #06b6d4;
         box-shadow: 0 0 10px rgba(6,182,212,0.5);
       }
-      .light-mode .nav-item:hover {
-        background: rgba(0, 0, 0, 0.04);
-        color: #000;
+      .light-mode .nav-item {
+        background: rgba(0, 0, 0, 0.025);
+        border-color: rgba(0, 0, 0, 0.08);
       }
+      .light-mode .nav-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.14);
+      }
+      .light-mode .nav-label { color: rgba(0, 0, 0, 0.82); }
+      .light-mode .nav-number { color: rgba(0, 0, 0, 0.48); }
+      .light-mode .nav-move-up {
+        background: rgba(0, 0, 0, 0.04);
+        color: rgba(0, 0, 0, 0.55);
+      }
+      .light-mode .nav-move-up:hover { background: rgba(180, 83, 9, 0.12); }
+      .light-mode .nav-visibility { color: rgba(0, 0, 0, 0.42); }
+      .light-mode .nav-visibility:hover { background: rgba(0, 0, 0, 0.08); }
 
       /* ─── 05. HERO SCENE & CANVAS ──────────────────────────────────────────── */
       .scene {
@@ -7015,61 +7117,73 @@
         const activeSlides = getActiveSlides();
         const currentId = activeSlides[currentSlideIdx]?.id;
 
+        const eyeOpen = `<svg width="18" height="12" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z"/><circle cx="10" cy="6" r="3"/></svg>`;
+        const eyeClosed = `<svg width="18" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 10 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 10 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="19" y2="19"/></svg>`;
+        const upArrow = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>`;
+
         slideState.forEach((item, index) => {
           const div = document.createElement('div');
           div.className = `nav-item ${!item.enabled ? 'disabled' : ''} ${item.id === currentId ? 'active' : ''}`;
-          div.draggable = true;
           div.dataset.id = item.id;
-          
-          // Drag events
-          div.ondragstart = (e) => {
-            e.target.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', index);
-          };
-          div.ondragend = (e) => e.target.classList.remove('dragging');
-          div.ondragover = (e) => {
-            e.preventDefault();
-            div.classList.add('drag-over');
-          };
-          div.ondragleave = () => div.classList.remove('drag-over');
-          div.ondrop = (e) => {
-            e.preventDefault();
-            div.classList.remove('drag-over');
-            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-            const toIndex = index;
-            const movedItem = slideState.splice(fromIndex, 1)[0];
-            slideState.splice(toIndex, 0, movedItem);
-            saveSlideState();
-          };
+          div.dataset.index = index;
+          div.setAttribute('role', 'button');
+          div.setAttribute('tabindex', '0');
+          div.setAttribute('aria-label', `Slide ${index + 1}: ${SLIDE_METADATA[item.id]}`);
 
-          div.onclick = () => {
-             if (!item.enabled) return;
-             const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
-             goToSlide(newIndex);
-          };
+          const isFirst = index === 0;
 
           div.innerHTML = `
-            <span class="drag-handle">
-              <svg width="12" height="18" viewBox="0 0 12 18" fill="currentColor">
-                <circle cx="2" cy="3" r="1.5"/><circle cx="2" cy="9" r="1.5"/><circle cx="2" cy="15" r="1.5"/>
-                <circle cx="10" cy="3" r="1.5"/><circle cx="10" cy="9" r="1.5"/><circle cx="10" cy="15" r="1.5"/>
-              </svg>
-            </span>
-            <span class="nav-label">${String(index + 1).padStart(2, '0')}. ${SLIDE_METADATA[item.id]}</span>
-            <span class="visibility-toggle" onclick="toggleSlideVisibility('${item.id}', event)" title="${item.enabled ? 'Hide Slide' : 'Show Slide'}">
-               ${item.enabled ? 
-                 `<svg width="18" height="12" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 6s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z"/>
-                    <circle cx="10" cy="6" r="3"/>
-                  </svg>` : 
-                 `<svg width="18" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 10 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 10 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                    <line x1="1" y1="1" x2="19" y2="19"/>
-                  </svg>`
-               }
-            </span>
+            <button type="button" class="nav-move-up" title="Move up" aria-label="Move slide up" ${isFirst ? 'disabled' : ''}>${upArrow}</button>
+            <span class="nav-number">${String(index + 1).padStart(2, '0')}</span>
+            <span class="nav-label">${SLIDE_METADATA[item.id]}</span>
+            <button type="button" class="nav-visibility" title="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-label="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-pressed="${item.enabled}">
+              ${item.enabled ? eyeOpen : eyeClosed}
+            </button>
           `;
+
+          div.addEventListener('click', (e) => {
+            if (e.target.closest('.nav-move-up')) {
+              e.stopPropagation();
+              moveSlideUp(item.id);
+              return;
+            }
+            if (e.target.closest('.nav-visibility')) {
+              toggleSlideVisibility(item.id, e);
+              return;
+            }
+            if (!item.enabled) return;
+            const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
+            goToSlide(newIndex);
+          });
+
+          div.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              if (e.target.closest('.nav-move-up') || e.target.closest('.nav-visibility')) return;
+              e.preventDefault();
+              if (!item.enabled) return;
+              const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
+              goToSlide(newIndex);
+            }
+          });
+
           container.appendChild(div);
+        });
+      }
+
+      function moveSlideUp(id) {
+        const idx = slideState.findIndex(s => s.id === id);
+        if (idx <= 0) return;
+        [slideState[idx - 1], slideState[idx]] = [slideState[idx], slideState[idx - 1]];
+        saveSlideState();
+        // Flash highlight on moved row
+        requestAnimationFrame(() => {
+          const container = document.getElementById('dynamicNavItems');
+          if (!container) return;
+          const el = container.querySelector(`.nav-item[data-id="${id}"]`);
+          if (el) {
+            el.classList.add('just-moved');
+            setTimeout(() => el.classList.remove('just-moved'), 500);
+          }
         });
       }
 
