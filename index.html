@@ -416,7 +416,7 @@
         opacity: 0.18;
         transition: opacity 0.15s ease;
       }
-      .nav-move-up {
+      .nav-drag-handle {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -424,24 +424,20 @@
         height: 26px;
         padding: 0;
         border: 0;
-        background: rgba(255, 255, 255, 0.04);
-        color: rgba(255, 255, 255, 0.5);
+        background: transparent;
+        color: rgba(255, 255, 255, 0.3);
         border-radius: 6px;
         flex-shrink: 0;
-        cursor: pointer;
-        transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+        cursor: grab;
+        touch-action: none;
+        transition: color 0.2s ease, background 0.2s ease;
       }
-      .nav-move-up:hover {
+      .nav-drag-handle:hover {
         color: var(--s2-gold);
-        background: rgba(var(--s2-gold-rgb), 0.12);
-        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.05);
       }
-      .nav-move-up:active { transform: translateY(0); }
-      .nav-move-up:disabled {
-        opacity: 0.25;
-        cursor: not-allowed;
-        transform: none;
-        background: transparent;
+      .nav-drag-handle:active {
+        cursor: grabbing;
       }
       .nav-item.just-moved {
         animation: navMoveFlash 0.5s ease;
@@ -475,17 +471,23 @@
         border: 0;
         padding: 6px;
         border-radius: 6px;
-        color: rgba(255, 255, 255, 0.32);
+        color: rgba(255, 255, 255, 0.25);
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        opacity: 0;
-        transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+        opacity: 1; /* Make always visible */
+        transition: color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
         flex-shrink: 0;
       }
-      .nav-item:hover .nav-visibility,
-      .nav-item.disabled .nav-visibility { opacity: 1; }
+      .nav-item:hover .nav-visibility {
+        color: var(--s2-gold);
+        opacity: 1;
+      }
+      .nav-item.disabled .nav-visibility {
+        color: var(--s2-gold);
+        opacity: 0.8;
+      }
       .nav-visibility:hover {
         background: rgba(255, 255, 255, 0.08);
         color: var(--s2-gold);
@@ -659,11 +661,13 @@
       }
       .light-mode .nav-label { color: rgba(0, 0, 0, 0.82); }
       .light-mode .nav-number { color: rgba(0, 0, 0, 0.48); }
-      .light-mode .nav-move-up {
-        background: rgba(0, 0, 0, 0.04);
-        color: rgba(0, 0, 0, 0.55);
+      .light-mode .nav-drag-handle {
+        color: rgba(0, 0, 0, 0.4);
       }
-      .light-mode .nav-move-up:hover { background: rgba(180, 83, 9, 0.12); }
+      .light-mode .nav-drag-handle:hover {
+        background: rgba(0, 0, 0, 0.06);
+        color: rgba(180, 83, 9, 1);
+      }
       .light-mode .nav-visibility { color: rgba(0, 0, 0, 0.42); }
       .light-mode .nav-visibility:hover { background: rgba(0, 0, 0, 0.08); }
 
@@ -4669,6 +4673,18 @@
         <div class="ribbon-line"></div>
         <div class="ribbon-text">Quick Nav</div>
       </div>
+      
+      <div class="side-nav-header">
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>Presentation Map</span>
+          <label class="toggle-switch" style="transform: scale(0.7); margin-right: -8px;" title="Hide disabled pages from this list">
+            <input type="checkbox" id="hideInactiveToggle" onchange="toggleHideInactive()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <span style="font-size: 9px; opacity: 0.5; margin-top: -4px;">Hide Inactive Pages</span>
+      </div>
+
       <div id="dynamicNavItems">
         <!-- Dynamically injected -->
       </div>
@@ -5138,16 +5154,16 @@
             <div class="premium-header" style="margin-bottom: 0;">
               <div class="year-badge">THE JOURNEY</div>
             </div>
-            <h2 class="s9-title">70 Years in the Making — <span class="s9-accent">From a Summer Dream to a Nobel Prize</span></h2>
-            <p class="s9-subtitle">Most of us met AI through ChatGPT, but serious research began 70 years ago. Progress was slow — until one researcher refused to give up.</p>
+            <h2 class="s9-title">The Evolution of Neural Networks — <span class="s9-accent">A 70-Year Timeline</span></h2>
+
           </div>
 
           <div class="s9-timeline">
-            <div class="s9-card">
+            <div class="s9-card clickable-card" onclick="openImagePopup('assets/darthmouth.png', true)">
               <div class="s9-dot"></div>
               <div class="s9-year">1956</div>
-              <div class="s9-card-title">The Dartmouth Dream</div>
-              <div class="s9-card-desc">At the Dartmouth Summer Project, researchers believed they could solve AI in a single summer. Progress proved far slower.</div>
+              <div class="s9-card-title">The Dartmouth Dream <svg style="display:inline; margin-left:6px; vertical-align:middle; opacity:0.6;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              <div class="s9-card-desc">At the Dartmouth Summer Project, researchers believed they could solve AI in a single summer. Progress proved far slower. <span style="display:block; margin-top:8px; color:var(--s2-gold); font-size:0.85em; opacity:0.9;">Click to view Dartmouth Proposal &rarr;</span></div>
             </div>
 
             <div class="s9-card">
@@ -5191,6 +5207,39 @@
         <div id="modalMeta" class="modal-meta"></div>
         <div id="modalIntro" class="modal-intro">Intro text</div>
         <ul id="modalFacts" class="modal-facts"></ul>
+      </div>
+    </div>
+
+    <!-- Image Popup Overlay -->
+    <style>
+      #imagePopupOverlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85); z-index: 9999; justify-content: center; align-items: center;
+        opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(5px);
+      }
+      #imagePopupOverlay.visible { opacity: 1; }
+      #imagePopupOverlay img {
+        max-width: 90%; max-height: 90%; border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255,255,255,0.1);
+        transform: scale(0.95); transition: transform 0.3s ease;
+      }
+      #imagePopupOverlay.visible img { transform: scale(1); }
+      .image-pp-close {
+        position: absolute; top: 30px; right: 40px; background: none; border: none;
+        color: #fff; font-size: 40px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;
+      }
+      .image-pp-close:hover { opacity: 1; }
+      .clickable-card { cursor: pointer; transition: transform 0.2s, background 0.2s; }
+      .clickable-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); }
+      .light-mode .clickable-card:hover { background: rgba(0,0,0,0.04); }
+    </style>
+    <div id="imagePopupOverlay" onclick="closeImagePopup(event)">
+      <button class="image-pp-close" onclick="closeImagePopup(event)">&times;</button>
+      <div style="display:flex; flex-direction:column; align-items:center; max-height:100%; max-width:100%;">
+        <img id="imagePopupImg" src="" alt="Popup Image" />
+        <div id="imagePopupCaption" style="color: rgba(255,255,255,0.6); margin-top: 12px; font-size: 0.9em; max-width: 80%; text-align: center; display: none;">
+          Ref: IEEE Spectrum (<a href="https://spectrum.ieee.org/dartmouth-ai-workshop" target="_blank" style="color: var(--s2-gold); text-decoration: none;">https://spectrum.ieee.org/dartmouth-ai-workshop</a>)
+        </div>
       </div>
     </div>
 
@@ -6610,6 +6659,26 @@
         document.getElementById("pioneerModal").classList.remove("active");
       }
 
+      function openImagePopup(src, showDartmouthCaption = false) {
+        const overlay = document.getElementById('imagePopupOverlay');
+        document.getElementById('imagePopupImg').src = src;
+        
+        const caption = document.getElementById('imagePopupCaption');
+        if (caption) caption.style.display = showDartmouthCaption ? 'block' : 'none';
+        
+        overlay.style.display = 'flex';
+        // Delay adding visible class slightly so the transition works
+        setTimeout(() => overlay.classList.add('visible'), 10);
+      }
+
+      function closeImagePopup(e) {
+        // Prevent closing if clicking the image or the reference link
+        if (e && (e.target.tagName === 'IMG' || e.target.tagName === 'A')) return; 
+        const overlay = document.getElementById('imagePopupOverlay');
+        overlay.classList.remove('visible');
+        setTimeout(() => overlay.style.display = 'none', 300);
+      }
+
       // Close modal when clicking outside
       document
         .getElementById("pioneerModal")
@@ -7072,17 +7141,18 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
-        { id: 'slideTwo', enabled: true },
-        { id: 'slideThree', enabled: true },
-        { id: 'slideFive', enabled: true },
+        { id: 'slideNine', enabled: true },
         { id: 'slideSeven', enabled: true },
+        { id: 'slideFive', enabled: true },
+        { id: 'slideTwo', enabled: false },
+        { id: 'slideThree', enabled: false },
         { id: 'slideEight', enabled: true },
         { id: 'slideRobotFootball', enabled: true },
-        { id: 'slideFour', enabled: true },
-        { id: 'slideNine', enabled: true }
+        { id: 'slideFour', enabled: true }
       ];
 
       let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || DEFAULT_SLIDE_STATE;
+      let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive')) || false;
 
       // Merge new slides from default state if they are missing in localStorage
       DEFAULT_SLIDE_STATE.forEach((def, defIdx) => {
@@ -7121,6 +7191,11 @@
       function renderQuickNav() {
         const container = document.getElementById('dynamicNavItems');
         if (!container) return;
+        
+        // Sync the master toggle state
+        const masterToggle = document.getElementById('hideInactiveToggle');
+        if (masterToggle) masterToggle.checked = hideInactive;
+
         container.innerHTML = '';
 
         const activeSlides = getActiveSlides();
@@ -7128,9 +7203,12 @@
 
         const eyeOpen = `<svg width="18" height="12" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z"/><circle cx="10" cy="6" r="3"/></svg>`;
         const eyeClosed = `<svg width="18" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 10 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 10 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="19" y2="19"/></svg>`;
-        const upArrow = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>`;
+        const gripIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>`;
 
         slideState.forEach((item, index) => {
+          // If master toggle is ON, skip disabled items
+          if (hideInactive && !item.enabled) return;
+
           const div = document.createElement('div');
           div.className = `nav-item ${!item.enabled ? 'disabled' : ''} ${item.id === currentId ? 'active' : ''}`;
           div.dataset.id = item.id;
@@ -7139,10 +7217,8 @@
           div.setAttribute('tabindex', '0');
           div.setAttribute('aria-label', `Slide ${index + 1}: ${SLIDE_METADATA[item.id]}`);
 
-          const isFirst = index === 0;
-
           div.innerHTML = `
-            <button type="button" class="nav-move-up" title="Move up" aria-label="Move slide up" ${isFirst ? 'disabled' : ''}>${upArrow}</button>
+            <button type="button" class="nav-drag-handle" title="Drag to reorder" aria-label="Drag to reorder">${gripIcon}</button>
             <span class="nav-number">${String(index + 1).padStart(2, '0')}</span>
             <span class="nav-label">${SLIDE_METADATA[item.id]}</span>
             <button type="button" class="nav-visibility" title="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-label="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-pressed="${item.enabled}">
@@ -7151,9 +7227,8 @@
           `;
 
           div.addEventListener('click', (e) => {
-            if (e.target.closest('.nav-move-up')) {
+            if (e.target.closest('.nav-drag-handle')) {
               e.stopPropagation();
-              moveSlideUp(item.id);
               return;
             }
             if (e.target.closest('.nav-visibility')) {
@@ -7167,7 +7242,7 @@
 
           div.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
-              if (e.target.closest('.nav-move-up') || e.target.closest('.nav-visibility')) return;
+              if (e.target.closest('.nav-drag-handle') || e.target.closest('.nav-visibility')) return;
               e.preventDefault();
               if (!item.enabled) return;
               const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
@@ -7175,26 +7250,126 @@
             }
           });
 
+          // --- Custom Pointer Drag (Attached strictly to handle) ---
+          const dragHandle = div.querySelector('.nav-drag-handle');
+          let isDragging = false;
+          let ghost = null;
+          let initialOffset = 0;
+
+          dragHandle.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            cleanupDrag(); // Safety cleanup
+            
+            isDragging = true;
+            div.classList.add('dragging-source');
+            document.body.classList.add('is-reordering-nav');
+            
+            // Create Ghost
+            ghost = div.cloneNode(true);
+            ghost.classList.add('nav-ghost');
+            document.body.appendChild(ghost);
+            
+            const rect = div.getBoundingClientRect();
+            initialOffset = e.clientY - rect.top;
+            
+            ghost.style.width = rect.width + 'px';
+            ghost.style.height = rect.height + 'px';
+            ghost.style.left = rect.left + 'px';
+            ghost.style.top = (e.clientY - initialOffset) + 'px';
+            
+            try { dragHandle.setPointerCapture(e.pointerId); } catch(err) {}
+            
+            const onPointerMove = (moveEvent) => {
+              if (!isDragging || !ghost) return;
+              ghost.style.left = div.getBoundingClientRect().left + 'px';
+              ghost.style.top = (moveEvent.clientY - initialOffset) + 'px';
+              updateDropIndicator(moveEvent.clientY);
+            };
+
+            const onPointerUp = (upEvent) => {
+              try { dragHandle.releasePointerCapture(upEvent.pointerId); } catch(err) {}
+              dragHandle.removeEventListener('pointermove', onPointerMove);
+              dragHandle.removeEventListener('pointerup', onPointerUp);
+              dragHandle.removeEventListener('pointercancel', onPointerUp);
+              
+              if (isDragging) {
+                const targetInfo = getDropTarget(upEvent.clientY);
+                if (targetInfo && targetInfo.id !== item.id) {
+                  reorderSlides(item.id, targetInfo.id, targetInfo.isAbove);
+                } else {
+                  cleanupDrag();
+                }
+              }
+            };
+
+            dragHandle.addEventListener('pointermove', onPointerMove);
+            dragHandle.addEventListener('pointerup', onPointerUp);
+            dragHandle.addEventListener('pointercancel', onPointerUp);
+          });
+
+          function updateDropIndicator(y) {
+            const target = getDropTarget(y);
+            let indicator = document.querySelector('.nav-drop-indicator');
+            if (!indicator) {
+              indicator = document.createElement('div');
+              indicator.className = 'nav-drop-indicator';
+              container.appendChild(indicator);
+            }
+            
+            if (target) {
+              indicator.classList.add('visible');
+              const containerRect = container.getBoundingClientRect();
+              const targetRect = target.el.getBoundingClientRect();
+              const indicatorY = target.isAbove ? targetRect.top : targetRect.bottom;
+              indicator.style.top = (indicatorY - containerRect.top) + 'px';
+            } else {
+              indicator.classList.remove('visible');
+            }
+          }
+
+          function getDropTarget(y) {
+            const items = Array.from(container.querySelectorAll('.nav-item:not(.dragging-source)'));
+            for (const el of items) {
+              const rect = el.getBoundingClientRect();
+              if (y >= rect.top && y <= rect.bottom) {
+                return { id: el.dataset.id, el, isAbove: y < (rect.top + rect.height / 2) };
+              }
+            }
+            return null;
+          }
+
+          function cleanupDrag() {
+            isDragging = false;
+            div.classList.remove('dragging-source');
+            document.body.classList.remove('is-reordering-nav');
+            if (ghost) { ghost.remove(); ghost = null; }
+            const indicator = document.querySelector('.nav-drop-indicator');
+            if (indicator) indicator.classList.remove('visible');
+          }
+
           container.appendChild(div);
         });
       }
 
-      function moveSlideUp(id) {
-        const idx = slideState.findIndex(s => s.id === id);
-        if (idx <= 0) return;
-        [slideState[idx - 1], slideState[idx]] = [slideState[idx], slideState[idx - 1]];
+      function reorderSlides(draggedId, targetId, isAbove) {
+        const draggedIdx = slideState.findIndex(s => s.id === draggedId);
+        const draggedItem = slideState.splice(draggedIdx, 1)[0];
+        
+        let newIdx = slideState.findIndex(s => s.id === targetId);
+        if (!isAbove) newIdx++;
+        
+        slideState.splice(newIdx, 0, draggedItem);
         saveSlideState();
-        // Flash highlight on moved row
-        requestAnimationFrame(() => {
-          const container = document.getElementById('dynamicNavItems');
-          if (!container) return;
-          const el = container.querySelector(`.nav-item[data-id="${id}"]`);
-          if (el) {
-            el.classList.add('just-moved');
-            setTimeout(() => el.classList.remove('just-moved'), 500);
-          }
-        });
       }
+
+      function toggleHideInactive() {
+        hideInactive = document.getElementById('hideInactiveToggle').checked;
+        localStorage.setItem('ann_hide_inactive', JSON.stringify(hideInactive));
+        renderQuickNav();
+      }
+
+
 
       function getActiveSlides() {
         const orderMap = slideState.reduce((acc, s, i) => { acc[s.id] = i; return acc; }, {});
