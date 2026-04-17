@@ -4287,6 +4287,177 @@
         padding: 4px 12px;
         border-radius: 20px;
       }
+
+      /* ── SLIDE 09: THE JOURNEY (CLOSING SLIDE) ─────────────────────────── */
+      .slide-nine {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 60px;
+        background: transparent;
+        position: relative;
+        overflow: hidden;
+      }
+      .s9-bg-glow {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 15% 30%, rgba(255, 191, 0, 0.08), transparent 45%),
+          radial-gradient(circle at 85% 70%, rgba(147, 51, 234, 0.07), transparent 45%);
+        pointer-events: none;
+        z-index: 0;
+      }
+      .light-mode .s9-bg-glow {
+        background:
+          radial-gradient(circle at 15% 30%, rgba(180, 83, 9, 0.07), transparent 45%),
+          radial-gradient(circle at 85% 70%, rgba(79, 70, 229, 0.06), transparent 45%);
+      }
+      .s9-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 1400px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .s9-header {
+        text-align: center;
+        margin-bottom: 4px;
+      }
+      .s9-title {
+        font-family: var(--font-heading);
+        font-size: clamp(32px, 4.2vw, 56px);
+        font-weight: 800;
+        font-style: italic;
+        color: var(--text-main);
+        margin: 10px 0 8px;
+        line-height: 1.1;
+      }
+      .s9-title .s9-accent {
+        background: linear-gradient(90deg, var(--accent-main), #ffd700);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .s9-subtitle {
+        font-family: system-ui, sans-serif;
+        font-size: clamp(14px, 1.1vw, 17px);
+        color: var(--text-dim);
+        max-width: 780px;
+        margin: 0 auto;
+        line-height: 1.55;
+      }
+      .s9-timeline {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        position: relative;
+        padding: 10px 0;
+      }
+      .s9-timeline::before {
+        content: '';
+        position: absolute;
+        top: 50px;
+        left: 6%;
+        right: 6%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-main), transparent);
+        opacity: 0.35;
+        z-index: 0;
+      }
+      .s9-card {
+        position: relative;
+        background: var(--card-bg, rgba(255, 255, 255, 0.04));
+        border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+        border-radius: 16px;
+        padding: 24px 20px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        z-index: 1;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: s9-fade-up 0.7s ease forwards;
+      }
+      .light-mode .s9-card {
+        background: rgba(255, 255, 255, 0.65);
+        border-color: rgba(0, 0, 0, 0.08);
+      }
+      .s9-card:nth-child(1) { animation-delay: 0.1s; }
+      .s9-card:nth-child(2) { animation-delay: 0.25s; }
+      .s9-card:nth-child(3) { animation-delay: 0.4s; }
+      .s9-card:nth-child(4) { animation-delay: 0.55s; }
+      .s9-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-main);
+        box-shadow: 0 12px 40px rgba(255, 191, 0, 0.12);
+      }
+      .s9-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--accent-main);
+        box-shadow: 0 0 0 4px var(--bg-main, #0a0a0a), 0 0 18px rgba(255, 191, 0, 0.6);
+        margin: 0 auto 14px;
+      }
+      .light-mode .s9-dot {
+        box-shadow: 0 0 0 4px #f5f5f5, 0 0 12px rgba(180, 83, 9, 0.4);
+      }
+      .s9-year {
+        font-family: var(--font-heading);
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--accent-main);
+        text-align: center;
+        margin-bottom: 6px;
+        letter-spacing: 1px;
+      }
+      .s9-card-title {
+        font-family: system-ui, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        text-align: center;
+        margin-bottom: 10px;
+        letter-spacing: 0.3px;
+      }
+      .s9-card-desc {
+        font-family: system-ui, sans-serif;
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--text-dim);
+        text-align: center;
+      }
+      .s9-closing {
+        text-align: center;
+        margin-top: 12px;
+        padding: 22px 28px;
+        border-top: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+        opacity: 0;
+        animation: s9-fade-up 0.7s ease forwards;
+        animation-delay: 0.8s;
+      }
+      .s9-closing-text {
+        font-family: var(--font-heading);
+        font-size: clamp(16px, 1.5vw, 22px);
+        font-style: italic;
+        color: var(--text-main);
+        line-height: 1.5;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .s9-closing-text strong {
+        color: var(--accent-main);
+        font-weight: 700;
+      }
+      @keyframes s9-fade-up {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (max-width: 900px) {
+        .s9-timeline { grid-template-columns: repeat(2, 1fr); }
+        .s9-timeline::before { display: none; }
+      }
     </style>
   </head>
   <body class="dark-mode">
@@ -4845,6 +5016,56 @@
                 <p>The <strong>self-attention mechanism</strong> changed everything. It allows the model to look at <em>all parts of the input simultaneously</em>, dynamically deciding which words are most relevant to each other, unlocking unprecedented logic, reasoning, and context understanding.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 09: THE JOURNEY (CLOSING) -->
+      <section class="slide-nine" id="slideNine">
+        <div class="s9-bg-glow"></div>
+        <div class="s9-container">
+          <div class="s9-header">
+            <div class="premium-header" style="margin-bottom: 0;">
+              <div class="year-badge">THE JOURNEY</div>
+            </div>
+            <h2 class="s9-title">70 Years in the Making — <span class="s9-accent">From a Summer Dream to a Nobel Prize</span></h2>
+            <p class="s9-subtitle">Most of us met AI through ChatGPT, but serious research began 70 years ago. Progress was slow — until one researcher refused to give up.</p>
+          </div>
+
+          <div class="s9-timeline">
+            <div class="s9-card">
+              <div class="s9-dot"></div>
+              <div class="s9-year">1956</div>
+              <div class="s9-card-title">The Dartmouth Dream</div>
+              <div class="s9-card-desc">At the Dartmouth Summer Project, researchers believed they could solve AI in a single summer. Progress proved far slower.</div>
+            </div>
+
+            <div class="s9-card">
+              <div class="s9-dot"></div>
+              <div class="s9-year">1986</div>
+              <div class="s9-card-title">Geoffrey Hinton</div>
+              <div class="s9-card-desc">Called the <strong style="color: var(--text-main);">Godfather of AI</strong>, his work on backpropagation gave neural networks the ability to learn from their mistakes.</div>
+            </div>
+
+            <div class="s9-card">
+              <div class="s9-dot"></div>
+              <div class="s9-year">2012</div>
+              <div class="s9-card-title">AlexNet Breakthrough</div>
+              <div class="s9-card-desc">Hinton's team dramatically outperformed every other system in image recognition — showing the world what deep learning could really do.</div>
+            </div>
+
+            <div class="s9-card">
+              <div class="s9-dot"></div>
+              <div class="s9-year">2024</div>
+              <div class="s9-card-title">Nobel Prize in Physics</div>
+              <div class="s9-card-desc">Hinton was awarded the Nobel Prize in Physics for his foundational work that made modern AI possible.</div>
+            </div>
+          </div>
+
+          <div class="s9-closing">
+            <p class="s9-closing-text">
+              What took <strong>70 years of persistence</strong> now shapes everything we build.
+            </p>
           </div>
         </div>
       </section>
@@ -6734,7 +6955,8 @@
         'slideFive': 'Bio-Inspiration',
         'slideSeven': 'ANN Architecture',
         'slideFour': 'The Convergence',
-        'slideEight': 'Training Analogy'
+        'slideEight': 'Training Analogy',
+        'slideNine': 'The Journey'
       };
 
       const DEFAULT_SLIDE_STATE = [
@@ -6745,7 +6967,8 @@
         { id: 'slideSeven', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideRobotFootball', enabled: true },
-        { id: 'slideFour', enabled: true }
+        { id: 'slideFour', enabled: true },
+        { id: 'slideNine', enabled: true }
       ];
 
       let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || DEFAULT_SLIDE_STATE;
