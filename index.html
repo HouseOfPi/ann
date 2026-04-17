@@ -606,8 +606,8 @@
       .toggle-switch {
         position: relative;
         display: inline-block;
-        width: 36px;
-        height: 20px;
+        width: 44px;
+        height: 22px;
       }
       .toggle-switch input {
         opacity: 0;
@@ -618,30 +618,36 @@
         position: absolute;
         cursor: pointer;
         top: 0; left: 0; right: 0; bottom: 0;
-        background-color: rgba(15,23,42,0.6);
-        transition: .3s;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.1);
+        background-color: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border-radius: 22px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
       }
       .toggle-slider:before {
         position: absolute;
         content: "";
-        height: 14px;
-        width: 14px;
-        left: 2px;
+        height: 16px;
+        width: 16px;
+        left: 3px;
         bottom: 2px;
-        background-color: #cbd5e1;
-        transition: .3s;
+        background-color: #475569;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
       }
       input:checked + .toggle-slider {
-        background-color: rgba(6,182,212,0.3);
-        border-color: rgba(6,182,212,0.5);
+        background-color: rgba(34, 211, 238, 0.1);
+        border-color: rgba(34, 211, 238, 0.4);
       }
       input:checked + .toggle-slider:before {
-        transform: translateX(16px);
-        background-color: #06b6d4;
-        box-shadow: 0 0 10px rgba(6,182,212,0.5);
+        transform: translateX(20px);
+        background-color: #22d3ee;
+        box-shadow: 0 0 12px rgba(34, 211, 238, 0.7), 0 0 4px rgba(34, 211, 238, 0.4);
+      }
+      .toggle-switch:hover .toggle-slider {
+        border-color: rgba(255, 255, 255, 0.25);
+        background-color: rgba(30, 41, 59, 0.9);
       }
       .light-mode .nav-item {
         background: rgba(0, 0, 0, 0.025);
@@ -4648,8 +4654,8 @@
         <div class="settings-label">Sound Effects</div>
         <div class="settings-btns">
             <div class="settings-item" style="padding: 0; width: 100%;">
-                <span class="settings-label" style="font-size: 13px; opacity: 0.7; letter-spacing: 0;">Enable Audio Events</span>
-                <label class="toggle-switch" style="margin-left: auto;">
+                <span class="settings-label" style="font-size: 13px; opacity: 0.85; letter-spacing: 0.3px;">Enable Interface Sounds</span>
+                <label class="toggle-switch" style="margin-left: auto;" title="Toggle all interface sounds and video audio">
                     <input type="checkbox" id="soundToggle" checked onchange="toggleSound()">
                     <span class="toggle-slider"></span>
                 </label>
@@ -5363,6 +5369,7 @@
     <script>
       /* ── A. CORE CANVAS ENGINE & BRAIN ANIMATION ── */
       let isLightMode = false; // used by drawBrain canvas — managed by setMode()
+      let soundEnabled = true; // managed by toggleSound()
 
       const bc = document.getElementById("brain"),
         bx = bc.getContext("2d");
@@ -7566,12 +7573,20 @@
 
 
 
+      function toggleSound() {
+        soundEnabled = document.getElementById('soundToggle').checked;
+        const vid = document.getElementById('neuronVideo');
+        if (vid) {
+          vid.muted = !soundEnabled;
+        }
+      }
+
       function toggleNeuronVideo(e) {
         if (e) e.stopPropagation();
         const vid = document.getElementById('neuronVideo');
         const btn = document.getElementById('neuronPlayBtn');
         if (vid.paused) {
-          vid.muted = false; // Ensure sound is unmuted when user initiates playback
+          vid.muted = !soundEnabled; // Respect global sound setting
           vid.play();
           btn.textContent = '⏸';
         } else {
