@@ -1320,10 +1320,7 @@ function FormulaPanel() {
   const zOp = animate({ from: 0, to: 1, start: 13.0, end: 13.6 })(t);
   // Stage 3: f(z) = ... output (15.5-17s)
   const fOp = animate({ from: 0, to: 1, start: 15.5, end: 16.1 })(t);
-  // Panel exit (19.5-20.5)
-  const exit = animate({ from: 0, to: 1, start: 19.5, end: 20.5, ease: Easing.easeInCubic })(t);
-
-  const panelOpacity = clamp(sumOp - exit, 0, 1);
+  const panelOpacity = clamp(sumOp, 0, 1);
   if (panelOpacity === 0) return null;
 
   return (
