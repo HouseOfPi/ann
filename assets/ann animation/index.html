@@ -2053,6 +2053,11 @@ function NetNodes() {
         const isOutput = li === NET_LAYER_SIZES.length - 1;
         const activation = NET_ACTIVATIONS[li][i];
         
+        // Appear only when the data pulse "reaches" this layer
+        const reached = isInput 
+          ? animate({ from:0, to:1, start:1.0, end:1.5 })(t)
+          : animate({ from:0, to:1, start:fireTime, end:fireTime+0.2 })(t);
+
         return (
           <div key={`${li}-${i}`} style={{
             position:'absolute',
@@ -2079,16 +2084,16 @@ function NetNodes() {
             }}>
               <div style={{
                 position:'absolute', left:0, right:0, bottom:0,
-                height: `${glow * activation * 100}%`,
+                height: `${reached * activation * 100}%`,
                 background: isOutput ? COLORS.accent2 : COLORS.accent,
                 opacity: 0.8,
-                transition: 'height 0.15s',
+                transition: 'height 0.1s',
               }}/>
               <div style={{ 
                 position: 'relative', zIndex: 2, 
                 fontFamily: FONT_MONO, fontSize: 13, fontWeight: 600,
-                color: (glow * activation > 0.5) ? '#fff' : COLORS.ink,
-                opacity: appear 
+                color: (glow * activation > 0.5 || reached * activation > 0.6) ? '#fff' : COLORS.ink,
+                opacity: reached
               }}>
                 {activation.toFixed(2)}
               </div>
