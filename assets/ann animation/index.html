@@ -804,11 +804,15 @@ function usePaletteVersion() {
   React.useEffect(() => {
     paletteSubs.add(force);
     const handleMessage = (e) => {
-      if (e.data && e.data.type === 'SET_THEME') {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
         let m = e.data.mode;
         if (m === 'custom') setPalette('Warm Linen');
         else if (m === 'light') setPalette('Paper White');
         else if (m === 'dark') setPalette('Midnight');
+      } else if (e.data.type === 'RESET_ANIMATION') {
+        setTime(startTime);
+        setPlaying(true);
       }
     };
     window.addEventListener('message', handleMessage);
@@ -1879,7 +1883,6 @@ function NeuronScene() {
       <OutputNode />
       <OutputPulse />
       <FormulaPanel />
-      <SoundToggle />
       <TweaksPanel />
       <NavLinks />
     </div>

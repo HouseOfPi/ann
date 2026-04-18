@@ -7540,6 +7540,13 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
+        if (incoming.id === 'slideSingleNeuron') {
+          const frame = incoming.querySelector('iframe');
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({ type: 'RESET_ANIMATION' }, '*');
+          }
+        }
+
         // Update UI
         const progress = ((index + 1) / activeSlides.length) * 100;
         document.getElementById("slideCounter").innerText = `${index + 1} / ${activeSlides.length}`;
