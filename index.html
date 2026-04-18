@@ -7207,6 +7207,7 @@
       );
       let currentSlideIdx = 0;
       let isSlideAnimating = false;
+      let activeSlideTimeline = null;
 
       // Set default slide (page 1) as active on load
       presentationSections[0].classList.add("active-slide");
@@ -7263,8 +7264,20 @@
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
       function saveSlideState() {
+        const activeBefore = getActiveSlides();
+        const currentId = activeBefore[currentSlideIdx]?.id;
+        
         localStorage.setItem('ann_slide_state', JSON.stringify(slideState));
         renderQuickNav();
+
+        const activeAfter = getActiveSlides();
+        const newIdx = activeAfter.findIndex(s => s.id === currentId);
+        if (newIdx !== -1) {
+          currentSlideIdx = newIdx;
+        } else {
+          // If current slide was hidden, stay at same index if possible
+          currentSlideIdx = Math.max(0, Math.min(currentSlideIdx, activeAfter.length - 1));
+        }
         updateNavigationButtons();
       }
 
@@ -7482,8 +7495,16 @@
         const nav = document.getElementById("sideNav");
         if (nav) nav.classList.remove("open");
 
-        if (index < 0 || index >= activeSlides.length || isSlideAnimating) return;
-        if (index === currentSlideIdx && activeSlides[index].classList.contains('active-slide')) return;
+        if (index < 0 || index >= activeSlides.length) return;
+        
+        if (isSlideAnimating && activeSlideTimeline) {
+          activeSlideTimeline.progress(1).kill();
+        }
+
+        if (index === currentSlideIdx && activeSlides[index].classList.contains('active-slide')) {
+           isSlideAnimating = false;
+           return;
+        }
         
         isSlideAnimating = true;
         const outgoing = document.querySelector('.active-slide');
@@ -7494,13 +7515,16 @@
 
         if (typeof syncSlider === "function") syncSlider(index);
 
-        const tl = gsap.timeline({
+        activeSlideTimeline = gsap.timeline({
           onComplete: () => {
             if (outgoing) outgoing.classList.remove("active-slide");
             if (outgoing) gsap.set(outgoing, { visibility: "hidden", zIndex: 0 });
             isSlideAnimating = false;
+            activeSlideTimeline = null;
+            updateNavigationButtons();
           },
         });
+        const tl = activeSlideTimeline;
 
         incoming.classList.add("active-slide");
         gsap.set(incoming, {
