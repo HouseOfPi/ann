@@ -4756,7 +4756,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
           <span>Presentation Map</span>
           <label class="toggle-switch" style="transform: scale(0.7); margin-right: -8px;" title="Hide disabled pages from this list">
-            <input type="checkbox" id="hideInactiveToggle" onchange="toggleHideInactive()">
+            <input type="checkbox" id="hideInactiveToggle" onchange="toggleHideInactive()" checked>
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -7245,11 +7245,12 @@
         { id: 'slideSeven', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideRobotFootball', enabled: true },
-        { id: 'slideFour', enabled: true }
+        { id: 'slideFour', enabled: false }
       ];
 
       let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || DEFAULT_SLIDE_STATE;
-      let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive')) || false;
+      let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive'));
+      if (hideInactive === null) hideInactive = true;
 
       // Merge new slides from default state if they are missing in localStorage
       DEFAULT_SLIDE_STATE.forEach((def, defIdx) => {
