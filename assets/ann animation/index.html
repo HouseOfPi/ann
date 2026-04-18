@@ -2483,7 +2483,7 @@ function App() {
   }, [view]);
   if (view === 'network') {
     return (
-      <Stage key={key} width={1920} height={1080} duration={16} background={PALETTES[CURRENT_PALETTE].bg} loop={true} persistKey="network-anim">
+      <Stage key={key} width={1920} height={1080} duration={16} background={PALETTES[CURRENT_PALETTE].bg} loop={false} persistKey="network-anim">
         <div data-video-root style={{ position:'absolute', inset:0 }}>
           <NetworkScene />
           <NavLinks />
@@ -2493,7 +2493,7 @@ function App() {
     );
   }
   return (
-    <Stage key={key} width={1920} height={1080} duration={21} background={PALETTES[CURRENT_PALETTE].bg} loop={true} persistKey="neuron-anim">
+    <Stage key={key} width={1920} height={1080} duration={21} background={PALETTES[CURRENT_PALETTE].bg} loop={false} persistKey="neuron-anim">
       <NeuronScene />
     </Stage>
   );
