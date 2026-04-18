@@ -7567,8 +7567,11 @@
 
         if (incoming.id === 'slideSingleNeuron') {
           const frame = incoming.querySelector('iframe');
-          if (frame && frame.contentWindow) {
-            frame.contentWindow.postMessage({ type: 'RESET_ANIMATION' }, '*');
+          if (frame) {
+            // Full refresh the iframe source to ensure a complete state reset
+            const currentSrc = frame.src;
+            frame.src = '';
+            setTimeout(() => { frame.src = currentSrc; }, 0);
           }
         }
 
