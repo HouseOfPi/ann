@@ -2038,6 +2038,7 @@ function NetConnections() {
 
 function NetNodes() {
   const t = useTime();
+  const [hoveredNode, setHoveredNode] = React.useState(null);
   return (
     <>
       {netLayerPositions.flatMap((layer, li) => layer.map((p, i) => {
@@ -2059,12 +2060,17 @@ function NetNodes() {
           : animate({ from:0, to:1, start:fireTime, end:fireTime+0.2 })(t);
 
         return (
-          <div key={`${li}-${i}`} style={{
-            position:'absolute',
-            left: p.x - NET_NODE_R, top: p.y - NET_NODE_R,
-            width: NET_NODE_R*2, height: NET_NODE_R*2,
-            transform:`scale(${appear})`,
-          }}>
+          <div key={`${li}-${i}`} 
+            onMouseEnter={() => setHoveredNode({ li, i, x: p.x, y: p.y })}
+            onMouseLeave={() => setHoveredNode(null)}
+            style={{
+              position:'absolute',
+              left: p.x - NET_NODE_R, top: p.y - NET_NODE_R,
+              width: NET_NODE_R*2, height: NET_NODE_R*2,
+              transform:`scale(${appear})`,
+              cursor: li > 0 ? 'pointer' : 'default',
+              zIndex: hoveredNode?.li === li && hoveredNode?.i === i ? 100 : 10
+            }}>
             {glow > 0.05 && (
               <div style={{
                 position:'absolute', inset:-18,
@@ -2101,6 +2107,52 @@ function NetNodes() {
           </div>
         );
       }))}
+      {hoveredNode && hoveredNode.li > 0 && (() => {
+        const hLi = hoveredNode.li;
+        const hI = hoveredNode.i;
+        let sum = 0;
+        return (
+          <div style={{
+            position: 'absolute',
+            left: hoveredNode.x + NET_NODE_R + 15,
+            top: hoveredNode.y - NET_NODE_R,
+            background: 'rgba(0,0,0,0.85)',
+            border: `1px solid ${COLORS.line}`,
+            backdropFilter: 'blur(10px)',
+            padding: '16px 20px',
+            borderRadius: 12,
+            color: '#fff',
+            fontFamily: FONT_MONO,
+            fontSize: 13,
+            zIndex: 1000,
+            pointerEvents: 'none',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+          }}>
+            <div style={{ marginBottom: 10, color: COLORS.dim, fontFamily: FONT_SANS, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
+              Calculations
+            </div>
+            {NET_ACTIVATIONS[hLi - 1].map((act, j) => {
+              const w = netHashedWeight(hLi - 1, j, hI);
+              const val = act * w;
+              sum += val;
+              return (
+                <div key={j} style={{ display: 'flex', justifyContent: 'space-between', gap: 32, marginBottom: 6 }}>
+                  <span style={{ color: COLORS.dim }}>x<sub style={{fontSize:9}}>{j+1}</sub> · w<sub style={{fontSize:9}}>{j+1}</sub></span>
+                  <span>{act.toFixed(2)} × {w > 0 ? '+' : ''}{w.toFixed(2)} = <span style={{ color: val >= 0 ? COLORS.accent : COLORS.accent2 }}>{val > 0 ? '+' : ''}{val.toFixed(2)}</span></span>
+                </div>
+              );
+            })}
+            <div style={{ borderTop: `1px solid ${COLORS.line}`, margin: '10px 0', paddingTop: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: COLORS.dim }}>Sum (z)</span>
+              <span>{sum.toFixed(2)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: COLORS.dim }}>Sigmoid ƒ(z)</span>
+              <span style={{ color: COLORS.accent, fontWeight: 600 }}>{NET_ACTIVATIONS[hLi][hI].toFixed(2)}</span>
+            </div>
+          </div>
+        );
+      })()}
     </>
   );
 }
