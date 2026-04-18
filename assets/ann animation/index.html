@@ -439,6 +439,18 @@ function Stage({
     };
   }, [playing, duration, loop]);
 
+  // Handle external reset messages
+  React.useEffect(() => {
+    const handleReset = (e) => {
+      if (e.data && e.data.type === 'RESET_ANIMATION') {
+        setTime(startTime);
+        setPlaying(true);
+      }
+    };
+    window.addEventListener('message', handleReset);
+    return () => window.removeEventListener('message', handleReset);
+  }, [startTime]);
+
   // Keyboard: space = play/pause, ← → = seek
   React.useEffect(() => {
     const onKey = (e) => {
@@ -841,9 +853,6 @@ function usePaletteVersion() {
         if (m === 'custom') setPalette('Warm Linen');
         else if (m === 'light') setPalette('Paper White');
         else if (m === 'dark') setPalette('Midnight');
-      } else if (e.data.type === 'RESET_ANIMATION') {
-        setTime(startTime);
-        setPlaying(true);
       }
     };
     window.addEventListener('message', handleMessage);
