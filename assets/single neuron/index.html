@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>One Neuron — Original Animation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    html, body { 
+      margin: 0; padding: 0; width: 100%; height: 100%; 
+      background: transparent; 
+      overflow: hidden; 
+    }
+    #root { width: 100vw; height: 100vh; position: relative; }
+    #errbox { position: fixed; top: 0; left: 0; right: 0; background: #300; color: #fdd; padding: 20px; font-family: monospace; font-size: 13px; white-space: pre-wrap; z-index: 99999; display: none; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="errbox"></div>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+try {
+
+// --- Theme Management ---
+const THEMES = {
+  dark: { bg: 'transparent', ink: '#f8fafc', dim: '#94a3b8', line: '#334155', accent: '#22d3ee', accent2: '#fb7185', neuron: '#f8fafc', neuronFill: '#1e293b' },
+  light: { bg: 'transparent', ink: '#0f172a', dim: '#64748b', line: '#cbd5e1', accent: '#0891b2', accent2: '#db2777', neuron: '#0f172a', neuronFill: '#ffffff' },
+  linen: { bg: 'transparent', ink: '#1c1c1c', dim: '#6b6b6b', line: '#dcd6c5', accent: '#4a8bdd', accent2: '#e27b5e', neuron: '#1c1c1c', neuronFill: '#ffffff' }
+};
+
+const ThemeContext = React.createContext({ colors: THEMES.dark, mode: 'dark' });
+const useColors = () => React.useContext(ThemeContext).colors;
+
+function ThemeProvider({ children }) {
+  const [mode, setMode] = React.useState('dark');
+  React.useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.data && e.data.type === 'SET_THEME') setMode(e.data.mode === 'custom' ? 'linen' : e.data.mode);
+    };
+    window.addEventListener('message', handleMessage);
+    window.parent.postMessage({ type: 'GET_THEME' }, '*');
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+  const value = React.useMemo(() => ({ mode, colors: THEMES[mode] || THEMES.dark }), [mode]);
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+// --- Original Animation Engine (untouched) ---
+
+const Easing = {
+  linear: (t) => t,
+  easeInQuad: (t) => t * t,
+  easeOutQuad: (t) => t * (2 - t),
+  easeInOutQuad: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+  easeInCubic: (t) => t * t * t,
+  easeOutCubic: (t) => (--t) * t * t + 1,
+  easeInOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
+  easeInQuart: (t) => t * t * t * t,
+  easeOutQuart: (t) => 1 - (--t) * t * t * t,
+  easeInOutQuart: (t) => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t),
+  easeOutBack: (t) => {
+    const c1 = 1.70158, c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  },
+  easeInBack: (t) => {
+    const c1 = 1.70158, c3 = c1 + 1;
+    return c3 * t * t * t - c1 * t * t;
+  },
+  easeInOutBack: (t) => {
+    const c1 = 1.70158, c2 = c1 * 1.525;
+    return t < 0.5 ? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2 : (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+  }
+};
+
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+function animate({ from = 0, to = 1, start = 0, end = 1, ease = Easing.easeInOutCubic }) {
+  return (t) => {
+    if (t <= start) return from;
+    if (t >= end) return to;
+    const local = (t - start) / (end - start);
+    return from + (to - from) * ease(local);
+  };
+}
+
+const TimelineContext = React.createContext({ time: 0, duration: 21, playing: true });
+const useTime = () => React.useContext(TimelineContext).time;
+const useTimeline = () => React.useContext(TimelineContext);
+
+const SpriteContext = React.createContext({ localTime: 0, progress: 0, duration: 0 });
+const useSprite = () => React.useContext(SpriteContext);
+
+function Sprite({ start = 0, end = Infinity, children }) {
+  const { time } = useTimeline();
+  const visible = time >= start && time <= end;
+  if (!visible) return null;
+  const duration = end - start;
+  const localTime = Math.max(0, time - start);
+  const progress = duration > 0 ? clamp(localTime / duration, 0, 1) : 0;
+  return (
+    <SpriteContext.Provider value={{ localTime, progress, duration, visible }}>
+      {typeof children === 'function' ? children({ localTime, progress, duration }) : children}
+    </SpriteContext.Provider>
+  );
+}
+
+function Stage({ width, height, duration, children }) {
+  const [time, setTime] = React.useState(0);
+  const [playing, setPlaying] = React.useState(true);
+  const [scale, setScale] = React.useState(1);
+  const stageRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+  const lastTsRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!playing) {
+      lastTsRef.current = null;
+      return;
+    }
+    const step = (ts) => {
+      if (!lastTsRef.current) lastTsRef.current = ts;
+      const dt = (ts - lastTsRef.current) / 1000;
+      lastTsRef.current = ts;
+      setTime(t => (t + dt) % duration);
+      requestAnimationFrame(step);
+    };
+    const raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [duration, playing]);
+
+  React.useEffect(() => {
+    const measure = () => {
+      if (stageRef.current) setScale(Math.min(stageRef.current.clientWidth / width, stageRef.current.clientHeight / height));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [width, height]);
+
+  React.useEffect(() => {
+    const handleEvents = (e) => {
+      if (e.type === 'click' || (e.type === 'keydown' && e.code === 'Space')) {
+        if (e.type === 'keydown') e.preventDefault();
+        setPlaying(p => !p);
+      }
+    };
+    window.addEventListener('click', handleEvents);
+    window.addEventListener('keydown', handleEvents);
+    return () => {
+      window.removeEventListener('click', handleEvents);
+      window.removeEventListener('keydown', handleEvents);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={stageRef}
+      style={{
+        position: 'absolute', inset: 0,
+        background: 'transparent',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        cursor: 'pointer',
+      }}
+    >
+      <div ref={canvasRef} style={{ width, height, position: 'relative', transform: `scale(${scale})`, transformOrigin: 'center', boxShadow: 'none' }}>
+        <TimelineContext.Provider value={{ time, duration, playing }}>
+          {children}
+        </TimelineContext.Provider>
+      </div>
+
+      <PlayPauseButton playing={playing} toggle={() => setPlaying(p => !p)} />
+    </div>
+  );
+}
+
+function PlayPauseButton({ playing, toggle }) {
+  const C = useColors();
+  const [hover, setHover] = React.useState(false);
+  
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); toggle(); }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        position: 'absolute',
+        top: '24px',
+        right: '24px',
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        background: hover ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.03)',
+        border: `1.5px solid ${C.line}`,
+        color: C.ink,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        backdropFilter: 'blur(8px)',
+        zIndex: 2000,
+        transform: hover ? 'scale(1.05)' : 'scale(1)',
+      }}
+      title={playing ? "Pause" : "Play"}
+    >
+      {playing ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <rect x="6" y="4" width="3.5" height="16" rx="1" />
+          <rect x="14.5" y="4" width="3.5" height="16" rx="1" />
+        </svg>
+      ) : (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '2px' }}>
+          <path d="M7 4.5V19.5L19 12L7 4.5Z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// --- Geometry ---
+const CX = 960, CY = 540, NR = 120;
+const N_INPUTS = 4, INPUT_X = 340, IS = 160, IY0 = CY - (IS * (N_INPUTS - 1)) / 2;
+const INPUT_POSITIONS = Array.from({ length: N_INPUTS }, (_, i) => ({ x: INPUT_X, y: IY0 + i * IS }));
+const INPUT_VALUES = [0.8, 0.3, 0.6, 0.9], WEIGHTS = [0.7, -0.4, 0.5, 0.2], BIAS = 0.1;
+const Z = INPUT_VALUES.reduce((acc, x, i) => acc + x * WEIGHTS[i], 0) + BIAS;
+const OUTPUT_VAL = 1 / (1 + Math.exp(-Z));
+function lerpPoint(a, b, t) { return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; }
+
+// --- Scene Components (Restored Original Logic) ---
+
+function TitleCard() {
+  const C = useColors();
+  return (
+    <Sprite start={0} end={3.2}>
+      {({ localTime, duration }) => {
+        const exitStart = duration - 0.5;
+        let opacity = 1;
+        if (localTime < 0.6) opacity = Easing.easeOutCubic(localTime / 0.6);
+        else if (localTime > exitStart) opacity = 1 - Easing.easeInCubic((localTime - exitStart) / 0.5);
+        return (
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 380, textAlign: 'center', opacity, fontFamily: 'Inter' }}>
+            <div style={{ fontSize: 22, letterSpacing: '0.28em', textTransform: 'uppercase', color: C.dim, fontWeight: 500, marginBottom: 28 }}>Artificial Neural Networks</div>
+            <div style={{ fontSize: 96, fontWeight: 600, color: C.ink, letterSpacing: '-0.03em', lineHeight: 1 }}>One Neuron</div>
+            <div style={{ fontSize: 26, color: C.dim, marginTop: 32, fontFamily: 'JetBrains Mono', letterSpacing: '0.02em' }}>inputs  →  weighted sum  →  activation  →  output</div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+function NeuronBody() {
+  const C = useColors();
+  const t = useTime();
+  const appear = animate({ from: 0, to: 1, start: 3.0, end: 3.7, ease: Easing.easeOutBack })(t);
+  const fill = animate({ from: 0, to: 1, start: 11, end: 14.5 })(t);
+  const fire = animate({ start: 15, end: 15.8 })(t) - animate({ start: 17.5, end: 18.5 })(t);
+  if (appear === 0) return null;
+  return (
+    <div style={{ position: 'absolute', left: CX-NR, top: CY-NR, width: NR*2, height: NR*2, transform: `scale(${appear})` }}>
+      <div style={{ position: 'absolute', inset: -40, borderRadius: '50%', background: `radial-gradient(circle, ${C.accent} 0%, transparent 65%)`, opacity: clamp(fire,0,1)*0.45, filter: 'blur(12px)' }}/>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: C.neuronFill, border: `2.5px solid ${C.neuron}`, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: `${fill*100}%`, background: `linear-gradient(to top, ${C.accent} 0%, ${C.accent} 100%)`, opacity: fire > 0.1 ? 0.95 : 0.35 }}/>
+      </div>
+    </div>
+  );
+}
+
+function InputNodes() {
+  const C = useColors();
+  const t = useTime();
+  return (
+    <>
+      {INPUT_POSITIONS.map((p, i) => {
+        const d = 3.3 + i*0.08, app = animate({ from: 0, to: 1, start: d, end: d+0.5, ease: Easing.easeOutBack })(t);
+        if (app === 0) return null;
+        const vOp = animate({ start: d+0.3, end: d+0.8 })(t), wD = 7 + i*0.1, wOp = animate({ start: wD, end: wD+0.5 })(t);
+        return (
+          <React.Fragment key={i}>
+            <div style={{ position: 'absolute', left: p.x-36, top: p.y-36, width: 72, height: 72, borderRadius: '50%', background: C.bg, border: `2px solid ${C.ink}`, transform: `scale(${app})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'JetBrains Mono', fontSize: 24, color: C.ink }}>x<sub>{i+1}</sub></div>
+            <div style={{ position: 'absolute', left: p.x-140, top: p.y-14, width: 90, textAlign: 'right', fontFamily: 'JetBrains Mono', fontSize: 22, color: C.dim, opacity: vOp }}>{INPUT_VALUES[i].toFixed(1)}</div>
+            <div style={{ position: 'absolute', left: (p.x+CX)/2-50, top: (p.y+CY)/2-40, width:100, textAlign: 'center', fontFamily: 'JetBrains Mono', fontSize: 20, color: C.accent2, opacity: wOp, fontWeight: 600 }}>w<sub>{i+1}</sub>={WEIGHTS[i].toFixed(1)}</div>
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+}
+
+function Connections() {
+  const C = useColors();
+  const t = useTime();
+  const p = animate({ start: 4.0, end: 5.2 })(t);
+  return (
+    <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} viewBox="0 0 1920 1080">
+      {INPUT_POSITIONS.map((p_in, i) => {
+        const dx = CX-p_in.x, dy = CY-p_in.y, dist = Math.sqrt(dx*dx+dy*dy);
+        const ex = CX-(dx/dist)*NR, ey = CY-(dy/dist)*NR, sx = p_in.x+(dx/dist)*36, sy = p_in.y+(dy/dist)*36;
+        const seg = Math.sqrt((ex-sx)**2+(ey-sy)**2), d = 4.0 + i*0.1, prog = clamp(animate({ start: d, end: d+1.2 })(t),0,1);
+        return <line key={i} x1={sx} y1={sy} x2={ex} y2={ey} stroke={C.line} strokeWidth={1.5 + Math.abs(WEIGHTS[i])*4} strokeDasharray={seg} strokeDashoffset={seg*(1-prog)} />;
+      })}
+      <line x1={CX+NR} y1={CY} x2={1600-40} y2={CY} stroke={C.line} strokeWidth={4} strokeDasharray={600} strokeDashoffset={600*(1-animate({start:4.4, end:5.4})(t))} />
+    </svg>
+  );
+}
+
+function InputPulses() {
+  const C = useColors();
+  const t = useTime();
+  return (
+    <>
+      {INPUT_POSITIONS.map((p, i) => {
+        const dx = CX-p.x, dy = CY-p.y, dist = Math.sqrt(dx*dx+dy*dy);
+        const sx = p.x+(dx/dist)*36, sy = p.y+(dy/dist)*36, ex = CX-(dx/dist)*NR, ey = CY-(dy/dist)*NR;
+        const prog = clamp(animate({ start: 8.5, end: 10.3 })(t), 0, 1);
+        if (prog === 0 || prog === 1) return null;
+        const cur = lerpPoint({x:sx, y:sy}, {x:ex, y:ey}, prog), color = WEIGHTS[i] >= 0 ? C.accent : C.accent2;
+        return <div key={i} style={{ position: 'absolute', left: cur.x-15, top: cur.y-15, width: 30, height: 30, borderRadius: '50%', background: color, boxShadow: `0 0 20px ${color}`, opacity: 0.85 }}/>
+      })}
+    </>
+  );
+}
+
+function FormulaPanel() {
+  const C = useColors();
+  const t = useTime();
+  const sOp = animate({ start: 11.0, end: 11.6 })(t), zOp = animate({ start: 13.0, end: 13.6 })(t), fOp = animate({ start: 15.5, end: 16.1 })(t), ex = animate({ start: 19.5, end: 20.5 })(t);
+  if (sOp - ex <= 0) return null;
+  return (
+    <div style={{ position: 'absolute', left: CX-500, top: CY+220, width: 1000, textAlign: 'center', fontFamily: 'JetBrains Mono', opacity: clamp(sOp-ex, 0, 1) }}>
+      <div style={{ fontSize: 34, color: C.ink }}>
+        <span style={{ color: C.dim }}>z</span> = <span style={{ opacity: sOp }}><span style={{ fontSize: 42, color: C.accent }}>Σ</span> w<sub>i</sub>·x<sub>i</sub> + b</span>
+        <span style={{ opacity: zOp }}> = <span style={{ color: C.accent }}>{Z.toFixed(2)}</span></span>
+      </div>
+      <div style={{ fontSize: 30, color: C.ink, marginTop: 24, opacity: fOp }}>
+        <span style={{ color: C.dim }}>output</span> = f(z) = <span style={{ color: C.accent2 }}>{OUTPUT_VAL.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+}
+
+function OutputPulse() {
+  const C = useColors();
+  const t = useTime();
+  const prog = clamp(animate({ start: 16.2, end: 18.0 })(t), 0, 1);
+  if (prog === 0) return null;
+  const x = (CX + NR) + (1600 - 40 - (CX + NR)) * prog;
+  return <div style={{ position: 'absolute', left: x-16, top: CY-16, width: 32, height: 32, borderRadius: '50%', background: C.accent2, boxShadow: `0 0 30px ${C.accent2}`, opacity: prog < 0.95 ? 1 : 0 }}/>
+}
+
+function OutputNode() {
+  const C = useColors();
+  const t = useTime();
+  const app = animate({ start: 4.8, end: 5.3, ease: Easing.easeOutBack })(t), vOp = animate({ start: 17.8, end: 18.4 })(t);
+  if (app === 0) return null;
+  return (
+    <>
+      <div style={{ position: 'absolute', left: 1600-40, top: CY-40, width: 80, height: 80, borderRadius: '50%', background: C.bg, border: `2.5px solid ${C.ink}`, transform: `scale(${app})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'JetBrains Mono', fontSize: 26, color: C.ink }}>y</div>
+      <div style={{ position: 'absolute', left: 1600-100, top: CY+86, width: 200, textAlign: 'center', fontFamily: 'JetBrains Mono', fontSize: 24, color: C.accent2, opacity: vOp, fontWeight: 600 }}>{OUTPUT_VAL.toFixed(2)}</div>
+    </>
+  );
+}
+
+function StageLabels() {
+  const C = useColors();
+  const t = useTime();
+  const op = animate({ start: 3.6, end: 4.2 })(t) - animate({ start: 19.5, end: 20.2 })(t);
+  const s2 = animate({ start: 11.0, end: 11.5 })(t) - animate({ start: 15.0, end: 15.5 })(t);
+  const s3 = animate({ start: 15.0, end: 15.5 })(t) - animate({ start: 19.5, end: 20.2 })(t);
+  const text = s3 > 0.3 ? 'apply activation function' : s2 > 0.3 ? 'sum the weighted inputs' : '';
+  return (
+    <>
+      <div style={{ position: 'absolute', left: INPUT_X-80, top: 220, width: 160, textAlign: 'center', fontFamily: 'Inter', fontSize: 20, letterSpacing: '0.22em', textTransform: 'uppercase', color: C.dim, opacity: clamp(op,0,1) }}>Inputs</div>
+      <div style={{ position: 'absolute', left: CX-300, top: CY-230, width: 600, textAlign: 'center', fontFamily: 'Inter', fontSize: 28, color: C.ink, opacity: Math.max(s2,s3) }}>{text}</div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <Stage width={1920} height={1080} duration={21}>
+        <TitleCard />
+        <StageLabels />
+        <Connections />
+        <NeuronBody />
+        <InputNodes />
+        <InputPulses />
+        <OutputNode />
+        <OutputPulse />
+        <FormulaPanel />
+      </Stage>
+    </ThemeProvider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+} catch(e) { document.getElementById('errbox').style.display='block'; document.getElementById('errbox').textContent=e.message; }
+  </script>
+</body>
+</html>

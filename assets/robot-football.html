@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robot Football — Neural Network Training Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    /* Default Dark Theme */
+    --bg-page: #07091a;
+    --bg-panel: #0e1628;
+    --bg-item: #080e1c;
+    --border-ui: #1e2d45;
+    --text-main: #ccc;
+    --text-bright: #ffffff;
+    --text-dim: #7eb8f788;
+    --accent: #4db8c8;
+    --accent-glow: rgba(77, 184, 200, 0.2);
+    --field-bg: #1a5c2a;
+    --nn-grid-bg: #080e1c;
+    --shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  [data-theme="light"] {
+    --bg-page: #f8fafc;
+    --bg-panel: #ffffff;
+    --bg-item: #ffffff;
+    --border-ui: #e2e8f0;
+    --text-main: #64748b;
+    --text-bright: #0f172a;
+    --text-dim: #94a3b8;
+    --accent: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.1);
+    --field-bg: #2d8a41;
+    --nn-grid-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  body {
+    background: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-bottom: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  header {
+    text-align: center;
+    padding: 18px 0 14px;
+    background: var(--bg-item);
+    border-bottom: 1px solid var(--border-ui);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  #theme-toggle {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-ui);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #theme-toggle:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-bright);
+    margin: 0;
+  }
+  .subtitle {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  /* ── 2-column layout ── */
+  #main-container {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    gap: 12px;
+    padding: 0 14px;
+    align-items: flex-start;
+  }
+
+  /* Left column: NN + Analytics stacked */
+  #left-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Agent Intelligence panel */
+  #nn-panel {
+    position: relative;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-ui);
+    border-radius: 12px;
+    padding: 14px 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Right: Field — 2/3 width */
+  #right-content {
+    flex: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+
+  /* --- Field --- */
+  #field-wrap {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-ui);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+  canvas#field {
+    border-radius: 10px;
+    box-shadow: 0 0 50px #00000088;
+  }
+
+  #nn-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-ui);
+  }
+  #nn-top-bar h2 {
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  #nn-top-bar h2::before {
+    content: '';
+    display: block;
+    width: 3px; height: 12px;
+    background: linear-gradient(180deg, var(--accent), #2a6e7a);
+    border-radius: 2px;
+  }
+  #epoch-counter {
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--bg-item);
+    border: 1px solid var(--border-ui);
+    border-radius: 5px;
+    padding: 3px 9px;
+    letter-spacing: 0.5px;
+  }
+  .selected-robot {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .robot-btn {
+    padding: 4px 18px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #151f30;
+    color: #aaa;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .robot-btn.active { border-color: #4a9eff; color: #fff; background: #1a2d4a; }
+  .robot-btn:hover  { border-color: #4a9eff88; }
+  .nn-label {
+    font-size: 10px;
+    color: #ffffff33;
+    text-align: center;
+    margin-top: 4px;
+  }
+  #nn-canvas {
+    background: transparent;
+    width: 100%;
+    display: block;
+    flex: 1;
+    min-height: 0;
+  }
+  #nn-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(10, 14, 30, 0.94);
+    border: 1px solid rgba(148, 88, 228, 0.6);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font: 11px/1.4 'Inter', sans-serif;
+    color: #e2e8f0;
+    max-width: 280px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  #nn-tooltip .tt-label { color: #c4a0ff; font-weight: 700; font-size: 11px; }
+  #nn-tooltip .tt-desc  { color: #94a3b8; font-size: 10px; margin-top: 2px; }
+  #nn-bottom-bar {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  /* --- Weights info --- */
+  #weights-info {
+    flex: 1;
+    font-size: 10px;
+    color: #888;
+    background: #080e1c;
+    border-radius: 6px;
+    padding: 7px 10px;
+    line-height: 1.6;
+    min-width: 200px;
+    border: 1px solid #1a2a44;
+  }
+  #weights-info .pos { color: #4ade80; }
+  #weights-info .neg { color: #f87171; }
+  #epoch-counter {
+    font-size: 11px;
+    color: #7eb8f7;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    padding: 6px 12px;
+    background: #080e1c;
+    border-radius: 6px;
+    border: 1px solid #1a2a44;
+    align-self: center;
+  }
+
+  /* ── Training Analytics (Polished 3-Column Design) ── */
+  #feed-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-ui);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  #feed-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-ui);
+    background: rgba(0,0,0,0.1);
+  }
+  #feed-panel-header::before {
+    content: '';
+    display: block;
+    width: 3px; height: 14px;
+    background: #4dd0e1;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(77, 208, 225, 0.4);
+  }
+  #feed-panel-header h2 {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-bright);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .feed-tabs {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    background: rgba(0,0,0,0.3);
+    padding: 3px;
+    border-radius: 100px;
+  }
+  .r-tab {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    color: #64748b;
+    text-transform: uppercase;
+  }
+  .r-tab.red.active  { background: rgba(231, 76, 60, 0.15); color: #f87171; border-color: rgba(231, 76, 60, 0.2); }
+  .r-tab.blue.active { background: rgba(52, 152, 219, 0.15); color: #60a5fa; border-color: rgba(52, 152, 219, 0.2); }
+
+  #event-table {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr 1.2fr; /* Optimized widths */
+    background: rgba(0,0,0,0.05);
+  }
+  #feed-info-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(77, 208, 225, 0.4);
+    background: rgba(77, 208, 225, 0.1);
+    color: #4dd0e1;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 6px;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  #feed-info-btn:hover {
+    background: rgba(77, 208, 225, 0.25);
+    border-color: #4dd0e1;
+    transform: scale(1.1);
+  }
+  #feed-help {
+    padding: 10px 14px;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border-ui);
+    background: rgba(77, 208, 225, 0.04);
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 14px;
+    border-bottom: none;
+    transition: max-height 0.35s ease, padding 0.35s ease, border-bottom 0.35s ease;
+  }
+  #feed-help.open {
+    max-height: 300px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-ui);
+  }
+  #feed-help p { margin: 0 0 6px; }
+  #feed-help p:last-child { margin-bottom: 0; }
+  #feed-help ul {
+    margin: 4px 0 8px 0;
+    padding-left: 16px;
+    list-style: none;
+  }
+  #feed-help li { margin: 2px 0; }
+  #feed-help li::before { content: '• '; }
+  #feed-help .help-good { color: #10b981; }
+  #feed-help .help-bad  { color: #f87171; }
+  #feed-help b { color: var(--text-bright); }
+
+  .et-col {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-right: 1px solid var(--border-ui);
+    min-width: 0;
+  }
+  .et-col:last-child { border-right: none; }
+  .et-header {
+    font-size: 8.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    white-space: nowrap;
+  }
+  .et-body {
+    font-size: 11.5px;
+    color: var(--text-bright);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .et-body .rdot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: baseline;
+    box-shadow: 0 0 8px currentColor;
+  }
+  
+  .reward-pts {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .reward-pts.pos { color: #10b981; }
+  .reward-pts.neg { color: #f87171; }
+  .reward-verdict {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .reward-verdict.pos { color: #059669; }
+  .reward-verdict.neg { color: #b91c1c; }
+
+  #score-bar-wrap {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0,0,0,0.15);
+  }
+  #bar-robot-name {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    min-width: 40px;
+  }
+  #score-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  #score-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+  }
+  #score-bar-fill.neg { background: #f87171; box-shadow: 0 0 10px rgba(248, 113, 113, 0.4); }
+  #bar-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+    min-width: 50px;
+    text-align: right;
+  }
+  #bar-total.pos { color: #10b981; }
+  #bar-total.neg { color: #f87171; }
+
+
+
+  @keyframes feedIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* --- Speed control --- */
+  #speed-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #ffffff55;
+  }
+  #speed-control input { width: 90px; accent-color: #4a9eff; }
+  #restart-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s;
+  }
+  #restart-btn:hover {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #f59e0b;
+    transform: scale(1.1);
+  }
+
+  #pause-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(74, 158, 255, 0.4);
+    background: rgba(74, 158, 255, 0.12);
+    color: #4a9eff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s;
+  }
+  #pause-btn:hover {
+    background: rgba(74, 158, 255, 0.3);
+    border-color: #4a9eff;
+    transform: scale(1.1);
+  }
+  #pause-btn.playing { color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.12); }
+  #pause-btn.playing:hover { background: rgba(16, 185, 129, 0.3); border-color: #10b981; }
+
+  /* --- Legend --- */
+  #legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 14px 0 6px;
+    font-size: 11px;
+    color: #ffffff44;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  /* --- Theory Section --- */
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Robot Football — Neural Network Training</h1>
+  <p class="subtitle">Watch robots learn through reinforcement: actions are judged, rewards adjust weights in real-time</p>
+  <button id="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+  </button>
+</header>
+
+<div id="main-container">
+
+  <!-- Left Sidebar: Brain -->
+  <!-- Left column: Training Analytics + Agent Intelligence -->
+  <div id="left-column">
+
+    <div id="feed-panel">
+      <div id="feed-panel-header">
+        <h2>How the Robot Learns</h2>
+        <button id="feed-info-btn" onclick="document.getElementById('feed-help').classList.toggle('open')" title="What is this?">ℹ</button>
+        <div class="feed-tabs">
+          <button class="r-tab red active" onclick="setActiveTeam(0)">● Red</button>
+          <button class="r-tab blue" onclick="setActiveTeam(1)">● Blue</button>
+        </div>
+      </div>
+
+      <!-- Help text -->
+      <div id="feed-help">
+        <p>🤖 <b>No human is teaching the robot!</b> The game has a built-in "referee" — simple rules coded in advance that automatically judge each action:</p>
+        <ul>
+          <li><span class="help-good">Score a goal → +3.0 points</span></li>
+          <li><span class="help-good">Shot on target → +0.8 points</span></li>
+          <li><span class="help-good">Trick kick works → +1.0 points</span></li>
+          <li><span class="help-bad">Concede a goal → −2.5 points</span></li>
+          <li><span class="help-bad">Shot goes wide → −0.4 points</span></li>
+        </ul>
+        <p>The robot tries random actions, sees whether the score goes up or down, and gradually figures out what works. This is called <b>Reinforcement Learning</b> — learning by trial and error, just like a child learning to ride a bike.</p>
+      </div>
+
+      <!-- 3-column event table -->
+      <div id="event-table">
+        <div class="et-col">
+          <div class="et-header">⚡ Action</div>
+          <div class="et-body" id="et-action" style="color:var(--text-dim); font-style:italic">Warming up…</div>
+        </div>
+        <div class="et-col">
+          <div class="et-header">📊 Reward</div>
+          <div class="et-body" id="et-reward">—</div>
+        </div>
+        <div class="et-col">
+          <div class="et-header">🧠 Learns</div>
+          <div class="et-body" id="et-lesson" style="color:var(--text-dim); font-style:italic">Waiting for first move…</div>
+        </div>
+      </div>
+
+      <!-- Compact performance bar -->
+      <div id="score-bar-wrap">
+        <span id="bar-robot-name">Red</span>
+        <div id="score-bar"><div id="score-bar-fill"></div></div>
+        <span id="bar-total">0</span>
+      </div>
+    </div>
+
+    <div id="nn-panel">
+      <div id="nn-top-bar" style="flex-direction:column; align-items:flex-start;">
+        <h2>Neural Network</h2>
+        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:8px;">
+          <div class="selected-robot">
+            <button class="robot-btn active" onclick="setActiveTeam(0)">Red</button>
+            <button class="robot-btn" onclick="setActiveTeam(1)">Blue</button>
+          </div>
+          <span id="epoch-counter">Epoch: 0</span>
+        </div>
+      </div>
+      <canvas id="nn-canvas"></canvas>
+      <div id="nn-tooltip"><span class="tt-label"></span><div class="tt-desc"></div></div>
+      <div class="nn-label">Sensory Inputs &rarr; Deep Reasoning &rarr; Physical Actions</div>
+    </div>
+
+  </div>
+
+  <!-- Right: Field -->
+  <div id="right-content">
+    <div id="field-wrap">
+      <canvas id="field"></canvas>
+      <div id="speed-control">
+        <button id="restart-btn" onclick="restartSimulation()" title="Restart Football">🔄</button>
+        <button id="pause-btn" onclick="togglePause()" title="Pause / Resume">⏸︎</button>
+        <span>Cycle speed:</span>
+        <input type="range" min="0.3" max="2" step="0.1" value="1.1" id="speedSlider" autocomplete="off">
+        <span id="speedVal">1.1x</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+// ======================== CANVAS SETUP ========================
+const fieldCanvas = document.getElementById('field');
+const fctx = fieldCanvas.getContext('2d');
+const nnCanvas = document.getElementById('nn-canvas');
+const nctx = nnCanvas.getContext('2d');
+
+// Field: dynamic width based on right column
+const W = Math.min(840, window.innerWidth * 0.62);
+const H = W * 0.6;
+fieldCanvas.width = W;
+fieldCanvas.height = H;
+
+// NN canvas: vertical oriented
+function resizeNNCanvas() {
+  const panel  = document.getElementById('nn-panel');
+  const topBar = document.getElementById('nn-top-bar');
+  const label  = panel.querySelector('.nn-label');
+  const pw     = Math.max(200, panel.clientWidth - 28);
+  const usedH  = (topBar?.offsetHeight ?? 0) + (label?.offsetHeight ?? 0) + 48;
+  const ph     = Math.max(300, panel.clientHeight - usedH);
+  nnCanvas.width  = pw;
+  nnCanvas.height = ph;
+}
+resizeNNCanvas();
+window.addEventListener('resize', resizeNNCanvas);
+
+// Force slider to default value on every load, ignore any browser-cached value
+const _speedSlider = document.getElementById('speedSlider');
+_speedSlider.value = 1.1;
+let simSpeed = 1.1;
+document.getElementById('speedVal').textContent = '1.1x';
+
+document.getElementById('speedSlider').addEventListener('input', e => {
+  simSpeed = parseFloat(e.target.value);
+  document.getElementById('speedVal').textContent = simSpeed.toFixed(1) + 'x';
+});
+
+// ======================== PHYSICS ========================
+const FRICTION = 0.975;
+const BALL_FRICTION = 0.988;
+const BALL_MASS = 0.3;
+const ROBOT_MASS = 2.0;
+const BASE_KICK = 5.5;
+const MAX_SPEED = 2.5;
+const ROBOT_R = 20;
+const BALL_R = 9;
+const GOAL_W = H * 0.32;
+const GOAL_D = 16;
+const REST = 0.6;
+
+let goalFlash = 0, goalFlashColor = '';
+let goalCountedThisFrame = false; // Prevent multiple goal counts for same ball
+let particles = [];
+let epoch = 0;
+let selectedRobot = 0;
+let cumulativeReward = [0, 0];
+
+// ======================== NEURAL NETWORK ========================
+// Simple 3-layer NN: 8 inputs -> 6 hidden (ReLU) -> 4 outputs (tanh)
+//
+// INPUTS:  ball_dx, ball_dy, ball_vx, ball_vy, goal_dx, goal_dy, teammate_dx, teammate_dy
+// OUTPUTS: forward, backward, left, right, kick
+//
+// Each robot has its own weights that get adjusted via a simplified
+// policy-gradient-like rule: reward * eligibility trace
+
+const NN_IN = 8, NN_HID1 = 10, NN_HID2 = 8, NN_OUT = 5;
+const LEARN_RATE = 0.08;
+
+function createNN() {
+  const nn = {
+    w1: [], b1: [], w2: [], b2: [], w3: [], b3: [],
+    // For visualization
+    lastInputs:  new Array(NN_IN).fill(0),
+    lastHidden1: new Array(NN_HID1).fill(0),
+    lastHidden2: new Array(NN_HID2).fill(0),
+    lastOutputs: new Array(NN_OUT).fill(0),
+    lastW1Delta: null, lastW2Delta: null, lastW3Delta: null,
+    eligibility1: [], eligibility2: [], eligibility3: [],
+  };
+
+  // He initialization (better for ReLU layers) with non-zero biases to break symmetry
+  for (let i = 0; i < NN_HID1; i++) {
+    nn.w1[i] = []; nn.eligibility1[i] = [];
+    for (let j = 0; j < NN_IN; j++) {
+      nn.w1[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_IN);
+      nn.eligibility1[i][j] = 0;
+    }
+    nn.b1[i] = (Math.random() - 0.3) * 0.3; // slight positive bias to keep ReLU neurons alive
+  }
+  for (let i = 0; i < NN_HID2; i++) {
+    nn.w2[i] = []; nn.eligibility2[i] = [];
+    for (let j = 0; j < NN_HID1; j++) {
+      nn.w2[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_HID1);
+      nn.eligibility2[i][j] = 0;
+    }
+    nn.b2[i] = (Math.random() - 0.3) * 0.3;
+  }
+  for (let i = 0; i < NN_OUT; i++) {
+    nn.w3[i] = []; nn.eligibility3[i] = [];
+    for (let j = 0; j < NN_HID2; j++) {
+      nn.w3[i][j] = (Math.random() - 0.5) * Math.sqrt(4 / NN_HID2);
+      nn.eligibility3[i][j] = 0;
+    }
+    nn.b3[i] = (Math.random() - 0.5) * 0.5; // more varied output biases for different starting behaviors
+  }
+  return nn;
+}
+
+function nnForward(nn, inputs) {
+  nn.lastInputs = inputs.slice();
+  // L1 (ReLU)
+  for (let i = 0; i < NN_HID1; i++) {
+    let sum = nn.b1[i];
+    for (let j = 0; j < NN_IN; j++) sum += nn.w1[i][j] * inputs[j];
+    nn.lastHidden1[i] = Math.max(0, sum);
+  }
+  // L2 (ReLU)
+  for (let i = 0; i < NN_HID2; i++) {
+    let sum = nn.b2[i];
+    for (let j = 0; j < NN_HID1; j++) sum += nn.w2[i][j] * nn.lastHidden1[j];
+    nn.lastHidden2[i] = Math.max(0, sum);
+  }
+  // Output (tanh + small exploration noise)
+  for (let i = 0; i < NN_OUT; i++) {
+    let sum = nn.b3[i];
+    for (let j = 0; j < NN_HID2; j++) sum += nn.w3[i][j] * nn.lastHidden2[j];
+    nn.lastOutputs[i] = Math.tanh(sum) + (Math.random() - 0.5) * 0.08;
+  }
+
+  // Trace updates for all layers
+  for (let i = 0; i < NN_HID1; i++) {
+    for (let j = 0; j < NN_IN; j++) {
+      nn.eligibility1[i][j] = 0.9 * nn.eligibility1[i][j] + nn.lastInputs[j] * (nn.lastHidden1[i] > 0 ? 1 : 0);
+    }
+  }
+  for (let i = 0; i < NN_HID2; i++) {
+    for (let j = 0; j < NN_HID1; j++) {
+      nn.eligibility2[i][j] = 0.9 * nn.eligibility2[i][j] + nn.lastHidden1[j] * (nn.lastHidden2[i] > 0 ? 1 : 0);
+    }
+  }
+  for (let i = 0; i < NN_OUT; i++) {
+    for (let j = 0; j < NN_HID2; j++) {
+      nn.eligibility3[i][j] = 0.9 * nn.eligibility3[i][j] + nn.lastHidden2[j] * (1 - nn.lastOutputs[i] * nn.lastOutputs[i]);
+    }
+  }
+  return nn.lastOutputs;
+}
+
+const W_CLAMP = 4.0;  // max absolute weight value
+const GRAD_CLIP = 0.12; // max per-step delta
+
+function nnUpdate(nn, reward) {
+  const lr = LEARN_RATE * Math.max(-1, Math.min(1, reward)); // clip reward
+  const w1d = [], w2d = [], w3d = [];
+
+  for (let i = 0; i < NN_HID1; i++) {
+    w1d[i] = [];
+    for (let j = 0; j < NN_IN; j++) {
+      const d = Math.max(-GRAD_CLIP, Math.min(GRAD_CLIP, lr * nn.eligibility1[i][j]));
+      nn.w1[i][j] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.w1[i][j] + d));
+      w1d[i][j] = d;
+    }
+    nn.b1[i] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.b1[i] + lr * 0.01));
+  }
+  for (let i = 0; i < NN_HID2; i++) {
+    w2d[i] = [];
+    for (let j = 0; j < NN_HID1; j++) {
+      const d = Math.max(-GRAD_CLIP, Math.min(GRAD_CLIP, lr * nn.eligibility2[i][j]));
+      nn.w2[i][j] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.w2[i][j] + d));
+      w2d[i][j] = d;
+    }
+    nn.b2[i] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.b2[i] + lr * 0.01));
+  }
+  for (let i = 0; i < NN_OUT; i++) {
+    w3d[i] = [];
+    for (let j = 0; j < NN_HID2; j++) {
+      const d = Math.max(-GRAD_CLIP, Math.min(GRAD_CLIP, lr * nn.eligibility3[i][j]));
+      nn.w3[i][j] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.w3[i][j] + d));
+      w3d[i][j] = d;
+    }
+    nn.b3[i] = Math.max(-W_CLAMP, Math.min(W_CLAMP, nn.b3[i] + lr * 0.01));
+  }
+
+  nn.lastW1Delta = w1d; nn.lastW2Delta = w2d; nn.lastW3Delta = w3d;
+  epoch++;
+}
+
+// ======================== ENTITIES ========================
+function createBall() {
+  return { x: W / 2, y: H / 2, vx: 0, vy: 0, r: BALL_R, mass: BALL_MASS, trail: [] };
+}
+
+const ROBOT_NAMES = ['Red', 'Blue'];
+const ROBOT_COLORS = ['#e74c3c', '#3498db'];
+
+function createRobot(x, y, color, teamSign, idx) {
+  return {
+    x, y, vx: 0, vy: 0, r: ROBOT_R, mass: ROBOT_MASS,
+    color, teamSign, idx,
+    angle: teamSign > 0 ? 0 : Math.PI,
+    legPhase: 0, armSwing: 0, spinMove: 0,
+    eyeGlow: 0, kickCooldown: 0,
+    nn: createNN(),
+    lastAction: 'idle',
+    possession: false,
+    actionTimer: 0,
+  };
+}
+
+let ball = createBall();
+let robots = [
+  createRobot(W * 0.25, H * 0.5, ROBOT_COLORS[0], 1, 0),
+  createRobot(W * 0.75, H * 0.5, ROBOT_COLORS[1], -1, 1),
+];
+
+function resetAfterGoal() {
+  ball = createBall();
+  ball.vx = (Math.random() - 0.5) * 1;
+  ball.vy = (Math.random() - 0.5) * 0.5;
+  robots[0].x = W * 0.25; robots[0].y = H * 0.5;
+  robots[1].x = W * 0.75; robots[1].y = H * 0.5;
+  robots.forEach(r => { r.vx = 0; r.vy = 0; });
+  goalCountedThisFrame = false; // Reset flag for next goal
+}
+
+// ======================== REWARD SYSTEM ========================
+const REWARDS = {
+  GOAL_SCORED:      +3.0,
+  GOAL_CONCEDED:    -2.5,
+  SHOT_ON_TARGET:   +0.8,
+  SHOT_WIDE:        -0.4,
+  SUCCESSFUL_TRICK: +1.0,
+};
+
+// Maps a reward event to plain-English explanations for non-technical users
+function explainReward(reason, amount) {
+  const pos = amount >= 0;
+  const map = {
+    'GOAL_SCORED':      {
+      action: 'Scored a goal!',
+      verdict: pos ? 'Great job!' : 'Lucky shot',
+      lesson: 'Will repeat this move.'
+    },
+    'GOAL_CONCEDED':    {
+      action: 'Conceded a goal',
+      verdict: 'That hurt!',
+      lesson: 'Will defend better next time.'
+    },
+    'SHOT_ON_TARGET':   {
+      action: 'Shot on target',
+      verdict: 'Good aim!',
+      lesson: 'Will aim this way more often.'
+    },
+    'SHOT_WIDE':        {
+      action: 'Shot missed goal',
+      verdict: 'Wasted chance',
+      lesson: 'Will adjust aim next shot.'
+    },
+    'SUCCESSFUL_TRICK': {
+      action: 'Pulled off a trick kick!',
+      verdict: 'Fancy!',
+      lesson: 'Creative moves pay off!'
+    },
+  };
+  return map[reason] || {
+    action: reason,
+    verdict: pos ? 'Good' : 'Bad',
+    lesson: pos ? 'Will do more of this.' : 'Will avoid this.'
+  };
+}
+
+// Per-robot event storage and active feed tab
+let lastEvents    = [null, null];
+let activeFeedRobot = 0;
+
+function setActiveTeam(idx) {
+  selectedRobot = idx;
+  activeFeedRobot = idx;
+  
+  // Update Learning Feed tabs
+  document.querySelectorAll('.r-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+  
+  // Update NN Panel buttons
+  document.querySelectorAll('.robot-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+
+  // Re-render Learning content
+  if (lastEvents[idx]) renderFeedPanel(lastEvents[idx]);
+  else {
+    // Reset to "waiting" state if no event
+    document.getElementById('et-action').innerHTML = "Warming up..";
+    document.getElementById('et-reward').innerHTML = "—";
+    document.getElementById('et-lesson').textContent = "Waiting for first move..";
+  }
+  updateScoreBar();
+}
+
+function switchFeedRobot(idx) { setActiveTeam(idx); } // Alias for safety
+function selectRobot(idx)     { setActiveTeam(idx); } // Alias for safety
+
+function giveReward(robotIdx, reasonKey, amount) {
+  const r = robots[robotIdx];
+  nnUpdate(r.nn, amount);
+  cumulativeReward[robotIdx] += amount;
+
+  const { action, verdict, lesson } = explainReward(reasonKey, amount);
+  const entry = { robotIdx, robot: ROBOT_NAMES[robotIdx], color: r.color, amount, action, verdict, lesson };
+
+  // Store per robot and render if it's the active tab
+  lastEvents[robotIdx] = entry;
+  if (robotIdx === activeFeedRobot) renderFeedPanel(entry);
+  updateScoreBar();
+}
+
+function renderFeedPanel(entry) {
+  const pos  = entry.amount >= 0;
+  const sign = pos ? '+' : '';
+  const dot  = `<span class="rdot" style="background:${entry.color}"></span>`;
+
+  // Column 1 — Action
+  document.getElementById('et-action').innerHTML =
+    `${dot}<b>${entry.robot}</b> ${entry.action}`;
+  document.getElementById('et-action').style.fontStyle = 'normal';
+  document.getElementById('et-action').style.color = '';
+
+  // Column 2 — Reward (big number + verdict label)
+  const pts   = `${sign}${entry.amount.toFixed(1)}`;
+  const cls   = pos ? 'pos' : 'neg';
+  document.getElementById('et-reward').innerHTML =
+    `<div class="reward-pts ${cls}">${pts}</div>` +
+    `<div class="reward-verdict ${cls}">${entry.verdict}</div>`;
+
+  // Column 3 — Lesson
+  document.getElementById('et-lesson').textContent = entry.lesson;
+  document.getElementById('et-lesson').style.fontStyle = 'normal';
+  document.getElementById('et-lesson').style.color = '';
+}
+
+// updateLatestEvent kept as alias for compatibility
+function updateLatestEvent(entry) { renderFeedPanel(entry); }
+
+let peakReward = 10;
+function updateScoreBar() {
+  const total = cumulativeReward[activeFeedRobot];
+  const fill  = document.getElementById('score-bar-fill');
+  peakReward  = Math.max(peakReward, Math.abs(total));
+  peakReward  = peakReward * 0.9998 + 10 * 0.0002;
+  const pct   = Math.min(Math.abs(total) / peakReward * 100, 100);
+  fill.className   = total >= 0 ? 'pos' : 'neg';
+  fill.style.width = pct + '%';
+  const sign = total >= 0 ? '+' : '';
+  const barTotal = document.getElementById('bar-total');
+  barTotal.textContent = `${sign}${total.toFixed(1)}`;
+  barTotal.className   = total >= 0 ? 'pos' : 'neg';
+  document.getElementById('bar-robot-name').textContent = ROBOT_NAMES[activeFeedRobot];
+}
+
+
+
+
+// ======================== PHYSICS HELPERS ========================
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+function resolveCollision(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const d = Math.hypot(dx, dy);
+  const minD = a.r + b.r;
+  if (d >= minD || d === 0) return false;
+  const nx = dx / d, ny = dy / d;
+  const overlap = minD - d;
+  const tm = a.mass + b.mass;
+  a.x -= nx * overlap * (b.mass / tm);
+  a.y -= ny * overlap * (b.mass / tm);
+  b.x += nx * overlap * (a.mass / tm);
+  b.y += ny * overlap * (a.mass / tm);
+  const dvx = a.vx - b.vx, dvy = a.vy - b.vy;
+  const dvn = dvx * nx + dvy * ny;
+  if (dvn <= 0) return true;
+  const j = (1 + REST) * dvn / tm;
+  a.vx -= j * b.mass * nx;
+  a.vy -= j * b.mass * ny;
+  b.vx += j * a.mass * nx;
+  b.vy += j * a.mass * ny;
+  return true;
+}
+
+function wallBounce(obj) {
+  if (obj.x - obj.r < 0) { obj.x = obj.r; obj.vx = Math.abs(obj.vx) * REST; }
+  if (obj.x + obj.r > W) { obj.x = W - obj.r; obj.vx = -Math.abs(obj.vx) * REST; }
+  if (obj.y - obj.r < 0) { obj.y = obj.r; obj.vy = Math.abs(obj.vy) * REST; }
+  if (obj.y + obj.r > H) { obj.y = H - obj.r; obj.vy = -Math.abs(obj.vy) * REST; }
+}
+
+
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 0.8 + Math.random() * 3;
+    particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s, life: 1, color, size: 2 + Math.random() * 2.5 });
+  }
+}
+
+// ======================== NN-DRIVEN AI ========================
+function getOpponent(r) {
+  return robots.find(o => o.teamSign !== r.teamSign);
+}
+
+function normalize(v, range) { return Math.max(-1, Math.min(1, v / range)); }
+
+function robotThink(r) {
+  const goalX = r.teamSign > 0 ? W : 0;
+  const opp = getOpponent(r);
+
+  // Build normalized inputs for the NN
+  const inputs = [
+    normalize(ball.x - r.x, W * 0.5),        // ball_dx
+    normalize(ball.y - r.y, H * 0.5),         // ball_dy
+    normalize(ball.vx, 6),                      // ball_vx
+    normalize(ball.vy, 6),                      // ball_vy
+    normalize(goalX - r.x, W),                 // goal_dx
+    normalize(H / 2 - r.y, H * 0.5),          // goal_dy
+    opp ? normalize(opp.x - r.x, W * 0.5) : 0, // opp_dx
+    opp ? normalize(opp.y - r.y, H * 0.5) : 0,  // opp_dy
+  ];
+
+  const outputs = nnForward(r.nn, inputs);
+  // outputs: [forward, backward, left, right, kick]
+
+  const dBall = dist(r, ball);
+  r.possession = dBall < r.r + ball.r + 12;
+
+  // --- Detect ball at boundary (top/bottom/side walls, NOT goal mouth) ---
+  const BOUNDARY_ZONE = 50;
+  const gt2 = (H - GOAL_W) / 2, gb2 = gt2 + GOAL_W;
+  const atTopBot   = ball.y < BOUNDARY_ZONE || ball.y > H - BOUNDARY_ZONE;
+  const atSideWall = (ball.x < BOUNDARY_ZONE || ball.x > W - BOUNDARY_ZONE)
+                     && (ball.y < gt2 || ball.y > gb2); // exclude goal mouth
+  const ballAtBoundary = atTopBot || atSideWall;
+
+  // --- Movement: sprint toward ball when it's at a boundary ---
+  // Add unique spatial jitter so robots don't move in identical lines
+  const time = Date.now() * 0.002;
+  const jitterX = Math.sin(time + r.idx * 1.5) * 35; 
+  const jitterY = Math.cos(time + r.idx * 2.1) * 20;
+
+  // Add personal space repulsion from other robots to prevent clustering
+  let repX = 0, repY = 0;
+  robots.forEach(other => {
+    if (other === r) return;
+    const d = dist(r, other);
+    if (d < 120) {
+      repX += (r.x - other.x) / d * 0.18;
+      repY += (r.y - other.y) / d * 0.18;
+    }
+  });
+
+  const toBallX = (ball.x + jitterX - r.x) / (dBall || 1);
+  const toBallY = (ball.y + jitterY - r.y) / (dBall || 1);
+  const baseAccel = ballAtBoundary
+    ? 0.55 * simSpeed   // sprint — both robots rush the boundary ball
+    : 0.28 * simSpeed;
+  const nnAccel = 0.12 * simSpeed; // slightly more individual NN influence
+  // forward/backward are relative to the goal direction (teamSign: +1 = goal on right, -1 = goal on left)
+  const fwd = Math.max(0, outputs[0]);   // forward  (toward opponent goal)
+  const bwd = Math.max(0, outputs[1]);   // backward (away from opponent goal)
+  const lft = Math.max(0, outputs[2]);   // left     (up on screen)
+  const rgt = Math.max(0, outputs[3]);   // right    (down on screen)
+  const nnX = (fwd - bwd) * r.teamSign;  // teamSign flips direction per team
+  const nnY = (rgt - lft);               // positive = down, negative = up
+  r.vx += (toBallX * baseAccel) + (nnX * nnAccel) + (repX * simSpeed);
+  r.vy += (toBallY * baseAccel) + (nnY * nnAccel) + (repY * simSpeed);
+
+  // Speed cap — raise it during boundary sprint
+  const speedCap = ballAtBoundary ? MAX_SPEED * 1.6 * simSpeed : MAX_SPEED * simSpeed;
+  const spd = Math.hypot(r.vx, r.vy);
+  if (spd > speedCap) {
+    r.vx = (r.vx / spd) * speedCap;
+    r.vy = (r.vy / spd) * speedCap;
+  }
+
+  // --- Kick Logic ---
+  if (dBall < r.r + ball.r + 6 && r.kickCooldown <= 0) {
+    const kickPower = (outputs[4] + 1) / 2;
+    const trickTend = 0.2; // fixed low trick tendency (simplified)
+    const goalAngle = Math.atan2(H / 2 - ball.y, goalX - ball.x);
+
+    if (ballAtBoundary) {
+      // ---- BOUNDARY CLEAR: kick hard toward centre of field ----
+      const toCentreX = W / 2 - ball.x;
+      const toCentreY = H / 2 - ball.y;
+      const d = Math.hypot(toCentreX, toCentreY) || 1;
+      const clearForce = (6.5 + kickPower * 4) * simSpeed;
+      
+      // If stuck in a tight corner, do a "Flick Out" (spin and kick)
+      const inTightCorner = (ball.x < 35 || ball.x > W - 35) && (ball.y < 35 || ball.y > H - 35);
+      if (inTightCorner) {
+        r.spinMove = 1.0;
+        ball.vx = (toCentreX / d) * (clearForce * 1.2);
+        ball.vy = (toCentreY / d) * (clearForce * 1.2);
+        r.lastAction = 'Flick Out';
+      } else {
+        ball.vx = (toCentreX / d) * clearForce + (Math.random() - 0.5) * 2;
+        ball.vy = (toCentreY / d) * clearForce + (Math.random() - 0.5) * 2;
+        r.lastAction = 'Clearance';
+      }
+      
+      r.kickCooldown = 25;
+      r.armSwing = 1.4;
+      spawnParticles(ball.x, ball.y, '#ffffff', 16);
+
+    } else if (trickTend > 0.4 && Math.random() < 0.4) {
+      // ---- TRICK KICK ----
+      if (Math.random() < 0.5) {
+        const force = (4 + kickPower * 3) * simSpeed;
+        const spin = (ball.y > H / 2 ? -1 : 1);
+        ball.vx += Math.cos(goalAngle) * force + Math.sin(goalAngle) * force * 0.35 * spin;
+        ball.vy += Math.sin(goalAngle) * force * 0.5 + Math.cos(goalAngle) * force * 0.35 * spin;
+        r.lastAction = 'curve';
+        r.armSwing = 1.5;
+        spawnParticles(ball.x, ball.y, '#ffee00', 14);
+      } else {
+        const backAngle = Math.atan2(r.y - ball.y, r.x - ball.x);
+        const force = 4 * simSpeed;
+        ball.vx += Math.cos(backAngle + Math.PI * 0.75) * force;
+        ball.vy += Math.sin(backAngle + Math.PI * 0.75) * force;
+        r.lastAction = 'backheel';
+        r.spinMove = 1;
+        r.armSwing = -1;
+        spawnParticles(ball.x, ball.y, '#ff69b4', 10);
+      }
+      r.kickCooldown = 30;
+      giveReward(r.idx, 'SUCCESSFUL_TRICK', REWARDS.SUCCESSFUL_TRICK);
+
+    } else {
+      // ---- NORMAL SHOT toward goal ----
+      const force = (3.5 + kickPower * 4) * simSpeed;
+      const spread = (Math.random() - 0.5) * 0.4;
+      ball.vx += Math.cos(goalAngle) * force;
+      ball.vy += Math.sin(goalAngle) * force * 0.4 + spread;
+      r.kickCooldown = 22;
+      r.armSwing = 1;
+      r.lastAction = 'shoot';
+      spawnParticles(ball.x, ball.y, r.color, 8);
+
+      const toGoalX = goalX - ball.x;
+      const shotAligned = (toGoalX > 0 && ball.vx > 1) || (toGoalX < 0 && ball.vx < -1);
+      const nearGoalY = ball.y > (H - GOAL_W) / 2 && ball.y < (H + GOAL_W) / 2;
+      if (shotAligned && nearGoalY) {
+        giveReward(r.idx, 'SHOT_ON_TARGET', REWARDS.SHOT_ON_TARGET);
+      } else if (!shotAligned) {
+        giveReward(r.idx, 'SHOT_WIDE', REWARDS.SHOT_WIDE);
+      }
+    }
+  }
+
+  r.angle = Math.atan2(ball.y - r.y, ball.x - r.x);
+  r.legPhase += spd * 0.12;
+  r.kickCooldown = Math.max(0, r.kickCooldown - 1);
+  r.armSwing *= 0.92;
+  r.spinMove *= 0.93;
+  r.eyeGlow = dBall < 70 ? 1 : r.eyeGlow * 0.95;
+}
+
+// ======================== GOALS ========================
+function checkGoals() {
+  // Prevent multiple goal counts for the same ball in goal zone
+  if (goalCountedThisFrame) {
+    return false;
+  }
+
+  const gt = (H - GOAL_W) / 2;
+  const gb = gt + GOAL_W;
+  if (ball.y > gt && ball.y < gb) {
+    if (ball.x - ball.r <= GOAL_D) {
+      goalCountedThisFrame = true;
+      goalFlash = 40; goalFlashColor = '#3498db';
+      spawnParticles(ball.x, ball.y, '#3498db', 25);
+      // Reward blue team, penalize red team
+      robots.forEach(r => {
+        if (r.teamSign < 0) giveReward(r.idx, 'GOAL_SCORED', REWARDS.GOAL_SCORED);
+        else giveReward(r.idx, 'GOAL_CONCEDED', REWARDS.GOAL_CONCEDED);
+      });
+      setTimeout(resetAfterGoal, 900);
+      return true;
+    }
+    if (ball.x + ball.r >= W - GOAL_D) {
+      goalCountedThisFrame = true;
+      goalFlash = 40; goalFlashColor = '#e74c3c';
+      spawnParticles(ball.x, ball.y, '#e74c3c', 25);
+      robots.forEach(r => {
+        if (r.teamSign > 0) giveReward(r.idx, 'GOAL_SCORED', REWARDS.GOAL_SCORED);
+        else giveReward(r.idx, 'GOAL_CONCEDED', REWARDS.GOAL_CONCEDED);
+      });
+      setTimeout(resetAfterGoal, 900);
+      return true;
+    }
+  }
+  return false;
+}
+
+// ======================== UPDATE ========================
+function update() {
+  goalCountedThisFrame = false; // Reset goal flag at start of each frame
+  robots.forEach(r => robotThink(r));
+
+  robots.forEach(r => {
+    r.vx *= FRICTION;
+    r.vy *= FRICTION;
+    r.x += r.vx;
+    r.y += r.vy;
+    wallBounce(r);
+  });
+
+  ball.vx *= BALL_FRICTION;
+  ball.vy *= BALL_FRICTION;
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  const gt = (H - GOAL_W) / 2, gb = gt + GOAL_W;
+  const HARD_BOUNCE = 2.5; // guaranteed minimum exit speed from any wall
+
+  // Detect which walls are touched
+  const hitTop    = ball.y - ball.r < 0;
+  const hitBot    = ball.y + ball.r > H;
+  const hitLeft   = ball.x - ball.r < 0  && (ball.y < gt || ball.y > gb);
+  const hitRight  = ball.x + ball.r > W  && (ball.y < gt || ball.y > gb);
+
+  // Clamp position first
+  if (hitTop)   ball.y = ball.r;
+  if (hitBot)   ball.y = H - ball.r;
+  if (hitLeft)  ball.x = ball.r;
+  if (hitRight) ball.x = W - ball.r;
+
+  // Corner: both X and Y walls hit at once — fire ball diagonally toward centre
+  const inCorner = (hitTop || hitBot) && (hitLeft || hitRight);
+  if (inCorner) {
+    const toCX = W / 2 - ball.x, toCY = H / 2 - ball.y;
+    const d = Math.hypot(toCX, toCY) || 1;
+    ball.vx = (toCX / d) * (HARD_BOUNCE * 1.8);
+    ball.vy = (toCY / d) * (HARD_BOUNCE * 1.8);
+    spawnParticles(ball.x, ball.y, '#fff', 8);
+  } else {
+    // Normal wall bounce: reverse component with guaranteed minimum speed
+    if (hitTop)   ball.vy =  Math.max(Math.abs(ball.vy) * REST, HARD_BOUNCE);
+    if (hitBot)   ball.vy = -Math.max(Math.abs(ball.vy) * REST, HARD_BOUNCE);
+    if (hitLeft)  ball.vx =  Math.max(Math.abs(ball.vx) * REST, HARD_BOUNCE);
+    if (hitRight) ball.vx = -Math.max(Math.abs(ball.vx) * REST, HARD_BOUNCE);
+  }
+
+  // --- Anti-Stagnation Net (Universal) ---
+  const ballSpeed = Math.hypot(ball.vx, ball.vy);
+  const movement = Math.hypot(ball.x - (ball.lastX || 0), ball.y - (ball.lastY || 0));
+  ball.lastX = ball.x; ball.lastY = ball.y;
+  
+  // If ball hasn't moved much for ~60 frames anywhere on pitch, give it a kick
+  ball.globalStuckTimer = (movement < 0.2) ? (ball.globalStuckTimer || 0) + 1 : 0;
+  
+  if (ball.globalStuckTimer > 60) {
+    const angle = Math.random() * Math.PI * 2;
+    ball.vx = Math.cos(angle) * 5;
+    ball.vy = Math.sin(angle) * 5;
+    ball.globalStuckTimer = 0;
+    spawnParticles(ball.x, ball.y, '#ffffff', 16);
+  }
+
+  for (let i = 0; i < robots.length; i++) {
+    const r = robots[i];
+    resolveCollision(r, ball);
+    
+    // Joint collision pinch: push ball if robot and other robot are too close to ball
+    robots.forEach(other => {
+      if (other !== r && dist(r, other) < r.r + other.r + 10) {
+        if (dist(r, ball) < r.r + ball.r + 5) {
+           const toCenter = { x: W/2 - ball.x, y: H/2 - ball.y };
+           const d = Math.hypot(toCenter.x, toCenter.y) || 1;
+           ball.vx += (toCenter.x / d) * 1.5;
+           ball.vy += (toCenter.y / d) * 1.5;
+        }
+      }
+    });
+
+    for (let j = i + 1; j < robots.length; j++) resolveCollision(robots[i], robots[j]);
+  }
+
+  // Clear stale possession flag
+  robots.forEach(r => {
+    if (r.lastAction === 'possess' && !r.possession) r.lastAction = 'idle';
+  });
+
+  if (goalFlash > 0) goalFlash--;
+  particles = particles.filter(p => {
+    p.x += p.vx; p.y += p.vy; p.vx *= 0.95; p.vy *= 0.95; p.life -= 0.03;
+    return p.life > 0;
+  });
+
+  checkGoals();
+  document.getElementById('epoch-counter').textContent = 'Epoch: ' + epoch;
+}
+
+// ======================== DRAW FIELD ========================
+function drawField() {
+  const grad = fctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#1a5c2a'); grad.addColorStop(0.5, '#1e6b30'); grad.addColorStop(1, '#1a5c2a');
+  fctx.fillStyle = grad;
+  fctx.fillRect(0, 0, W, H);
+
+  fctx.fillStyle = '#ffffff06';
+  for (let i = 0; i < W; i += 50) { if (Math.floor(i/50)%2===0) fctx.fillRect(i, 0, 50, H); }
+
+  fctx.strokeStyle = '#ffffff28'; fctx.lineWidth = 1.5; fctx.setLineDash([]);
+  fctx.strokeRect(8, 8, W-16, H-16);
+  fctx.beginPath(); fctx.moveTo(W/2,8); fctx.lineTo(W/2,H-8); fctx.stroke();
+  fctx.beginPath(); fctx.arc(W/2, H/2, 45, 0, Math.PI*2); fctx.stroke();
+
+  const gt = (H - GOAL_W) / 2;
+  fctx.fillStyle = '#ffffff0c';
+  fctx.fillRect(0, gt, GOAL_D, GOAL_W);
+  fctx.fillRect(W-GOAL_D, gt, GOAL_D, GOAL_W);
+  fctx.strokeStyle = '#ffffff50'; fctx.lineWidth = 2;
+  fctx.strokeRect(0, gt, GOAL_D, GOAL_W);
+  fctx.strokeRect(W-GOAL_D, gt, GOAL_D, GOAL_W);
+
+  // Penalty areas
+  fctx.strokeStyle = '#ffffff1a'; fctx.lineWidth = 1.5;
+  fctx.strokeRect(8, gt-30, 55, GOAL_W+60);
+  fctx.strokeRect(W-63, gt-30, 55, GOAL_W+60);
+}
+
+function drawRobot(r) {
+  fctx.save();
+  fctx.translate(r.x, r.y);
+  if (r.spinMove > 0.1) fctx.rotate(r.spinMove * Math.PI * 2);
+
+  const lg = Math.sin(r.legPhase) * 5;
+  const bb = Math.abs(Math.sin(r.legPhase * 0.5)) * 1.5;
+
+  // Highlight selected robot
+  if (r.idx === selectedRobot) {
+    fctx.strokeStyle = '#ffffff44';
+    fctx.lineWidth = 2;
+    fctx.setLineDash([3, 3]);
+    fctx.beginPath();
+    fctx.arc(0, 0, r.r + 6, 0, Math.PI * 2);
+    fctx.stroke();
+    fctx.setLineDash([]);
+  }
+
+  // Shadow
+  fctx.fillStyle = '#00000030';
+  fctx.beginPath(); fctx.ellipse(2, r.r+1, r.r*0.7, 5, 0, 0, Math.PI*2); fctx.fill();
+
+  // Legs
+  fctx.strokeStyle = '#666'; fctx.lineWidth = 4; fctx.lineCap = 'round';
+  fctx.beginPath(); fctx.moveTo(-6,7); fctx.lineTo(-8+lg, r.r-2); fctx.stroke();
+  fctx.beginPath(); fctx.moveTo(6,7); fctx.lineTo(8-lg, r.r-2); fctx.stroke();
+  fctx.fillStyle = '#444';
+  fctx.beginPath(); fctx.ellipse(-8+lg, r.r, 4, 2.5, 0, 0, Math.PI*2); fctx.fill();
+  fctx.beginPath(); fctx.ellipse(8-lg, r.r, 4, 2.5, 0, 0, Math.PI*2); fctx.fill();
+
+  // Body
+  const bg = fctx.createLinearGradient(-r.r,-r.r,r.r,r.r);
+  bg.addColorStop(0,'#555'); bg.addColorStop(0.3,'#888'); bg.addColorStop(0.7,'#666'); bg.addColorStop(1,'#444');
+  fctx.fillStyle = bg;
+  fctx.beginPath(); fctx.roundRect(-12,-10-bb,24,20,5); fctx.fill();
+  fctx.fillStyle = r.color; fctx.globalAlpha = 0.75;
+  fctx.beginPath(); fctx.roundRect(-9,-5-bb,18,10,3); fctx.fill();
+  fctx.globalAlpha = 1;
+
+  // Arms
+  const aa = r.armSwing * 0.8;
+  fctx.strokeStyle = '#777'; fctx.lineWidth = 3.5;
+  fctx.beginPath(); fctx.moveTo(-12,-3-bb); fctx.lineTo(-19-Math.sin(aa)*7, 3-bb+Math.cos(aa)*4); fctx.stroke();
+  fctx.beginPath(); fctx.moveTo(12,-3-bb); fctx.lineTo(19+Math.sin(aa)*7, 3-bb+Math.cos(aa)*4); fctx.stroke();
+
+  // Head
+  const hg = fctx.createRadialGradient(0,-16-bb,2,0,-16-bb,10);
+  hg.addColorStop(0,'#999'); hg.addColorStop(1,'#555');
+  fctx.fillStyle = hg;
+  fctx.beginPath(); fctx.roundRect(-9,-24-bb,18,15,4); fctx.fill();
+  fctx.fillStyle = '#111';
+  fctx.beginPath(); fctx.roundRect(-7,-21-bb,14,7,2); fctx.fill();
+
+  // Eyes
+  const ec = r.eyeGlow > 0.3 ? r.color : '#0f0';
+  fctx.fillStyle = ec; fctx.shadowColor = ec; fctx.shadowBlur = 5 * (0.5+r.eyeGlow*0.5);
+  fctx.beginPath(); fctx.arc(-3,-18-bb,2,0,Math.PI*2); fctx.fill();
+  fctx.beginPath(); fctx.arc(3,-18-bb,2,0,Math.PI*2); fctx.fill();
+  fctx.shadowBlur = 0;
+
+  // Antenna
+  fctx.strokeStyle = '#888'; fctx.lineWidth = 1.2;
+  fctx.beginPath(); fctx.moveTo(0,-24-bb); fctx.lineTo(Math.sin(Date.now()*0.004)*2.5,-31-bb); fctx.stroke();
+  fctx.fillStyle = r.color;
+  fctx.beginPath(); fctx.arc(Math.sin(Date.now()*0.004)*2.5,-32-bb,2,0,Math.PI*2); fctx.fill();
+
+
+
+
+
+  fctx.restore();
+}
+
+function drawBall() {
+  ball.trail.push({ x: ball.x, y: ball.y });
+  if (ball.trail.length > 10) ball.trail.shift();
+  for (let i = 0; i < ball.trail.length; i++) {
+    const t = ball.trail[i];
+    fctx.fillStyle = `rgba(255,255,255,${(i/ball.trail.length)*0.15})`;
+    fctx.beginPath(); fctx.arc(t.x, t.y, ball.r*(i/ball.trail.length)*0.5, 0, Math.PI*2); fctx.fill();
+  }
+  fctx.fillStyle = '#00000030';
+  fctx.beginPath(); fctx.ellipse(ball.x+2, ball.y+2, ball.r, ball.r*0.4, 0, 0, Math.PI*2); fctx.fill();
+  const bg = fctx.createRadialGradient(ball.x-2, ball.y-2, 1, ball.x, ball.y, ball.r);
+  bg.addColorStop(0,'#fff'); bg.addColorStop(0.6,'#eee'); bg.addColorStop(1,'#bbb');
+  fctx.fillStyle = bg;
+  fctx.beginPath(); fctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); fctx.fill();
+}
+
+function drawFieldScene() {
+  fctx.clearRect(0, 0, W, H);
+  drawField();
+  if (goalFlash > 0) {
+    fctx.fillStyle = goalFlashColor + Math.floor((goalFlash/40)*25).toString(16).padStart(2,'0');
+    fctx.fillRect(0, 0, W, H);
+  }
+  drawBall();
+  robots.forEach(drawRobot);
+  particles.forEach(p => {
+    fctx.globalAlpha = p.life;
+    fctx.fillStyle = p.color;
+    fctx.beginPath(); fctx.arc(p.x, p.y, p.size*p.life, 0, Math.PI*2); fctx.fill();
+  });
+  fctx.globalAlpha = 1;
+}
+
+// ======================== DRAW NEURAL NETWORK ========================
+const INPUT_LABELS = ['ball dx', 'ball dy', 'ball vx', 'ball vy', 'goal dx', 'goal dy', 'opp dx', 'opp dy'];
+const OUTPUT_LABELS = ['forward', 'backward', 'left', 'right', 'kick'];
+
+const INPUT_DESCRIPTIONS = [
+  'How far left or right is the ball from me? Negative = ball is to my left, Positive = ball is to my right.',
+  'How far up or down is the ball from me? Negative = ball is above me, Positive = ball is below me.',
+  'Is the ball moving left or right? Negative = moving left, Positive = moving right. Close to 0 = barely moving.',
+  'Is the ball moving up or down? Negative = moving up, Positive = moving down. Close to 0 = barely moving.',
+  'How far am I from the goal I need to score in? Bigger number = farther away from the goal.',
+  'Am I lined up with the goal vertically? 0 = perfectly centered, otherwise I need to move up or down.',
+  'Where is the opponent robot left/right? Helps me avoid them or plan around them.',
+  'Where is the opponent robot up/down? Together with opp dx, tells me exactly where my opponent is.',
+];
+const OUTPUT_DESCRIPTIONS = [
+  'How much should I run toward the opponent\'s goal? Higher value = sprint forward faster. This is how the robot attacks.',
+  'How much should I run back toward my own goal? Higher value = retreat faster. This is how the robot defends.',
+  'How much should I move to the left side of the field? Higher value = move left more. Helps dodge opponents or position better.',
+  'How much should I move to the right side of the field? Higher value = move right more. Helps dodge opponents or position better.',
+  'How hard should I kick the ball? Higher value = stronger kick. Only works when the robot is close enough to touch the ball.',
+];
+
+let lastNodePositions = null;
+
+// Layer palette: purple → blue → cyan → pink
+const NN_LAYER_COLORS = [
+  { r: 148, g: 88,  b: 228 },  // purple  — inputs
+  { r:  72, g: 130, b: 255 },  // blue    — hidden 1
+  { r:  30, g: 205, b: 230 },  // cyan    — hidden 2
+  { r: 240, g:  80, b: 160 },  // pink    — outputs
+];
+
+function drawNN() {
+  const cw = nnCanvas.width, ch = nnCanvas.height;
+  const isDark = document.body.getAttribute('data-theme') !== 'light';
+
+  // Background
+  nctx.clearRect(0, 0, cw, ch);
+  
+  // Minimal grid if in light mode
+  if (!isDark) {
+    nctx.strokeStyle = '#e2e8f0';
+    nctx.setLineDash([2, 5]);
+    nctx.lineWidth = 0.5;
+    for (let x = 0; x < cw; x += 30) { nctx.beginPath(); nctx.moveTo(x,0); nctx.lineTo(x,ch); nctx.stroke(); }
+    for (let y = 0; y < ch; y += 30) { nctx.beginPath(); nctx.moveTo(0,y); nctx.lineTo(cw,y); nctx.stroke(); }
+    nctx.setLineDash([]);
+  }
+
+  const nn = robots[selectedRobot].nn;
+  const layers      = [NN_IN, NN_HID1, NN_HID2, NN_OUT];
+  const activations = [nn.lastInputs, nn.lastHidden1, nn.lastHidden2, nn.lastOutputs];
+
+  const PAD_L = 52, PAD_R = 18, PAD_T = 30, PAD_B = 14;
+  const NODE_R = Math.min(15, Math.floor((ch - PAD_T - PAD_B) / (Math.max(...layers) * 2.6)));
+
+  // Column X positions
+  const usableW = cw - PAD_L - PAD_R;
+  const colX = layers.map((_, i) => PAD_L + (usableW / (layers.length - 1)) * i);
+
+  // Node Y positions — pure vertical column
+  const nodes = layers.map((n, l) => {
+    const spacing = Math.min(NODE_R * 2.7, (ch - PAD_T - PAD_B) / n);
+    const totalH  = (n - 1) * spacing;
+    const startY  = PAD_T + (ch - PAD_T - PAD_B - totalH) / 2;
+    return Array.from({ length: n }, (_, i) => ({ x: colX[l], y: startY + i * spacing }));
+  });
+
+  // --- 1. Draw connections (behind nodes) ---
+  const connLayerPairs = [
+    { from: 0, to: 1, W: nn.w1, D: nn.lastW1Delta },
+    { from: 1, to: 2, W: nn.w2, D: nn.lastW2Delta },
+    { from: 2, to: 3, W: nn.w3, D: nn.lastW3Delta },
+  ];
+
+  connLayerPairs.forEach(({ from, to, W, D }) => {
+    // Collect all weights to find top-25% threshold for label display
+    const allAbs = [];
+    for (let i = 0; i < nodes[to].length; i++)
+      for (let j = 0; j < nodes[from].length; j++)
+        allAbs.push(Math.abs(W[i][j]));
+    allAbs.sort((a, b) => b - a);
+    const labelThreshold = allAbs[Math.floor(allAbs.length * 0.22)] ?? 0;
+
+    for (let i = 0; i < nodes[to].length; i++) {
+      for (let j = 0; j < nodes[from].length; j++) {
+        const w   = W[i][j];
+        const d   = D ? D[i][j] : 0;
+        const f   = nodes[from][j];
+        const t   = nodes[to][i];
+        const absW = Math.min(Math.abs(w), 2);
+
+        // Flash highlight on recent weight update
+        const absDelta = Math.abs(d);
+        const flash = absDelta > 0.001 ? Math.min(1, absDelta * 25) : 0;
+
+        // Positive weights → blue/cyan, negative → pink/magenta
+        let cr, cg, cb;
+        if (w >= 0) { cr = isDark ? 60 : 40;  cg = isDark ? 140 : 120;  cb = 255; }
+        else        { cr = 230; cg = isDark ? 70 : 100; cb = isDark ? 160 : 200; }
+        if (flash > 0) { cr += flash * 40; cg += flash * 40; }
+
+        const alpha = (isDark ? 0.08 : 0.12) + absW * 0.28 + flash * 0.2;
+        nctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`;
+        nctx.lineWidth   = 0.6 + absW * 0.9;
+        nctx.beginPath();
+        nctx.moveTo(f.x, f.y);
+        nctx.lineTo(t.x, t.y);
+        nctx.stroke();
+
+        // Weight label on strong connections
+        if (Math.abs(w) >= labelThreshold) {
+          // Offset label position slightly along the line to reduce overlap
+          const t0 = 0.38 + (i % 3) * 0.08;
+          const mx = f.x + (t.x - f.x) * t0;
+          const my = f.y + (t.y - f.y) * t0;
+          const label = (w >= 0 ? '+' : '') + w.toFixed(2);
+
+          nctx.font = '7.5px monospace';
+          nctx.textAlign = 'center';
+          nctx.textBaseline = 'middle';
+          const tw = nctx.measureText(label).width;
+
+          // Pill background
+          nctx.fillStyle = isDark ? 'rgba(8,12,28,0.85)' : 'rgba(255,255,255,0.92)';
+          nctx.shadowColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)';
+          nctx.shadowBlur = 4;
+          nctx.beginPath();
+          nctx.roundRect(mx - tw / 2 - 3, my - 6, tw + 6, 12, 3);
+          nctx.fill();
+          nctx.shadowBlur = 0;
+
+          nctx.fillStyle = w >= 0 ? (isDark ? '#7ec8ff' : '#2563eb') : (isDark ? '#f9a8d4' : '#db2777');
+          nctx.fillText(label, mx, my);
+        }
+      }
+    }
+  });
+
+  // --- 2. Draw nodes (on top of connections) ---
+  for (let l = 0; l < 4; l++) {
+    const col = NN_LAYER_COLORS[l];
+    for (let i = 0; i < layers[l]; i++) {
+      const { x, y } = nodes[l][i];
+      const act       = activations[l][i] ?? 0;
+      const intensity = Math.min(1, Math.abs(act ?? 0));
+
+      // Outer glow ring
+      const glowSize = NODE_R * 2.4;
+      const glow = nctx.createRadialGradient(x, y, NODE_R * 0.5, x, y, glowSize);
+      const glowAlpha = isDark ? 0.28 : 0.18;
+      glow.addColorStop(0, `rgba(${col.r},${col.g},${col.b},${glowAlpha * intensity})`);
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      nctx.fillStyle = glow;
+      nctx.beginPath();
+      nctx.arc(x, y, glowSize, 0, Math.PI * 2);
+      nctx.fill();
+
+      // Node body — radial gradient for 3-D look
+      const nr = Math.min(255, col.r + 55), ng = Math.min(255, col.g + 55), nb = Math.min(255, col.b + 55);
+      const bodyGrad = nctx.createRadialGradient(x - NODE_R * 0.32, y - NODE_R * 0.32, 1, x, y, NODE_R);
+      const baseNodeAlpha = isDark ? 0.35 : 0.7;
+      bodyGrad.addColorStop(0, `rgba(${nr},${ng},${nb},${baseNodeAlpha + intensity * 0.3})`);
+      bodyGrad.addColorStop(1, `rgba(${col.r},${col.g},${col.b},${baseNodeAlpha + intensity * 0.3})`);
+      nctx.fillStyle = bodyGrad;
+      nctx.beginPath();
+      nctx.arc(x, y, NODE_R, 0, Math.PI * 2);
+      nctx.fill();
+
+      // Node border
+      nctx.strokeStyle = isDark ? `rgba(${nr},${ng},${nb},${0.5 + intensity * 0.4})` : `rgba(${col.r},${col.g},${col.b},0.3)`;
+      nctx.lineWidth = 1.8;
+      nctx.stroke();
+
+      // Activation value inside node
+      nctx.fillStyle = isDark ? `rgba(255,255,255,${0.65 + intensity * 0.35})` : (intensity > 0.5 ? '#fff' : '#1e293b');
+      nctx.font = `bold ${NODE_R > 12 ? 8 : 7}px monospace`;
+      nctx.textAlign = 'center';
+      nctx.textBaseline = 'middle';
+      nctx.fillText(act.toFixed(2), x, y);
+    }
+  }
+
+  // --- 3. Input value pills (left of input column) ---
+  for (let i = 0; i < NN_IN; i++) {
+    const { x, y } = nodes[0][i];
+    const val   = (nn.lastInputs[i] ?? 0).toFixed(2);
+    const pillW = 36, pillH = 14;
+    const px    = x - NODE_R - pillW - 7;
+
+    nctx.fillStyle   = isDark ? 'rgba(100, 60, 180, 0.35)' : '#ede9fe';
+    nctx.strokeStyle = isDark ? 'rgba(148, 88, 228, 0.5)' : '#ddd6fe';
+    nctx.lineWidth   = 0.8;
+    nctx.beginPath();
+    nctx.roundRect(px, y - pillH / 2, pillW, pillH, 3);
+    nctx.fill();
+    nctx.stroke();
+
+    nctx.fillStyle   = isDark ? '#c4a0ff' : '#6d28d9';
+    nctx.font        = '8px monospace';
+    nctx.textAlign   = 'center';
+    nctx.textBaseline = 'middle';
+    nctx.fillText(val, px + pillW / 2, y);
+  }
+
+  // --- 4. Column headers ---
+  const headers = ['INPUTS', 'LAYER 1', 'LAYER 2', 'ACTIONS'];
+  headers.forEach((hdr, i) => {
+    const col = NN_LAYER_COLORS[i];
+    nctx.fillStyle = `rgba(${col.r},${col.g},${col.b},0.55)`;
+    nctx.font      = 'bold 8.5px sans-serif';
+    nctx.textAlign = 'center';
+    nctx.textBaseline = 'top';
+    nctx.fillText(hdr, colX[i], 6);
+  });
+
+  // Store node positions for tooltip hit-testing
+  lastNodePositions = { nodes, NODE_R, layers };
+}
+
+// ======================== NN TOOLTIP ========================
+const nnTooltip = document.getElementById('nn-tooltip');
+const nnPanel   = nnCanvas.parentElement;
+
+nnCanvas.addEventListener('mousemove', e => {
+  if (!lastNodePositions) return;
+  const { nodes, NODE_R, layers } = lastNodePositions;
+  const rect = nnCanvas.getBoundingClientRect();
+  const scaleX = nnCanvas.width / rect.width;
+  const scaleY = nnCanvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  let hit = null;
+  for (let l = 0; l < layers.length; l++) {
+    for (let i = 0; i < nodes[l].length; i++) {
+      const dx = mx - nodes[l][i].x, dy = my - nodes[l][i].y;
+      if (dx * dx + dy * dy <= (NODE_R + 4) * (NODE_R + 4)) {
+        hit = { layer: l, index: i };
+        break;
+      }
+    }
+    if (hit) break;
+  }
+
+  if (hit) {
+    let label, desc;
+    if (hit.layer === 0) {
+      label = INPUT_LABELS[hit.index];
+      desc  = INPUT_DESCRIPTIONS[hit.index];
+    } else if (hit.layer === 3) {
+      label = OUTPUT_LABELS[hit.index];
+      desc  = OUTPUT_DESCRIPTIONS[hit.index];
+    } else {
+      label = `Hidden Layer ${hit.layer} — Neuron ${hit.index + 1}`;
+      desc  = 'This is part of the robot\'s "thinking" process. It combines clues from the inputs to find patterns — like "the ball is close AND the goal is to my right, so I should move right." It learns which clues matter most over time.';
+    }
+    nnTooltip.querySelector('.tt-label').textContent = label;
+    nnTooltip.querySelector('.tt-desc').textContent  = desc;
+    nnTooltip.style.opacity = '1';
+
+    // Position tooltip below the node, not on top of it
+    const panelRect = nnPanel.getBoundingClientRect();
+    const rect = nnCanvas.getBoundingClientRect();
+    const scaleXInv = rect.width / nnCanvas.width;
+    const scaleYInv = rect.height / nnCanvas.height;
+    const nodeScreenX = rect.left - panelRect.left + nodes[hit.layer][hit.index].x * scaleXInv;
+    const nodeScreenY = rect.top - panelRect.top + nodes[hit.layer][hit.index].y * scaleYInv;
+    const ttW = 290;
+
+    // Place below the node with some offset
+    let tx = nodeScreenX - ttW / 2;
+    let ty = nodeScreenY + NODE_R * scaleYInv + 10;
+
+    // If tooltip goes below panel, show above the node instead
+    if (ty + 80 > panelRect.height) {
+      ty = nodeScreenY - NODE_R * scaleYInv - 60;
+    }
+    // Keep within horizontal bounds
+    if (tx < 4) tx = 4;
+    if (tx + ttW > panelRect.width - 4) tx = panelRect.width - ttW - 4;
+
+    nnTooltip.style.left = tx + 'px';
+    nnTooltip.style.top  = ty + 'px';
+  } else {
+    nnTooltip.style.opacity = '0';
+  }
+});
+
+nnCanvas.addEventListener('mouseleave', () => {
+  nnTooltip.style.opacity = '0';
+});
+
+
+// ======================== ROBOT SELECTION ========================
+// Logic consolidated into setActiveTeam above
+
+// ======================== MAIN LOOP ========================
+let paused = false;
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('pause-btn');
+  btn.textContent = paused ? '▶' : '⏸︎';
+  btn.classList.toggle('playing', paused);
+  btn.title = paused ? 'Resume' : 'Pause';
+}
+
+function restartSimulation() {
+  // Reset epoch
+  epoch = 0;
+  document.getElementById('epoch-counter').textContent = 'Epoch: 0';
+
+  // Reset robots with fresh neural networks and positions
+  robots.forEach((r, idx) => {
+    r.nn = createNN();
+    r.vx = 0;
+    r.vy = 0;
+    r.x = idx === 0 ? W * 0.25 : W * 0.75;
+    r.y = H * 0.5;
+  });
+
+  // Reset ball
+  ball.x = W / 2;
+  ball.y = H / 2;
+  ball.vx = 0;
+  ball.vy = 0;
+  ball.trail = [];
+
+  // Reset other state variables
+  goalFlash = 0;
+  goalFlashColor = '';
+  goalCountedThisFrame = false;
+  cumulativeReward = [0, 0];
+  particles = [];
+  paused = false;
+
+  // Update pause button state
+  const pauseBtn = document.getElementById('pause-btn');
+  pauseBtn.textContent = '⏸︎';
+  pauseBtn.classList.remove('playing');
+  pauseBtn.title = 'Pause / Resume';
+
+  // Visual feedback - golden particles at center
+  spawnParticles(W/2, H/2, '#f59e0b', 40);
+}
+
+function loop() {
+  if (!paused) {
+    update();
+  }
+  drawFieldScene();
+  drawNN();
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('keydown', e => {
+  if (e.key === ' ') { e.preventDefault(); togglePause(); }
+  if (e.key === 'r' || e.key === 'R') {
+    resetAfterGoal();
+    spawnParticles(W/2, H/2, '#4ade80', 30);
+  }
+});
+
+// --- LIGHT/DARK THEME ---
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  
+  const icon = document.getElementById('theme-icon');
+  const text = document.getElementById('theme-text');
+  icon.textContent = isLight ? '🌙' : '☀️';
+  text.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+}
+
+ball.vx = 1.2; 
+ball.vy = 0.5;
+loop();
+</script>
+</body>
+</html>

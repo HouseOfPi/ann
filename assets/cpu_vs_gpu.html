@@ -1,0 +1,276 @@
+
+<style>
+  :root {
+    --cpu: #e06040; --gpu: #40c090; --gold: #d4a843;
+    --dim: var(--color-text-secondary); --text: var(--color-text-primary);
+    --panel: var(--color-background-secondary); --border: var(--color-border-tertiary);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font-sans); color: var(--text); }
+  h2 { font-size: 20px; font-weight: 500; text-align: center; padding: 16px 0 4px; }
+  .sub { text-align: center; font-size: 13px; color: var(--dim); font-family: var(--font-mono); margin-bottom: 14px; }
+
+  .controls { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+  button { font-family: var(--font-mono); font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 7px 16px; cursor: pointer; background: var(--color-background-primary); color: var(--text); transition: background 0.15s; }
+  button:hover { background: var(--color-background-secondary); }
+  button:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-both { border-color: var(--gold); color: var(--gold); }
+  .btn-reset { border-color: var(--border); }
+
+  .arena { display: flex; gap: 16px; padding: 0 16px; max-width: 900px; margin: 0 auto; }
+  .side { flex:1; background: var(--panel); border: 0.5px solid var(--border); border-radius: var(--border-radius-lg); padding: 16px; display: flex; flex-direction: column; align-items: center; }
+  .side-header { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 2px; }
+  .side-label { font-size: 12px; font-family: var(--font-mono); font-weight: 500; letter-spacing: 2px; }
+  .cpu .side-label { color: var(--cpu); } .gpu .side-label { color: var(--gpu); }
+
+  .side-btn { font-family: var(--font-mono); font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid; transition: background 0.15s; background: transparent; }
+  .cpu .side-btn { border-color: var(--cpu); color: var(--cpu); }
+  .cpu .side-btn:hover { background: rgba(224,96,64,0.1); }
+  .gpu .side-btn { border-color: var(--gpu); color: var(--gpu); }
+  .gpu .side-btn:hover { background: rgba(64,192,144,0.1); }
+  .side-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .side-sub { font-size: 11px; color: var(--dim); font-family: var(--font-mono); margin-bottom: 12px; align-self: flex-start; }
+
+  .chip-container { width: 200px; height: 200px; border-radius: var(--border-radius-md); padding: 10px; display: grid; gap: 5px; }
+  .cpu .chip-container { grid-template-columns: repeat(2, 1fr); border: 1.5px solid var(--cpu); background: rgba(224,96,64,0.04); }
+  .gpu .chip-container { grid-template-columns: repeat(10, 1fr); border: 1.5px solid var(--gpu); background: rgba(64,192,144,0.04); }
+
+  .cpu-core { border: 2px solid var(--cpu); border-radius: 6px; background: rgba(224,96,64,0.08); display: flex; align-items: center; justify-content: center; font-size: 11px; font-family: var(--font-mono); color: var(--cpu); transition: background 0.05s, border-color 0.05s, color 0.05s; }
+  .cpu-core.active { background: #e06040; border-color: #ff9070; color: #fff; font-weight: 700; }
+  .gpu-core { border: 0.5px solid rgba(64,192,144,0.3); border-radius: 2px; background: rgba(64,192,144,0.06); transition: background 0.08s; }
+  .gpu-core.active { background: rgba(64,192,144,0.6); border-color: var(--gpu); }
+
+  .progress-wrap { width: 100%; margin-top: 12px; }
+  .progress-outer { width: 100%; height: 6px; background: rgba(128,128,128,0.12); border-radius: 3px; overflow: hidden; }
+  .progress-inner { height: 100%; width: 0%; border-radius: 3px; transition: width 0.3s; }
+  .cpu .progress-inner { background: var(--cpu); } .gpu .progress-inner { background: var(--gpu); }
+  .progress-pct { font-size: 11px; font-family: var(--font-mono); text-align: right; margin-top: 3px; }
+  .cpu .progress-pct { color: var(--cpu); } .gpu .progress-pct { color: var(--gpu); }
+
+  .queue-section { width: 100%; margin-top: 10px; }
+  .queue-label { font-size: 10px; color: var(--dim); font-family: var(--font-mono); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .queue-track { display: flex; flex-wrap: wrap; gap: 2px; min-height: 20px; }
+  .data-block { width: 9px; height: 9px; border-radius: 1px; opacity: 0.25; transition: opacity 0.3s; }
+  .data-block.done { opacity: 1; }
+  .cpu .data-block { background: var(--cpu); } .gpu .data-block { background: var(--gpu); }
+
+  .status-tag { font-size: 10px; font-family: var(--font-mono); margin-top: 8px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--border); color: var(--dim); background: var(--panel); letter-spacing: 1px; min-width: 80px; text-align: center; }
+  .status-tag.running-cpu { border-color: var(--cpu); color: var(--cpu); }
+  .status-tag.running-gpu { border-color: var(--gpu); color: var(--gpu); }
+  .status-tag.done-tag { border-color: var(--gold); color: var(--gold); }
+
+  .stats-bar { display: flex; gap: 12px; justify-content: center; padding: 14px 16px 8px; max-width: 900px; margin: 0 auto; }
+  .stat-card { background: var(--panel); border: 0.5px solid var(--border); border-radius: var(--border-radius-md); padding: 10px 18px; text-align: center; flex: 1; max-width: 180px; }
+  .stat-val { font-size: 24px; font-weight: 500; font-family: var(--font-mono); }
+  .stat-label { font-size: 10px; color: var(--dim); font-family: var(--font-mono); letter-spacing: 1px; margin-top: 2px; }
+  .cpu-stat .stat-val { color: var(--cpu); } .gpu-stat .stat-val { color: var(--gpu); } .ratio-stat .stat-val { color: var(--gold); }
+
+  .insight { max-width: 900px; margin: 4px auto 0; padding: 0 16px; }
+  .insight-box { background: var(--panel); border: 0.5px solid var(--border); border-radius: var(--border-radius-md); padding: 14px 18px; font-size: 13px; line-height: 1.7; color: var(--text); }
+  .insight-box strong { color: var(--gold); }
+  .cpu-hl { color: var(--cpu); font-weight: 500; } .gpu-hl { color: var(--gpu); font-weight: 500; }
+
+  .a100-note { max-width: 900px; margin: 10px auto 16px; padding: 0 16px; }
+  .a100-box { border: 0.5px solid var(--gpu); border-radius: var(--border-radius-md); padding: 14px 18px; font-size: 13px; line-height: 1.8; color: var(--text); background: rgba(64,192,144,0.04); }
+  .a100-box .tag { display: inline-block; font-size: 11px; font-family: var(--font-mono); font-weight: 500; color: var(--gpu); border: 0.5px solid var(--gpu); border-radius: var(--border-radius-md); padding: 2px 8px; margin-bottom: 8px; letter-spacing: 1px; }
+  .a100-box .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .a100-box .chip { background: var(--panel); border: 0.5px solid var(--border); border-radius: var(--border-radius-md); padding: 8px 14px; font-size: 12px; font-family: var(--font-mono); flex: 1; min-width: 130px; }
+  .a100-box .chip .val { font-size: 16px; font-weight: 500; color: var(--gpu); display: block; }
+  .a100-box .chip .lbl { color: var(--dim); font-size: 11px; }
+  .caveat { font-size: 11px; font-family: var(--font-mono); color: var(--gold); }
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
+  @media (max-width: 600px) { .arena { flex-direction: column; } .chip-container { width: 100%; height: 160px; } }
+</style>
+
+<h2>CPU vs GPU — parallel processing</h2>
+<p class="sub">why GPUs power AI training</p>
+
+<div class="controls">
+  <button class="btn-both" onclick="startBoth()">▶ run both</button>
+  <button class="btn-reset" onclick="resetAll()">↺ reset all</button>
+</div>
+
+<div class="arena">
+  <div class="side cpu">
+    <div class="side-header">
+      <div>
+        <div class="side-label">CPU</div>
+      </div>
+      <button class="side-btn" id="cpuBtn" onclick="startCPU()">▶ run</button>
+    </div>
+    <div class="side-sub">4 cores — sequential</div>
+    <div class="chip-container" id="cpuChip"></div>
+    <div class="progress-wrap">
+      <div class="progress-outer"><div class="progress-inner" id="cpuProgress"></div></div>
+      <div class="progress-pct" id="cpuPct">0%</div>
+    </div>
+    <div class="queue-section">
+      <div class="queue-label"><span>data queue</span><span id="cpuCount">0/400</span></div>
+      <div class="queue-track" id="cpuQueue"></div>
+    </div>
+    <div class="status-tag" id="cpuStatus">IDLE</div>
+  </div>
+
+  <div class="side gpu">
+    <div class="side-header">
+      <div>
+        <div class="side-label">GPU</div>
+      </div>
+      <button class="side-btn" id="gpuBtn" onclick="startGPU()">▶ run</button>
+    </div>
+    <div class="side-sub">100 cores — parallel</div>
+    <div class="chip-container" id="gpuChip"></div>
+    <div class="progress-wrap">
+      <div class="progress-outer"><div class="progress-inner" id="gpuProgress"></div></div>
+      <div class="progress-pct" id="gpuPct">0%</div>
+    </div>
+    <div class="queue-section">
+      <div class="queue-label"><span>data queue</span><span id="gpuCount">0/400</span></div>
+      <div class="queue-track" id="gpuQueue"></div>
+    </div>
+    <div class="status-tag" id="gpuStatus">IDLE</div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-card cpu-stat"><div class="stat-val" id="cpuTime">—</div><div class="stat-label">CPU CYCLES</div></div>
+  <div class="stat-card ratio-stat"><div class="stat-val" id="speedup">—</div><div class="stat-label">GPU SPEEDUP</div></div>
+  <div class="stat-card gpu-stat"><div class="stat-val" id="gpuTime">—</div><div class="stat-label">GPU CYCLES</div></div>
+</div>
+
+<div class="insight">
+  <div class="insight-box">
+    <strong>Why this matters for AI:</strong> Training a neural network = multiplying millions of matrix values — simple, repetitive math done billions of times.
+    A <span class="cpu-hl">CPU</span> handles <strong>4 tasks at once</strong> (great for complex logic).
+    A <span class="gpu-hl">GPU</span> handles <strong>100 tasks simultaneously</strong> (perfect for uniform parallel computation).
+  </div>
+</div>
+
+<div class="a100-note">
+  <div class="a100-box">
+    <div class="tag">REAL WORLD — NVIDIA A100</div>
+    <div>The A100 is one of the most widely used GPUs for AI training today. Its specs show just how far beyond this simulation real hardware operates.</div>
+    <div class="row">
+      <div class="chip"><span class="val">6,912</span><span class="lbl">CUDA cores</span></div>
+      <div class="chip"><span class="val">432</span><span class="lbl">Tensor cores (matrix math)</span></div>
+      <div class="chip"><span class="val">312 TFLOPS</span><span class="lbl">TF32 training throughput</span></div>
+      <div class="chip"><span class="val">80 GB</span><span class="lbl">HBM2e memory</span></div>
+    </div>
+    <hr class="divider">
+    <div style="font-size:12px; margin-bottom:6px;"><strong>GPT-3 training — what we actually know</strong></div>
+    <div style="font-size:12px; color: var(--dim); line-height:1.8;">
+      GPT-3 has <strong style="color:var(--text)">175 billion parameters</strong> and required enormous compute to train.
+      OpenAI never officially disclosed exact hardware details — but based on the 2020 timeline,
+      training likely ran on <strong style="color:var(--text)">thousands of V100 GPUs</strong> (not A100s, which were barely released then),
+      using both <strong style="color:var(--text)">model parallelism</strong> (splitting layers across GPUs) and
+      <strong style="color:var(--text)">data parallelism</strong> (each GPU processes different data batches).
+      Training duration estimates of ~30 days exist but are <span class="caveat">unconfirmed by OpenAI</span>.
+    </div>
+    <hr class="divider">
+    <div style="font-size:12px; color: var(--dim);">
+      <strong style="color:var(--text)">About this simulation:</strong> The 100-core grid here represents a tiny fraction of what one real GPU does in one cycle — real training involves thousands of CUDA cores, dedicated Tensor cores, high-bandwidth memory, and fast GPU interconnects working together simultaneously.
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOTAL=400, CPU_CORES=4, GPU_CORES=100, CPU_TICK=60, GPU_CYCLE=800;
+  let cpuDone=0, gpuDone=0, cpuCycles=0, gpuCycles=0;
+  let cpuTimer=null, gpuTimeout=null, cpuRunning=false, gpuRunning=false;
+
+  const cpuChip=document.getElementById('cpuChip'), gpuChip=document.getElementById('gpuChip');
+  for(let i=0;i<CPU_CORES;i++){const d=document.createElement('div');d.className='cpu-core';d.textContent=`C${i}`;cpuChip.appendChild(d);}
+  for(let i=0;i<GPU_CORES;i++){const d=document.createElement('div');d.className='gpu-core';gpuChip.appendChild(d);}
+  ['cpuQueue','gpuQueue'].forEach(id=>{const el=document.getElementById(id);for(let i=0;i<TOTAL;i++){const b=document.createElement('div');b.className='data-block';el.appendChild(b);}});
+
+  function setStatus(s, state){
+    const el=document.getElementById(`${s}Status`);
+    el.className='status-tag';
+    if(state==='running'){el.classList.add(`running-${s}`);el.textContent='RUNNING';}
+    else if(state==='done'){el.classList.add('done-tag');el.textContent='DONE';}
+    else el.textContent='IDLE';
+  }
+  function setBtnState(s, running){
+    const btn=document.getElementById(`${s}Btn`);
+    btn.textContent = running ? '■ stop' : '▶ run';
+    btn.disabled = false;
+  }
+  function updateStats(s){
+    const done=s==='cpu'?cpuDone:gpuDone, pct=Math.round((done/TOTAL)*100);
+    document.getElementById(`${s}Progress`).style.width=pct+'%';
+    document.getElementById(`${s}Pct`).textContent=pct+'%';
+    document.getElementById(`${s}Count`).textContent=`${done}/${TOTAL}`;
+  }
+  function lightCores(s,idx,on){const c=document.querySelectorAll(`.${s}-core`);idx.forEach(i=>{if(c[i])c[i].classList.toggle('active',on);});}
+  function markBlocks(s,start,count){const b=document.querySelectorAll(`#${s}Queue .data-block`);for(let i=start;i<start+count&&i<TOTAL;i++)b[i].classList.add('done');}
+
+  function cpuTick(){
+    if(cpuDone>=TOTAL){
+      lightCores('cpu',[0,1,2,3],false);
+      document.getElementById('cpuTime').textContent=cpuCycles+'';
+      clearInterval(cpuTimer); cpuRunning=false;
+      setStatus('cpu','done'); setBtnState('cpu',false); tryShowSpeedup(); return;
+    }
+    lightCores('cpu',[0,1,2,3],true);
+    setTimeout(()=>lightCores('cpu',[0,1,2,3],false),CPU_TICK*0.7);
+    const batch=Math.min(CPU_CORES,TOTAL-cpuDone);
+    markBlocks('cpu',cpuDone,batch); cpuDone+=batch; cpuCycles++; updateStats('cpu');
+  }
+  function gpuWaveCycle(){
+    if(gpuDone>=TOTAL){
+      lightCores('gpu',Array.from({length:GPU_CORES},(_,i)=>i),false);
+      document.getElementById('gpuTime').textContent=gpuCycles+'';
+      gpuRunning=false; setStatus('gpu','done'); setBtnState('gpu',false); tryShowSpeedup(); return;
+    }
+    const batch=Math.min(GPU_CORES,TOTAL-gpuDone);
+    const all=Array.from({length:batch},(_,i)=>i);
+    lightCores('gpu',all,true);
+    setTimeout(()=>{markBlocks('gpu',gpuDone,batch);gpuDone+=batch;gpuCycles++;updateStats('gpu');},200);
+    setTimeout(()=>lightCores('gpu',all,false),350);
+    gpuTimeout=setTimeout(gpuWaveCycle,GPU_CYCLE);
+  }
+  function tryShowSpeedup(){
+    const c=document.getElementById('cpuTime').textContent, g=document.getElementById('gpuTime').textContent;
+    if(c!=='—'&&g!=='—') document.getElementById('speedup').textContent=Math.round(parseInt(c)/parseInt(g))+'×';
+  }
+
+  function resetSide(s){
+    if(s==='cpu'){clearInterval(cpuTimer);cpuDone=0;cpuCycles=0;cpuRunning=false;}
+    else{clearTimeout(gpuTimeout);gpuDone=0;gpuCycles=0;gpuRunning=false;}
+    document.querySelectorAll(`.${s}-core`).forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll(`#${s}Queue .data-block`).forEach(b=>b.classList.remove('done'));
+    document.getElementById(`${s}Progress`).style.width='0%';
+    document.getElementById(`${s}Pct`).textContent='0%';
+    document.getElementById(`${s}Count`).textContent=`0/${TOTAL}`;
+    document.getElementById(`${s}Time`).textContent='—';
+    setStatus(s,'idle'); setBtnState(s,false);
+  }
+
+  function startCPU(){
+    if(cpuRunning){resetSide('cpu');return;}
+    resetSide('cpu'); cpuRunning=true;
+    setStatus('cpu','running'); setBtnState('cpu',true);
+    document.getElementById('speedup').textContent='—';
+    cpuTimer=setInterval(cpuTick,CPU_TICK);
+  }
+  function startGPU(){
+    if(gpuRunning){resetSide('gpu');return;}
+    resetSide('gpu'); gpuRunning=true;
+    setStatus('gpu','running'); setBtnState('gpu',true);
+    document.getElementById('speedup').textContent='—';
+    gpuWaveCycle();
+  }
+  function startBoth(){
+    resetAll();
+    cpuRunning=true; gpuRunning=true;
+    setStatus('cpu','running'); setStatus('gpu','running');
+    setBtnState('cpu',true); setBtnState('gpu',true);
+    cpuTimer=setInterval(cpuTick,CPU_TICK);
+    gpuWaveCycle();
+  }
+  function resetAll(){
+    resetSide('cpu'); resetSide('gpu');
+    document.getElementById('speedup').textContent='—';
+  }
+</script>
