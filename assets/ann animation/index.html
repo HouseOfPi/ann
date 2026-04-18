@@ -1933,10 +1933,28 @@ const netLayerPositions = NET_LAYER_SIZES.map((n, li) => {
   return Array.from({ length: n }, (_, i) => ({ x: NET_LAYER_X[li], y: y0 + i * spacing }));
 });
 
+const NET_INPUT_VALUES = [0.8, 0.4, 0.9];
+
 function netHashedWeight(li, i, j) {
   const seed = (li * 991 + i * 97 + j * 31) % 100;
   return (seed - 50) / 50;
 }
+
+const NET_ACTIVATIONS = (() => {
+  const act = [NET_INPUT_VALUES];
+  for (let li = 0; li < NET_LAYER_SIZES.length - 1; li++) {
+    const next = [];
+    for (let j = 0; j < NET_LAYER_SIZES[li + 1]; j++) {
+      let sum = 0;
+      for (let i = 0; i < NET_LAYER_SIZES[li]; i++) {
+        sum += act[li][i] * netHashedWeight(li, i, j);
+      }
+      next[j] = 1 / (1 + Math.exp(-sum));
+    }
+    act.push(next);
+  }
+  return act;
+})();
 
 function NetTitle() {
   const t = useTime();
