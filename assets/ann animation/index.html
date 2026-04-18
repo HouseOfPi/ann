@@ -1327,26 +1327,45 @@ function FormulaPanel() {
       fontFamily: FONT_MONO,
     }}>
       <div style={{
-        fontSize: 34,
+        fontSize: 32,
         color: COLORS.ink,
-        letterSpacing: '0.02em',
+        letterSpacing: '0.01em',
         whiteSpace: 'nowrap',
         lineHeight: 1.4,
       }}>
         <span style={{ color: COLORS.dim }}>z</span>
-        <span style={{ color: COLORS.dim, margin: '0 14px' }}>=</span>
+        <span style={{ color: COLORS.dim, margin: '0 12px' }}>=</span>
+        
         <span style={{ opacity: sumOp }}>
-          <span style={{ fontSize: 42, color: COLORS.accent, verticalAlign: 'middle' }}>Σ</span>
-          <span style={{ color: COLORS.ink, margin: '0 2px' }}>w</span>
-          <span style={{ fontSize: 20, color: COLORS.dim, verticalAlign: 'sub' }}>i</span>
-          <span style={{ color: COLORS.ink }}>·x</span>
-          <span style={{ fontSize: 20, color: COLORS.dim, verticalAlign: 'sub' }}>i</span>
-          <span style={{ margin: '0 10px' }}>+</span>
-          <span>b</span>
+          {/* Term 1 */}
+          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.dim }}>1</sub>
+          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.dim }}>1</sub>
+          
+          <span style={{ margin: '0 8px', color: COLORS.dim }}>+</span>
+          
+          {/* Term 2 */}
+          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.dim }}>2</sub>
+          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.dim }}>2</sub>
+          
+          <span style={{ margin: '0 8px', color: COLORS.dim }}>+</span>
+          
+          {/* Term 3 */}
+          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.dim }}>3</sub>
+          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.dim }}>3</sub>
+          
+          <span style={{ margin: '0 8px', color: COLORS.dim }}>+</span>
+          
+          {/* Term 4 */}
+          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.dim }}>4</sub>
+          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.dim }}>4</sub>
+          
+          <span style={{ margin: '0 10px', color: COLORS.accent }}>+</span>
+          <span style={{ color: COLORS.accent }}>b</span>
         </span>
+
         <span style={{ opacity: zOp }}>
           <span style={{ color: COLORS.dim, margin: '0 14px' }}>=</span>
-          <span style={{ color: COLORS.accent, fontWeight: 600 }}>{Z.toFixed(2)}</span>
+          <span style={{ color: COLORS.accent, fontWeight: 700 }}>{Z.toFixed(2)}</span>
         </span>
       </div>
 
