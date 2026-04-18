@@ -7585,32 +7585,8 @@
       // REMOVED slide-change-on-scroll to allow vertical scrolling within slides
       // as per user request "Do not let mouse scroll lead to page change"
 
-      window.addEventListener(
-        "keydown",
-        (e) => {
-          if (
-            document.getElementById("cgdOverlay").classList.contains("active")
-          )
-            return;
-          if (
-            e.key === "ArrowRight" ||
-            e.key === "ArrowDown" ||
-            e.key === "PageDown" ||
-            e.key === " "
-          ) {
-            e.preventDefault();
-            goToSlide(currentSlideIdx + 1);
-          } else if (
-            e.key === "ArrowLeft" ||
-            e.key === "ArrowUp" ||
-            e.key === "PageUp"
-          ) {
-            e.preventDefault();
-            goToSlide(currentSlideIdx - 1);
-          }
-        },
-        { passive: false }
-      );
+
+
 
       // --- GSAP Hero Animations ---
       function splitText(selector) {
