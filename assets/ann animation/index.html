@@ -507,23 +507,23 @@ function Stage({
         </div>
       </div>
 
-      <PlayPauseButton playing={playing} toggle={() => setPlaying(p => !p)} />
+      <div style={{ position: 'absolute', top: '24px', right: '24px', display: 'flex', gap: '12px', zIndex: 2100 }}>
+        <ResetButton onReset={() => { setTime(startTime); setPlaying(true); }} />
+        <PlayPauseButton playing={playing} toggle={() => setPlaying(p => !p)} />
+      </div>
     </div>
   );
 }
 
-function PlayPauseButton({ playing, toggle }) {
+function ResetButton({ onReset }) {
   const [hover, setHover] = React.useState(false);
   const C = COLORS;
   return (
     <button
-      onClick={(e) => { e.stopPropagation(); toggle(); }}
+      onClick={(e) => { e.stopPropagation(); onReset(); }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
-        position: 'absolute',
-        top: '24px',
-        right: '24px',
         width: '48px',
         height: '48px',
         borderRadius: '50%',
@@ -536,7 +536,38 @@ function PlayPauseButton({ playing, toggle }) {
         cursor: 'pointer',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         backdropFilter: 'blur(8px)',
-        zIndex: 2000,
+        transform: hover ? 'scale(1.05)' : 'scale(1)',
+      }}
+      title="Reset to Start"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 5V1L7 6L12 11V7C15.31 7 18 9.69 18 13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13H4C4 17.42 7.58 21 12 21C16.42 21 20 17.42 20 13C20 8.58 16.42 5 12 5Z" />
+      </svg>
+    </button>
+  );
+}
+
+function PlayPauseButton({ playing, toggle }) {
+  const [hover, setHover] = React.useState(false);
+  const C = COLORS;
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); toggle(); }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        background: hover ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0.03)',
+        border: `1.5px solid ${C.line}`,
+        color: C.ink,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        backdropFilter: 'blur(8px)',
         transform: hover ? 'scale(1.05)' : 'scale(1)',
       }}
       title={playing ? "Pause" : "Play"}
