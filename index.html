@@ -180,6 +180,99 @@
         --s2-text: #1d1d1f;
         --s2-border: rgba(0, 0, 0, 0.07);
       }
+
+      /* ─── 02b. COLOR PALETTES (applied via hamburger menu) ─────────────────── */
+      /* Palette 1 — Warm Linen (light) */
+      .palette-warm-linen {
+        --bg: #f3f1e9;
+        --text-main: #1c1c1c;
+        --text-dim: #6b6b6b;
+        --text-gradient: linear-gradient(90deg, #4a8bdd, #e27b5e);
+        --theme-btn-bg: rgba(0, 0, 0, 0.05);
+        --theme-btn-color: #1c1c1c;
+        --accent-main: #e27b5e;
+        --accent-dim: rgba(226, 123, 94, 0.18);
+        --hero-gradient: linear-gradient(90deg, #4a8bdd, #e27b5e);
+        --s2-bg: #f3f1e9;
+        --s2-text: #1c1c1c;
+        --s2-gold: #4a8bdd;
+        --s2-gold-rgb: 74, 139, 221;
+        --s2-gold-dim: rgba(74, 139, 221, 0.15);
+        --s2-border: #dcd6c5;
+      }
+      /* Palette 2 — Paper White (light) */
+      .palette-paper-white {
+        --bg: #ffffff;
+        --text-main: #0a0a0a;
+        --text-dim: #555;
+        --text-gradient: linear-gradient(90deg, #2e5bff, #d0465a);
+        --theme-btn-bg: rgba(0, 0, 0, 0.05);
+        --theme-btn-color: #0a0a0a;
+        --accent-main: #d0465a;
+        --accent-dim: rgba(208, 70, 90, 0.15);
+        --hero-gradient: linear-gradient(90deg, #2e5bff, #d0465a);
+        --s2-bg: #ffffff;
+        --s2-text: #0a0a0a;
+        --s2-gold: #2e5bff;
+        --s2-gold-rgb: 46, 91, 255;
+        --s2-gold-dim: rgba(46, 91, 255, 0.12);
+        --s2-border: #e5e5e5;
+      }
+      /* Palette 3 — Midnight (dark) */
+      .palette-midnight {
+        --bg: #0a0a0f;
+        --text-main: #f5f5f5;
+        --text-gradient: linear-gradient(90deg, #22d3ee, #f59e0b);
+        --theme-btn-bg: rgba(255, 255, 255, 0.08);
+        --theme-btn-color: #f5f5f5;
+        --accent-main: #f59e0b;
+        --accent-dim: rgba(245, 158, 11, 0.18);
+        --hero-gradient: linear-gradient(90deg, #22d3ee, #f59e0b);
+        --s2-bg: #0a0a0f;
+        --s2-text: #f5f5f5;
+        --s2-gold: #22d3ee;
+        --s2-gold-rgb: 34, 211, 238;
+        --s2-gold-dim: rgba(34, 211, 238, 0.15);
+        --s2-border: rgba(255, 255, 255, 0.1);
+      }
+      /* Palette 4 — Mint (light) */
+      .palette-mint {
+        --bg: #eaf1ea;
+        --text-main: #0f2e1e;
+        --text-dim: #4a6b5a;
+        --text-gradient: linear-gradient(90deg, #2e7d5a, #d97355);
+        --theme-btn-bg: rgba(0, 0, 0, 0.05);
+        --theme-btn-color: #0f2e1e;
+        --accent-main: #d97355;
+        --accent-dim: rgba(217, 115, 85, 0.18);
+        --hero-gradient: linear-gradient(90deg, #2e7d5a, #d97355);
+        --s2-bg: #eaf1ea;
+        --s2-text: #0f2e1e;
+        --s2-gold: #2e7d5a;
+        --s2-gold-rgb: 46, 125, 90;
+        --s2-gold-dim: rgba(46, 125, 90, 0.15);
+        --s2-border: #cfddcf;
+      }
+      /* Palette 5 — Plum (light) */
+      .palette-plum {
+        --bg: #f5eaf3;
+        --text-main: #2b1a33;
+        --text-dim: #6b4a70;
+        --text-gradient: linear-gradient(90deg, #9d4fb3, #d97706);
+        --theme-btn-bg: rgba(0, 0, 0, 0.05);
+        --theme-btn-color: #2b1a33;
+        --accent-main: #d97706;
+        --accent-dim: rgba(217, 119, 6, 0.18);
+        --hero-gradient: linear-gradient(90deg, #9d4fb3, #d97706);
+        --s2-bg: #f5eaf3;
+        --s2-text: #2b1a33;
+        --s2-gold: #9d4fb3;
+        --s2-gold-rgb: 157, 79, 179;
+        --s2-gold-dim: rgba(157, 79, 179, 0.15);
+        --s2-border: #e0ccde;
+      }
+      /* Palette 6 — Dark (default) uses :root values, no class needed */
+
       /* ─── 03. CORE RESET & BASE LAYOUT ─────────────────────────────────────── */
       * {
         margin: 0;
@@ -4081,6 +4174,89 @@
       }
       .light-mode .settings-swatch.active { border-color: #000; }
 
+      /* Palette picker rows (hamburger menu) */
+      .palette-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .palette-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: var(--font-body);
+        color: rgba(255, 255, 255, 0.85);
+        transition: all 0.25s ease;
+        text-align: left;
+        width: 100%;
+      }
+      .palette-row:hover {
+        background: rgba(var(--s2-gold-rgb), 0.1);
+        border-color: rgba(var(--s2-gold-rgb), 0.4);
+        transform: translateX(2px);
+      }
+      .palette-row.active {
+        border-color: var(--s2-gold);
+        background: rgba(var(--s2-gold-rgb), 0.12);
+        box-shadow: 0 0 0 1px var(--s2-gold);
+      }
+      .light-mode .palette-row {
+        background: rgba(0, 0, 0, 0.03);
+        border-color: rgba(0, 0, 0, 0.08);
+        color: rgba(0, 0, 0, 0.8);
+      }
+      .light-mode .palette-row:hover {
+        background: rgba(var(--s2-gold-rgb), 0.08);
+      }
+      .palette-swatches {
+        display: flex;
+        gap: 3px;
+        padding: 3px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        flex-shrink: 0;
+      }
+      .light-mode .palette-swatches { background: rgba(0, 0, 0, 0.04); }
+      .palette-swatches span {
+        width: 16px;
+        height: 22px;
+        border-radius: 3px;
+        display: block;
+      }
+      .palette-name {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+      .palette-check {
+        opacity: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--s2-gold);
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        transition: opacity 0.2s ease;
+      }
+      .palette-row.active .palette-check { opacity: 1; }
+      .palette-hint {
+        margin-top: 10px;
+        font-size: 11px;
+        line-height: 1.5;
+        opacity: 0.55;
+        color: var(--text-main, #fff);
+      }
+
       /* ── Theme template picker (modern cards) ── */
       .settings-themes {
         display: grid;
@@ -4659,22 +4835,70 @@
 
     <div class="settings-side" id="settingsSide">
       <div class="settings-group">
-        <div class="settings-label">Appearance</div>
-        <div class="settings-btns">
-          <button class="settings-btn mode-btn-light active" onclick="setMode('light')">Light</button>
-          <button class="settings-btn mode-btn-dark" onclick="setMode('dark')">Dark</button>
+        <div class="settings-label">Color Palette</div>
+        <div class="palette-list" id="paletteList">
+          <button class="palette-row" data-palette="warm-linen" onclick="setPalette('warm-linen')">
+            <div class="palette-swatches">
+              <span style="background:#f3f1e9"></span>
+              <span style="background:#1c1c1c"></span>
+              <span style="background:#4a8bdd"></span>
+              <span style="background:#e27b5e"></span>
+            </div>
+            <span class="palette-name">Warm Linen</span>
+            <span class="palette-check">✓</span>
+          </button>
+          <button class="palette-row" data-palette="paper-white" onclick="setPalette('paper-white')">
+            <div class="palette-swatches">
+              <span style="background:#ffffff;border:1px solid #ddd"></span>
+              <span style="background:#0a0a0a"></span>
+              <span style="background:#2e5bff"></span>
+              <span style="background:#d0465a"></span>
+            </div>
+            <span class="palette-name">Paper White</span>
+            <span class="palette-check">✓</span>
+          </button>
+          <button class="palette-row" data-palette="midnight" onclick="setPalette('midnight')">
+            <div class="palette-swatches">
+              <span style="background:#0a0a0f"></span>
+              <span style="background:#f5f5f5"></span>
+              <span style="background:#22d3ee"></span>
+              <span style="background:#f59e0b"></span>
+            </div>
+            <span class="palette-name">Midnight</span>
+            <span class="palette-check">✓</span>
+          </button>
+          <button class="palette-row" data-palette="mint" onclick="setPalette('mint')">
+            <div class="palette-swatches">
+              <span style="background:#eaf1ea"></span>
+              <span style="background:#0f2e1e"></span>
+              <span style="background:#2e7d5a"></span>
+              <span style="background:#d97355"></span>
+            </div>
+            <span class="palette-name">Mint</span>
+            <span class="palette-check">✓</span>
+          </button>
+          <button class="palette-row" data-palette="plum" onclick="setPalette('plum')">
+            <div class="palette-swatches">
+              <span style="background:#f5eaf3"></span>
+              <span style="background:#2b1a33"></span>
+              <span style="background:#9d4fb3"></span>
+              <span style="background:#d97706"></span>
+            </div>
+            <span class="palette-name">Plum</span>
+            <span class="palette-check">✓</span>
+          </button>
+          <button class="palette-row active" data-palette="dark" onclick="setPalette('dark')">
+            <div class="palette-swatches">
+              <span style="background:#07101f"></span>
+              <span style="background:#f0f6ff"></span>
+              <span style="background:#22d3ee"></span>
+              <span style="background:#34d399"></span>
+            </div>
+            <span class="palette-name">Deep Navy</span>
+            <span class="palette-check">✓</span>
+          </button>
         </div>
-      </div>
-      <div class="settings-group">
-        <div class="settings-label">Accent Color</div>
-        <div class="settings-swatches accent-grid">
-          <div class="accent-swatch active" data-accent="cyan" onclick="setAccent('cyan')"></div>
-          <div class="accent-swatch" data-accent="gold" onclick="setAccent('gold')"></div>
-          <div class="accent-swatch" data-accent="violet" onclick="setAccent('violet')"></div>
-          <div class="accent-swatch" data-accent="rose" onclick="setAccent('rose')"></div>
-          <div class="accent-swatch" data-accent="emerald" onclick="setAccent('emerald')"></div>
-          <div class="accent-swatch" data-accent="orange" onclick="setAccent('orange')"></div>
-        </div>
+        <div class="palette-hint">Each palette defines the background, ink, and two accent hues used across the app.</div>
       </div>
 
       <div class="settings-group">
@@ -7810,6 +8034,61 @@
         const currentMode = document.body.classList.contains("light-mode") ? "light" : "dark";
         setMode(currentMode === "light" ? "dark" : "light");
       }
+
+      // ─── Color Palette System ────────────────────────────────────────────
+      const PALETTES = {
+        "warm-linen":  { light: true,  cls: "palette-warm-linen"  },
+        "paper-white": { light: true,  cls: "palette-paper-white" },
+        "midnight":    { light: false, cls: "palette-midnight"    },
+        "mint":        { light: true,  cls: "palette-mint"        },
+        "plum":        { light: true,  cls: "palette-plum"        },
+        "dark":        { light: false, cls: null                  },
+      };
+
+      function setPalette(name) {
+        const p = PALETTES[name];
+        if (!p) return;
+        const body = document.body;
+
+        // Remove all palette classes + legacy light/custom mode classes
+        Object.values(PALETTES).forEach(pal => { if (pal.cls) body.classList.remove(pal.cls); });
+        body.classList.remove("light-mode", "custom-mode");
+
+        // Apply new palette
+        if (p.cls) body.classList.add(p.cls);
+        if (p.light) body.classList.add("light-mode");
+
+        // Sync the canvas-rendering flag so brain visuals match
+        if (typeof isLightMode !== "undefined") isLightMode = p.light;
+        else window.isLightMode = p.light;
+
+        // Persist and reflect in UI
+        try { localStorage.setItem("ann_palette", name); } catch (e) {}
+        document.querySelectorAll(".palette-row").forEach(r =>
+          r.classList.toggle("active", r.dataset.palette === name)
+        );
+
+        // Refresh accent-dependent CSS vars / iframes
+        if (typeof applyAccentVars === "function") applyAccentVars();
+        document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
+          if (frame.contentWindow) {
+            frame.contentWindow.postMessage({ type: "SET_THEME", mode: p.light ? "light" : "dark" }, "*");
+          }
+        });
+      }
+
+      // Back-compat shim: old setMode calls route to the nearest palette
+      const _origSetMode = typeof setMode === "function" ? setMode : null;
+      window.setMode = function (mode) {
+        if (mode === "light" || mode === "custom") setPalette("warm-linen");
+        else setPalette("dark");
+      };
+
+      // Restore saved palette on load (default: dark)
+      (function () {
+        const saved = (() => { try { return localStorage.getItem("ann_palette"); } catch (e) { return null; } })();
+        setPalette(saved && PALETTES[saved] ? saved : "dark");
+      })();
 
       function toggleSettings() {
         document.getElementById("menuToggle").classList.toggle("open");
