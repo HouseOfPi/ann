@@ -4829,7 +4829,7 @@
   </head>
   <body class="dark-mode">
     <!-- ── 08. TOP-LEVEL UI COMPONENTS ────────────────────────────────────────── -->
-    <button class="menu-toggle" id="menuToggle" onclick="toggleSettings()" title="Menu">
+    <button class="menu-toggle" id="menuToggle" title="Menu">
       <span></span><span></span><span></span>
     </button>
 
@@ -4940,7 +4940,7 @@
     </div>
 
     <nav class="side-nav-panel" id="sideNav">
-      <div class="nav-ribbon" id="navRibbon" onclick="toggleSideNav(event)">
+      <div class="nav-ribbon" id="navRibbon">
         <div class="ribbon-line"></div>
         <div class="ribbon-text">Quick Nav</div>
       </div>
@@ -7686,7 +7686,11 @@
       function goToSlide(index) {
         const activeSlides = getActiveSlides();
         const nav = document.getElementById("sideNav");
+        const settings = document.getElementById("settingsSide");
+        const toggle = document.getElementById("menuToggle");
         if (nav) nav.classList.remove("open");
+        if (settings) settings.classList.remove("open");
+        if (toggle) toggle.classList.remove("open");
 
         if (index < 0 || index >= activeSlides.length) return;
         
@@ -8094,18 +8098,23 @@
         setPalette(saved && PALETTES[saved] ? saved : "dark");
       })();
 
-      function toggleSettings() {
-        document.getElementById("menuToggle").classList.toggle("open");
-        document.getElementById("settingsSide").classList.toggle("open");
-      }
-
-      document.addEventListener("click", (e) => {
+      function toggleSettings(e) {
+        if (e) e.stopPropagation();
         const side = document.getElementById("settingsSide");
         const toggle = document.getElementById("menuToggle");
-        if (side.classList.contains("open") && !side.contains(e.target) && !toggle.contains(e.target)) {
-          toggleSettings();
-        }
-      });
+        const sideNav = document.getElementById("sideNav");
+        
+        if (!side || !toggle) return;
+        const isOpening = !side.classList.contains("open");
+        
+        if (isOpening && sideNav) sideNav.classList.remove("open");
+        
+        side.classList.toggle("open", isOpening);
+        toggle.classList.toggle("open", isOpening);
+      }
+
+      // Attach listener to menu toggle
+      document.getElementById("menuToggle").addEventListener("click", toggleSettings);
 
 
 
@@ -8170,14 +8179,44 @@
 
       function toggleSideNav(e) {
         if (e) e.stopPropagation();
-        document.getElementById("sideNav").classList.toggle("open");
+        const nav = document.getElementById("sideNav");
+        const settingsSide = document.getElementById("settingsSide");
+        const menuToggle = document.getElementById("menuToggle");
+        
+        if (!nav) return;
+        const isOpening = !nav.classList.contains("open");
+        
+        if (isOpening) {
+          if (settingsSide) settingsSide.classList.remove("open");
+          if (menuToggle) menuToggle.classList.remove("open");
+        }
+        
+        nav.classList.toggle("open", isOpening);
       }
 
-      // Close if clicking outside
+      // Attach listener to nav ribbon
+      const navRibbon = document.getElementById("navRibbon");
+      if (navRibbon) navRibbon.addEventListener("click", toggleSideNav);
+
+      // Global click listener to close menus when clicking outside
       document.addEventListener("click", (e) => {
-        const nav = document.getElementById("sideNav");
-        if (nav && nav.classList.contains("open") && !nav.contains(e.target)) {
-          nav.classList.remove("open");
+        const settingsSide = document.getElementById("settingsSide");
+        const menuToggle = document.getElementById("menuToggle");
+        const sideNav = document.getElementById("sideNav");
+
+        // Close settings if open and click is outside
+        if (settingsSide && settingsSide.classList.contains("open")) {
+          if (!settingsSide.contains(e.target) && !menuToggle.contains(e.target)) {
+            settingsSide.classList.remove("open");
+            menuToggle.classList.remove("open");
+          }
+        }
+
+        // Close sideNav if open and click is outside
+        if (sideNav && sideNav.classList.contains("open")) {
+          if (!sideNav.contains(e.target)) {
+            sideNav.classList.remove("open");
+          }
         }
       });
 
