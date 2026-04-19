@@ -56,6 +56,10 @@ body{font-family:'Inter',sans-serif}
   --glass-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --svg-bg: radial-gradient(circle at 60% 30%, #f1f5f9 0%, #e2e8f0 100%);
 }
+.app.palette-midnight {
+  --sb-bg: #000000 !important;
+  --svg-bg: #000000 !important;
+}
 
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .app{display:flex;width:100%;height:100vh;overflow:hidden;position:relative;z-index:1}
@@ -2176,11 +2180,13 @@ stepCounter = function(id, d) {
 };
 
 // ── Theme sync from parent presentation ──────────────────────────────────────
-function applyTheme(mode) {
+function applyTheme(mode, palette) {
   const wantDark = (mode === 'dark');
-  if (isDark === wantDark) return;   // already correct, skip redraw
   isDark = wantDark;
-  document.getElementById('app').className = 'app ' + (isDark ? 'dark' : 'light');
+  const app = document.getElementById('app');
+  app.className = 'app ' + (isDark ? 'dark' : 'light');
+  if (palette === 'Midnight') app.classList.add('palette-midnight');
+  
   const icon = document.getElementById('theme-icon');
   if (icon) icon.textContent = isDark ? '☀️' : '🌙';
   buildNetwork(true);   // redraw SVG with new isDark value
@@ -2188,14 +2194,14 @@ function applyTheme(mode) {
 
 window.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'SET_THEME') {
-    // Handle both old 'mode' format and new 'palette' format
+     // Handle both old 'mode' format and new 'palette' format
     const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
     const paletteToMode = {
       'Warm Linen': 'light', 'Paper White': 'light', 'Mint': 'light', 'Plum': 'light',
       'Midnight': 'dark', 'Deep Navy': 'dark',
     };
     const mode = paletteToMode[palette] || (e.data.mode || 'dark');
-    applyTheme(mode);
+    applyTheme(mode, palette);
   }
 });
 

@@ -220,7 +220,7 @@
       }
       /* Palette 3 — Midnight (dark) */
       .palette-midnight {
-        --bg: #0a0a0f;
+        --bg: #000000;
         --text-main: #f5f5f5;
         --text-gradient: linear-gradient(90deg, #22d3ee, #f59e0b);
         --theme-btn-bg: rgba(255, 255, 255, 0.08);
@@ -228,7 +228,7 @@
         --accent-main: #f59e0b;
         --accent-dim: rgba(245, 158, 11, 0.18);
         --hero-gradient: linear-gradient(90deg, #22d3ee, #f59e0b);
-        --s2-bg: #0a0a0f;
+        --s2-bg: #000000;
         --s2-text: #f5f5f5;
         --s2-gold: #22d3ee;
         --s2-gold-rgb: 34, 211, 238;
@@ -307,7 +307,8 @@
                           radial-gradient(ellipse at 80% 85%, rgba(34, 211, 238, 0.07) 0%, transparent 45%);
         transition: background 0.7s ease;
       }
-      .light-mode body {
+      .light-mode body,
+      body.palette-midnight {
         background-image: none;
       }
       .slider-container {
@@ -1957,8 +1958,10 @@
           ),
           linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
       }
-      .light-mode .s3-orb {
-        opacity: 0.05;
+      .light-mode .s3-orb,
+      .palette-midnight .s3-orb {
+        opacity: 0;
+        display: none;
       }
 
       .s3-ambient {
@@ -2680,10 +2683,9 @@
           radial-gradient(circle at 80% 60%, rgba(168,85,247,0.05) 0%, transparent 50%);
         pointer-events: none;
       }
-      .light-mode .s5-bg {
-        background:
-          radial-gradient(circle at 20% 40%, rgba(6,182,212,0.08) 0%, transparent 50%),
-          radial-gradient(circle at 80% 60%, rgba(168,85,247,0.06) 0%, transparent 50%);
+      .light-mode .s5-bg,
+      .palette-midnight .s5-bg {
+        display: none;
       }
 
       .s5-content {
@@ -2977,6 +2979,9 @@
       }
       .s5-brain-card {
         background: #060a18;
+      }
+      .palette-midnight .s5-brain-card {
+        background: #000;
       }
       .light-mode .s5-img-frame {
         border-color: rgba(0,0,0,0.1);
@@ -4837,7 +4842,7 @@
       }
     </style>
   </head>
-  <body class="dark-mode">
+  <body class="dark-mode palette-midnight">
     <!-- ── 08. TOP-LEVEL UI COMPONENTS ────────────────────────────────────────── -->
     <button class="menu-toggle" id="menuToggle" title="Menu">
       <span></span><span></span><span></span>
@@ -4867,7 +4872,7 @@
             <span class="palette-name">Paper White</span>
             <span class="palette-check">✓</span>
           </button>
-          <button class="palette-row" data-palette="midnight" onclick="setPalette('midnight')">
+          <button class="palette-row active" data-palette="midnight" onclick="setPalette('midnight')">
             <div class="palette-swatches">
               <span style="background:#0a0a0f"></span>
               <span style="background:#f5f5f5"></span>
@@ -4897,7 +4902,7 @@
             <span class="palette-name">Plum</span>
             <span class="palette-check">✓</span>
           </button>
-          <button class="palette-row active" data-palette="dark" onclick="setPalette('dark')">
+          <button class="palette-row" data-palette="dark" onclick="setPalette('dark')">
             <div class="palette-swatches">
               <span style="background:#07101f"></span>
               <span style="background:#f0f6ff"></span>
@@ -8099,13 +8104,12 @@
       const _origSetMode = typeof setMode === "function" ? setMode : null;
       window.setMode = function (mode) {
         if (mode === "light" || mode === "custom") setPalette("warm-linen");
-        else setPalette("dark");
+        else setPalette("midnight");
       };
 
-      // Restore saved palette on load (default: dark)
+      // Force Midnight palette on load
       (function () {
-        const saved = (() => { try { return localStorage.getItem("ann_palette"); } catch (e) { return null; } })();
-        setPalette(saved && PALETTES[saved] ? saved : "dark");
+        setPalette("midnight");
       })();
 
       function toggleSettings(e) {

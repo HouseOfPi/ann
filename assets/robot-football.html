@@ -37,6 +37,14 @@
     --shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
 
+  [data-theme="midnight"] {
+    --bg-page: #000000;
+    --bg-panel: #000000;
+    --bg-item: #000000;
+    --border-ui: #1a2a44;
+    --shadow: none;
+  }
+
   body {
     background: var(--bg-page);
     display: flex;
@@ -1861,9 +1869,23 @@ function toggleTheme() {
   
   const icon = document.getElementById('theme-icon');
   const text = document.getElementById('theme-text');
-  icon.textContent = isLight ? '🌙' : '☀️';
-  text.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+  if (icon) icon.textContent = isLight ? '🌙' : '☀️';
+  if (text) text.textContent = isLight ? 'Dark Mode' : 'Light Mode';
 }
+
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'SET_THEME') {
+    if (e.data.palette === 'Midnight') {
+      document.body.setAttribute('data-theme', 'midnight');
+    } else {
+      document.body.setAttribute('data-theme', e.data.mode);
+    }
+    const icon = document.getElementById('theme-icon');
+    const text = document.getElementById('theme-text');
+    if (icon) icon.textContent = e.data.mode === 'light' ? '🌙' : '☀️';
+    if (text) text.textContent = e.data.mode === 'light' ? 'Dark Mode' : 'Light Mode';
+  }
+});
 
 ball.vx = 1.2; 
 ball.vy = 0.5;
