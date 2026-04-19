@@ -273,6 +273,9 @@
       }
       /* Palette 6 — Dark (default) uses :root values, no class needed */
 
+      /* Remove cyan/turquoise gradients from dark palettes for clean backgrounds */
+      .palette-midnight { background-image: none; }
+
       /* ─── 03. CORE RESET & BASE LAYOUT ─────────────────────────────────────── */
       * {
         margin: 0;
