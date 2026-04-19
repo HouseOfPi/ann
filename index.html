@@ -8037,12 +8037,12 @@
 
       // ─── Color Palette System ────────────────────────────────────────────
       const PALETTES = {
-        "warm-linen":  { light: true,  cls: "palette-warm-linen"  },
-        "paper-white": { light: true,  cls: "palette-paper-white" },
-        "midnight":    { light: false, cls: "palette-midnight"    },
-        "mint":        { light: true,  cls: "palette-mint"        },
-        "plum":        { light: true,  cls: "palette-plum"        },
-        "dark":        { light: false, cls: null                  },
+        "warm-linen":  { light: true,  cls: "palette-warm-linen",  iframeName: "Warm Linen"  },
+        "paper-white": { light: true,  cls: "palette-paper-white", iframeName: "Paper White" },
+        "midnight":    { light: false, cls: "palette-midnight",    iframeName: "Midnight"    },
+        "mint":        { light: true,  cls: "palette-mint",        iframeName: "Mint"        },
+        "plum":        { light: true,  cls: "palette-plum",        iframeName: "Plum"        },
+        "dark":        { light: false, cls: null,                  iframeName: "Midnight"    },
       };
 
       function setPalette(name) {
@@ -8072,7 +8072,11 @@
         if (typeof applyAccentVars === "function") applyAccentVars();
         document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
           if (frame.contentWindow) {
-            frame.contentWindow.postMessage({ type: "SET_THEME", mode: p.light ? "light" : "dark" }, "*");
+            frame.contentWindow.postMessage({
+              type: "SET_THEME",
+              mode: p.light ? "light" : "dark",
+              palette: p.iframeName,
+            }, "*");
           }
         });
       }

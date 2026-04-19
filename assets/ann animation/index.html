@@ -797,12 +797,12 @@ Object.assign(window, {
 // ─── Palette presets ─────────────────────────────────────────────────────
 const PALETTES = {
   'Warm Linen': {
-    bg: 'transparent', ink: '#1c1c1c', dim: '#6b6b6b', line: '#dcd6c5',
+    bg: '#f3f1e9', ink: '#1c1c1c', dim: '#6b6b6b', line: '#dcd6c5',
     accent: '#4a8bdd', accent2: '#e27b5e',
     neuron: '#1c1c1c', neuronFill: '#ffffff',
   },
   'Paper White': {
-    bg: 'transparent', ink: '#0f172a', dim: '#64748b', line: '#cbd5e1',
+    bg: '#ffffff', ink: '#0f172a', dim: '#64748b', line: '#cbd5e1',
     accent: '#0891b2', accent2: '#db2777',
     neuron: '#0f172a', neuronFill: '#ffffff',
   },
@@ -849,6 +849,11 @@ function usePaletteVersion() {
     const handleMessage = (e) => {
       if (!e.data) return;
       if (e.data.type === 'SET_THEME') {
+        // Prefer explicit palette name when provided by parent
+        if (e.data.palette && PALETTES[e.data.palette]) {
+          setPalette(e.data.palette);
+          return;
+        }
         let m = e.data.mode;
         if (m === 'custom') setPalette('Warm Linen');
         else if (m === 'light') setPalette('Paper White');
