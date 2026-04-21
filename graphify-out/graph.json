@@ -1,7 +1,53 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {},
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "he_all_slide_iframes",
+        "label": "All embedded animation iframes in index.html",
+        "members": [
+          "index_iframe_ann_network",
+          "index_iframe_ann_animation",
+          "index_iframe_robot_football"
+        ],
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "index.html"
+      },
+      {
+        "id": "he_palette_system",
+        "label": "Palette system variants",
+        "members": [
+          "index_palette_midnight",
+          "index_palette_warm_linen",
+          "index_palette_paper_white",
+          "index_palette_mint",
+          "index_palette_plum",
+          "index_palette_deep_navy"
+        ],
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "index.html"
+      },
+      {
+        "id": "he_ann_animations",
+        "label": "ANN animation assets",
+        "members": [
+          "ann_network_vehicle_classifier",
+          "ann_animation_index",
+          "ann_animation_standalone_one_neuron",
+          "single_neuron_original",
+          "robot_football_scene",
+          "training_combined_pipeline",
+          "cpu_vs_gpu_scene"
+        ],
+        "confidence": "INFERRED",
+        "confidence_score": 0.85,
+        "source_file": null
+      }
+    ]
+  },
   "nodes": [
     {
       "label": "scripts.js",
@@ -9,7 +55,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_js_scripts_js",
-      "community": 0,
+      "community": 2,
       "norm_label": "scripts.js"
     },
     {
@@ -18,7 +64,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L8",
       "id": "scripts_resizebrain",
-      "community": 0,
+      "community": 2,
       "norm_label": "resizebrain()"
     },
     {
@@ -27,7 +73,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L38",
       "id": "scripts_buildbrain",
-      "community": 0,
+      "community": 2,
       "norm_label": "buildbrain()"
     },
     {
@@ -36,7 +82,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L69",
       "id": "scripts_spawnp",
-      "community": 0,
+      "community": 2,
       "norm_label": "spawnp()"
     },
     {
@@ -45,7 +91,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L95",
       "id": "scripts_setherobg",
-      "community": 0,
+      "community": 2,
       "norm_label": "setherobg()"
     },
     {
@@ -54,7 +100,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L111",
       "id": "scripts_initsynapse",
-      "community": 3,
+      "community": 5,
       "norm_label": "initsynapse()"
     },
     {
@@ -63,7 +109,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L123",
       "id": "scripts_drawsynapse",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawsynapse()"
     },
     {
@@ -72,7 +118,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L201",
       "id": "scripts_initnexus",
-      "community": 3,
+      "community": 5,
       "norm_label": "initnexus()"
     },
     {
@@ -81,7 +127,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L213",
       "id": "scripts_drawnexus",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawnexus()"
     },
     {
@@ -90,7 +136,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L285",
       "id": "scripts_initstream",
-      "community": 3,
+      "community": 5,
       "norm_label": "initstream()"
     },
     {
@@ -99,7 +145,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L296",
       "id": "scripts_drawstream",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawstream()"
     },
     {
@@ -108,7 +154,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L334",
       "id": "scripts_initstorm",
-      "community": 3,
+      "community": 5,
       "norm_label": "initstorm()"
     },
     {
@@ -117,7 +163,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L342",
       "id": "scripts_drawstorm",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawstorm()"
     },
     {
@@ -126,7 +172,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L361",
       "id": "scripts_drawlightning",
-      "community": 0,
+      "community": 2,
       "norm_label": "drawlightning()"
     },
     {
@@ -135,7 +181,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L379",
       "id": "scripts_initball",
-      "community": 3,
+      "community": 5,
       "norm_label": "initball()"
     },
     {
@@ -144,7 +190,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L391",
       "id": "scripts_drawball",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawball()"
     },
     {
@@ -153,7 +199,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L457",
       "id": "scripts_initdual",
-      "community": 10,
+      "community": 9,
       "norm_label": "initdual()"
     },
     {
@@ -162,7 +208,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L499",
       "id": "scripts_drawdual",
-      "community": 10,
+      "community": 9,
       "norm_label": "drawdual()"
     },
     {
@@ -171,7 +217,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L703",
       "id": "scripts_initann",
-      "community": 10,
+      "community": 9,
       "norm_label": "initann()"
     },
     {
@@ -180,7 +226,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L732",
       "id": "scripts_drawann",
-      "community": 10,
+      "community": 9,
       "norm_label": "drawann()"
     },
     {
@@ -189,7 +235,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L929",
       "id": "scripts_hextorgba",
-      "community": 10,
+      "community": 9,
       "norm_label": "hextorgba()"
     },
     {
@@ -198,7 +244,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L938",
       "id": "scripts_drawneural",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawneural()"
     },
     {
@@ -207,7 +253,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1007",
       "id": "scripts_drawbrain",
-      "community": 3,
+      "community": 5,
       "norm_label": "drawbrain()"
     },
     {
@@ -216,7 +262,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1120",
       "id": "scripts_showpioneer",
-      "community": 0,
+      "community": 2,
       "norm_label": "showpioneer()"
     },
     {
@@ -225,7 +271,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1155",
       "id": "scripts_opens3cardpopup",
-      "community": 0,
+      "community": 10,
       "norm_label": "opens3cardpopup()"
     },
     {
@@ -234,7 +280,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1189",
       "id": "scripts_openpillpopup",
-      "community": 0,
+      "community": 10,
       "norm_label": "openpillpopup()"
     },
     {
@@ -243,7 +289,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1226",
       "id": "scripts_switchs4tab",
-      "community": 0,
+      "community": 2,
       "norm_label": "switchs4tab()"
     },
     {
@@ -252,7 +298,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1240",
       "id": "scripts_closemodal",
-      "community": 0,
+      "community": 2,
       "norm_label": "closemodal()"
     },
     {
@@ -261,7 +307,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1244",
       "id": "scripts_openimagepopup",
-      "community": 0,
+      "community": 2,
       "norm_label": "openimagepopup()"
     },
     {
@@ -270,7 +316,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1260",
       "id": "scripts_closeimagepopup",
-      "community": 0,
+      "community": 2,
       "norm_label": "closeimagepopup()"
     },
     {
@@ -279,7 +325,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1294",
       "id": "scripts_opengpudemo",
-      "community": 0,
+      "community": 2,
       "norm_label": "opengpudemo()"
     },
     {
@@ -288,7 +334,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1300",
       "id": "scripts_closegpudemo",
-      "community": 1,
+      "community": 3,
       "norm_label": "closegpudemo()"
     },
     {
@@ -297,7 +343,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1323",
       "id": "scripts_initgpudemo",
-      "community": 0,
+      "community": 2,
       "norm_label": "initgpudemo()"
     },
     {
@@ -306,7 +352,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1357",
       "id": "scripts_setgpustatus",
-      "community": 1,
+      "community": 3,
       "norm_label": "setgpustatus()"
     },
     {
@@ -315,7 +361,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1370",
       "id": "scripts_updategpustats",
-      "community": 1,
+      "community": 3,
       "norm_label": "updategpustats()"
     },
     {
@@ -324,7 +370,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1380",
       "id": "scripts_lightgpucores",
-      "community": 1,
+      "community": 3,
       "norm_label": "lightgpucores()"
     },
     {
@@ -333,7 +379,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1387",
       "id": "scripts_markgpublocks",
-      "community": 1,
+      "community": 3,
       "norm_label": "markgpublocks()"
     },
     {
@@ -342,7 +388,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1393",
       "id": "scripts_stopcpublink",
-      "community": 1,
+      "community": 3,
       "norm_label": "stopcpublink()"
     },
     {
@@ -351,7 +397,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1409",
       "id": "scripts_spawnpackets",
-      "community": 1,
+      "community": 3,
       "norm_label": "spawnpackets()"
     },
     {
@@ -360,7 +406,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1528",
       "id": "scripts_cputickoperation",
-      "community": 1,
+      "community": 3,
       "norm_label": "cputickoperation()"
     },
     {
@@ -369,7 +415,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1554",
       "id": "scripts_gpucycleoperation",
-      "community": 1,
+      "community": 3,
       "norm_label": "gpucycleoperation()"
     },
     {
@@ -378,7 +424,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1583",
       "id": "scripts_tryshowgpuspeedup",
-      "community": 1,
+      "community": 3,
       "norm_label": "tryshowgpuspeedup()"
     },
     {
@@ -387,7 +433,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1591",
       "id": "scripts_resetsidedemo",
-      "community": 1,
+      "community": 3,
       "norm_label": "resetsidedemo()"
     },
     {
@@ -396,7 +442,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1621",
       "id": "scripts_finishcpu",
-      "community": 1,
+      "community": 3,
       "norm_label": "finishcpu()"
     },
     {
@@ -405,7 +451,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1645",
       "id": "scripts_startcpu",
-      "community": 1,
+      "community": 3,
       "norm_label": "startcpu()"
     },
     {
@@ -414,7 +460,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1658",
       "id": "scripts_startgpu",
-      "community": 1,
+      "community": 3,
       "norm_label": "startgpu()"
     },
     {
@@ -423,7 +469,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1670",
       "id": "scripts_startboth",
-      "community": 1,
+      "community": 3,
       "norm_label": "startboth()"
     },
     {
@@ -432,7 +478,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1676",
       "id": "scripts_resetgpudemo",
-      "community": 1,
+      "community": 3,
       "norm_label": "resetgpudemo()"
     },
     {
@@ -441,7 +487,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1682",
       "id": "scripts_opencpugpucomparison",
-      "community": 0,
+      "community": 2,
       "norm_label": "opencpugpucomparison()"
     },
     {
@@ -450,7 +496,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1685",
       "id": "scripts_closecpugpucomparison",
-      "community": 0,
+      "community": 2,
       "norm_label": "closecpugpucomparison()"
     },
     {
@@ -468,7 +514,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L1771",
       "id": "scripts_resetslidestate",
-      "community": 0,
+      "community": 2,
       "norm_label": "resetslidestate()"
     },
     {
@@ -531,7 +577,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2086",
       "id": "scripts_splittext",
-      "community": 0,
+      "community": 2,
       "norm_label": "splittext()"
     },
     {
@@ -549,7 +595,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2122",
       "id": "scripts_animateslideonetitle",
-      "community": 0,
+      "community": 2,
       "norm_label": "animateslideonetitle()"
     },
     {
@@ -558,7 +604,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2261",
       "id": "scripts_applyaccentvars",
-      "community": 8,
+      "community": 7,
       "norm_label": "applyaccentvars()"
     },
     {
@@ -567,7 +613,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2276",
       "id": "scripts_setaccent",
-      "community": 8,
+      "community": 7,
       "norm_label": "setaccent()"
     },
     {
@@ -576,7 +622,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2284",
       "id": "scripts_setstyle",
-      "community": 8,
+      "community": 7,
       "norm_label": "setstyle()"
     },
     {
@@ -585,7 +631,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2300",
       "id": "scripts_setmode",
-      "community": 8,
+      "community": 7,
       "norm_label": "setmode()"
     },
     {
@@ -594,7 +640,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2331",
       "id": "scripts_togglemode",
-      "community": 8,
+      "community": 7,
       "norm_label": "togglemode()"
     },
     {
@@ -603,7 +649,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2346",
       "id": "scripts_setpalette",
-      "community": 8,
+      "community": 7,
       "norm_label": "setpalette()"
     },
     {
@@ -612,7 +658,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2394",
       "id": "scripts_togglesettings",
-      "community": 0,
+      "community": 2,
       "norm_label": "togglesettings()"
     },
     {
@@ -621,7 +667,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2416",
       "id": "scripts_togglesound",
-      "community": 0,
+      "community": 2,
       "norm_label": "togglesound()"
     },
     {
@@ -630,7 +676,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2440",
       "id": "scripts_toggleneuronvideo",
-      "community": 0,
+      "community": 2,
       "norm_label": "toggleneuronvideo()"
     },
     {
@@ -639,7 +685,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2473",
       "id": "scripts_togglesidenav",
-      "community": 0,
+      "community": 2,
       "norm_label": "togglesidenav()"
     },
     {
@@ -648,7 +694,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2543",
       "id": "scripts_closepillpopup",
-      "community": 0,
+      "community": 10,
       "norm_label": "closepillpopup()"
     },
     {
@@ -657,7 +703,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/js/scripts.js",
       "source_location": "L2577",
       "id": "scripts_animateslideeight",
-      "community": 0,
+      "community": 2,
       "norm_label": "animateslideeight()"
     },
     {
@@ -675,7 +721,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/single neuron/animations.jsx",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_assets_single_neuron_animations_jsx",
-      "community": 2,
+      "community": 4,
       "norm_label": "animations.jsx"
     },
     {
@@ -684,7 +730,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L80",
       "id": "animations_clamp",
-      "community": 2,
+      "community": 4,
       "norm_label": "clamp()"
     },
     {
@@ -693,7 +739,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L85",
       "id": "animations_interpolate",
-      "community": 2,
+      "community": 4,
       "norm_label": "interpolate()"
     },
     {
@@ -702,7 +748,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L104",
       "id": "animations_animate",
-      "community": 9,
+      "community": 0,
       "norm_label": "animate()"
     },
     {
@@ -711,7 +757,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L117",
       "id": "animations_usetime",
-      "community": 5,
+      "community": 0,
       "norm_label": "usetime()"
     },
     {
@@ -720,7 +766,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L118",
       "id": "animations_usetimeline",
-      "community": 2,
+      "community": 4,
       "norm_label": "usetimeline()"
     },
     {
@@ -729,7 +775,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L131",
       "id": "animations_usesprite",
-      "community": 2,
+      "community": 4,
       "norm_label": "usesprite()"
     },
     {
@@ -738,7 +784,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L133",
       "id": "animations_sprite",
-      "community": 2,
+      "community": 4,
       "norm_label": "sprite()"
     },
     {
@@ -747,7 +793,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L157",
       "id": "animations_textsprite",
-      "community": 2,
+      "community": 4,
       "norm_label": "textsprite()"
     },
     {
@@ -756,7 +802,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L210",
       "id": "animations_imagesprite",
-      "community": 2,
+      "community": 4,
       "norm_label": "imagesprite()"
     },
     {
@@ -765,7 +811,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L278",
       "id": "animations_rectsprite",
-      "community": 2,
+      "community": 4,
       "norm_label": "rectsprite()"
     },
     {
@@ -774,7 +820,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L323",
       "id": "animations_stage",
-      "community": 2,
+      "community": 4,
       "norm_label": "stage()"
     },
     {
@@ -783,7 +829,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L486",
       "id": "animations_playbackbar",
-      "community": 2,
+      "community": 4,
       "norm_label": "playbackbar()"
     },
     {
@@ -792,7 +838,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L640",
       "id": "animations_iconbutton",
-      "community": 2,
+      "community": 4,
       "norm_label": "iconbutton()"
     },
     {
@@ -801,7 +847,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/single neuron/scenes.jsx",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_assets_single_neuron_scenes_jsx",
-      "community": 7,
+      "community": 0,
       "norm_label": "scenes.jsx"
     },
     {
@@ -810,7 +856,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L109",
       "id": "scenes_lerppoint",
-      "community": 4,
+      "community": 0,
       "norm_label": "lerppoint()"
     },
     {
@@ -819,7 +865,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L114",
       "id": "scenes_titlecard",
-      "community": 7,
+      "community": 0,
       "norm_label": "titlecard()"
     },
     {
@@ -828,7 +874,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L157",
       "id": "scenes_neuronbody",
-      "community": 7,
+      "community": 0,
       "norm_label": "neuronbody()"
     },
     {
@@ -837,7 +883,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L264",
       "id": "scenes_inputnodes",
-      "community": 4,
+      "community": 0,
       "norm_label": "inputnodes()"
     },
     {
@@ -846,7 +892,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L332",
       "id": "scenes_connections",
-      "community": 7,
+      "community": 0,
       "norm_label": "connections()"
     },
     {
@@ -855,7 +901,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L400",
       "id": "scenes_outputline",
-      "community": 7,
+      "community": 0,
       "norm_label": "outputline()"
     },
     {
@@ -864,7 +910,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L419",
       "id": "scenes_inputpulses",
-      "community": 7,
+      "community": 0,
       "norm_label": "inputpulses()"
     },
     {
@@ -873,7 +919,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L492",
       "id": "scenes_formulapanel",
-      "community": 9,
+      "community": 0,
       "norm_label": "formulapanel()"
     },
     {
@@ -882,7 +928,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L558",
       "id": "scenes_outputpulse",
-      "community": 9,
+      "community": 0,
       "norm_label": "outputpulse()"
     },
     {
@@ -891,7 +937,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L586",
       "id": "scenes_outputnode",
-      "community": 9,
+      "community": 0,
       "norm_label": "outputnode()"
     },
     {
@@ -900,7 +946,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L638",
       "id": "scenes_stagelabels",
-      "community": 9,
+      "community": 0,
       "norm_label": "stagelabels()"
     },
     {
@@ -909,7 +955,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L719",
       "id": "scenes_timestamplabel",
-      "community": 7,
+      "community": 0,
       "norm_label": "timestamplabel()"
     },
     {
@@ -918,7 +964,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L1101",
       "id": "scenes_neuronscene",
-      "community": 4,
+      "community": 0,
       "norm_label": "neuronscene()"
     },
     {
@@ -927,7 +973,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_assets_ann_animation_network_scene_jsx",
-      "community": 5,
+      "community": 0,
       "norm_label": "network_scene.jsx"
     },
     {
@@ -936,7 +982,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L14",
       "id": "network_scene_nethashedweight",
-      "community": 5,
+      "community": 0,
       "norm_label": "nethashedweight()"
     },
     {
@@ -945,7 +991,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L19",
       "id": "network_scene_nettitle",
-      "community": 5,
+      "community": 0,
       "norm_label": "nettitle()"
     },
     {
@@ -954,7 +1000,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L33",
       "id": "network_scene_netlayerlabels",
-      "community": 5,
+      "community": 0,
       "norm_label": "netlayerlabels()"
     },
     {
@@ -963,7 +1009,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L54",
       "id": "network_scene_netconnections",
-      "community": 5,
+      "community": 0,
       "norm_label": "netconnections()"
     },
     {
@@ -972,7 +1018,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L86",
       "id": "network_scene_netnodes",
-      "community": 5,
+      "community": 0,
       "norm_label": "netnodes()"
     },
     {
@@ -981,7 +1027,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L143",
       "id": "network_scene_netinputvalues",
-      "community": 5,
+      "community": 0,
       "norm_label": "netinputvalues()"
     },
     {
@@ -990,7 +1036,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L162",
       "id": "network_scene_netoutputvalues",
-      "community": 5,
+      "community": 0,
       "norm_label": "netoutputvalues()"
     },
     {
@@ -999,7 +1045,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L187",
       "id": "network_scene_netpulses",
-      "community": 5,
+      "community": 0,
       "norm_label": "netpulses()"
     },
     {
@@ -1008,7 +1054,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L222",
       "id": "network_scene_netcaption",
-      "community": 5,
+      "community": 0,
       "norm_label": "netcaption()"
     },
     {
@@ -1017,7 +1063,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/network_scene.jsx",
       "source_location": "L250",
       "id": "network_scene_networkscene",
-      "community": 4,
+      "community": 0,
       "norm_label": "networkscene()"
     },
     {
@@ -1026,7 +1072,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/animations.jsx",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_assets_ann_animation_animations_jsx",
-      "community": 2,
+      "community": 4,
       "norm_label": "animations.jsx"
     },
     {
@@ -1035,7 +1081,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L1",
       "id": "users_mosesmathew_desktop_personal_ann_presentation_code_yt_gemini_ann_assets_ann_animation_scenes_jsx",
-      "community": 4,
+      "community": 0,
       "norm_label": "scenes.jsx"
     },
     {
@@ -1044,7 +1090,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L46",
       "id": "scenes_setpalette",
-      "community": 4,
+      "community": 0,
       "norm_label": "setpalette()"
     },
     {
@@ -1053,7 +1099,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L51",
       "id": "scenes_usepaletteversion",
-      "community": 4,
+      "community": 0,
       "norm_label": "usepaletteversion()"
     },
     {
@@ -1062,7 +1108,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L63",
       "id": "scenes_setview",
-      "community": 4,
+      "community": 0,
       "norm_label": "setview()"
     },
     {
@@ -1071,7 +1117,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L68",
       "id": "scenes_useview",
-      "community": 4,
+      "community": 0,
       "norm_label": "useview()"
     },
     {
@@ -1080,7 +1126,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L211",
       "id": "scenes_biasnode",
-      "community": 9,
+      "community": 0,
       "norm_label": "biasnode()"
     },
     {
@@ -1089,7 +1135,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L464",
       "id": "scenes_biaspulse",
-      "community": 4,
+      "community": 0,
       "norm_label": "biaspulse()"
     },
     {
@@ -1098,7 +1144,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L740",
       "id": "scenes_usesoundengine",
-      "community": 2,
+      "community": 0,
       "norm_label": "usesoundengine()"
     },
     {
@@ -1107,7 +1153,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L912",
       "id": "scenes_soundtoggle",
-      "community": 2,
+      "community": 0,
       "norm_label": "soundtoggle()"
     },
     {
@@ -1116,7 +1162,7 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L974",
       "id": "scenes_navlinks",
-      "community": 4,
+      "community": 0,
       "norm_label": "navlinks()"
     },
     {
@@ -1125,8 +1171,489 @@
       "source_file": "/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt_gemini/ann/assets/ann animation/scenes.jsx",
       "source_location": "L993",
       "id": "scenes_tweakspanel",
-      "community": 4,
+      "community": 0,
       "norm_label": "tweakspanel()"
+    },
+    {
+      "label": "AI Explained Presentation (index)",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_presentation",
+      "community": 1,
+      "norm_label": "ai explained presentation (index)"
+    },
+    {
+      "label": "css/styles.css stylesheet",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_styles_css",
+      "community": 1,
+      "norm_label": "css/styles.css stylesheet"
+    },
+    {
+      "label": "js/scripts.js",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_scripts_js",
+      "community": 1,
+      "norm_label": "js/scripts.js"
+    },
+    {
+      "label": "GSAP 3.12.2 (cdnjs)",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_gsap",
+      "community": 1,
+      "norm_label": "gsap 3.12.2 (cdnjs)"
+    },
+    {
+      "label": "GSAP ScrollToPlugin 3.12.2",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_scrolltoplugin",
+      "community": 1,
+      "norm_label": "gsap scrolltoplugin 3.12.2"
+    },
+    {
+      "label": "Palette System (Warm Linen / Paper White / Midnight / Mint / Plum / Deep Navy)",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_system",
+      "community": 1,
+      "norm_label": "palette system (warm linen / paper white / midnight / mint / plum / deep navy)"
+    },
+    {
+      "label": "Midnight palette (default)",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_midnight",
+      "community": 1,
+      "norm_label": "midnight palette (default)"
+    },
+    {
+      "label": "Warm Linen palette",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_warm_linen",
+      "community": 1,
+      "norm_label": "warm linen palette"
+    },
+    {
+      "label": "Paper White palette",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_paper_white",
+      "community": 1,
+      "norm_label": "paper white palette"
+    },
+    {
+      "label": "Mint palette",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_mint",
+      "community": 1,
+      "norm_label": "mint palette"
+    },
+    {
+      "label": "Plum palette",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_plum",
+      "community": 1,
+      "norm_label": "plum palette"
+    },
+    {
+      "label": "Deep Navy palette",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_palette_deep_navy",
+      "community": 1,
+      "norm_label": "deep navy palette"
+    },
+    {
+      "label": "Hero slide: AI Explained",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_hero_ai_explained",
+      "community": 1,
+      "norm_label": "hero slide: ai explained"
+    },
+    {
+      "label": "Slide: Dartmouth Conference",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_slide_dartmouth",
+      "community": 1,
+      "norm_label": "slide: dartmouth conference"
+    },
+    {
+      "label": "Slide: Geoffrey Hinton pioneer",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_slide_hinton",
+      "community": 1,
+      "norm_label": "slide: geoffrey hinton pioneer"
+    },
+    {
+      "label": "Slide: Biological neuron firing video",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_slide_neuron_video",
+      "community": 1,
+      "norm_label": "slide: biological neuron firing video"
+    },
+    {
+      "label": "Slide: Brain network image",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_slide_brain_network",
+      "community": 1,
+      "norm_label": "slide: brain network image"
+    },
+    {
+      "label": "Embedded iframe: ann_network",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_iframe_ann_network",
+      "community": 1,
+      "norm_label": "embedded iframe: ann_network"
+    },
+    {
+      "label": "Embedded iframe: ann animation",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_iframe_ann_animation",
+      "community": 1,
+      "norm_label": "embedded iframe: ann animation"
+    },
+    {
+      "label": "Embedded iframe: robot-football",
+      "file_type": "document",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_iframe_robot_football",
+      "community": 1,
+      "norm_label": "embedded iframe: robot-football"
+    },
+    {
+      "label": "Robot Football \u2014 Neural Network Training Demo",
+      "file_type": "document",
+      "source_file": "assets/robot-football.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "robot_football_scene",
+      "community": 1,
+      "norm_label": "robot football \u2014 neural network training demo"
+    },
+    {
+      "label": "Layer palette: purple -> blue -> cyan -> pink",
+      "file_type": "document",
+      "source_file": "assets/robot-football.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "robot_football_layer_palette",
+      "community": 1,
+      "norm_label": "layer palette: purple -> blue -> cyan -> pink"
+    },
+    {
+      "label": "Midnight theme handler (postMessage)",
+      "file_type": "document",
+      "source_file": "assets/robot-football.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "robot_football_midnight_theme",
+      "community": 1,
+      "norm_label": "midnight theme handler (postmessage)"
+    },
+    {
+      "label": "Training Pipeline \u2014 Theory to Reality",
+      "file_type": "document",
+      "source_file": "assets/training-combined.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "training_combined_pipeline",
+      "community": 1,
+      "norm_label": "training pipeline \u2014 theory to reality"
+    },
+    {
+      "label": "GSAP 3.12.2 (training-combined)",
+      "file_type": "document",
+      "source_file": "assets/training-combined.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "training_combined_gsap",
+      "community": 1,
+      "norm_label": "gsap 3.12.2 (training-combined)"
+    },
+    {
+      "label": "CPU vs GPU visualization",
+      "file_type": "document",
+      "source_file": "assets/cpu_vs_gpu.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "cpu_vs_gpu_scene",
+      "community": 1,
+      "norm_label": "cpu vs gpu visualization"
+    },
+    {
+      "label": "Neural Network \u2014 Vehicle Classifier",
+      "file_type": "document",
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_network_vehicle_classifier",
+      "community": 1,
+      "norm_label": "neural network \u2014 vehicle classifier"
+    },
+    {
+      "label": "GSAP 3.12.5 (ann_network)",
+      "file_type": "document",
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_network_gsap",
+      "community": 1,
+      "norm_label": "gsap 3.12.5 (ann_network)"
+    },
+    {
+      "label": "GSAP MotionPathPlugin 3.12.5",
+      "file_type": "document",
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_network_motionpath",
+      "community": 1,
+      "norm_label": "gsap motionpathplugin 3.12.5"
+    },
+    {
+      "label": "applyTheme(mode, palette) handler",
+      "file_type": "document",
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_network_apply_theme",
+      "community": 1,
+      "norm_label": "applytheme(mode, palette) handler"
+    },
+    {
+      "label": "One Neuron \u2014 Original Animation",
+      "file_type": "document",
+      "source_file": "assets/single neuron/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "single_neuron_original",
+      "community": 8,
+      "norm_label": "one neuron \u2014 original animation"
+    },
+    {
+      "label": "React 18.3.1 UMD",
+      "file_type": "document",
+      "source_file": "assets/single neuron/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "single_neuron_react",
+      "community": 8,
+      "norm_label": "react 18.3.1 umd"
+    },
+    {
+      "label": "ReactDOM 18.3.1 UMD",
+      "file_type": "document",
+      "source_file": "assets/single neuron/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "single_neuron_reactdom",
+      "community": 8,
+      "norm_label": "reactdom 18.3.1 umd"
+    },
+    {
+      "label": "Babel Standalone 7.29.0",
+      "file_type": "document",
+      "source_file": "assets/single neuron/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "single_neuron_babel",
+      "community": 8,
+      "norm_label": "babel standalone 7.29.0"
+    },
+    {
+      "label": "Google Fonts: Inter + JetBrains Mono",
+      "file_type": "document",
+      "source_file": "assets/single neuron/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "single_neuron_fonts",
+      "community": 8,
+      "norm_label": "google fonts: inter + jetbrains mono"
+    },
+    {
+      "label": "One Neuron \u2014 Animated (Standalone)",
+      "file_type": "document",
+      "source_file": "assets/ann animation/One Neuron - Standalone.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_animation_standalone_one_neuron",
+      "community": 8,
+      "norm_label": "one neuron \u2014 animated (standalone)"
+    },
+    {
+      "label": "ANN Animation index (embedded in slide)",
+      "file_type": "document",
+      "source_file": "assets/ann animation/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "ann_animation_index",
+      "community": 1,
+      "norm_label": "ann animation index (embedded in slide)"
     }
   ],
   "links": [
@@ -4321,7 +4848,543 @@
       "source": "scenes_usesoundengine",
       "target": "scenes_soundtoggle",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 11",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_styles_css",
+      "source": "index_presentation",
+      "target": "index_styles_css"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 860",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_scripts_js",
+      "source": "index_presentation",
+      "target": "index_scripts_js"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 858",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_gsap",
+      "source": "index_presentation",
+      "target": "index_gsap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 859",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_scrolltoplugin",
+      "source": "index_presentation",
+      "target": "index_scrolltoplugin"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "lines 22-84",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_palette_system",
+      "source": "index_presentation",
+      "target": "index_palette_system"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_hero_ai_explained",
+      "source": "index_presentation",
+      "target": "index_hero_ai_explained"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 220",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_slide_dartmouth",
+      "source": "index_presentation",
+      "target": "index_slide_dartmouth"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 285",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_slide_hinton",
+      "source": "index_presentation",
+      "target": "index_slide_hinton"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 379",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_slide_neuron_video",
+      "source": "index_presentation",
+      "target": "index_slide_neuron_video"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 392",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_slide_brain_network",
+      "source": "index_presentation",
+      "target": "index_slide_brain_network"
+    },
+    {
+      "relation": "embeds",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 412",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_iframe_ann_network",
+      "source": "index_presentation",
+      "target": "index_iframe_ann_network"
+    },
+    {
+      "relation": "embeds",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 422",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_iframe_ann_animation",
+      "source": "index_presentation",
+      "target": "index_iframe_ann_animation"
+    },
+    {
+      "relation": "embeds",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 504",
+      "weight": 1.0,
+      "_src": "index_presentation",
+      "_tgt": "index_iframe_robot_football",
+      "source": "index_presentation",
+      "target": "index_iframe_robot_football"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 0.9,
+      "_src": "index_gsap",
+      "_tgt": "ann_network_gsap",
+      "source": "index_gsap",
+      "target": "ann_network_gsap"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 0.95,
+      "_src": "index_gsap",
+      "_tgt": "training_combined_gsap",
+      "source": "index_gsap",
+      "target": "training_combined_gsap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_midnight",
+      "source": "index_palette_system",
+      "target": "index_palette_midnight"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_warm_linen",
+      "source": "index_palette_system",
+      "target": "index_palette_warm_linen"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_paper_white",
+      "source": "index_palette_system",
+      "target": "index_palette_paper_white"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_mint",
+      "source": "index_palette_system",
+      "target": "index_palette_mint"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_plum",
+      "source": "index_palette_system",
+      "target": "index_palette_plum"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "index_palette_system",
+      "_tgt": "index_palette_deep_navy",
+      "source": "index_palette_system",
+      "target": "index_palette_deep_navy"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "weight": 0.85,
+      "_src": "ann_network_apply_theme",
+      "_tgt": "index_palette_system",
+      "source": "index_palette_system",
+      "target": "ann_network_apply_theme"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "assets/robot-football.html",
+      "source_location": null,
+      "weight": 0.85,
+      "_src": "robot_football_midnight_theme",
+      "_tgt": "index_palette_midnight",
+      "source": "index_palette_midnight",
+      "target": "robot_football_midnight_theme"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 412",
+      "weight": 1.0,
+      "_src": "index_iframe_ann_network",
+      "_tgt": "ann_network_vehicle_classifier",
+      "source": "index_iframe_ann_network",
+      "target": "ann_network_vehicle_classifier"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 422",
+      "weight": 1.0,
+      "_src": "index_iframe_ann_animation",
+      "_tgt": "ann_animation_index",
+      "source": "index_iframe_ann_animation",
+      "target": "ann_animation_index"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html",
+      "source_location": "line 504",
+      "weight": 1.0,
+      "_src": "index_iframe_robot_football",
+      "_tgt": "robot_football_scene",
+      "source": "index_iframe_robot_football",
+      "target": "robot_football_scene"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/robot-football.html",
+      "source_location": "line 1524",
+      "weight": 1.0,
+      "_src": "robot_football_scene",
+      "_tgt": "robot_football_layer_palette",
+      "source": "robot_football_scene",
+      "target": "robot_football_layer_palette"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/robot-football.html",
+      "source_location": "line 1878",
+      "weight": 1.0,
+      "_src": "robot_football_scene",
+      "_tgt": "robot_football_midnight_theme",
+      "source": "robot_football_scene",
+      "target": "robot_football_midnight_theme"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "assets/robot-football.html",
+      "source_location": null,
+      "weight": 0.75,
+      "_src": "robot_football_scene",
+      "_tgt": "training_combined_pipeline",
+      "source": "robot_football_scene",
+      "target": "training_combined_pipeline"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/training-combined.html",
+      "source_location": "line 255",
+      "weight": 1.0,
+      "_src": "training_combined_pipeline",
+      "_tgt": "training_combined_gsap",
+      "source": "training_combined_pipeline",
+      "target": "training_combined_gsap"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "assets/cpu_vs_gpu.html",
+      "source_location": null,
+      "weight": 0.7,
+      "_src": "cpu_vs_gpu_scene",
+      "_tgt": "training_combined_pipeline",
+      "source": "training_combined_pipeline",
+      "target": "cpu_vs_gpu_scene"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/ann_network.html",
+      "source_location": "line 7",
+      "weight": 1.0,
+      "_src": "ann_network_vehicle_classifier",
+      "_tgt": "ann_network_gsap",
+      "source": "ann_network_vehicle_classifier",
+      "target": "ann_network_gsap"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/ann_network.html",
+      "source_location": "line 8",
+      "weight": 1.0,
+      "_src": "ann_network_vehicle_classifier",
+      "_tgt": "ann_network_motionpath",
+      "source": "ann_network_vehicle_classifier",
+      "target": "ann_network_motionpath"
+    },
+    {
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/ann_network.html",
+      "source_location": "line 2183",
+      "weight": 1.0,
+      "_src": "ann_network_vehicle_classifier",
+      "_tgt": "ann_network_apply_theme",
+      "source": "ann_network_vehicle_classifier",
+      "target": "ann_network_apply_theme"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "assets/ann_network.html",
+      "source_location": null,
+      "weight": 0.7,
+      "_src": "ann_network_vehicle_classifier",
+      "_tgt": "ann_animation_index",
+      "source": "ann_network_vehicle_classifier",
+      "target": "ann_animation_index"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/single neuron/index.html",
+      "source_location": "line 18",
+      "weight": 1.0,
+      "_src": "single_neuron_original",
+      "_tgt": "single_neuron_react",
+      "source": "single_neuron_original",
+      "target": "single_neuron_react"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/single neuron/index.html",
+      "source_location": "line 19",
+      "weight": 1.0,
+      "_src": "single_neuron_original",
+      "_tgt": "single_neuron_reactdom",
+      "source": "single_neuron_original",
+      "target": "single_neuron_reactdom"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/single neuron/index.html",
+      "source_location": "line 20",
+      "weight": 1.0,
+      "_src": "single_neuron_original",
+      "_tgt": "single_neuron_babel",
+      "source": "single_neuron_original",
+      "target": "single_neuron_babel"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "assets/single neuron/index.html",
+      "source_location": "line 8",
+      "weight": 1.0,
+      "_src": "single_neuron_original",
+      "_tgt": "single_neuron_fonts",
+      "source": "single_neuron_original",
+      "target": "single_neuron_fonts"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "assets/ann animation/One Neuron - Standalone.html",
+      "source_location": null,
+      "weight": 0.9,
+      "_src": "ann_animation_standalone_one_neuron",
+      "_tgt": "single_neuron_original",
+      "source": "single_neuron_original",
+      "target": "ann_animation_standalone_one_neuron"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "assets/ann animation/index.html",
+      "source_location": null,
+      "weight": 0.8,
+      "_src": "ann_animation_index",
+      "_tgt": "ann_animation_standalone_one_neuron",
+      "source": "ann_animation_standalone_one_neuron",
+      "target": "ann_animation_index"
     }
   ],
-  "hyperedges": []
+  "hyperedges": [
+    {
+      "id": "he_all_slide_iframes",
+      "label": "All embedded animation iframes in index.html",
+      "members": [
+        "index_iframe_ann_network",
+        "index_iframe_ann_animation",
+        "index_iframe_robot_football"
+      ],
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html"
+    },
+    {
+      "id": "he_palette_system",
+      "label": "Palette system variants",
+      "members": [
+        "index_palette_midnight",
+        "index_palette_warm_linen",
+        "index_palette_paper_white",
+        "index_palette_mint",
+        "index_palette_plum",
+        "index_palette_deep_navy"
+      ],
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "index.html"
+    },
+    {
+      "id": "he_ann_animations",
+      "label": "ANN animation assets",
+      "members": [
+        "ann_network_vehicle_classifier",
+        "ann_animation_index",
+        "ann_animation_standalone_one_neuron",
+        "single_neuron_original",
+        "robot_football_scene",
+        "training_combined_pipeline",
+        "cpu_vs_gpu_scene"
+      ],
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": null
+    }
+  ]
 }
