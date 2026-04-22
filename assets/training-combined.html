@@ -358,8 +358,77 @@
 
             requestAnimationFrame(animate);
         }
+        }
         animate();
 
+        // ── Theme Sync
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'SET_THEME') {
+                const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
+                let key = palette.toLowerCase().replace(/\s+/g, '-');
+                if (key === 'dark') key = 'midnight';
+                if (key === 'light') key = 'paper-white';
+                document.body.className = 'palette-' + key;
+            }
+        });
     </script>
+
+    <style>
+        .palette-warm-linen {
+            --bg-page: #f3f1e9;
+            --bg-card: #ffffff;
+            --accent: #e27b5e;
+            --accent-glow: rgba(226, 123, 94, 0.15);
+            --text-main: #1c1c1c;
+            --text-dim: #6b6b6b;
+            --border: #dcd6c5;
+        }
+        .palette-paper-white {
+            --bg-page: #ffffff;
+            --bg-card: #f8fafc;
+            --accent: #d0465a;
+            --accent-glow: rgba(208, 70, 90, 0.1);
+            --text-main: #0a0a0a;
+            --text-dim: #555;
+            --border: #ddd;
+        }
+        .palette-midnight {
+            --bg-page: #000000;
+            --bg-card: #000000;
+            --accent: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.2);
+            --text-main: #f5f5f5;
+            --text-dim: #94a3b8;
+            --border: #1a2a44;
+        }
+        .palette-mint {
+            --bg-page: #eaf1ea;
+            --bg-card: #ffffff;
+            --accent: #d97355;
+            --accent-glow: rgba(217, 115, 85, 0.15);
+            --text-main: #0f2e1e;
+            --text-dim: #4a6358;
+            --border: #cfddcf;
+        }
+        .palette-plum {
+            --bg-page: #f5eaf3;
+            --bg-card: #ffffff;
+            --accent: #d97706;
+            --accent-glow: rgba(217, 119, 6, 0.15);
+            --text-main: #2b1a33;
+            --text-dim: #5a4a61;
+            --border: #e0ccde;
+        }
+        
+        /* Specific contrast fixes */
+        [class*="palette-"] h1 {
+            background: var(--text-main);
+            -webkit-background-clip: text;
+        }
+        body.palette-midnight h1 {
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+        }
+    </style>
 </body>
 </html>

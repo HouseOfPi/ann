@@ -30,7 +30,11 @@ try {
 const THEMES = {
   dark: { bg: 'transparent', ink: '#f8fafc', dim: '#94a3b8', line: '#334155', accent: '#22d3ee', accent2: '#fb7185', neuron: '#f8fafc', neuronFill: '#1e293b' },
   light: { bg: 'transparent', ink: '#0f172a', dim: '#64748b', line: '#cbd5e1', accent: '#0891b2', accent2: '#db2777', neuron: '#0f172a', neuronFill: '#ffffff' },
-  linen: { bg: 'transparent', ink: '#1c1c1c', dim: '#6b6b6b', line: '#dcd6c5', accent: '#4a8bdd', accent2: '#e27b5e', neuron: '#1c1c1c', neuronFill: '#ffffff' }
+  'warm-linen': { bg: 'transparent', ink: '#1c1c1c', dim: '#6b6b6b', line: '#dcd6c5', accent: '#4a8bdd', accent2: '#e27b5e', neuron: '#1c1c1c', neuronFill: '#ffffff' },
+  'paper-white': { bg: 'transparent', ink: '#0f172a', dim: '#64748b', line: '#cbd5e1', accent: '#0891b2', accent2: '#db2777', neuron: '#0f172a', neuronFill: '#ffffff' },
+  'mint': { bg: 'transparent', ink: '#10241a', dim: '#7a8a80', line: '#c2cfc4', accent: '#2e7d5a', accent2: '#d97355', neuron: '#10241a', neuronFill: '#f4faf4' },
+  'plum': { bg: 'transparent', ink: '#2a1a2a', dim: '#8d7a8c', line: '#cfc2cc', accent: '#9d4fb3', accent2: '#d97706', neuron: '#2a1a2a', neuronFill: '#faf5f9' },
+  'midnight': { bg: 'transparent', ink: '#f8fafc', dim: '#94a3b8', line: '#334155', accent: '#22d3ee', accent2: '#fb7185', neuron: '#f8fafc', neuronFill: '#1e293b' }
 };
 
 const ThemeContext = React.createContext({ colors: THEMES.dark, mode: 'dark' });
@@ -40,10 +44,17 @@ function ThemeProvider({ children }) {
   const [mode, setMode] = React.useState('dark');
   React.useEffect(() => {
     const handleMessage = (e) => {
-      if (e.data && e.data.type === 'SET_THEME') setMode(e.data.mode === 'custom' ? 'linen' : e.data.mode);
+      if (e.data && e.data.type === 'SET_THEME') {
+        const palette = e.data.palette || e.data.mode;
+        let key = palette.toLowerCase().replace(/\s+/g, '-');
+        if (key === 'custom') key = 'warm-linen';
+        if (key === 'dark') key = 'dark';
+        if (key === 'light') key = 'paper-white';
+        setMode(key);
+      }
     };
     window.addEventListener('message', handleMessage);
-    window.parent.postMessage({ type: 'GET_THEME' }, '*');
+    try { window.parent.postMessage({ type: 'GET_THEME' }, '*'); } catch(e){}
     return () => window.removeEventListener('message', handleMessage);
   }, []);
   const value = React.useMemo(() => ({ mode, colors: THEMES[mode] || THEMES.dark }), [mode]);

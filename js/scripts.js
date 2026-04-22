@@ -1712,6 +1712,7 @@
       // --- Dynamic Slide Management ---
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
+        'slideVenn': 'AI Definitions',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -1725,6 +1726,7 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
+        { id: 'slideVenn', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
         { id: 'slideNine', enabled: true },
@@ -2056,13 +2058,17 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideVenn') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
-            // Full refresh the iframe source to ensure a complete state reset
-            const currentSrc = frame.src;
-            frame.src = '';
-            setTimeout(() => { frame.src = currentSrc; }, 0);
+            // Full refresh the iframe source or trigger animation
+            if (incoming.id === 'slideVenn' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else {
+               const currentSrc = frame.src;
+               frame.src = '';
+               setTimeout(() => { frame.src = currentSrc; }, 0);
+            }
           }
         }
 

@@ -22,10 +22,10 @@
     --shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
 
-  [data-theme="light"] {
-    --bg-page: #f8fafc;
+  [data-theme="light"], [data-theme="paper-white"] {
+    --bg-page: #ffffff;
     --bg-panel: #ffffff;
-    --bg-item: #ffffff;
+    --bg-item: #f8fafc;
     --border-ui: #e2e8f0;
     --text-main: #64748b;
     --text-bright: #0f172a;
@@ -34,7 +34,22 @@
     --accent-glow: rgba(37, 99, 235, 0.1);
     --field-bg: #2d8a41;
     --nn-grid-bg: #ffffff;
-    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  [data-theme="warm-linen"] {
+    --bg-page: #f3f1e9;
+    --bg-panel: #ffffff;
+    --bg-item: #fcfaf2;
+    --border-ui: #dcd6c5;
+    --text-main: #505050;
+    --text-bright: #1c1c1c;
+    --text-dim: #7d7d7d;
+    --accent: #e27b5e;
+    --accent-glow: rgba(226, 123, 94, 0.15);
+    --field-bg: #3d7a46;
+    --nn-grid-bg: #ffffff;
+    --shadow: 0 5px 15px rgba(0,0,0,0.05);
   }
 
   [data-theme="midnight"] {
@@ -42,12 +57,45 @@
     --bg-panel: #000000;
     --bg-item: #000000;
     --border-ui: #1a2a44;
+    --text-main: #aab;
+    --text-bright: #f5f5f5;
+    --text-dim: #5c6270;
+    --accent: #f59e0b;
+    --accent-glow: rgba(245, 158, 11, 0.2);
+    --field-bg: #11381a;
+    --nn-grid-bg: #000000;
     --shadow: none;
+  }
+
+  [data-theme="mint"] {
+    --bg-page: #eaf1ea;
+    --bg-panel: #ffffff;
+    --bg-item: #f5faf5;
+    --border-ui: #cfddcf;
+    --text-main: #3a5b4a;
+    --text-bright: #0f2e1e;
+    --text-dim: #648c77;
+    --accent: #d97355;
+    --accent-glow: rgba(217, 115, 85, 0.15);
+    --nn-grid-bg: #ffffff;
+  }
+
+  [data-theme="plum"] {
+    --bg-page: #f5eaf3;
+    --bg-panel: #ffffff;
+    --bg-item: #faf5fa;
+    --border-ui: #e0ccde;
+    --text-main: #5a3a61;
+    --text-bright: #2b1a33;
+    --text-dim: #8c6491;
+    --accent: #d97706;
+    --accent-glow: rgba(217, 119, 6, 0.15);
+    --nn-grid-bg: #ffffff;
   }
 
   :root {
     --left-col-width: 42%;
-    --feed-panel-height: 300px;
+    --feed-panel-height: 160px;
   }
 
   body {
@@ -58,7 +106,7 @@
     color: var(--text-main);
     height: 100vh;
     min-height: 480px;
-    padding-bottom: 20px;
+    padding: 0 40px 40px; /* Added significant side and bottom padding */
     overflow-x: hidden;
     overflow-y: auto;
     transition: background 0.3s ease, color 0.3s ease;
@@ -67,15 +115,15 @@
   }
   header {
     text-align: center;
-    padding: 26px 0 22px;
+    padding: 40px 0 32px; /* Increased top/bottom padding for the header */
     background: transparent;
     border-bottom: 1px solid var(--border-ui);
-    margin-bottom: 22px;
+    margin-bottom: 40px; /* Increased gap between header and content */
     position: relative;
   }
   #theme-toggle {
     position: absolute;
-    right: 22px;
+    right: 0px; /* Adjusted since body now has side padding */
     top: 50%;
     transform: translateY(-50%);
     background: var(--bg-item);
@@ -97,7 +145,7 @@
     border-color: var(--accent);
   }
   h1 {
-    font-size: 22px;
+    font-size: 26px; /* Slightly larger title for the improved margin */
     font-weight: 700;
     letter-spacing: -0.2px;
     text-transform: none;
@@ -105,16 +153,16 @@
     margin: 0;
   }
   .subtitle {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--text-dim);
     text-transform: none;
     letter-spacing: 0;
-    margin-top: 6px;
+    margin-top: 8px;
     font-weight: 400;
-    max-width: 640px;
+    max-width: 720px;
     margin-left: auto;
     margin-right: auto;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   /* ── 2-column layout ── */
@@ -124,7 +172,7 @@
     width: 100%;
     min-height: 0;
     gap: 0;
-    padding: 0 22px;
+    padding: 0; /* Reset since body handles the side padding now */
     align-items: stretch;
     overflow: hidden;
   }
@@ -375,11 +423,11 @@
     border-radius: 14px;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow: hidden;
     box-shadow: var(--shadow);
     height: var(--feed-panel-height);
     flex: 0 0 var(--feed-panel-height);
-    min-height: 200px;
+    min-height: 160px;
   }
   #feed-panel-header {
     display: flex;
@@ -1984,15 +2032,21 @@ function toggleTheme() {
 
 window.addEventListener('message', (e) => {
   if (e.data && e.data.type === 'SET_THEME') {
-    if (e.data.palette === 'Midnight') {
-      document.body.setAttribute('data-theme', 'midnight');
-    } else {
-      document.body.setAttribute('data-theme', e.data.mode);
-    }
+    const palette = e.data.palette || e.data.mode;
+    let themeKey = palette.toLowerCase().replace(/\s+/g, '-');
+    
+    // Fallbacks and normalization
+    if (themeKey === 'dark') themeKey = 'midnight';
+    if (themeKey === 'light') themeKey = 'paper-white';
+    
+    document.body.setAttribute('data-theme', themeKey);
+    
     const icon = document.getElementById('theme-icon');
     const text = document.getElementById('theme-text');
-    if (icon) icon.textContent = e.data.mode === 'light' ? '🌙' : '☀️';
-    if (text) text.textContent = e.data.mode === 'light' ? 'Dark Mode' : 'Light Mode';
+    const isLight = ['warm-linen', 'paper-white', 'mint', 'plum', 'light'].includes(themeKey);
+    
+    if (icon) icon.textContent = isLight ? '☀️' : '🌙';
+    if (text) text.textContent = isLight ? 'Light Mode' : 'Dark Mode';
   }
 });
 
@@ -2019,7 +2073,7 @@ loop();
   }
   function setFeedHeight(px) {
     const total = leftCol.clientHeight;
-    const min = 200, max = total - 260;
+    const min = 160, max = total - 260;
     const clamped = Math.max(min, Math.min(max, px));
     root.style.setProperty('--feed-panel-height', clamped + 'px');
   }

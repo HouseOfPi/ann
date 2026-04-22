@@ -271,6 +271,73 @@
   }
   function resetAll(){
     resetSide('cpu'); resetSide('gpu');
-    document.getElementById('speedup').textContent='—';
+    document.getElementById('speedup').textContent = '—';
   }
+
+  // ── Theme sync from parent
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'SET_THEME') {
+      const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
+      let themeClass = palette.toLowerCase().replace(/\s+/g, '-');
+      if (themeClass === 'dark') themeClass = 'midnight';
+      if (themeClass === 'light') themeClass = 'paper-white';
+      
+      document.body.className = 'palette-' + themeClass;
+      
+      // Update local variables based on palette if needed
+      // Most are handled by the .palette-* CSS classes we'll add
+    }
+  });
 </script>
+
+<style>
+  /* Palette-specific overrides for CPU vs GPU */
+  .palette-warm-linen {
+    --text: #1c1c1c;
+    --dim: #6b6b6b;
+    --panel: #ffffff;
+    --border: #dcd6c5;
+    --gold: #4a8bdd;
+    background: #f3f1e9;
+  }
+  .palette-paper-white {
+    --text: #0a0a0a;
+    --dim: #555;
+    --panel: #f8fafc;
+    --border: #ddd;
+    --gold: #2e5bff;
+    background: #ffffff;
+  }
+  .palette-midnight {
+    --text: #f5f5f5;
+    --dim: #94a3b8;
+    --panel: #000000;
+    --border: #334155;
+    --gold: #f59e0b;
+    background: #000000;
+  }
+  .palette-mint {
+    --text: #0f2e1e;
+    --dim: #4a6358;
+    --panel: #ffffff;
+    --border: #cfddcf;
+    --gold: #2e7d5a;
+    background: #eaf1ea;
+  }
+  .palette-plum {
+    --text: #2b1a33;
+    --dim: #5a4a61;
+    --panel: #ffffff;
+    --border: #e0ccde;
+    --gold: #9d4fb3;
+    background: #f5eaf3;
+  }
+  .palette-deep-navy {
+    --text: #f0f6ff;
+    --dim: #94a3b8;
+    --panel: #0b1424;
+    --border: rgba(255, 255, 255, 0.1);
+    --gold: #22d3ee;
+    background: #07101f;
+  }
+</style>

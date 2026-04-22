@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Definitions Venn Diagram</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --ai-color: #22d3ee;
+            --ml-color: #34d399;
+            --dl-color: #f59e0b;
+            --text-main: #f0f6ff;
+            --bg-page: transparent;
+        }
+
+        [data-theme="warm-linen"] {
+            --ai-color: #4a8bdd;
+            --ml-color: #2e7d5a;
+            --dl-color: #e27b5e;
+            --text-main: #1c1c1c;
+        }
+        [data-theme="paper-white"] {
+            --ai-color: #2e5bff;
+            --ml-color: #10b981;
+            --dl-color: #d0465a;
+            --text-main: #0a0a0a;
+        }
+        [data-theme="midnight"] {
+            --ai-color: #38bdf8;
+            --ml-color: #10b981;
+            --dl-color: #f59e0b;
+            --text-main: #f5f5f5;
+        }
+        [data-theme="mint"] {
+            --ai-color: #2e7d5a;
+            --ml-color: #4ade80;
+            --dl-color: #d97355;
+            --text-main: #0f2e1e;
+        }
+        [data-theme="plum"] {
+            --ai-color: #9d4fb3;
+            --ml-color: #ec4899;
+            --dl-color: #d97706;
+            --text-main: #2b1a33;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .circle-group {
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .circle-group:hover {
+            transform: translateY(-5px);
+        }
+
+        .label {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .desc {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            fill-opacity: 0.7;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .venn-bg {
+            fill-opacity: 0.05;
+            stroke-width: 2.5;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        [data-theme="midnight"] .venn-bg { fill-opacity: 0.08; }
+        [data-theme="warm-linen"] .venn-bg { fill-opacity: 0.03; }
+
+        #venn-ai { fill: var(--ai-color); stroke: var(--ai-color); }
+        #venn-ml { fill: var(--ml-color); stroke: var(--ml-color); }
+        #venn-dl { fill: var(--dl-color); stroke: var(--dl-color); }
+
+        .title-top {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+        }
+        .title-top h2 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--ai-color);
+            margin-bottom: 8px;
+            opacity: 0;
+        }
+        .title-top h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            opacity: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="title-top">
+        <h2 id="eyebrow">The Hierarchy</h2>
+        <h1 id="main-title">Defining Intelligent Systems</h1>
+    </div>
+
+    <div class="container">
+        <svg viewBox="0 0 800 500">
+            <!-- Artificial Intelligence -->
+            <g class="circle-group" id="group-ai">
+                <ellipse id="venn-ai" class="venn-bg" cx="400" cy="250" rx="380" ry="230" />
+                <text class="label" x="400" y="70" text-anchor="middle" fill="currentColor" style="font-size: 22px;">Artificial Intelligence</text>
+                <text class="desc" x="400" y="95" text-anchor="middle" fill="currentColor">Any technique that enables computers to mimic human behavior.</text>
+            </g>
+
+            <!-- Machine Learning -->
+            <g class="circle-group" id="group-ml">
+                <ellipse id="venn-ml" class="venn-bg" cx="450" cy="285" rx="310" ry="180" />
+                <text class="label" x="480" y="155" text-anchor="middle" fill="currentColor" style="font-size: 20px;">Machine Learning</text>
+                <text class="desc" x="480" y="178" text-anchor="middle" fill="currentColor">Algorithms whose performance improve as they are exposed to more data.</text>
+            </g>
+
+            <!-- Deep Learning -->
+            <g class="circle-group" id="group-dl">
+                <ellipse id="venn-dl" class="venn-bg" cx="500" cy="325" rx="220" ry="120" />
+                <text class="label" x="520" y="270" text-anchor="middle" fill="currentColor" style="font-size: 18px;">Deep Learning</text>
+                <text class="desc" x="520" y="295" text-anchor="middle" fill="currentColor">Multilayered neural networks that learn from vast amounts of data.</text>
+            </g>
+        </svg>
+    </div>
+
+    <script>
+        let tl;
+        function runAnimation() {
+            if (tl) tl.kill();
+            tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1.2 } });
+
+            gsap.set([".label", ".desc", "#main-title", "#eyebrow"], { opacity: 0, y: 15 });
+            gsap.set(".venn-bg", { strokeDashoffset: 1000, scale: 0.9, transformOrigin: "center center" });
+
+            tl.to("#eyebrow", { opacity: 1, y: 0, duration: 0.8 }, 0.2)
+              .to("#main-title", { opacity: 1, y: 0, duration: 0.8 }, 0.4);
+
+            // Animate AI Circle
+            tl.to("#venn-ai", { strokeDashoffset: 0, scale: 1, duration: 1.5 }, 0.5)
+              .to("#group-ai .label", { opacity: 1, y: 0 }, 1.2)
+              .to("#group-ai .desc", { opacity: 1, y: 0 }, 1.4);
+
+            // Animate ML Circle
+            tl.to("#venn-ml", { strokeDashoffset: 0, scale: 1, duration: 1.5 }, 0.8)
+              .to("#group-ml .label", { opacity: 1, y: 0 }, 1.5)
+              .to("#group-ml .desc", { opacity: 1, y: 0 }, 1.7);
+
+            // Animate DL Circle
+            tl.to("#venn-dl", { strokeDashoffset: 0, scale: 1, duration: 1.5 }, 1.1)
+              .to("#group-dl .label", { opacity: 1, y: 0 }, 1.8)
+              .to("#group-dl .desc", { opacity: 1, y: 0 }, 2.0);
+        }
+
+        window.addEventListener('load', runAnimation);
+
+        // Theme Sync
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'SET_THEME') {
+                const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
+                let key = palette.toLowerCase().replace(/\s+/g, '-');
+                if (key === 'dark') key = 'midnight';
+                if (key === 'light') key = 'paper-white';
+                document.body.setAttribute('data-theme', key);
+            }
+        });
+        
+        // Handle restart if triggered
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'RESTART_ANIMATION') {
+                runAnimation();
+            }
+        });
+    </script>
+</body>
+</html>
