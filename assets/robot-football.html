@@ -45,43 +45,51 @@
     --shadow: none;
   }
 
+  :root {
+    --left-col-width: 42%;
+    --feed-panel-height: 300px;
+  }
+
   body {
     background: var(--bg-page);
     display: flex;
     flex-direction: column;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     color: var(--text-main);
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 480px;
     padding-bottom: 20px;
     overflow-x: hidden;
     overflow-y: auto;
     transition: background 0.3s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   header {
     text-align: center;
-    padding: 18px 0 14px;
-    background: var(--bg-item);
+    padding: 26px 0 22px;
+    background: transparent;
     border-bottom: 1px solid var(--border-ui);
-    margin-bottom: 16px;
+    margin-bottom: 22px;
     position: relative;
   }
   #theme-toggle {
     position: absolute;
-    right: 20px;
+    right: 22px;
     top: 50%;
     transform: translateY(-50%);
-    background: var(--bg-panel);
+    background: var(--bg-item);
     border: 1px solid var(--border-ui);
     color: var(--text-main);
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 7px 14px;
+    border-radius: 100px;
     font-size: 11px;
     cursor: pointer;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: all 0.18s ease;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
   }
   #theme-toggle:hover {
     background: var(--accent);
@@ -89,38 +97,48 @@
     border-color: var(--accent);
   }
   h1 {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    text-transform: none;
     color: var(--text-bright);
     margin: 0;
   }
   .subtitle {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 3px;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 6px;
+    font-weight: 400;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
   }
 
   /* ── 2-column layout ── */
   #main-container {
     display: flex;
-    flex: 1;
+    flex: 1 1 auto;
     width: 100%;
-    gap: 12px;
-    padding: 0 14px;
-    align-items: flex-start;
+    min-height: 0;
+    gap: 0;
+    padding: 0 22px;
+    align-items: stretch;
+    overflow: hidden;
   }
 
   /* Left column: NN + Analytics stacked */
   #left-column {
-    flex: 1;
-    min-width: 0;
+    width: var(--left-col-width);
+    flex: 0 0 var(--left-col-width);
+    min-width: 320px;
+    max-width: 70%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
+    min-height: 0;
   }
 
   /* Agent Intelligence panel */
@@ -128,39 +146,108 @@
     position: relative;
     background: var(--bg-panel);
     border: 1px solid var(--border-ui);
-    border-radius: 12px;
-    padding: 14px 14px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    box-shadow: var(--shadow);
-  }
-
-  /* Right: Field — 2/3 width */
-  #right-content {
-    flex: 2;
-    min-width: 0;
+    border-radius: 14px;
+    padding: 18px 18px 14px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-bottom: 20px;
+    box-shadow: var(--shadow);
+    flex: 1 1 auto;
+    min-height: 240px;
+    overflow: hidden;
+  }
+
+  /* Right: Field — fills remaining width */
+  #right-content {
+    flex: 1 1 auto;
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 0;
+    min-height: 0;
+    overflow: hidden;
   }
 
   /* --- Field --- */
   #field-wrap {
     background: var(--bg-panel);
     border: 1px solid var(--border-ui);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 14px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 14px;
     box-shadow: var(--shadow);
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
   }
   canvas#field {
     border-radius: 10px;
     box-shadow: 0 0 50px #00000088;
+    max-width: 100%;
+    max-height: calc(100% - 50px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* --- Resize handles --- */
+  .resizer {
+    background: transparent;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 5;
+    transition: background 0.15s ease;
+  }
+  .resizer::after {
+    content: '';
+    position: absolute;
+    background: var(--border-ui);
+    border-radius: 2px;
+    transition: background 0.15s ease, transform 0.15s ease;
+    left: 50%;
+    top: 50%;
+  }
+  .resizer:hover::after,
+  .resizer.dragging::after {
+    background: var(--accent);
+  }
+  #resizer-col {
+    width: 16px;
+    cursor: col-resize;
+  }
+  #resizer-col::after {
+    width: 3px;
+    height: 42px;
+    transform: translate(-50%, -50%);
+  }
+  #resizer-col:hover::after,
+  #resizer-col.dragging::after {
+    transform: translate(-50%, -50%) scaleY(1.15);
+  }
+  #resizer-row {
+    height: 16px;
+    cursor: row-resize;
+  }
+  #resizer-row::after {
+    height: 3px;
+    width: 42px;
+    transform: translate(-50%, -50%);
+  }
+  #resizer-row:hover::after,
+  #resizer-row.dragging::after {
+    transform: translate(-50%, -50%) scaleX(1.15);
+  }
+
+  /* Feed panel height bounded by CSS var */
+  #feed-panel {
+    height: var(--feed-panel-height);
+    flex: 0 0 var(--feed-panel-height);
+    min-height: 200px;
   }
 
   #nn-top-bar {
@@ -168,25 +255,25 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px;
-    padding-bottom: 6px;
+    gap: 10px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-ui);
   }
   #nn-top-bar h2 {
-    font-size: 10px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-bright);
+    text-transform: none;
+    letter-spacing: -0.1px;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 9px;
   }
   #nn-top-bar h2::before {
     content: '';
     display: block;
-    width: 3px; height: 12px;
-    background: linear-gradient(180deg, var(--accent), #2a6e7a);
+    width: 3px; height: 14px;
+    background: var(--accent);
     border-radius: 2px;
   }
   #epoch-counter {
@@ -204,22 +291,25 @@
     align-items: center;
   }
   .robot-btn {
-    padding: 4px 18px;
-    border: 1px solid #333;
-    border-radius: 6px;
-    background: #151f30;
-    color: #aaa;
+    padding: 5px 16px;
+    border: 1px solid var(--border-ui);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--text-dim);
     font-size: 11px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s ease;
   }
-  .robot-btn.active { border-color: #4a9eff; color: #fff; background: #1a2d4a; }
-  .robot-btn:hover  { border-color: #4a9eff88; }
+  .robot-btn.active { border-color: var(--accent); color: var(--text-bright); background: var(--accent-glow); }
+  .robot-btn:hover  { color: var(--text-bright); }
   .nn-label {
-    font-size: 10px;
-    color: #ffffff33;
+    font-size: 11px;
+    color: var(--text-dim);
     text-align: center;
-    margin-top: 4px;
+    margin-top: 6px;
+    opacity: 0.7;
+    letter-spacing: 0.2px;
   }
   #nn-canvas {
     background: transparent;
@@ -267,13 +357,14 @@
   #weights-info .neg { color: #f87171; }
   #epoch-counter {
     font-size: 11px;
-    color: #7eb8f7;
-    letter-spacing: 1px;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+    font-weight: 600;
     white-space: nowrap;
-    padding: 6px 12px;
-    background: #080e1c;
-    border-radius: 6px;
-    border: 1px solid #1a2a44;
+    padding: 5px 11px;
+    background: var(--bg-item);
+    border-radius: 100px;
+    border: 1px solid var(--border-ui);
     align-self: center;
   }
 
@@ -281,34 +372,36 @@
   #feed-panel {
     background: var(--bg-panel);
     border: 1px solid var(--border-ui);
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     box-shadow: var(--shadow);
+    height: var(--feed-panel-height);
+    flex: 0 0 var(--feed-panel-height);
+    min-height: 200px;
   }
   #feed-panel-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
+    padding: 16px 18px;
     border-bottom: 1px solid var(--border-ui);
-    background: rgba(0,0,0,0.1);
+    background: transparent;
   }
   #feed-panel-header::before {
     content: '';
     display: block;
     width: 3px; height: 14px;
-    background: #4dd0e1;
-    border-radius: 20px;
-    box-shadow: 0 0 10px rgba(77, 208, 225, 0.4);
+    background: var(--accent);
+    border-radius: 2px;
   }
   #feed-panel-header h2 {
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text-bright);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    text-transform: none;
+    letter-spacing: -0.1px;
   }
 
   .feed-tabs {
@@ -337,8 +430,8 @@
 
   #event-table {
     display: grid;
-    grid-template-columns: 1fr 0.8fr 1.2fr; /* Optimized widths */
-    background: rgba(0,0,0,0.05);
+    grid-template-columns: 1fr 0.8fr 1.2fr;
+    background: transparent;
   }
   #feed-info-btn {
     width: 20px; height: 20px;
@@ -394,26 +487,27 @@
   #feed-help b { color: var(--text-bright); }
 
   .et-col {
-    padding: 14px 16px;
+    padding: 18px 18px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     border-right: 1px solid var(--border-ui);
     min-width: 0;
   }
   .et-col:last-child { border-right: none; }
   .et-header {
-    font-size: 8.5px;
-    font-weight: 800;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #64748b;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    padding-bottom: 2px;
+    border-bottom: none;
     white-space: nowrap;
+    opacity: 0.85;
   }
   .et-body {
-    font-size: 11.5px;
+    font-size: 13px;
     color: var(--text-bright);
     line-height: 1.5;
     font-weight: 500;
@@ -446,15 +540,16 @@
   .reward-verdict.neg { color: #b91c1c; }
 
   #score-bar-wrap {
-    padding: 10px 14px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: rgba(0,0,0,0.15);
+    gap: 14px;
+    background: transparent;
+    border-top: 1px solid var(--border-ui);
   }
   #bar-robot-name {
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 11px;
+    font-weight: 700;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -463,8 +558,8 @@
   }
   #score-bar {
     flex: 1;
-    height: 5px;
-    background: rgba(255,255,255,0.05);
+    height: 6px;
+    background: var(--bg-item);
     border-radius: 10px;
     overflow: hidden;
   }
@@ -622,6 +717,8 @@
       </div>
     </div>
 
+    <div id="resizer-row" class="resizer" title="Drag to resize"></div>
+
     <div id="nn-panel">
       <div id="nn-top-bar" style="flex-direction:column; align-items:flex-start;">
         <h2>Neural Network</h2>
@@ -639,6 +736,8 @@
     </div>
 
   </div>
+
+  <div id="resizer-col" class="resizer" title="Drag to resize"></div>
 
   <!-- Right: Field -->
   <div id="right-content">
@@ -675,9 +774,10 @@ function resizeNNCanvas() {
   const panel  = document.getElementById('nn-panel');
   const topBar = document.getElementById('nn-top-bar');
   const label  = panel.querySelector('.nn-label');
-  const pw     = Math.max(200, panel.clientWidth - 28);
-  const usedH  = (topBar?.offsetHeight ?? 0) + (label?.offsetHeight ?? 0) + 48;
-  const ph     = Math.max(300, panel.clientHeight - usedH);
+  const pw     = Math.max(200, panel.clientWidth - 36);
+  const usedH  = (topBar?.offsetHeight ?? 0) + (label?.offsetHeight ?? 0) + 40;
+  // Fill the panel: the layout is now bounded by the viewport so clientHeight is the source of truth.
+  const ph     = Math.max(260, panel.clientHeight - usedH);
   nnCanvas.width  = pw;
   nnCanvas.height = ph;
 }
@@ -1550,8 +1650,10 @@ function drawNN() {
   const layers      = [NN_IN, NN_HID1, NN_HID2, NN_OUT];
   const activations = [nn.lastInputs, nn.lastHidden1, nn.lastHidden2, nn.lastOutputs];
 
-  const PAD_L = 52, PAD_R = 18, PAD_T = 30, PAD_B = 14;
-  const NODE_R = Math.min(15, Math.floor((ch - PAD_T - PAD_B) / (Math.max(...layers) * 2.6)));
+  const PAD_L = 58, PAD_R = 22, PAD_T = 34, PAD_B = 16;
+  const maxByHeight = Math.floor((ch - PAD_T - PAD_B) / (Math.max(...layers) * 2.4));
+  const maxByWidth  = Math.floor((cw - PAD_L - PAD_R) / (layers.length * 3.2));
+  const NODE_R = Math.max(10, Math.min(26, maxByHeight, maxByWidth));
 
   // Column X positions
   const usableW = cw - PAD_L - PAD_R;
@@ -1579,7 +1681,10 @@ function drawNN() {
       for (let j = 0; j < nodes[from].length; j++)
         allAbs.push(Math.abs(W[i][j]));
     allAbs.sort((a, b) => b - a);
-    const labelThreshold = allAbs[Math.floor(allAbs.length * 0.22)] ?? 0;
+    // Show labels only on the strongest ~8% of weights to reduce visual noise
+    const labelThreshold = allAbs[Math.floor(allAbs.length * 0.08)] ?? 0;
+    // Fade weak connections further so strong ones stand out
+    const connThreshold = allAbs[Math.floor(allAbs.length * 0.6)] ?? 0;
 
     for (let i = 0; i < nodes[to].length; i++) {
       for (let j = 0; j < nodes[from].length; j++) {
@@ -1599,9 +1704,13 @@ function drawNN() {
         else        { cr = 230; cg = isDark ? 70 : 100; cb = isDark ? 160 : 200; }
         if (flash > 0) { cr += flash * 40; cg += flash * 40; }
 
-        const alpha = (isDark ? 0.08 : 0.12) + absW * 0.28 + flash * 0.2;
+        // Strong connections pop; weak ones recede
+        const isWeak = Math.abs(w) < connThreshold;
+        const baseA  = isDark ? 0.05 : 0.08;
+        const strong = absW * 0.38;
+        const alpha  = (isWeak ? baseA * 0.6 : baseA) + strong + flash * 0.22;
         nctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha})`;
-        nctx.lineWidth   = 0.6 + absW * 0.9;
+        nctx.lineWidth   = isWeak ? 0.4 : (0.7 + absW * 1.0);
         nctx.beginPath();
         nctx.moveTo(f.x, f.y);
         nctx.lineTo(t.x, t.y);
@@ -1615,19 +1724,16 @@ function drawNN() {
           const my = f.y + (t.y - f.y) * t0;
           const label = (w >= 0 ? '+' : '') + w.toFixed(2);
 
-          nctx.font = '7.5px monospace';
+          nctx.font = '600 9px "Inter", sans-serif';
           nctx.textAlign = 'center';
           nctx.textBaseline = 'middle';
           const tw = nctx.measureText(label).width;
 
-          // Pill background
-          nctx.fillStyle = isDark ? 'rgba(8,12,28,0.85)' : 'rgba(255,255,255,0.92)';
-          nctx.shadowColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.1)';
-          nctx.shadowBlur = 4;
+          // Subtle pill background
+          nctx.fillStyle = isDark ? 'rgba(8,12,28,0.78)' : 'rgba(255,255,255,0.95)';
           nctx.beginPath();
-          nctx.roundRect(mx - tw / 2 - 3, my - 6, tw + 6, 12, 3);
+          nctx.roundRect(mx - tw / 2 - 5, my - 7.5, tw + 10, 15, 7);
           nctx.fill();
-          nctx.shadowBlur = 0;
 
           nctx.fillStyle = w >= 0 ? (isDark ? '#7ec8ff' : '#2563eb') : (isDark ? '#f9a8d4' : '#db2777');
           nctx.fillText(label, mx, my);
@@ -1671,12 +1777,14 @@ function drawNN() {
       nctx.lineWidth = 1.8;
       nctx.stroke();
 
-      // Activation value inside node
-      nctx.fillStyle = isDark ? `rgba(255,255,255,${0.65 + intensity * 0.35})` : (intensity > 0.5 ? '#fff' : '#1e293b');
-      nctx.font = `bold ${NODE_R > 12 ? 8 : 7}px monospace`;
-      nctx.textAlign = 'center';
-      nctx.textBaseline = 'middle';
-      nctx.fillText(act.toFixed(2), x, y);
+      // Activation value inside node (skip inputs — shown in pills to the left)
+      if (l !== 0) {
+        nctx.fillStyle = isDark ? `rgba(255,255,255,${0.75 + intensity * 0.25})` : (intensity > 0.5 ? '#fff' : '#1e293b');
+        nctx.font = `600 ${Math.max(8, Math.min(12, Math.floor(NODE_R * 0.55)))}px "Inter", sans-serif`;
+        nctx.textAlign = 'center';
+        nctx.textBaseline = 'middle';
+        nctx.fillText(act.toFixed(2), x, y);
+      }
     }
   }
 
@@ -1684,19 +1792,19 @@ function drawNN() {
   for (let i = 0; i < NN_IN; i++) {
     const { x, y } = nodes[0][i];
     const val   = (nn.lastInputs[i] ?? 0).toFixed(2);
-    const pillW = 36, pillH = 14;
-    const px    = x - NODE_R - pillW - 7;
+    const pillW = 40, pillH = 18;
+    const px    = x - NODE_R - pillW - 8;
 
-    nctx.fillStyle   = isDark ? 'rgba(100, 60, 180, 0.35)' : '#ede9fe';
-    nctx.strokeStyle = isDark ? 'rgba(148, 88, 228, 0.5)' : '#ddd6fe';
-    nctx.lineWidth   = 0.8;
+    nctx.fillStyle   = isDark ? 'rgba(100, 60, 180, 0.22)' : '#f5f3ff';
+    nctx.strokeStyle = isDark ? 'rgba(148, 88, 228, 0.4)' : '#e9e5ff';
+    nctx.lineWidth   = 1;
     nctx.beginPath();
-    nctx.roundRect(px, y - pillH / 2, pillW, pillH, 3);
+    nctx.roundRect(px, y - pillH / 2, pillW, pillH, 9);
     nctx.fill();
     nctx.stroke();
 
     nctx.fillStyle   = isDark ? '#c4a0ff' : '#6d28d9';
-    nctx.font        = '8px monospace';
+    nctx.font        = '600 10px "Inter", sans-serif';
     nctx.textAlign   = 'center';
     nctx.textBaseline = 'middle';
     nctx.fillText(val, px + pillW / 2, y);
@@ -1706,11 +1814,12 @@ function drawNN() {
   const headers = ['INPUTS', 'LAYER 1', 'LAYER 2', 'ACTIONS'];
   headers.forEach((hdr, i) => {
     const col = NN_LAYER_COLORS[i];
-    nctx.fillStyle = `rgba(${col.r},${col.g},${col.b},0.55)`;
-    nctx.font      = 'bold 8.5px sans-serif';
+    nctx.fillStyle = `rgba(${col.r},${col.g},${col.b},${isDark ? 0.9 : 0.75})`;
+    nctx.font      = '700 10px "Inter", sans-serif';
     nctx.textAlign = 'center';
     nctx.textBaseline = 'top';
-    nctx.fillText(hdr, colX[i], 6);
+    // subtle letter-spacing via canvas (manual tracking not supported; use plain)
+    nctx.fillText(hdr, colX[i], 4);
   });
 
   // Store node positions for tooltip hit-testing
@@ -1887,9 +1996,82 @@ window.addEventListener('message', (e) => {
   }
 });
 
-ball.vx = 1.2; 
+ball.vx = 1.2;
 ball.vy = 0.5;
 loop();
+
+// ======================== RESIZE HANDLES ========================
+(function setupResizers() {
+  const container = document.getElementById('main-container');
+  const leftCol   = document.getElementById('left-column');
+  const colRes    = document.getElementById('resizer-col');
+  const rowRes    = document.getElementById('resizer-row');
+  const root      = document.documentElement;
+  if (!container || !leftCol || !colRes || !rowRes) return;
+
+  let dragging = null;
+
+  function setLeftWidth(px) {
+    const total = container.clientWidth;
+    const min = 320, max = total - 360;
+    const clamped = Math.max(min, Math.min(max, px));
+    root.style.setProperty('--left-col-width', clamped + 'px');
+  }
+  function setFeedHeight(px) {
+    const total = leftCol.clientHeight;
+    const min = 200, max = total - 260;
+    const clamped = Math.max(min, Math.min(max, px));
+    root.style.setProperty('--feed-panel-height', clamped + 'px');
+  }
+
+  function start(kind, el) {
+    dragging = kind;
+    el.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = kind === 'col' ? 'col-resize' : 'row-resize';
+  }
+  function move(clientX, clientY) {
+    if (!dragging) return;
+    if (dragging === 'col') {
+      const rect = container.getBoundingClientRect();
+      setLeftWidth(clientX - rect.left - 22); // subtract container padding
+    } else {
+      const rect = leftCol.getBoundingClientRect();
+      setFeedHeight(clientY - rect.top);
+    }
+    resizeNNCanvas();
+    drawNN();
+  }
+  function end() {
+    if (!dragging) return;
+    colRes.classList.remove('dragging');
+    rowRes.classList.remove('dragging');
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+    dragging = null;
+    resizeNNCanvas();
+    drawNN();
+  }
+
+  colRes.addEventListener('mousedown', (e) => { start('col', colRes); e.preventDefault(); });
+  rowRes.addEventListener('mousedown', (e) => { start('row', rowRes); e.preventDefault(); });
+  window.addEventListener('mousemove', (e) => move(e.clientX, e.clientY));
+  window.addEventListener('mouseup', end);
+
+  colRes.addEventListener('touchstart', (e) => { start('col', colRes); e.preventDefault(); }, { passive: false });
+  rowRes.addEventListener('touchstart', (e) => { start('row', rowRes); e.preventDefault(); }, { passive: false });
+  window.addEventListener('touchmove', (e) => {
+    if (!dragging || !e.touches[0]) return;
+    move(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  window.addEventListener('touchend', end);
+
+  // Auto-resize NN canvas whenever its panel actually changes size
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => { resizeNNCanvas(); drawNN(); });
+    ro.observe(document.getElementById('nn-panel'));
+  }
+})();
 </script>
 </body>
 </html>
