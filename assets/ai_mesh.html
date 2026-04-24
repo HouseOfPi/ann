@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI · ML · DL · GenAI — The Tangled Web</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  :root {
+    --bg-page: transparent;
+    --mesh-line: #1c2438;
+    --text-main: #e8ecf5;
+    --text-dim: #94a3b8;
+    --bubble-bg: #f3f1e9;
+    --bubble-shadow: rgba(0, 0, 0, 0.08);
+    --ai-color: #5b54c9;
+    --ml-color: #6b9b7a;
+    --dl-color: #c79a2e;
+    --gen-color: #c0602a;
+    --title-color: #1c1c1c;
+    --subtitle-color: #6b6b6b;
+  }
+  [data-theme="paper-white"] {
+    --mesh-line: #1a2238;
+    --bubble-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-dim: #475569;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555555;
+  }
+  [data-theme="warm-linen"] {
+    --mesh-line: #1f2a44;
+    --bubble-bg: #faf7ee;
+    --text-main: #1c1c1c;
+    --text-dim: #6b6b6b;
+    --title-color: #1c1c1c;
+    --subtitle-color: #6b6b6b;
+  }
+  [data-theme="midnight"] {
+    --mesh-line: #6b7aa8;
+    --bubble-bg: #12172a;
+    --text-main: #f1f5f9;
+    --text-dim: #94a3b8;
+    --ai-color: #8b82f0;
+    --ml-color: #5cc389;
+    --dl-color: #e8c14e;
+    --gen-color: #f08659;
+    --title-color: #f1f5f9;
+    --subtitle-color: #94a3b8;
+  }
+  [data-theme="mint"] {
+    --mesh-line: #0a3d2a;
+    --bubble-bg: #eef7f1;
+    --text-main: #0f2e1e;
+    --text-dim: #065f46;
+    --title-color: #0f2e1e;
+    --subtitle-color: #065f46;
+  }
+  [data-theme="plum"] {
+    --mesh-line: #3d1d4a;
+    --bubble-bg: #f2e6f4;
+    --text-main: #2b1a33;
+    --text-dim: #6b4a78;
+    --ai-color: #7a42a8;
+    --ml-color: #8a6b3f;
+    --dl-color: #c28430;
+    --gen-color: #c44a6c;
+    --title-color: #2b1a33;
+    --subtitle-color: #6b4a78;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 40px;
+  }
+
+  .header {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    opacity: 0;
+  }
+  .header-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--subtitle-color);
+    padding: 6px 14px;
+    border: 1px solid color-mix(in srgb, var(--subtitle-color) 30%, transparent);
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 600;
+    color: var(--title-color);
+    letter-spacing: -0.5px;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--gen-color);
+  }
+  .header-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--subtitle-color);
+    letter-spacing: 0.5px;
+  }
+
+  .footer-note {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--subtitle-color);
+    opacity: 0;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: min(1100px, 92vw);
+    height: min(640px, 74vh);
+    margin-top: 40px;
+  }
+
+  svg.mesh {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .scribble {
+    fill: none;
+    stroke: var(--mesh-line);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.9;
+  }
+  [data-theme="midnight"] .scribble { opacity: 0.8; }
+
+  .bubble-group { cursor: default; }
+
+  .bubble-box {
+    fill: var(--bubble-bg);
+    stroke-width: 3;
+    filter: drop-shadow(0 6px 16px var(--bubble-shadow));
+  }
+  .bubble-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: var(--title-color);
+    letter-spacing: 0.5px;
+  }
+  .bubble-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+
+  .ai    .bubble-box { stroke: var(--ai-color); }
+  .ai    .bubble-sub { fill: var(--ai-color); }
+  .ml    .bubble-box { stroke: var(--ml-color); }
+  .ml    .bubble-sub { fill: var(--ml-color); }
+  .dl    .bubble-box { stroke: var(--dl-color); }
+  .dl    .bubble-sub { fill: var(--dl-color); }
+  .gen   .bubble-box { stroke: var(--gen-color); }
+  .gen   .bubble-sub { fill: var(--gen-color); }
+
+  .legend {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 22px;
+    opacity: 0;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="canvas-wrap">
+      <svg class="mesh" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet">
+        <g id="scribbles"></g>
+        <g id="bubbles"></g>
+      </svg>
+    </div>
+
+    <div class="footer-note">Press <strong>R</strong> to replay</div>
+  </div>
+
+<script>
+  // ─── SCRIBBLE GENERATION ──────────────────────────────────────────────
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const scribbleG = document.getElementById('scribbles');
+  const bubbleG   = document.getElementById('bubbles');
+
+  const W = 1200, H = 720;
+  const CX = W / 2, CY = H / 2;
+
+  // Seeded PRNG for reproducible tangles
+  function mulberry32(seed) {
+    return function() {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(9271);
+
+  // Build tangled sinuous paths constrained to a circular region
+  function buildScribble(numSegments, bounds) {
+    const pts = [];
+    const ccx = bounds.cx;
+    const ccy = bounds.cy;
+    const radius = bounds.r;
+    // Start at a random point inside the circle
+    const startR = rand() * radius * 0.9;
+    const startA = rand() * Math.PI * 2;
+    let x = ccx + Math.cos(startA) * startR;
+    let y = ccy + Math.sin(startA) * startR;
+    let angle = rand() * Math.PI * 2;
+    pts.push([x, y]);
+    for (let i = 0; i < numSegments; i++) {
+      const step = 40 + rand() * 90;
+      angle += (rand() - 0.5) * 1.8;
+      x += Math.cos(angle) * step;
+      y += Math.sin(angle) * step;
+      // Soft reflect off the circle boundary
+      const dx = x - ccx;
+      const dy = y - ccy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > radius) {
+        const overshoot = dist - radius;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        x -= nx * overshoot * 1.5;
+        y -= ny * overshoot * 1.5;
+        // Reflect angle across the inward normal
+        const normalAngle = Math.atan2(-ny, -nx);
+        angle = 2 * normalAngle - angle + Math.PI;
+      }
+      pts.push([x, y]);
+    }
+    // Convert to smooth cubic path
+    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      const cx = (x1 + x2) / 2;
+      const cy = (y1 + y2) / 2;
+      d += ` Q ${x1.toFixed(1)} ${y1.toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)}`;
+    }
+    return d;
+  }
+
+  const bounds = { cx: W / 2, cy: H / 2, r: Math.min(W, H) * 0.65 };
+
+  // Circular clip path so mesh has hard sphere edges
+  const defs = document.createElementNS(svgNS, 'defs');
+  const clipPath = document.createElementNS(svgNS, 'clipPath');
+  clipPath.setAttribute('id', 'meshClip');
+  const clipCircle = document.createElementNS(svgNS, 'circle');
+  clipCircle.setAttribute('cx', bounds.cx);
+  clipCircle.setAttribute('cy', bounds.cy);
+  clipCircle.setAttribute('r', bounds.r);
+  clipPath.appendChild(clipCircle);
+  defs.appendChild(clipPath);
+  document.querySelector('svg.mesh').prepend(defs);
+  scribbleG.setAttribute('clip-path', 'url(#meshClip)');
+
+  const paths = [];
+  const SCRIBBLE_COUNT = 28;
+  for (let i = 0; i < SCRIBBLE_COUNT; i++) {
+    const segCount = 32 + Math.floor(rand() * 20);
+    const d = buildScribble(segCount, bounds);
+    const p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('class', 'scribble');
+    scribbleG.appendChild(p);
+    paths.push(p);
+  }
+
+  // ─── SPEECH BUBBLES ──────────────────────────────────────────────────
+  // Rectangular rounded callouts with a tail triangle pointing inward.
+  // config: [cls, label, subLabel, x, y, w, h, tailX, tailY, tailSide]
+  // tailSide: 'bottom'|'top'|'left'|'right'  (which side the tail protrudes from)
+  const bubbles = [
+    { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 195, y: 105, w: 230, h: 120, tailX: 380, tailY: 225, side: 'bottom' },
+    { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 700, y: 155, w: 260, h: 120, tailX: 720, tailY: 275, side: 'bottom' },
+    { cls: 'dl',  label: 'DL',    sub: 'Deep Learning',            x: 150, y: 420, w: 240, h: 120, tailX: 360, tailY: 420, side: 'top' },
+    { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 650, y: 460, w: 320, h: 130, tailX: 700, tailY: 460, side: 'top' },
+  ];
+
+  function tailPath(x, y, w, h, tx, ty, side) {
+    // Bubble rect with rounded corners r, plus a tail triangle off the given side
+    const r = 14;
+    let d = `M ${x + r} ${y}`;
+    // TOP edge
+    if (side === 'top') {
+      const baseMid = x + w * 0.25;
+      d += ` L ${baseMid - 14} ${y}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${baseMid + 24} ${y}`;
+    }
+    d += ` L ${x + w - r} ${y}`;
+    d += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+    // RIGHT edge
+    if (side === 'right') {
+      const baseMid = y + h * 0.5;
+      d += ` L ${x + w} ${baseMid - 14}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${x + w} ${baseMid + 24}`;
+    }
+    d += ` L ${x + w} ${y + h - r}`;
+    d += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+    // BOTTOM edge
+    if (side === 'bottom') {
+      const baseMid = x + w * 0.75;
+      d += ` L ${baseMid + 14} ${y + h}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${baseMid - 24} ${y + h}`;
+    }
+    d += ` L ${x + r} ${y + h}`;
+    d += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+    // LEFT edge
+    if (side === 'left') {
+      const baseMid = y + h * 0.5;
+      d += ` L ${x} ${baseMid + 14}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${x} ${baseMid - 24}`;
+    }
+    d += ` L ${x} ${y + r}`;
+    d += ` Q ${x} ${y} ${x + r} ${y}`;
+    d += ' Z';
+    return d;
+  }
+
+  bubbles.forEach((b, i) => {
+    const g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('class', `bubble-group ${b.cls}`);
+    g.setAttribute('data-index', i);
+
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', tailPath(b.x, b.y, b.w, b.h, b.tailX, b.tailY, b.side));
+    path.setAttribute('class', 'bubble-box');
+    g.appendChild(path);
+
+    const sub = document.createElementNS(svgNS, 'text');
+    sub.setAttribute('class', 'bubble-sub');
+    sub.setAttribute('x', b.x + b.w / 2);
+    sub.setAttribute('y', b.y + 26);
+    sub.textContent = b.sub;
+    g.appendChild(sub);
+
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('class', 'bubble-text');
+    label.setAttribute('x', b.x + b.w / 2);
+    label.setAttribute('y', b.y + b.h / 2 + 10);
+    label.setAttribute('font-size', b.label.length > 3 ? 52 : 64);
+    label.textContent = b.label;
+    g.appendChild(label);
+
+    // pivot for scale-in
+    const pivotX = b.x + b.w / 2;
+    const pivotY = b.y + b.h / 2;
+    g.style.transformOrigin = `${pivotX}px ${pivotY}px`;
+    g.style.transformBox = 'fill-box';
+    g.setAttribute('opacity', 0);
+
+    bubbleG.appendChild(g);
+  });
+
+  // ─── ANIMATION ───────────────────────────────────────────────────────
+  function animate() {
+    // Prep paths for draw-in
+    paths.forEach(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      p.style.opacity = 0.55;
+    });
+
+    // Reset bubbles
+    gsap.set('.bubble-group', { opacity: 0, scale: 0.4 });
+    gsap.set('.header', { opacity: 0, y: -10 });
+    gsap.set('.footer-note', { opacity: 0 });
+
+    const tl = gsap.timeline();
+
+    tl.to('.header', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0);
+
+    // Scribbles draw in a tangled rush
+    tl.to(paths, {
+      strokeDashoffset: 0,
+      duration: 2.4,
+      ease: 'power1.inOut',
+      stagger: { each: 0.09, from: 'random' },
+    }, 0.3);
+
+    // Bubbles pop in AFTER mesh is ~70% drawn
+    tl.to('.bubble-group', {
+      opacity: 1,
+      scale: 1,
+      duration: 0.9,
+      ease: 'back.out(1.8)',
+      stagger: 0.15,
+    }, 1.9);
+
+    tl.to('.footer-note', { opacity: 1, duration: 0.6 }, '-=0.3');
+
+    // Subtle continuous drift on bubbles
+    document.querySelectorAll('.bubble-group').forEach((g, i) => {
+      gsap.to(g, {
+        y: `+=${(i % 2 === 0 ? -6 : 6)}`,
+        duration: 3 + i * 0.3,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 3 + i * 0.2,
+      });
+    });
+  }
+
+  animate();
+
+  // Replay on R
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'r' || e.key === 'R') { gsap.killTweensOf('*'); animate(); }
+  });
+
+  // Theme sync
+  window.addEventListener('message', (e) => {
+    if (!e.data) return;
+    if (e.data.type === 'SET_THEME') {
+      const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
+      const key = palette.toLowerCase().replace(/\s+/g, '-');
+      document.body.setAttribute('data-theme', key);
+    }
+    if (e.data.type === 'RESTART_ANIMATION') {
+      gsap.killTweensOf('*');
+      animate();
+    }
+  });
+
+  // Default theme
+  document.body.setAttribute('data-theme', 'warm-linen');
+</script>
+</body>
+</html>
