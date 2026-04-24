@@ -3911,13 +3911,19 @@
 
       /* ---- Light-mode theme for CGD modal ---- */
       .light-mode .cgd-overlay {
-        background: rgba(220, 228, 236, 0.97);
+        background: color-mix(in srgb, var(--bg) 97%, transparent);
       }
       .light-mode .cgd-modal {
-        background: #f5f7fa;
+        background: var(--bg);
         border-color: rgba(0, 0, 0, 0.08);
-        color: #1a1a2e;
+        color: var(--text-main);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      }
+      .light-mode .cgd-title {
+        background: linear-gradient(90deg, var(--text-main), var(--accent-main)) !important;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
       .light-mode .cgd-modal::-webkit-scrollbar-thumb {
         background: rgba(0, 0, 0, 0.15);
