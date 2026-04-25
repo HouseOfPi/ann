@@ -209,10 +209,19 @@
   }
   .bp-bulb { font-size: 18px; }
   .bp-summary-text { color: var(--title-color); line-height: 1.5; }
-  .ai-c  { color: var(--ai-color);  font-weight: 700; }
-  .ml-c  { color: var(--ml-color);  font-weight: 700; }
-  .dl-c  { color: var(--dl-color);  font-weight: 700; }
   .gen-c { color: var(--gen-color); font-weight: 700; }
+
+  /* Neural Network Graphic (Migrated) */
+  .bp-nn-wrap { margin-top: 15px; border-radius: 8px; background: rgba(0,0,0,0.03); padding: 5px; height: 100px; display: flex; align-items: center; justify-content: center; }
+  .nn-node { fill: var(--dl-color); opacity: 0.8; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--dl-color) 40%, transparent)); }
+  .nn-edge { stroke: var(--dl-color); stroke-width: 0.5; stroke-opacity: 0.2; }
+  .nn-signal { fill: #fff; filter: drop-shadow(0 0 5px var(--dl-color)); pointer-events: none; }
+  .nn-node.fire { filter: drop-shadow(0 0 8px #fff); transform: scale(1.3); transform-origin: center; transition: transform 0.2s; }
+  
+  .bp-examples { margin-top: 10px; font-size: 10px; color: var(--subtitle-color); border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 8px; }
+  .bp-examples strong { font-weight: 700; text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px; opacity: 0.7; }
+  .bp-chip-row { display: flex; flex-wrap: wrap; gap: 4px; }
+  .bp-chip { background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 500; font-family: var(--font-mono); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; }
@@ -408,6 +417,13 @@
             <li>Human engineers write explicit rules</li>
           </ul>
           <div class="bp-tag ai">→ Machines follow instructions</div>
+          <div class="bp-examples">
+            <strong>Key Models</strong>
+            <div class="bp-chip-row">
+              <span class="bp-chip">IBM Watson</span>
+              <span class="bp-chip">Expert Systems</span>
+            </div>
+          </div>
         </div>
 
         <!-- ML -->
@@ -425,6 +441,14 @@
             <li>Finds patterns &amp; makes predictions</li>
           </ul>
           <div class="bp-tag ml">→ Machines learn from data</div>
+          <div class="bp-examples">
+            <strong>Key Models</strong>
+            <div class="bp-chip-row">
+              <span class="bp-chip">Random Forest</span>
+              <span class="bp-chip">SVM</span>
+              <span class="bp-chip">XGBoost</span>
+            </div>
+          </div>
         </div>
 
         <!-- DL -->
@@ -442,6 +466,19 @@
             <li>Handles complex problems like images, speech, etc.</li>
           </ul>
           <div class="bp-tag dl">→ Machines learn deep patterns</div>
+          
+          <div class="bp-nn-wrap">
+            <svg id="bp-nn-svg" viewBox="0 0 200 100" style="width:100%; height:100%"></svg>
+          </div>
+
+          <div class="bp-examples">
+            <strong>State-of-the-art</strong>
+            <div class="bp-chip-row">
+              <span class="bp-chip">ResNet</span>
+              <span class="bp-chip">BERT</span>
+              <span class="bp-chip">AlphaGo</span>
+            </div>
+          </div>
         </div>
 
         <!-- GenAI -->
@@ -459,6 +496,15 @@
             <li>Text, images, audio, video, code, and more</li>
           </ul>
           <div class="bp-tag gen">→ Machines generate new content</div>
+          <div class="bp-examples">
+            <strong>The Frontiers</strong>
+            <div class="bp-chip-row">
+              <span class="bp-chip">GPT-4o</span>
+              <span class="bp-chip">Claude 3.5</span>
+              <span class="bp-chip">Gemini 1.5</span>
+              <span class="bp-chip">LLaMA 3</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -746,12 +792,74 @@
 
   function openBigPicture() {
     document.getElementById('bpOverlay').classList.add('open');
+    initBPNN();
   }
   function closeBigPicture(e) {
     if (!e || e.target === document.getElementById('bpOverlay') || e.currentTarget.classList.contains('bp-close')) {
       document.getElementById('bpOverlay').classList.remove('open');
+      if (bpPropLoop) bpPropLoop.kill();
     }
   }
+
+  /* BP Neural Network Logic */
+  let bpNNPos = [], bpNNEdges = [], bpPropLoop;
+  function initBPNN() {
+    const svg = document.getElementById('bp-nn-svg');
+    svg.innerHTML = '';
+    const layers = [3, 5, 4, 2];
+    const xS = 20, xE = 180, yT = 15, yB = 85;
+    
+    bpNNPos = layers.map((count, li) => {
+      const x = xS + (xE - xS) * (li / (layers.length - 1));
+      const h = yB - yT;
+      return Array.from({length: count}, (_, i) => ({
+        x, y: count === 1 ? (yT + yB)/2 : yT + h * (i / (count - 1))
+      }));
+    });
+
+    bpNNEdges = [];
+    for (let li = 0; li < bpNNPos.length - 1; li++) {
+      for (const a of bpNNPos[li]) {
+        for (const b of bpNNPos[li + 1]) {
+          const line = document.createElementNS(svgNS, 'line');
+          line.setAttribute('class', 'nn-edge');
+          line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+          line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+          svg.appendChild(line);
+          bpNNEdges.push({ a, b });
+        }
+      }
+    }
+    bpNNPos.flat().forEach(p => {
+      const c = document.createElementNS(svgNS, 'circle');
+      c.setAttribute('class', 'nn-node');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 3);
+      svg.appendChild(c);
+    });
+
+    if (bpPropLoop) bpPropLoop.kill();
+    bpPropLoop = gsap.timeline({ repeat: -1 });
+    bpPropLoop.call(bpPropagate).to({}, { duration: 2.5 });
+  }
+
+  function bpPropagate() {
+    const svg = document.getElementById('bp-nn-svg');
+    const delayStep = 0.4;
+    for (let li = 0; li < bpNNPos.length - 1; li++) {
+      const layerDelay = li * delayStep;
+      bpNNEdges.filter(e => e.a.x === bpNNPos[li][0].x).forEach(e => {
+        const s = document.createElementNS(svgNS, 'circle');
+        s.setAttribute('class', 'nn-signal');
+        s.setAttribute('cx', e.a.x); s.setAttribute('cy', e.a.y); s.setAttribute('r', 1.5);
+        svg.appendChild(s);
+        gsap.to(s, {
+          attr: { cx: e.b.x, cy: e.b.y }, opacity: 1, duration: 0.6, delay: layerDelay, ease: "power2.inOut",
+          onComplete: () => s.remove()
+        });
+      });
+    }
+  }
+
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBigPicture(); });
 </script>
 </body>
