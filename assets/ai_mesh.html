@@ -69,6 +69,151 @@
     --subtitle-color: #6b4a78;
   }
 
+  /* ── Big Picture Button ── */
+  .big-picture-btn {
+    position: absolute;
+    top: 96px;
+    left: 120px;
+    background: var(--ai-color);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    z-index: 10;
+  }
+  .big-picture-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+
+  /* ── Big Picture Modal ── */
+  .bp-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .bp-overlay.open { display: flex; }
+  .bp-modal {
+    background: var(--bubble-bg);
+    border-radius: 20px;
+    padding: 36px 32px 28px;
+    max-width: 920px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+  .bp-close {
+    position: absolute;
+    top: 14px; right: 18px;
+    background: none; border: none;
+    font-size: 26px; cursor: pointer;
+    color: var(--text-dim);
+    line-height: 1;
+  }
+  .bp-close:hover { color: var(--title-color); }
+  .bp-title {
+    text-align: center;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 600;
+    color: var(--title-color);
+    margin-bottom: 20px;
+  }
+
+  /* timeline bar */
+  .bp-timeline-line {
+    position: relative;
+    height: 6px;
+    background: linear-gradient(to right, var(--ai-color), var(--ml-color), var(--dl-color), var(--gen-color));
+    border-radius: 3px;
+    margin: 0 24px 28px;
+  }
+  .bp-tl-dot {
+    position: absolute;
+    top: 50%; transform: translate(-50%,-50%);
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--ai-color);
+    border: 3px solid var(--bubble-bg);
+  }
+  .bp-arrow {
+    position: absolute;
+    right: -18px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--gen-color);
+  }
+
+  /* cards */
+  .bp-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .bp-card {
+    border-radius: 14px;
+    padding: 16px 14px;
+    border: 2px solid transparent;
+  }
+  .bp-ai  { background: color-mix(in srgb, var(--ai-color)  12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--ai-color)  35%, transparent); }
+  .bp-ml  { background: color-mix(in srgb, var(--ml-color)  12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--ml-color)  35%, transparent); }
+  .bp-dl  { background: color-mix(in srgb, var(--dl-color)  12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--dl-color)  35%, transparent); }
+  .bp-gen { background: color-mix(in srgb, var(--gen-color) 12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--gen-color) 35%, transparent); }
+  .bp-era {
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 10px;
+    color: var(--subtitle-color);
+  }
+  .bp-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .bp-icon { font-size: 28px; }
+  .bp-label {
+    font-size: 26px; font-weight: 900; line-height: 1;
+  }
+  .bp-label.ai  { color: var(--ai-color); }
+  .bp-label.ml  { color: var(--ml-color); }
+  .bp-label.dl  { color: var(--dl-color); }
+  .bp-label.gen { color: var(--gen-color); }
+  .bp-sublabel { font-size: 11px; color: var(--subtitle-color); font-weight: 600; margin-top: 2px; }
+  .bp-list {
+    list-style: disc; padding-left: 16px;
+    font-size: 12px; color: var(--title-color); line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .bp-tag {
+    border-radius: 8px; padding: 7px 10px;
+    font-size: 11px; font-weight: 700;
+  }
+  .bp-tag.ai  { background: color-mix(in srgb, var(--ai-color)  20%, transparent); color: var(--ai-color); }
+  .bp-tag.ml  { background: color-mix(in srgb, var(--ml-color)  20%, transparent); color: var(--ml-color); }
+  .bp-tag.dl  { background: color-mix(in srgb, var(--dl-color)  20%, transparent); color: var(--dl-color); }
+  .bp-tag.gen { background: color-mix(in srgb, var(--gen-color) 20%, transparent); color: var(--gen-color); }
+
+  /* summary bar */
+  .bp-summary {
+    display: flex; align-items: center; gap: 10px;
+    background: color-mix(in srgb, var(--subtitle-color) 10%, var(--bubble-bg));
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 13px;
+  }
+  .bp-bulb { font-size: 18px; }
+  .bp-summary-text { color: var(--title-color); line-height: 1.5; }
+  .ai-c  { color: var(--ai-color);  font-weight: 700; }
+  .ml-c  { color: var(--ml-color);  font-weight: 700; }
+  .dl-c  { color: var(--dl-color);  font-weight: 700; }
+  .gen-c { color: var(--gen-color); font-weight: 700; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; }
   body {
@@ -229,6 +374,105 @@
     </div>
 
     <div class="footer-note">Press <strong>R</strong> to replay</div>
+
+    <button class="big-picture-btn" onclick="openBigPicture()">💡 Big Picture</button>
+  </div>
+
+  <!-- Big Picture Modal -->
+  <div class="bp-overlay" id="bpOverlay" onclick="closeBigPicture(event)">
+    <div class="bp-modal">
+      <button class="bp-close" onclick="closeBigPicture()">&times;</button>
+      <div class="bp-title">From Rules to Creation</div>
+
+      <div class="bp-timeline-line">
+        <div class="bp-tl-dot" style="left:12.5%"></div>
+        <div class="bp-tl-dot" style="left:37.5%"></div>
+        <div class="bp-tl-dot" style="left:62.5%; background:var(--dl-color)"></div>
+        <div class="bp-tl-dot" style="left:87.5%; background:var(--gen-color)"></div>
+        <div class="bp-arrow">&rarr;</div>
+      </div>
+
+      <div class="bp-cards">
+        <!-- AI -->
+        <div class="bp-card bp-ai">
+          <div class="bp-era">1980s–1990s</div>
+          <div class="bp-card-header ai">
+            <span class="bp-icon">🧠</span>
+            <div>
+              <div class="bp-label ai">AI</div>
+              <div class="bp-sublabel">Rule-based systems</div>
+            </div>
+          </div>
+          <ul class="bp-list">
+            <li>Predefined logic</li>
+            <li>Human engineers write explicit rules</li>
+          </ul>
+          <div class="bp-tag ai">→ Machines follow instructions</div>
+        </div>
+
+        <!-- ML -->
+        <div class="bp-card bp-ml">
+          <div class="bp-era">2010s</div>
+          <div class="bp-card-header ml">
+            <span class="bp-icon">📈</span>
+            <div>
+              <div class="bp-label ml">ML</div>
+              <div class="bp-sublabel">Machine Learning</div>
+            </div>
+          </div>
+          <ul class="bp-list">
+            <li>Learns from data</li>
+            <li>Finds patterns &amp; makes predictions</li>
+          </ul>
+          <div class="bp-tag ml">→ Machines learn from data</div>
+        </div>
+
+        <!-- DL -->
+        <div class="bp-card bp-dl">
+          <div class="bp-era">2010s</div>
+          <div class="bp-card-header dl">
+            <span class="bp-icon">🔗</span>
+            <div>
+              <div class="bp-label dl">DL</div>
+              <div class="bp-sublabel">Deep Learning</div>
+            </div>
+          </div>
+          <ul class="bp-list">
+            <li>Multi-layer neural networks</li>
+            <li>Handles complex problems like images, speech, etc.</li>
+          </ul>
+          <div class="bp-tag dl">→ Machines learn deep patterns</div>
+        </div>
+
+        <!-- GenAI -->
+        <div class="bp-card bp-gen">
+          <div class="bp-era">PRESENT</div>
+          <div class="bp-card-header gen">
+            <span class="bp-icon">✨</span>
+            <div>
+              <div class="bp-label gen">GenAI</div>
+              <div class="bp-sublabel">Generative AI</div>
+            </div>
+          </div>
+          <ul class="bp-list">
+            <li>Creates new content</li>
+            <li>Text, images, audio, video, code, and more</li>
+          </ul>
+          <div class="bp-tag gen">→ Machines generate new content</div>
+        </div>
+      </div>
+
+      <div class="bp-summary">
+        <span class="bp-bulb">💡</span>
+        <span class="bp-summary-text">
+          <strong>THE BIG PICTURE:</strong>
+          <span class="ai-c">AI</span> is the broad field.
+          <span class="ml-c">ML</span> learns from data.
+          <span class="dl-c">DL</span> learns deeper patterns.
+          <span class="gen-c">GenAI</span> creates new content.
+        </span>
+      </div>
+    </div>
   </div>
 
 <script>
@@ -488,6 +732,16 @@
 
   // Default theme
   document.body.setAttribute('data-theme', 'warm-linen');
+
+  function openBigPicture() {
+    document.getElementById('bpOverlay').classList.add('open');
+  }
+  function closeBigPicture(e) {
+    if (!e || e.target === document.getElementById('bpOverlay') || e.currentTarget.classList.contains('bp-close')) {
+      document.getElementById('bpOverlay').classList.remove('open');
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBigPicture(); });
 </script>
 </body>
 </html>
