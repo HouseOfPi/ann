@@ -1712,7 +1712,8 @@
       // --- Dynamic Slide Management ---
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
-        'slideVenn': 'AI Definitions',
+        'slideMesh': 'The Complexity',
+        'slideVenn': 'The Hierarchy',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -1726,6 +1727,7 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
+        { id: 'slideMesh', enabled: true },
         { id: 'slideVenn', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -2058,11 +2060,11 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideVenn') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideVenn' || incoming.id === 'slideMesh') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             // Full refresh the iframe source or trigger animation
-            if (incoming.id === 'slideVenn' && frame.contentWindow) {
+            if ((incoming.id === 'slideVenn' || incoming.id === 'slideMesh') && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else {
                const currentSrc = frame.src;

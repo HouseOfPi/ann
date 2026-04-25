@@ -306,7 +306,7 @@
   }
   [data-theme="midnight"] .scribble { opacity: 0.8; }
 
-  .bubble-group { cursor: default; }
+  .bubble-group { cursor: default; will-change: transform; }
 
   .bubble-box {
     fill: var(--bubble-bg);
@@ -672,39 +672,50 @@
     gsap.set('.bubble-group', { opacity: 0, scale: 0.4 });
     gsap.set('.header', { opacity: 0, y: -10 });
     gsap.set('.footer-note', { opacity: 0 });
+    gsap.set('.big-picture-btn', { opacity: 0, scale: 0.8, pointerEvents: 'none' });
 
     const tl = gsap.timeline();
 
     tl.to('.header', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0);
 
-    // Scribbles draw in a tangled rush
+    // Scribbles draw in a tangled rush (faster)
     tl.to(paths, {
       strokeDashoffset: 0,
-      duration: 2.4,
+      duration: 1.6,
       ease: 'power1.inOut',
-      stagger: { each: 0.09, from: 'random' },
+      stagger: { each: 0.06, from: 'random' },
     }, 0.3);
 
-    // Bubbles pop in AFTER mesh is ~70% drawn
+    // Bubbles pop in ALONGSIDE the mesh drawing
     tl.to('.bubble-group', {
       opacity: 1,
       scale: 1,
-      duration: 0.9,
+      duration: 0.8,
       ease: 'back.out(1.8)',
       stagger: 0.15,
-    }, 1.9);
+    }, 0.4);
+
+    // Big Picture button pops in earlier as mesh completes
+    tl.to('.big-picture-btn', {
+      opacity: 1, 
+      scale: 1, 
+      pointerEvents: 'auto',
+      duration: 0.5, 
+      ease: 'back.out(2)'
+    }, 2.2);
 
     tl.to('.footer-note', { opacity: 1, duration: 0.6 }, '-=0.3');
 
     // Subtle continuous drift on bubbles
     document.querySelectorAll('.bubble-group').forEach((g, i) => {
       gsap.to(g, {
-        y: `+=${(i % 2 === 0 ? -6 : 6)}`,
-        duration: 3 + i * 0.3,
+        y: (i % 2 === 0 ? -10 : 10),
+        duration: 4 + i * 0.5,
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 3 + i * 0.2,
+        delay: 3 + i * 0.4,
+        force3D: true
       });
     });
   }
