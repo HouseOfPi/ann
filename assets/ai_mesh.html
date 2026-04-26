@@ -872,7 +872,7 @@
     { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 195, y: 105, w: 230, h: 120, tailX: 380, tailY: 225, side: 'bottom' },
     { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 700, y: 155, w: 260, h: 120, tailX: 720, tailY: 275, side: 'bottom' },
     { cls: 'dl',  label: 'DL',    sub: 'Deep Learning',            x: 150, y: 420, w: 240, h: 120, tailX: 360, tailY: 420, side: 'top' },
-    { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 650, y: 460, w: 320, h: 130, tailX: 700, tailY: 460, side: 'top' },
+    { cls: 'genai', label: 'GenAI', sub: 'Generative AI',            x: 650, y: 460, w: 320, h: 130, tailX: 700, tailY: 460, side: 'top' },
   ];
 
   function tailPath(x, y, w, h, tx, ty, side) {
@@ -1478,6 +1478,68 @@
           </div>
         </div>
       `;
+    } else if (type === 'genai') {
+      window.lastGenAIIndex = 0;
+      content.innerHTML = `
+        <div class="ml-layout genai-layout" style="gap: 5px;">
+          <div class="ml-header" style="margin-bottom: 5px;">
+            <h1 style="margin: 0; color: var(--gen-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--gen-color), color-mix(in srgb, var(--gen-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GEN AI &mdash; CREATION</h1>
+          </div>
+          
+          <div class="ml-flow-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin: 10px 0 20px 0; padding: 0;">
+            <!-- Top: Prompt Bubble -->
+            <div style="position: relative; cursor: pointer; width: 100%; max-width: 450px;" onclick="randomizeGenAIInput()">
+              <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: color-mix(in srgb, var(--gen-color) 15%, var(--bubble-bg)); border: 1.5px solid var(--gen-color); border-radius: 20px; padding: 2px 14px; font-size: 9px; font-weight: 900; color: var(--gen-color); letter-spacing: 1px; z-index: 2;">PROMPT</div>
+              <div class="ml-card-lift" style="background: rgba(255,255,255,0.05); border: 2px solid color-mix(in srgb, var(--gen-color) 30%, transparent); border-radius: 16px; padding: 25px 20px; text-align: center; position: relative; overflow: hidden;">
+                <div id="genai-prompt-text" style="font-size: 18px; font-weight: 700; color: var(--text-main); font-style: italic; line-height: 1.4;">"A specialized AI robot settlement building modular glass domes on the red plains of Mars..."</div>
+              </div>
+            </div>
+
+            <!-- Arrow -->
+            <div style="display: flex; align-items: center; justify-content: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--gen-color)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:24px; opacity:0.6;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </div>
+
+            <!-- Bottom: Result -->
+            <div style="position: relative; width: 100%; max-width: 500px;">
+              <div class="ml-card-lift" style="background: #000; border: 2.5px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 15px 45px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+                <img id="genai-result-img" src="https://images.unsplash.com/photo-1545156521-77bd85671d30?auto=format&fit=crop&q=80&w=800" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
+                <!-- Loading Overlay (hidden by default) -->
+                <div id="genai-loading" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 5;">
+                   <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gen-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
+                   <div style="font-size: 11px; font-weight: 800; color: var(--gen-color); letter-spacing: 2px;">CREATING NEW CONTENT...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ml-footer" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px;">
+            <!-- Key Idea Box -->
+            <div class="ml-info-box" style="padding: 12px 25px; min-height: auto; max-width: 850px; background: rgba(147, 51, 234, 0.05); border: 1.5px solid rgba(147, 51, 234, 0.12); border-radius: 12px; display: flex; align-items: center; gap: 18px;">
+               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:32px; height:32px;">
+                 <defs>
+                   <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                     <stop offset="0%" style="stop-color:var(--gen-color); stop-opacity:1" />
+                     <stop offset="100%" style="stop-color:#f472b6; stop-opacity:1" />
+                   </linearGradient>
+                 </defs>
+                 <path d="M12 3l1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5zM19 16l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1zM5 16l0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8z" fill="url(#sparkle-grad)" />
+               </svg>
+               <div style="font-size: 15px; font-weight: 600; color: color-mix(in srgb, var(--gen-color) 80%, black); text-align: left; line-height: 1.6;">
+                 GenAI creates entirely new content 
+                 <span style="color: var(--dl-color); background: color-mix(in srgb, var(--dl-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">images</span>
+                 <span style="color: var(--ml-color); background: color-mix(in srgb, var(--ml-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">text</span>
+                 <span style="color: var(--ai-color); background: color-mix(in srgb, var(--ai-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">audio</span>
+                 <span style="color: var(--gen-color); background: color-mix(in srgb, var(--gen-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">video</span>
+                 from a simple prompt.
+               </div>
+            </div>
+          </div>
+        </div>
+      `;
     } else {
       badge.textContent = data.label;
       badge.className = `detail-type-badge type-${type}`;
@@ -1559,6 +1621,53 @@
     }
     
     randomizeDLInput();
+  }
+
+  function randomizeGenAIInput() {
+    const prompts = [
+      { 
+        text: '"A specialized AI robot settlement building modular glass domes on the red plains of Mars..."',
+        img: 'https://images.unsplash.com/photo-1545156521-77bd85671d30?auto=format&fit=crop&q=80&w=800' 
+      },
+      { 
+        text: '"A cinematic ultra-realistic 4K image of a space shuttle launching into a clear blue sky, massive plumes of billowing white smoke..."',
+        img: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=800'
+      },
+      { 
+        text: '"A futuristic Mars city at sunset with glowing skyscrapers and flying transport pods across the desert surface..."',
+        img: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=800'
+      }
+    ];
+
+    const promptTextEl = document.getElementById('genai-prompt-text');
+    const resultImgEl = document.getElementById('genai-result-img');
+    const loadingEl = document.getElementById('genai-loading');
+
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * prompts.length);
+    } while (nextIndex === window.lastGenAIIndex);
+    window.lastGenAIIndex = nextIndex;
+
+    const selected = prompts[nextIndex];
+
+    // Animation Sequence
+    gsap.to(promptTextEl, { opacity: 0, y: 10, duration: 0.2, onComplete: () => {
+      promptTextEl.innerText = selected.text;
+      gsap.to(promptTextEl, { opacity: 1, y: 0, duration: 0.4 });
+      
+      // Show loading
+      loadingEl.style.display = 'flex';
+      gsap.fromTo(loadingEl, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+
+      // Artificial Delay for "Generation"
+      setTimeout(() => {
+        resultImgEl.src = selected.img;
+        gsap.to(loadingEl, { opacity: 0, duration: 0.4, onComplete: () => {
+          loadingEl.style.display = 'none';
+        }});
+      }, 1500);
+    }});
   }
 
   function switchMLTab(index) {
