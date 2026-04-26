@@ -399,6 +399,26 @@
   .training-table { width: 100%; border-collapse: collapse; font-size: 10px; color: var(--text-dim); }
   .training-table th { text-align: left; padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.2); color: var(--ml-color); font-weight: 800; text-transform: uppercase; }
   .training-table td { padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.1); font-weight: 600; }
+
+  /* Tab System */
+  .ml-tabs {
+    display: flex; gap: 4px; margin-bottom: 25px;
+    background: rgba(128,128,128,0.08); padding: 5px; border-radius: 14px;
+    width: fit-content; margin-left: auto; margin-right: auto;
+  }
+  .ml-tab-btn {
+    padding: 10px 24px; border-radius: 10px; cursor: pointer;
+    font-size: 13px; font-weight: 800; color: var(--text-dim);
+    transition: all 0.3s ease; border: none; background: transparent;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .ml-tab-btn.active {
+    background: var(--ml-color); color: white;
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--ml-color) 40%, transparent);
+  }
+  .ml-tab-pane { display: none; width: 100%; flex-direction: column; align-items: center; }
+  .ml-tab-pane.active { display: flex; animation: fadeInModal 0.4s ease forwards; }
+
   .ml-model-sub { font-size: 11px; font-weight: 700; color: #666; }
   .ml-arrow-svg { width: 24px; height: 24px; opacity: 0.6; }
 
@@ -1048,164 +1068,296 @@
     
     if (type === 'ml') {
       content.innerHTML = `
-        <div class="ml-layout" style="gap: 15px;">
-          <div class="ml-header" style="margin-bottom: 0;">
-            <div class="ml-title-area">
-              <div class="ml-main-title" style="font-size: 34px; font-weight: 900; letter-spacing: -1.5px; background: linear-gradient(135deg, var(--ml-color) 0%, color-mix(in srgb, var(--ml-color), #000 30%) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MACHINE LEARNING</div>
+        <div class="ml-tabs">
+          <button class="ml-tab-btn active" onclick="switchMLTab(0)">🏠 House Price</button>
+          <button class="ml-tab-btn" onclick="switchMLTab(1)">⚡ EV Price</button>
+        </div>
+
+        <div id="ml-pane-0" class="ml-tab-pane active">
+          <div class="ml-layout" style="gap: 15px;">
+            <div class="ml-header" style="margin-bottom: 0;">
+              <h1 style="margin: 0; color: var(--ml-color); letter-spacing: 2px; font-size: 32px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--ml-color), color-mix(in srgb, var(--ml-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MACHINE LEARNING</h1>
             </div>
-          </div>
-          
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-            <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">Predicting house price using multiple factors</div>
-          </div>
-          
-          <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
-            <!-- Left: Features -->
-            <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
-              <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">INPUT FEATURES</div>
-              <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 220px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
-                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                  <span style="font-size: 20px;">🏠</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Size (sq ft)</span>
-                </div>
-                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                  <span style="font-size: 20px;">🛏️</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Number of Bedrooms</span>
-                </div>
-                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                  <span style="font-size: 20px;">📍</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Location (City / Area)</span>
-                </div>
-                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                  <span style="font-size: 20px;">🗓️</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Age of House</span>
-                </div>
-                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                  <span style="font-size: 20px;">🛣️</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Distance to Center</span>
-                </div>
-                <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
-                  <span style="font-size: 20px;">🍀</span>
-                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Amenities</span>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">Predicting house price using multiple factors</div>
+            </div>
+            
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
+              <!-- Left: Features -->
+              <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">INPUT FEATURES</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 240px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🏠</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Size</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">2,100 sq ft</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🛏️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Bedrooms</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">4 Units</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">📍</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Location</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Core City</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🗓️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Age</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">5 Years</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🛣️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Distance</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">2 Miles</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
+                    <span style="font-size: 18px;">🍀</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Amenities</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Pool+Gym</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Arrow -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
-              <polyline points="10 6 16 12 10 18"></polyline>
-            </svg>
+              <!-- Arrow -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
 
-            <!-- Middle: ML Model -->
-            <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
-              
-              <!-- Upper Half: Model Logic -->
-              <div class="model-section-wrap">
-                <!-- Training Dataset Pop-over -->
-                <div class="training-preview">
-                  <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 TRAINING DATASET</div>
-                  <table class="training-table" style="font-size: 8.5px;">
-                    <thead>
-                      <tr><th>Size</th><th>Beds</th><th>Loc</th><th>Age</th><th>Dist</th><th>Price</th></tr>
-                    </thead>
-                    <tbody>
-                      <tr><td>1200</td><td>2</td><td>Sub</td><td>12y</td><td>5m</td><td>$450k</td></tr>
-                      <tr><td>1850</td><td>3</td><td>Core</td><td>5y</td><td>1m</td><td>$680k</td></tr>
-                      <tr><td>2400</td><td>4</td><td>Sub</td><td>2y</td><td>8m</td><td>$920k</td></tr>
-                      <tr><td>1400</td><td>2</td><td>Edge</td><td>20y</td><td>12m</td><td>$510k</td></tr>
-                      <tr><td>2100</td><td>3</td><td>Core</td><td>8y</td><td>2m</td><td>$750k</td></tr>
-                      <tr><td>1600</td><td>3</td><td>Sub</td><td>15y</td><td>6m</td><td>$580k</td></tr>
-                    </tbody>
-                  </table>
-                </div>
+              <!-- Middle: ML Model -->
+              <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
+                <!-- Upper Half: Model Logic -->
+                <div class="model-section-wrap">
+                  <div class="training-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 TRAINING DATASET</div>
+                    <table class="training-table" style="font-size: 8.5px;">
+                      <thead>
+                        <tr><th>Size</th><th>Beds</th><th>Loc</th><th>Age</th><th>Dist</th><th>Price</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>1200</td><td>2</td><td>Sub</td><td>12y</td><td>5m</td><td>$450k</td></tr>
+                        <tr><td>1850</td><td>3</td><td>Core</td><td>5y</td><td>1m</td><td>$680k</td></tr>
+                        <tr><td>2400</td><td>4</td><td>Sub</td><td>2y</td><td>8m</td><td>$920k</td></tr>
+                        <tr><td>1400</td><td>2</td><td>Edge</td><td>20y</td><td>12m</td><td>$510k</td></tr>
+                        <tr><td>2100</td><td>3</td><td>Core</td><td>8y</td><td>2m</td><td>$750k</td></tr>
+                        <tr><td>1600</td><td>3</td><td>Sub</td><td>15y</td><td>6m</td><td>$580k</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
 
-                <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
-                  <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
-                  <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
-                  <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
-                </svg>
-                <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
-                <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8; margin-bottom: 10px;">(Regression)</div>
-              </div>
-
-              <!-- Lower Half: Plot Visualization -->
-              <div class="plot-section-wrap" style="border-top: 1px solid rgba(128,128,128,0.1); padding-top: 15px; cursor: help;">
-                <div class="plot-preview">
-                  <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📈 REGRESSION ANALYSIS</div>
-                  <div style="font-size: 9px; color: var(--text-dim); margin-bottom: 12px; font-weight: 600;">Mathematical Best-Fit (Data vs. Prediction)</div>
-                  <svg viewBox="0 0 120 100" style="width:100%; height:auto;">
-                    <!-- Grid Lines -->
-                    <line x1="15" y1="30" x2="110" y2="30" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-                    <line x1="15" y1="50" x2="110" y2="50" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-                    <line x1="15" y1="70" x2="110" y2="70" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-                    <line x1="40" y1="10" x2="40" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-                    <line x1="70" y1="10" x2="70" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-                    <line x1="100" y1="10" x2="100" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
-
-                    <!-- Axis Labels -->
-                    <text x="110" y="98" font-size="6" fill="#888" text-anchor="end" font-weight="700">Square Ft.</text>
-                    <text x="5" y="10" font-size="6" fill="#888" transform="rotate(-90 5,10)" font-weight="700">Market Value ($)</text>
-                    
-                    <!-- Axes -->
-                    <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="1.5" opacity="0.4" />
-                    <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="0.5" />
-
-                    <!-- Training Dots (6 points) -->
-                    <circle cx="30" cy="78" r="2.5" fill="#2196F3" opacity="0.8" />
-                    <circle cx="38" cy="72" r="2.5" fill="#FF9800" opacity="0.8" />
-                    <circle cx="48" cy="65" r="2.5" fill="#4CAF50" opacity="0.8" />
-                    <circle cx="62" cy="52" r="2.5" fill="#E91E63" opacity="0.8" />
-                    <circle cx="78" cy="42" r="2.5" fill="#9C27B0" opacity="0.8" />
-                    <circle cx="95" cy="25" r="2.5" fill="#00BCD4" opacity="0.8" />
-
-                    <!-- Residual/Error Line (example) -->
-                    <line x1="62" y1="52" x2="62" y2="46" stroke="var(--ml-color)" stroke-width="1" stroke-dasharray="2,2" />
-
-                    <!-- Trend Line -->
-                    <path d="M 15 90 L 110 15" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" filter="drop-shadow(0 0 3px var(--ml-color))" />
-                    <text x="85" y="45" font-size="7" font-weight="900" fill="var(--ml-color)" opacity="0.7">Trend Line</text>
+                  <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
+                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                    <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
                   </svg>
-                  <div style="margin-top: 10px; font-size: 8px; text-align: center; color: var(--text-dim); opacity: 0.6;">Model finding the line that minimizes error</div>
+                  <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8; margin-bottom: 10px;">(Regression)</div>
                 </div>
 
-                <svg viewBox="0 0 100 80" style="width:90px; height:auto;">
-                  <path d="M 10 10 V 70 H 90" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="square" />
-                  <circle cx="25" cy="58" r="2.2" fill="#2196F3" />
-                  <circle cx="45" cy="40" r="2.2" fill="#4CAF50" />
-                  <circle cx="68" cy="36" r="2.2" fill="#9C27B0" />
-                  <circle cx="75" cy="22" r="2.2" fill="#00BCD4" />
-                  <path d="M 10 70 L 85 20" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" />
-                  <polyline points="75 22 85 20 83 30" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+                <!-- Lower Half: Plot Visualization -->
+                <div class="plot-section-wrap" style="border-top: 1px solid rgba(128,128,128,0.1); padding-top: 15px; cursor: help;">
+                  <div class="plot-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📈 REGRESSION ANALYSIS</div>
+                    <div style="font-size: 9px; color: var(--text-dim); margin-bottom: 12px; font-weight: 600;">Mathematical Best-Fit (Data vs. Prediction)</div>
+                    <svg viewBox="0 0 120 100" style="width:100%; height:auto;">
+                      <line x1="15" y1="30" x2="110" y2="30" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="15" y1="50" x2="110" y2="50" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="15" y1="70" x2="110" y2="70" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="40" y1="10" x2="40" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="70" y1="10" x2="70" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="100" y1="10" x2="100" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <text x="110" y="98" font-size="6" fill="#888" text-anchor="end" font-weight="700">Square Ft.</text>
+                      <text x="5" y="10" font-size="6" fill="#888" transform="rotate(-90 5,10)" font-weight="700">Value ($)</text>
+                      <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="1.5" opacity="0.4" />
+                      <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="0.5" />
+                      <circle cx="30" cy="78" r="2.5" fill="#2196F3" opacity="0.8" />
+                      <circle cx="38" cy="72" r="2.5" fill="#FF9800" opacity="0.8" />
+                      <circle cx="48" cy="65" r="2.5" fill="#4CAF50" opacity="0.8" />
+                      <circle cx="62" cy="52" r="2.5" fill="#E91E63" opacity="0.8" />
+                      <circle cx="78" cy="42" r="2.5" fill="#9C27B0" opacity="0.8" />
+                      <circle cx="95" cy="25" r="2.5" fill="#00BCD4" opacity="0.8" />
+                      <line x1="62" y1="52" x2="62" y2="46" stroke="var(--ml-color)" stroke-width="1" stroke-dasharray="2,2" />
+                      <path d="M 15 90 L 110 15" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" filter="drop-shadow(0 0 3px var(--ml-color))" />
+                    </svg>
+                  </div>
+
+                  <svg viewBox="0 0 100 80" style="width:90px; height:auto;">
+                    <path d="M 10 10 V 70 H 90" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="square" />
+                    <circle cx="25" cy="58" r="2.2" fill="#2196F3" />
+                    <circle cx="45" cy="40" r="2.2" fill="#4CAF50" />
+                    <circle cx="68" cy="36" r="2.2" fill="#9C27B0" />
+                    <circle cx="75" cy="22" r="2.2" fill="#00BCD4" />
+                    <path d="M 10 70 L 85 20" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" />
+                    <polyline points="75 22 85 20 83 30" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
               </div>
-            </div>
 
-            <!-- Arrow -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
-              <polyline points="10 6 16 12 10 18"></polyline>
-            </svg>
+              <!-- Arrow -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
 
-            <!-- Right: Output -->
-            <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
-              <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">OUTPUT</div>
-              <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
-                <svg viewBox="0 0 64 64" fill="none" stroke="var(--ml-color)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:60px; height:auto; margin-bottom: 20px;">
-                  <path d="M16 22.3 V54 H48 V22.3" />
-                  <path d="M6 30 L32 10 L58 30" />
-                  <text x="32" y="46" text-anchor="middle" font-size="24" font-weight="900" font-family="sans-serif" fill="var(--ml-color)" stroke="none">$</text>
-                </svg>
-                <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Estimated Price</div>
-                <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$780,000</div>
+              <!-- Right: Output -->
+              <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">OUTPUT</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
+                  <svg viewBox="0 0 64 64" fill="none" stroke="var(--ml-color)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:60px; height:auto; margin-bottom: 20px;">
+                    <path d="M16 22.3 V54 H48 V22.3" />
+                    <path d="M6 30 L32 10 L58 30" />
+                    <text x="32" y="46" text-anchor="middle" font-size="24" font-weight="900" font-family="sans-serif" fill="var(--ml-color)" stroke="none">$</text>
+                  </svg>
+                  <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Estimated Price</div>
+                  <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$780,000</div>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div class="ml-footer" style="display: flex; justify-content: center;">
-            <div class="ml-key-idea-box" style="padding: 12px 25px; min-height: auto; max-width: 850px;">
-              <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
-              <div class="ml-ki-text" style="font-size: 14px; line-height: 1.4;">
-                <strong>Key Idea:</strong> Computers learn patterns from data instead of being explicitly programmed to make decisions automatically &mdash; <span style="color:var(--text-main); opacity: 0.8; font-weight: 500;">like estimating house prices from multiple factors.</span>
+        </div>
+
+        <div id="ml-pane-1" class="ml-tab-pane">
+          <div class="ml-layout" style="gap: 15px;">
+            <div class="ml-header" style="margin-bottom: 0;">
+              <h1 style="margin: 0; color: var(--ml-color); letter-spacing: 2px; font-size: 32px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--ml-color), color-mix(in srgb, var(--ml-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MACHINE LEARNING</h1>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">Electric Vehicle Price Prediction</div>
+            </div>
+            
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
+              <!-- Left: Features -->
+              <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">INPUT FEATURES</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 240px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🔋</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Battery</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">85 kWh</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🛣️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Range</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">310 Miles</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🏷️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Brand</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Premium</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">⚡</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Charging</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Fast QC</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                    <span style="font-size: 18px;">🗓️</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Age</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">1 Year</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
+                    <span style="font-size: 18px;">📈</span>
+                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Demand</span>
+                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">High</span>
+                  </div>
+                </div>
               </div>
+              <!-- Arrow -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Middle: ML Model -->
+              <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
+                <!-- Upper Half: Model Logic -->
+                <div class="model-section-wrap">
+                  <div class="training-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 EV TRAINING DATA</div>
+                    <table class="training-table" style="font-size: 8.5px;">
+                      <thead>
+                        <tr><th>kWh</th><th>Range</th><th>Brand</th><th>Age</th><th>Demand</th><th>Price</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>60</td><td>240m</td><td>Mid</td><td>3y</td><td>High</td><td>$35k</td></tr>
+                        <tr><td>100</td><td>400m</td><td>Prem</td><td>1y</td><td>High</td><td>$85k</td></tr>
+                        <tr><td>75</td><td>310m</td><td>Mid</td><td>5y</td><td>Med</td><td>$42k</td></tr>
+                        <tr><td>85</td><td>330m</td><td>Prem</td><td>2y</td><td>Med</td><td>$65k</td></tr>
+                        <tr><td>50</td><td>200m</td><td>Eco</td><td>6y</td><td>Low</td><td>$24k</td></tr>
+                        <tr><td>95</td><td>380m</td><td>Prem</td><td>0y</td><td>High</td><td>$95k</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
+                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                    <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+                  </svg>
+                  <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8; margin-bottom: 10px;">(Regression)</div>
+                </div>
+
+                <!-- Lower Half: Plot Visualization -->
+                <div class="plot-section-wrap" style="border-top: 1px solid rgba(128,128,128,0.1); padding-top: 15px; cursor: help;">
+                  <div class="plot-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📈 EV VALUE ANALYSIS</div>
+                    <div style="font-size: 9px; color: var(--text-dim); margin-bottom: 12px; font-weight: 600;">Mathematical Best-Fit (kWh vs. Price)</div>
+                    <svg viewBox="0 0 120 100" style="width:100%; height:auto;">
+                      <line x1="15" y1="30" x2="110" y2="30" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="15" y1="50" x2="110" y2="50" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="15" y1="70" x2="110" y2="70" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <line x1="100" y1="10" x2="100" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                      <text x="110" y="98" font-size="6" fill="#888" text-anchor="end" font-weight="700">Capacity (kWh)</text>
+                      <text x="5" y="10" font-size="6" fill="#888" transform="rotate(-90 5,10)" font-weight="700">EV Price ($)</text>
+                      <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="1.5" opacity="0.4" />
+                      <circle cx="30" cy="80" r="2.5" fill="#2196F3" opacity="0.8" />
+                      <circle cx="45" cy="65" r="2.5" fill="#FF9800" opacity="0.8" />
+                      <circle cx="60" cy="50" r="2.5" fill="#4CAF50" opacity="0.8" />
+                      <circle cx="80" cy="35" r="2.5" fill="#E91E63" opacity="0.8" />
+                      <circle cx="95" cy="20" r="2.5" fill="#9C27B0" opacity="0.8" />
+                      <path d="M 15 95 L 110 5" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" filter="drop-shadow(0 0 3px var(--ml-color))" />
+                    </svg>
+                  </div>
+
+                  <svg viewBox="0 0 100 80" style="width:90px; height:auto;">
+                    <path d="M 10 10 V 70 H 90" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="square" />
+                    <circle cx="25" cy="58" r="2.2" fill="#4CAF50" />
+                    <circle cx="55" cy="35" r="2.2" fill="#2196F3" />
+                    <circle cx="85" cy="20" r="2.2" fill="#FF9800" />
+                    <path d="M 10 70 L 90 15" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Right: Output -->
+              <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">OUTPUT</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
+                  <svg viewBox="0 0 64 64" fill="none" stroke="var(--ml-color)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:60px; height:auto; margin-bottom: 20px;">
+                    <path d="M16 22.3 V54 H48 V22.3" />
+                    <path d="M6 30 L32 10 L58 30" />
+                    <text x="32" y="46" text-anchor="middle" font-size="24" font-weight="900" font-family="sans-serif" fill="var(--ml-color)" stroke="none">$</text>
+                  </svg>
+                  <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Estimated Price</div>
+                  <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$48,500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ml-footer" style="display: flex; justify-content: center;">
+          <div class="ml-key-idea-box" style="padding: 12px 25px; min-height: auto; max-width: 850px;">
+            <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
+            <div id="ml-ki-content" class="ml-ki-text" style="font-size: 14px; line-height: 1.4;">
+              <strong>Key Idea:</strong> ML combines multiple factors to predict a value &mdash; <span style="color:var(--text-main); opacity: 0.8; font-weight: 500;" id="ml-caption">like estimating house prices from multiple factors.</span>
             </div>
           </div>
         </div>
@@ -1228,6 +1380,20 @@
     if (!e || e.target === document.getElementById('detailOverlay') || e.currentTarget.classList.contains('detail-close')) {
       document.getElementById('detailOverlay').classList.remove('open');
     }
+  }
+
+  function switchMLTab(index) {
+    document.querySelectorAll('.ml-tab-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.ml-tab-pane').forEach((pane, i) => {
+      pane.classList.toggle('active', i === index);
+    });
+    const captions = [
+      "like estimating house prices from multiple factors.",
+      "like battery size, range, and age to predict the price of an electric vehicle."
+    ];
+    document.getElementById('ml-caption').innerText = captions[index];
   }
 
   /* BP Neural Network Logic */
