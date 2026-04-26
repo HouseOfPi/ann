@@ -1692,15 +1692,15 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 0;
+      let currentSlideIdx = 1;
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
-      // Set default slide (page 1) as active on load
-      presentationSections[0].classList.add("active-slide");
-      presentationSections[0].style.opacity = "1";
-      presentationSections[0].style.visibility = "visible";
-      presentationSections[0].style.transform = "scale(1)";
+      // Set default slide (page 2) as active on load
+      presentationSections[currentSlideIdx].classList.add("active-slide");
+      presentationSections[currentSlideIdx].style.opacity = "1";
+      presentationSections[currentSlideIdx].style.visibility = "visible";
+      presentationSections[currentSlideIdx].style.transform = "scale(1)";
 
       // Trigger title animation if we are starting on the 1st page
       if (currentSlideIdx === 0) {
@@ -2392,9 +2392,9 @@
         else setPalette("midnight");
       };
 
-      // Force Midnight palette on load
+      // Force Warm Linen palette on load
       (function () {
-        setPalette("midnight");
+        setPalette("warm-linen");
       })();
 
       function toggleSettings(e) {

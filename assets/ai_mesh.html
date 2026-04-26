@@ -223,6 +223,216 @@
   .bp-chip-row { display: flex; flex-wrap: wrap; gap: 4px; }
   .bp-chip { background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; font-weight: 500; font-family: var(--font-mono); }
 
+  /* ── Detail Modals ── */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .detail-overlay.open { display: flex; }
+  .detail-modal {
+    background: linear-gradient(135deg, var(--bubble-bg) 0%, color-mix(in srgb, var(--bubble-bg), #000 2%) 100%);
+    border-radius: 28px;
+    padding: 35px 45px 30px;
+    max-width: 980px;
+    width: fit-content;
+    height: auto;
+    max-height: 94vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+    border: none;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    scrollbar-width: none; /* Hide scrollbar for Chrome/Safari below */
+  }
+  .detail-modal::-webkit-scrollbar { display: none; }
+
+  .detail-modal::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--ml-color) 3%, transparent) 0%, transparent 50%);
+    pointer-events: none; opacity: 0.6;
+  }
+  .detail-overlay.open .detail-modal {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .detail-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: rgba(128,128,128,0.1);
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 20px; cursor: pointer;
+    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .detail-close:hover { background: rgba(128,128,128,0.2); color: var(--title-color); }
+  .detail-type-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
+  .type-ai  { background: color-mix(in srgb, var(--ai-color) 20%, transparent); color: var(--ai-color); }
+  .type-ml  { background: color-mix(in srgb, var(--ml-color) 20%, transparent); color: var(--ml-color); }
+  .type-dl  { background: color-mix(in srgb, var(--dl-color) 20%, transparent); color: var(--dl-color); }
+  .type-gen { background: color-mix(in srgb, var(--gen-color) 20%, transparent); color: var(--gen-color); }
+  .detail-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--title-color);
+    margin-bottom: 16px;
+  }
+  .detail-content {
+    color: var(--text-dim);
+    line-height: 1.6;
+    font-size: 16px;
+    min-height: auto;
+  }
+  .detail-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    border: 2px dashed color-mix(in srgb, var(--text-dim) 20%, transparent);
+    border-radius: 16px;
+    opacity: 0.5;
+  }
+  .detail-placeholder-text { font-size: 14px; font-weight: 500; font-style: italic; }
+
+  /* ── ML Modal Content Styles (Premium Redesign) ── */
+  .ml-layout { 
+    display: flex; flex-direction: column; gap: 20px; 
+    color: var(--text-main); font-family: 'Exo 2', sans-serif; 
+  }
+  .ml-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 5px; }
+  .ml-step-badge {
+    width: 44px; height: 44px; background: var(--ml-color); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; font-size: 24px; font-weight: 800; flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .ml-title-area { display: flex; flex-direction: row; align-items: baseline; gap: 12px; }
+  .ml-main-title { 
+    font-size: 32px; font-weight: 800; 
+    background: linear-gradient(to right, var(--ml-color), color-mix(in srgb, var(--ml-color), #000 20%));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -1px; line-height: 1.1; 
+  }
+  .ml-sub-title { font-size: 24px; font-weight: 700; color: var(--ml-color); opacity: 0.6; margin-left: 2px; }
+  .ml-example-text { font-size: 16px; color: var(--text-dim); margin-top: 6px; font-weight: 500; opacity: 0.8; }
+  
+  .ml-top-pill {
+    background: color-mix(in srgb, var(--ml-color) 10%, var(--bubble-bg)); color: var(--ml-color); padding: 8px 24px;
+    border-radius: 100px; font-size: 14px; font-weight: 700;
+    align-self: center; margin: 5px 0 15px 0;
+    border: 1px solid color-mix(in srgb, var(--ml-color) 20%, transparent);
+  }
+
+  .ml-flow-container {
+    display: flex; align-items: center; justify-content: center;
+    gap: 30px; margin-bottom: 15px; padding: 0 5px;
+  }
+
+  /* Left: Features */
+  .ml-features-wrap { display: flex; align-items: center; gap: 8px; }
+  .ml-feature-stack {
+    display: flex; flex-direction: column; border: 1px solid #e0e0e0;
+    border-radius: 12px; overflow: hidden; background: #fff; width: 230px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  }
+  .ml-feature-item {
+    display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0; font-size: 13px; font-weight: 600; color: #333;
+  }
+  .ml-feature-item:last-child { border-bottom: none; }
+  .ml-feature-svg { width: 22px; height: 22px; flex-shrink: 0; opacity: 0.8; }
+  
+  .ml-bracket-svg { width: 25px; height: 180px; }
+
+  /* Premium Effects */
+  .ml-card-lift:hover { transform: translateY(-8px) scale(1.02); }
+  @keyframes ml-pulse {
+    0% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ml-color) 30%, transparent)); }
+    50% { filter: drop-shadow(0 0 15px color-mix(in srgb, var(--ml-color) 60%, transparent)); }
+    100% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ml-color) 30%, transparent)); }
+  }
+  .ml-model-pulse { animation: ml-pulse 3s infinite ease-in-out; }
+  
+  /* Centered Hover Reveals */
+  .model-section-wrap, .plot-section-wrap { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  
+  .training-preview, .plot-preview {
+    position: absolute; top: 46%; left: 50%; width: 340px; height: auto;
+    background: var(--bubble-bg); border-radius: 22px;
+    opacity: 0; pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.85);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 100; display: flex; flex-direction: column; padding: 18px 22px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5); border: 2.5px solid var(--ml-color);
+  }
+  
+  /* Shared Centering Logic */
+  .model-section-wrap:hover .training-preview,
+  .plot-section-wrap:hover .plot-preview { 
+    opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; 
+  }
+
+  .training-table { width: 100%; border-collapse: collapse; font-size: 10px; color: var(--text-dim); }
+  .training-table th { text-align: left; padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.2); color: var(--ml-color); font-weight: 800; text-transform: uppercase; }
+  .training-table td { padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.1); font-weight: 600; }
+  .ml-model-sub { font-size: 11px; font-weight: 700; color: #666; }
+  .ml-arrow-svg { width: 24px; height: 24px; opacity: 0.6; }
+
+  /* Right: Output */
+  .ml-output-card {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    background: #f1f8e9; border: 2px solid #c8e6c9; padding: 25px 25px;
+    border-radius: 24px; width: 200px; text-align: center; flex-shrink: 0;
+  }
+  .ml-output-label { font-size: 12px; font-weight: 800; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; }
+  .ml-output-title { font-size: 16px; font-weight: 700; color: #333; margin-top: 5px; }
+  .ml-output-value { font-size: 26px; font-weight: 900; color: #2e7d32; margin-top: 4px; }
+
+  /* Footer Boxes (Side-by-side) */
+  .ml-footer { display: flex; gap: 15px; margin-top: 5px; }
+  .ml-info-box {
+    background: #f5fcf5; border-radius: 20px; padding: 15px 20px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid #e0f2f1;
+    flex: 1;
+  }
+  .ml-info-plot-svg { width: 60px; height: 40px; flex-shrink: 0; }
+  .ml-info-text { font-size: 13px; color: #2e7d32; font-weight: 600; line-height: 1.5; }
+  
+  .ml-key-idea-box {
+    background: #edf7ed; border-radius: 20px; padding: 15px 20px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid #c8e6c9;
+    flex: 1;
+  }
+  .ml-ki-icon-svg { width: 34px; height: 34px; flex-shrink: 0; }
+  .ml-ki-text { font-size: 16px; color: #1b5e20; font-weight: 600; }
+  .ml-ki-text strong { color: #2e7d32; font-weight: 800; font-size: 17px; }
+
+  .ml-dots { font-size: 24px; color: #ccc; margin-left: 105px; line-height: 1; letter-spacing: 4px; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; }
   body {
@@ -529,6 +739,18 @@
     </div>
   </div>
 
+  <!-- Detail Modal (Generic) -->
+  <div class="detail-overlay" id="detailOverlay" onclick="closeDetailModal(event)">
+    <div class="detail-modal" id="detailModal">
+      <button class="detail-close" onclick="closeDetailModal()">&times;</button>
+      <div id="detailContent" class="detail-content">
+        <div class="detail-placeholder">
+          <span class="detail-placeholder-text">Content Coming Soon...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
   // ─── SCRIBBLE GENERATION ──────────────────────────────────────────────
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -708,6 +930,8 @@
     g.style.transformOrigin = `${pivotX}px ${pivotY}px`;
     g.style.transformBox = 'fill-box';
     g.setAttribute('opacity', 0);
+    g.style.cursor = 'pointer';
+    g.onclick = () => openDetailModal(b.cls);
 
     bubbleG.appendChild(g);
   });
@@ -809,6 +1033,203 @@
     }
   }
 
+  function openDetailModal(type) {
+    const overlay = document.getElementById('detailOverlay');
+    const badge = document.getElementById('detailBadge');
+    const content = document.getElementById('detailContent');
+
+    const config = {
+      ai: { title: 'Artificial Intelligence', label: 'AI' },
+      ml: { title: 'Machine Learning', label: 'ML' },
+      dl: { title: 'Deep Learning', label: 'DL' },
+      gen: { title: 'Generative AI', label: 'GenAI' }
+    };
+    const data = config[type];
+    
+    if (type === 'ml') {
+      content.innerHTML = `
+        <div class="ml-layout" style="gap: 15px;">
+          <div class="ml-header" style="margin-bottom: 0;">
+            <div class="ml-title-area">
+              <div class="ml-main-title" style="font-size: 34px; font-weight: 900; letter-spacing: -1.5px; background: linear-gradient(135deg, var(--ml-color) 0%, color-mix(in srgb, var(--ml-color), #000 30%) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MACHINE LEARNING</div>
+            </div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">Predicting house price using multiple factors</div>
+          </div>
+          
+          <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
+            <!-- Left: Features -->
+            <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+              <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">INPUT FEATURES</div>
+              <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 220px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
+                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                  <span style="font-size: 20px;">🏠</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Size (sq ft)</span>
+                </div>
+                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                  <span style="font-size: 20px;">🛏️</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Number of Bedrooms</span>
+                </div>
+                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                  <span style="font-size: 20px;">📍</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Location (City / Area)</span>
+                </div>
+                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                  <span style="font-size: 20px;">🗓️</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Age of House</span>
+                </div>
+                <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
+                  <span style="font-size: 20px;">🛣️</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Distance to Center</span>
+                </div>
+                <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
+                  <span style="font-size: 20px;">🍀</span>
+                  <span style="font-size: 14px; font-weight: 700; color: var(--text-main);">Amenities</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Arrow -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+              <polyline points="10 6 16 12 10 18"></polyline>
+            </svg>
+
+            <!-- Middle: ML Model -->
+            <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
+              
+              <!-- Upper Half: Model Logic -->
+              <div class="model-section-wrap">
+                <!-- Training Dataset Pop-over -->
+                <div class="training-preview">
+                  <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 TRAINING DATASET</div>
+                  <table class="training-table" style="font-size: 8.5px;">
+                    <thead>
+                      <tr><th>Size</th><th>Beds</th><th>Loc</th><th>Age</th><th>Dist</th><th>Price</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>1200</td><td>2</td><td>Sub</td><td>12y</td><td>5m</td><td>$450k</td></tr>
+                      <tr><td>1850</td><td>3</td><td>Core</td><td>5y</td><td>1m</td><td>$680k</td></tr>
+                      <tr><td>2400</td><td>4</td><td>Sub</td><td>2y</td><td>8m</td><td>$920k</td></tr>
+                      <tr><td>1400</td><td>2</td><td>Edge</td><td>20y</td><td>12m</td><td>$510k</td></tr>
+                      <tr><td>2100</td><td>3</td><td>Core</td><td>8y</td><td>2m</td><td>$750k</td></tr>
+                      <tr><td>1600</td><td>3</td><td>Sub</td><td>15y</td><td>6m</td><td>$580k</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
+                  <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                  <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                  <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+                </svg>
+                <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8; margin-bottom: 10px;">(Regression)</div>
+              </div>
+
+              <!-- Lower Half: Plot Visualization -->
+              <div class="plot-section-wrap" style="border-top: 1px solid rgba(128,128,128,0.1); padding-top: 15px; cursor: help;">
+                <div class="plot-preview">
+                  <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 12px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📈 REGRESSION ANALYSIS</div>
+                  <div style="font-size: 9px; color: var(--text-dim); margin-bottom: 12px; font-weight: 600;">Mathematical Best-Fit (Data vs. Prediction)</div>
+                  <svg viewBox="0 0 120 100" style="width:100%; height:auto;">
+                    <!-- Grid Lines -->
+                    <line x1="15" y1="30" x2="110" y2="30" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                    <line x1="15" y1="50" x2="110" y2="50" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                    <line x1="15" y1="70" x2="110" y2="70" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                    <line x1="40" y1="10" x2="40" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                    <line x1="70" y1="10" x2="70" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+                    <line x1="100" y1="10" x2="100" y2="90" stroke="rgba(128,128,128,0.08)" stroke-width="0.5" />
+
+                    <!-- Axis Labels -->
+                    <text x="110" y="98" font-size="6" fill="#888" text-anchor="end" font-weight="700">Square Ft.</text>
+                    <text x="5" y="10" font-size="6" fill="#888" transform="rotate(-90 5,10)" font-weight="700">Market Value ($)</text>
+                    
+                    <!-- Axes -->
+                    <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="1.5" opacity="0.4" />
+                    <path d="M 15 10 V 90 H 110" fill="none" stroke="var(--ml-color)" stroke-width="0.5" />
+
+                    <!-- Training Dots (6 points) -->
+                    <circle cx="30" cy="78" r="2.5" fill="#2196F3" opacity="0.8" />
+                    <circle cx="38" cy="72" r="2.5" fill="#FF9800" opacity="0.8" />
+                    <circle cx="48" cy="65" r="2.5" fill="#4CAF50" opacity="0.8" />
+                    <circle cx="62" cy="52" r="2.5" fill="#E91E63" opacity="0.8" />
+                    <circle cx="78" cy="42" r="2.5" fill="#9C27B0" opacity="0.8" />
+                    <circle cx="95" cy="25" r="2.5" fill="#00BCD4" opacity="0.8" />
+
+                    <!-- Residual/Error Line (example) -->
+                    <line x1="62" y1="52" x2="62" y2="46" stroke="var(--ml-color)" stroke-width="1" stroke-dasharray="2,2" />
+
+                    <!-- Trend Line -->
+                    <path d="M 15 90 L 110 15" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" filter="drop-shadow(0 0 3px var(--ml-color))" />
+                    <text x="85" y="45" font-size="7" font-weight="900" fill="var(--ml-color)" opacity="0.7">Trend Line</text>
+                  </svg>
+                  <div style="margin-top: 10px; font-size: 8px; text-align: center; color: var(--text-dim); opacity: 0.6;">Model finding the line that minimizes error</div>
+                </div>
+
+                <svg viewBox="0 0 100 80" style="width:90px; height:auto;">
+                  <path d="M 10 10 V 70 H 90" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="square" />
+                  <circle cx="25" cy="58" r="2.2" fill="#2196F3" />
+                  <circle cx="45" cy="40" r="2.2" fill="#4CAF50" />
+                  <circle cx="68" cy="36" r="2.2" fill="#9C27B0" />
+                  <circle cx="75" cy="22" r="2.2" fill="#00BCD4" />
+                  <path d="M 10 70 L 85 20" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" />
+                  <polyline points="75 22 85 20 83 30" fill="none" stroke="var(--ml-color)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Arrow -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.4;">
+              <polyline points="10 6 16 12 10 18"></polyline>
+            </svg>
+
+            <!-- Right: Output -->
+            <div class="ml-card-lift" style="position: relative; display: flex; flex-direction: column;">
+              <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">OUTPUT</div>
+              <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
+                <svg viewBox="0 0 64 64" fill="none" stroke="var(--ml-color)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:60px; height:auto; margin-bottom: 20px;">
+                  <path d="M16 22.3 V54 H48 V22.3" />
+                  <path d="M6 30 L32 10 L58 30" />
+                  <text x="32" y="46" text-anchor="middle" font-size="24" font-weight="900" font-family="sans-serif" fill="var(--ml-color)" stroke="none">$</text>
+                </svg>
+                <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Estimated Price</div>
+                <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$780,000</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ml-footer" style="display: flex; justify-content: center;">
+            <div class="ml-key-idea-box" style="padding: 12px 25px; min-height: auto; max-width: 850px;">
+              <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
+              <div class="ml-ki-text" style="font-size: 14px; line-height: 1.4;">
+                <strong>Key Idea:</strong> Computers learn patterns from data instead of being explicitly programmed to make decisions automatically &mdash; <span style="color:var(--text-main); opacity: 0.8; font-weight: 500;">like estimating house prices from multiple factors.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      badge.textContent = data.label;
+      badge.className = `detail-type-badge type-${type}`;
+      
+      content.innerHTML = `
+        <div class="detail-placeholder">
+          <span class="detail-placeholder-text">Detailed information about ${data.title} arriving soon...</span>
+        </div>
+      `;
+    }
+
+    overlay.classList.add('open');
+  }
+
+  function closeDetailModal(e) {
+    if (!e || e.target === document.getElementById('detailOverlay') || e.currentTarget.classList.contains('detail-close')) {
+      document.getElementById('detailOverlay').classList.remove('open');
+    }
+  }
+
   /* BP Neural Network Logic */
   let bpNNPos = [], bpNNEdges = [], bpPropLoop;
   function initBPNN() {
@@ -868,7 +1289,12 @@
     }
   }
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBigPicture(); });
+  document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') {
+      closeBigPicture();
+      closeDetailModal();
+    }
+  });
 
 </script>
 </body>

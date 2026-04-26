@@ -10,7 +10,7 @@
     />
     <link rel="stylesheet" href="css/styles.css">
   </head>
-  <body class="dark-mode palette-midnight">
+  <body class="dark-mode light-mode palette-warm-linen">
     <!-- ── 08. TOP-LEVEL UI COMPONENTS ────────────────────────────────────────── -->
     <button class="menu-toggle" id="menuToggle" title="Menu">
       <span></span><span></span><span></span>
@@ -20,7 +20,7 @@
       <div class="settings-group">
         <div class="settings-label">Color Palette</div>
         <div class="palette-list" id="paletteList">
-          <button class="palette-row" data-palette="warm-linen" onclick="setPalette('warm-linen')">
+          <button class="palette-row active" data-palette="warm-linen" onclick="setPalette('warm-linen')">
             <div class="palette-swatches">
               <span style="background:#f3f1e9"></span>
               <span style="background:#1c1c1c"></span>
@@ -40,7 +40,7 @@
             <span class="palette-name">Paper White</span>
             <span class="palette-check">✓</span>
           </button>
-          <button class="palette-row active" data-palette="midnight" onclick="setPalette('midnight')">
+          <button class="palette-row" data-palette="midnight" onclick="setPalette('midnight')">
             <div class="palette-swatches">
               <span style="background:#0a0a0f"></span>
               <span style="background:#f5f5f5"></span>
