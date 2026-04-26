@@ -1354,10 +1354,126 @@
         </div>
 
         <div class="ml-footer" style="display: flex; justify-content: center;">
-          <div class="ml-key-idea-box" style="padding: 12px 25px; min-height: auto; max-width: 850px;">
             <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
             <div id="ml-ki-content" class="ml-ki-text" style="font-size: 14px; line-height: 1.4;">
               <strong>Key Idea:</strong> ML combines multiple factors to predict a value &mdash; <span style="color:var(--text-main); opacity: 0.8; font-weight: 500;" id="ml-caption">like estimating house prices from multiple factors.</span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (type === 'dl') {
+      window.dlMode = 'digits';
+      content.innerHTML = `
+        <div class="ml-layout dl-layout" style="gap: 5px;">
+          <div class="ml-header" style="margin-bottom: 5px;">
+            <h1 style="margin: 0; color: var(--dl-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--dl-color), color-mix(in srgb, var(--dl-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">DEEP LEARNING</h1>
+          </div>
+          
+          <div class="ml-flow-container" style="display: flex; align-items: stretch; justify-content: center; gap: 25px; margin: 25px 0 45px 0; padding: 0; min-height: 220px;">
+            <!-- Left: Input Image -->
+            <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
+              <div id="dl-input-header" style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">INPUT IMAGE</div>
+              <div class="ml-card-lift" onclick="randomizeDLInput()" style="background: white; border: 2.5px solid rgba(128,128,128,0.2); border-radius: 16px; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; position: relative; cursor: pointer;">
+                <img id="dl-input-img" src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_7_v2_1777197297922.png" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
+              </div>
+              <div style="position: absolute; bottom: -25px; display: flex; flex-direction: column; align-items: center; width: 220px;">
+              </div>
+            </div>
+
+            <!-- Arrow Container -->
+            <div style="display: flex; align-items: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--dl-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px; opacity:0.3;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+            </div>
+
+            <!-- Middle: DL Model -->
+            <div style="position: relative; display: flex; align-items: center;">
+              <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2.3px solid var(--dl-color); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px color-mix(in srgb, var(--dl-color) 12%, transparent); width: 190px;">
+                <div style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">PROCESSING</div>
+                <!-- Neural Net SVG -->
+                <svg viewBox="0 0 120 100" style="width:100%; height:auto; margin-bottom: 12px; overflow: visible;">
+                  <defs>
+                    <filter id="dl-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="2" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <g stroke="var(--dl-color)" stroke-width="0.5" opacity="0.4">
+                    <line x1="10" y1="20" x2="40" y2="10"/><line x1="10" y1="20" x2="40" y2="36"/><line x1="10" y1="20" x2="40" y2="62"/><line x1="10" y1="20" x2="40" y2="88"/>
+                    <line x1="10" y1="46" x2="40" y2="10"/><line x1="10" y1="46" x2="40" y2="36"/><line x1="10" y1="46" x2="40" y2="62"/><line x1="10" y1="46" x2="40" y2="88"/>
+                    <line x1="10" y1="72" x2="40" y2="10"/><line x1="10" y1="72" x2="40" y2="36"/><line x1="10" y1="72" x2="40" y2="62"/><line x1="10" y1="72" x2="40" y2="88"/>
+                    <line x1="40" y1="10" x2="70" y2="20"/><line x1="40" y1="10" x2="70" y2="50"/><line x1="40" y1="10" x2="70" y2="80"/>
+                    <line x1="40" y1="36" x2="70" y2="20"/><line x1="40" y1="36" x2="70" y2="50"/><line x1="40" y1="36" x2="70" y2="80"/>
+                    <line x1="40" y1="62" x2="70" y2="20"/><line x1="40" y1="62" x2="70" y2="50"/><line x1="40" y1="62" x2="70" y2="80"/>
+                    <line x1="40" y1="88" x2="70" y2="20"/><line x1="40" y1="88" x2="70" y2="50"/><line x1="40" y1="88" x2="70" y2="80"/>
+                    <line x1="70" y1="20" x2="110" y2="30"/><line x1="70" y1="20" x2="110" y2="70"/>
+                    <line x1="70" y1="50" x2="110" y2="30"/><line x1="70" y1="50" x2="110" y2="70"/>
+                    <line x1="70" y1="80" x2="110" y2="30"/><line x1="70" y1="80" x2="110" y2="70"/>
+                  </g>
+                  <g filter="url(#dl-glow)">
+                    <circle cx="10" cy="20" r="4" fill="#FFB74D"/><circle cx="10" cy="46" r="4" fill="#FFB74D"/><circle cx="10" cy="72" r="4" fill="#FFB74D"/>
+                    <circle cx="40" cy="10" r="4" fill="#81C784"/><circle cx="40" cy="36" r="4" fill="#81C784"/><circle cx="40" cy="62" r="4" fill="#81C784"/><circle cx="40" cy="88" r="4" fill="#81C784"/>
+                    <circle cx="70" cy="20" r="4" fill="#81C784"/><circle cx="70" cy="50" r="4" fill="#81C784"/><circle cx="70" cy="80" r="4" fill="#81C784"/>
+                    <circle cx="110" cy="30" r="4" fill="#64B5F6"/><circle cx="110" cy="70" r="4" fill="#64B5F6"/>
+                  </g>
+                </svg>
+
+                <div style="font-size: 15px; font-weight: 800; color: var(--dl-color); text-align: center;">Deep Neural Network</div>
+              </div>
+            </div>
+
+            <!-- Arrow Container -->
+            <div style="display: flex; align-items: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--dl-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px; opacity:0.3;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+            </div>
+
+            <!-- Right: Output -->
+            <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
+              <div id="dl-output-header" style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">PREDICTED LABEL</div>
+              <div id="dl-output-card" class="ml-card-lift" style="background: color-mix(in srgb, var(--dl-color) 10%, var(--bubble-bg)); border: 2.3px solid color-mix(in srgb, var(--dl-color) 40%, transparent); border-radius: 20px; width: 150px; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; transition: all 0.4s ease;">
+                <div id="dl-output-box" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box;">
+                  <div id="dl-output-label" style="font-size: 72px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif; line-height: 1; text-shadow: 0 0 20px color-mix(in srgb, var(--dl-color) 30%, transparent); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">7</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real World Examples -->
+          <div style="margin-top: 5px; width: 100%; max-width: 850px; margin-left: auto; margin-right: auto;">
+            <div style="text-align: center; font-size: 10px; font-weight: 800; color: var(--dl-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;">Switch Demonstration Mode</div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+              <!-- Example: Digits -->
+              <div class="ml-card-lift" onclick="setDLMode('digits')" style="background: rgba(255,255,255,0.02); border: 1.5px solid var(--dl-color); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <div style="width: 45px; height: 45px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">8</div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Handwritten Digits</div>
+              </div>
+              <!-- Example: Animals -->
+              <div class="ml-card-lift" onclick="setDLMode('animals')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Identify Animals</div>
+              </div>
+              <!-- Example: Vehicles -->
+              <div class="ml-card-lift" onclick="setDLMode('vehicles')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Detect Vehicles</div>
+              </div>
+              <!-- Example: Medical -->
+              <div class="ml-card-lift" onclick="setDLMode('medical')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Medical Diagnosis</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ml-footer" style="display: flex; justify-content: center; margin-top: 10px;">
+            <div class="ml-key-idea-box" style="padding: 10px 25px; min-height: auto; max-width: 850px; background: color-mix(in srgb, var(--dl-color) 10%, var(--bubble-bg)); border: 2px solid color-mix(in srgb, var(--dl-color) 30%, transparent);">
+              <div style="font-size: 24px; line-height: 1; margin-right: 15px;">⭐</div>
+              <div class="ml-ki-text" style="font-size: 13px; line-height: 1.4; text-align: left;">
+                <strong style="color: var(--dl-color);">Key Idea:</strong> DL uses multi-layer neural networks to automatically <span style="font-weight: 700; color: var(--text-main);">learn and understand complex patterns</span> in images.
+              </div>
             </div>
           </div>
         </div>
@@ -1380,6 +1496,69 @@
     if (!e || e.target === document.getElementById('detailOverlay') || e.currentTarget.classList.contains('detail-close')) {
       document.getElementById('detailOverlay').classList.remove('open');
     }
+  }
+
+  function randomizeDLInput() {
+    const mode = window.dlMode || 'digits';
+    const datasets = {
+      digits: [
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_7_v2_1777197297922.png', label: '7' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_3_1777197470836.png', label: '3' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_5_1777197485453.png', label: '5' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_8_1777197501373.png', label: '8' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_2_1777197517539.png', label: '2' }
+      ],
+      animals: [
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png', label: 'Dog' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_cat_1777197081962_1777202515518.png', label: 'Cat' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_bird_1777197081962_1777202532807.png', label: 'Bird' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_elephant_1777197081962_1777202548298.png', label: 'Elephant' }
+      ],
+      vehicles: [
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png', label: 'Car' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_truck_1777203370520.png', label: 'Truck' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_motorcycle_1777203387094.png', label: 'Motorcycle' }
+      ],
+      medical: [
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png', label: 'X-ray' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_mri_1777203408245.png', label: 'MRI' },
+        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_ctscan_1777203421747.png', label: 'CT Scan' }
+      ]
+    };
+    
+    const dataArr = datasets[mode];
+    const rand = dataArr[Math.floor(Math.random() * dataArr.length)];
+    const imgEl = document.getElementById('dl-input-img');
+    const labelEl = document.getElementById('dl-output-label');
+
+    gsap.to([imgEl, labelEl], { opacity: 0, scale: 0.95, duration: 0.2, onComplete: () => {
+      imgEl.src = rand.img;
+      labelEl.innerText = rand.label;
+      labelEl.style.fontSize = (mode === 'digits') ? '72px' : '28px';
+      gsap.to([imgEl, labelEl], { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
+    }});
+  }
+
+  function setDLMode(mode) {
+    window.dlMode = mode;
+    const inputHeader = document.getElementById('dl-input-header');
+    const outputHeader = document.getElementById('dl-output-header');
+    
+    if (mode === 'animals') {
+      inputHeader.innerText = 'RAW ANIMAL IMAGE';
+      outputHeader.innerText = 'IDENTIFIED SPECIES';
+    } else if (mode === 'vehicles') {
+      inputHeader.innerText = 'ROADWAY IMAGE';
+      outputHeader.innerText = 'VEHICLE TYPE';
+    } else if (mode === 'medical') {
+      inputHeader.innerText = 'CLINICAL SCAN';
+      outputHeader.innerText = 'DIAGNOSIS';
+    } else {
+      inputHeader.innerText = 'INPUT IMAGE';
+      outputHeader.innerText = 'PREDICTED LABEL';
+    }
+    
+    randomizeDLInput();
   }
 
   function switchMLTab(index) {
