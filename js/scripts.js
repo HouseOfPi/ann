@@ -1710,6 +1710,14 @@
       }
 
       // --- Dynamic Slide Management ---
+      // Map: slide id → group label shown above it (only the FIRST slide of a group gets a label)
+      const NAV_GROUPS = {
+        'slideTwo':          'History',
+        'slideFive':         'Biology',
+        'slideSeven':        'Neural Networks',
+        'slideEight':        'Training',
+      };
+
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
         'slideMesh': 'The Complexity',
@@ -1788,168 +1796,127 @@
         }
       }
 
+      // Track which groups are expanded (default: all collapsed)
+      const navGroupExpanded = {};
+
       function renderQuickNav() {
         const container = document.getElementById('dynamicNavItems');
         if (!container) return;
-        
-        // Sync the master toggle state
+
         const masterToggle = document.getElementById('hideInactiveToggle');
         if (masterToggle) masterToggle.checked = hideInactive;
 
+        const savedScroll = container.scrollTop;
         container.innerHTML = '';
 
         const activeSlides = getActiveSlides();
         const currentId = activeSlides[currentSlideIdx]?.id;
 
-        const eyeOpen = `<svg width="18" height="12" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z"/><circle cx="10" cy="6" r="3"/></svg>`;
-        const eyeClosed = `<svg width="18" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 10 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 10 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="19" y2="19"/></svg>`;
-        const gripIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>`;
+        const eyeOpen = `<svg width="13" height="9" viewBox="0 0 20 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6s3.5-5 9-5 9 5 9 5-3.5 5-9 5-9-5-9-5z"/><circle cx="10" cy="6" r="3"/></svg>`;
+        const eyeClosed = `<svg width="13" height="10" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 10 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 10 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="19" y2="19"/></svg>`;
+        const chevron = `<svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+
+        // Map each slide to its group's start ID
+        const groupOf = {};
+        let currentGroup = null;
+        slideState.forEach(item => {
+          if (NAV_GROUPS[item.id]) currentGroup = item.id;
+          if (currentGroup) groupOf[item.id] = currentGroup;
+        });
+
+        const renderedGroups = new Set();
 
         slideState.forEach((item, index) => {
-          // If master toggle is ON, skip disabled items
           if (hideInactive && !item.enabled) return;
 
-          const div = document.createElement('div');
-          div.className = `nav-item ${!item.enabled ? 'disabled' : ''} ${item.id === currentId ? 'active' : ''}`;
-          div.dataset.id = item.id;
-          div.dataset.index = index;
-          div.setAttribute('role', 'button');
-          div.setAttribute('tabindex', '0');
-          div.setAttribute('aria-label', `Slide ${index + 1}: ${SLIDE_METADATA[item.id]}`);
+          const inGroup = groupOf[item.id];
 
-          div.innerHTML = `
-            <button type="button" class="nav-drag-handle" title="Drag to reorder" aria-label="Drag to reorder">${gripIcon}</button>
-            <span class="nav-number">${String(index + 1).padStart(2, '0')}</span>
-            <span class="nav-label">${SLIDE_METADATA[item.id]}</span>
-            <button type="button" class="nav-visibility" title="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-label="${item.enabled ? 'Hide slide' : 'Show slide'}" aria-pressed="${item.enabled}">
-              ${item.enabled ? eyeOpen : eyeClosed}
-            </button>
-          `;
+          if (inGroup) {
+            // Render group header once
+            if (!renderedGroups.has(inGroup)) {
+              renderedGroups.add(inGroup);
 
-          div.addEventListener('click', (e) => {
-            if (e.target.closest('.nav-drag-handle')) {
-              e.stopPropagation();
-              return;
+              const isExpanded = !!navGroupExpanded[inGroup];
+              const hasActive = slideState.some(s => groupOf[s.id] === inGroup && s.id === currentId);
+
+              const header = document.createElement('div');
+              header.className = `nav-section-header ${isExpanded ? 'expanded' : ''} ${hasActive ? 'has-active' : ''}`;
+              header.dataset.group = inGroup;
+              header.innerHTML = `
+                <span class="nav-section-chevron">${chevron}</span>
+                <span class="nav-section-label">${NAV_GROUPS[inGroup]}</span>
+                ${isExpanded ? `<button type="button" class="nav-section-close" title="Collapse">✕</button>` : ''}
+              `;
+              header.addEventListener('click', (e) => {
+                if (e.target.closest('.nav-section-close')) {
+                  navGroupExpanded[inGroup] = false;
+                } else {
+                  navGroupExpanded[inGroup] = !navGroupExpanded[inGroup];
+                }
+                renderQuickNav();
+              });
+              container.appendChild(header);
+
+              // Children container
+              const children = document.createElement('div');
+              children.className = `nav-section-children ${isExpanded ? 'expanded' : ''}`;
+              children.dataset.groupChildren = inGroup;
+              container.appendChild(children);
             }
-            if (e.target.closest('.nav-visibility')) {
-              toggleSlideVisibility(item.id, e);
-              return;
+
+            // Append slide into its group's children container
+            const children = container.querySelector(`[data-group-children="${inGroup}"]`);
+            if (children) {
+              const div = makeNavItem(item, index, currentId, eyeOpen, eyeClosed, container);
+              div.classList.add('nav-child');
+              children.appendChild(div);
             }
+          } else {
+            // Ungrouped — render directly
+            const div = makeNavItem(item, index, currentId, eyeOpen, eyeClosed, container);
+            container.appendChild(div);
+          }
+        });
+
+        container.scrollTop = savedScroll;
+      }
+
+      function makeNavItem(item, index, currentId, eyeOpen, eyeClosed, container) {
+        const div = document.createElement('div');
+        div.className = `nav-item ${!item.enabled ? 'disabled' : ''} ${item.id === currentId ? 'active' : ''}`;
+        div.dataset.id = item.id;
+        div.dataset.index = index;
+        div.setAttribute('role', 'button');
+        div.setAttribute('tabindex', '0');
+
+        div.innerHTML = `
+          <span class="nav-number">${String(index + 1).padStart(2, '0')}</span>
+          <span class="nav-label">${SLIDE_METADATA[item.id]}</span>
+          <button type="button" class="nav-visibility" title="${item.enabled ? 'Hide' : 'Show'}" aria-pressed="${item.enabled}">
+            ${item.enabled ? eyeOpen : eyeClosed}
+          </button>
+        `;
+
+        div.addEventListener('click', (e) => {
+          if (e.target.closest('.nav-visibility')) {
+            toggleSlideVisibility(item.id, e);
+            return;
+          }
+          if (!item.enabled) return;
+          const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
+          goToSlide(newIndex);
+        });
+
+        div.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
             if (!item.enabled) return;
             const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
             goToSlide(newIndex);
-          });
-
-          div.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              if (e.target.closest('.nav-drag-handle') || e.target.closest('.nav-visibility')) return;
-              e.preventDefault();
-              if (!item.enabled) return;
-              const newIndex = getActiveSlides().findIndex(s => s.id === item.id);
-              goToSlide(newIndex);
-            }
-          });
-
-          // --- Custom Pointer Drag (Attached strictly to handle) ---
-          const dragHandle = div.querySelector('.nav-drag-handle');
-          let isDragging = false;
-          let ghost = null;
-          let initialOffset = 0;
-
-          dragHandle.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            cleanupDrag(); // Safety cleanup
-            
-            isDragging = true;
-            div.classList.add('dragging-source');
-            document.body.classList.add('is-reordering-nav');
-            
-            // Create Ghost
-            ghost = div.cloneNode(true);
-            ghost.classList.add('nav-ghost');
-            document.body.appendChild(ghost);
-            
-            const rect = div.getBoundingClientRect();
-            initialOffset = e.clientY - rect.top;
-            
-            ghost.style.width = rect.width + 'px';
-            ghost.style.height = rect.height + 'px';
-            ghost.style.left = rect.left + 'px';
-            ghost.style.top = (e.clientY - initialOffset) + 'px';
-            
-            try { dragHandle.setPointerCapture(e.pointerId); } catch(err) {}
-            
-            const onPointerMove = (moveEvent) => {
-              if (!isDragging || !ghost) return;
-              ghost.style.left = div.getBoundingClientRect().left + 'px';
-              ghost.style.top = (moveEvent.clientY - initialOffset) + 'px';
-              updateDropIndicator(moveEvent.clientY);
-            };
-
-            const onPointerUp = (upEvent) => {
-              try { dragHandle.releasePointerCapture(upEvent.pointerId); } catch(err) {}
-              dragHandle.removeEventListener('pointermove', onPointerMove);
-              dragHandle.removeEventListener('pointerup', onPointerUp);
-              dragHandle.removeEventListener('pointercancel', onPointerUp);
-              
-              if (isDragging) {
-                const targetInfo = getDropTarget(upEvent.clientY);
-                if (targetInfo && targetInfo.id !== item.id) {
-                  reorderSlides(item.id, targetInfo.id, targetInfo.isAbove);
-                } else {
-                  cleanupDrag();
-                }
-              }
-            };
-
-            dragHandle.addEventListener('pointermove', onPointerMove);
-            dragHandle.addEventListener('pointerup', onPointerUp);
-            dragHandle.addEventListener('pointercancel', onPointerUp);
-          });
-
-          function updateDropIndicator(y) {
-            const target = getDropTarget(y);
-            let indicator = document.querySelector('.nav-drop-indicator');
-            if (!indicator) {
-              indicator = document.createElement('div');
-              indicator.className = 'nav-drop-indicator';
-              container.appendChild(indicator);
-            }
-            
-            if (target) {
-              indicator.classList.add('visible');
-              const containerRect = container.getBoundingClientRect();
-              const targetRect = target.el.getBoundingClientRect();
-              const indicatorY = target.isAbove ? targetRect.top : targetRect.bottom;
-              indicator.style.top = (indicatorY - containerRect.top) + 'px';
-            } else {
-              indicator.classList.remove('visible');
-            }
           }
-
-          function getDropTarget(y) {
-            const items = Array.from(container.querySelectorAll('.nav-item:not(.dragging-source)'));
-            for (const el of items) {
-              const rect = el.getBoundingClientRect();
-              if (y >= rect.top && y <= rect.bottom) {
-                return { id: el.dataset.id, el, isAbove: y < (rect.top + rect.height / 2) };
-              }
-            }
-            return null;
-          }
-
-          function cleanupDrag() {
-            isDragging = false;
-            div.classList.remove('dragging-source');
-            document.body.classList.remove('is-reordering-nav');
-            if (ghost) { ghost.remove(); ghost = null; }
-            const indicator = document.querySelector('.nav-drop-indicator');
-            if (indicator) indicator.classList.remove('visible');
-          }
-
-          container.appendChild(div);
         });
+
+        return div;
       }
 
       function reorderSlides(draggedId, targetId, isAbove) {
