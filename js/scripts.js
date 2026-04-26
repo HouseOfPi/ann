@@ -2044,7 +2044,6 @@
         document.getElementById("slideCounter").innerText = `${index + 1} / ${activeSlides.length}`;
 
         updateNavigationButtons();
-        renderQuickNav();
       }
 
 
@@ -2464,6 +2463,48 @@
       const navRibbon = document.getElementById("navRibbon");
       if (navRibbon) navRibbon.addEventListener("click", toggleSideNav);
 
+      // ─── COURSE CONTENT ACCORDION LOGIC ───
+      function toggleAccordion(header, event) {
+        if (event) event.stopPropagation();
+        const item = header.parentElement;
+        item.classList.toggle('open');
+      }
+
+      function openGenAIModalDirectly() {
+        // Find the index of slideMesh
+        const activeSlides = getActiveSlides();
+        const meshIdx = activeSlides.findIndex(s => s.id === 'slideMesh');
+        if (meshIdx !== -1) {
+          goToSlide(meshIdx);
+          // Wait for slide transition to finish before opening modal
+          setTimeout(() => {
+            const frame = document.querySelector('#slideMesh iframe');
+            if (frame && frame.contentWindow) {
+              frame.contentWindow.postMessage({ type: 'OPEN_GENAI_MODAL' }, '*');
+            }
+          }, 850);
+        }
+      }
+
+      // Keep both quick nav systems in sync
+      function syncSlider(index) {
+        // New Course Accordion Nav
+        const lessons = document.querySelectorAll(".course-lesson");
+        lessons.forEach(lesson => {
+          lesson.classList.remove("active");
+          // Extract slide index from onclick attribute
+          const onclickStr = lesson.getAttribute('onclick');
+          if (onclickStr && onclickStr.includes(`goToSlide(${index})`)) {
+            lesson.classList.add("active");
+            // Auto-expand parent section
+            const parentSection = lesson.closest('.accordion-item');
+            if (parentSection && !parentSection.classList.contains('open')) {
+              parentSection.classList.add('open');
+            }
+          }
+        });
+      }
+
       // Global click listener to close menus when clicking outside
       document.addEventListener("click", (e) => {
         const settingsSide = document.getElementById("settingsSide");
@@ -2480,11 +2521,19 @@
 
         // Close sideNav if open and click is outside
         if (sideNav && sideNav.classList.contains("open")) {
+          // Check if clicking inside sideNav (including accordion)
           if (!sideNav.contains(e.target)) {
+            // Note: toggleMenu is used in index.html for close button
+            // If toggleMenu is not defined, we'll use toggleSideNav logic
             sideNav.classList.remove("open");
           }
         }
       });
+      
+      // Alias toggleMenu to toggleSideNav for buttons in index.html
+      function toggleMenu() { 
+        toggleSideNav(); 
+      }
 
       // Slide 3 Card Spotlight Effect
       document.querySelectorAll('.s3-glass-card').forEach(card => {
@@ -2568,5 +2617,10 @@
       document.getElementById("nextBtn").addEventListener("click", () => goToSlide(currentSlideIdx + 1));
 
       // Init dynamic nav components
-      renderQuickNav();
       updateNavigationButtons();
+      
+      // Auto-open first section on load
+      document.addEventListener('DOMContentLoaded', () => {
+        const firstHeader = document.querySelector('.accordion-header');
+        if (firstHeader) toggleAccordion(firstHeader);
+      });

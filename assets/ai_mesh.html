@@ -1954,6 +1954,16 @@
     }
   });
 
-</script>
+
+    // ── Listen for messages from parent ──
+    window.addEventListener('message', (e) => {
+      if (e.data.type === 'OPEN_GENAI_MODAL') {
+        openDetailModal('gen');
+      }
+      if (e.data.type === 'RESTART_ANIMATION') {
+        bt = 0;
+      }
+    });
+  </script>
 </body>
 </html>

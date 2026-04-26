@@ -123,23 +123,140 @@
     </div>
 
     <nav class="side-nav-panel" id="sideNav">
-      <div class="nav-ribbon" id="navRibbon">
-        <div class="ribbon-line"></div>
-        <div class="ribbon-text">Quick Nav</div>
+      <div class="side-nav-header" style="justify-content: space-between; padding: 25px 22px;">
+        <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.2px;">Course content</span>
+        <button class="nav-close-btn" onclick="toggleMenu()" style="background: none; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; padding: 5px;">&times;</button>
       </div>
       
-      <div class="side-nav-header">
-        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-          <span>Contents</span>
-          <label class="toggle-switch" style="transform: scale(0.65); margin-right: -10px;" title="Hide disabled slides">
-            <input type="checkbox" id="hideInactiveToggle" onchange="toggleHideInactive()" checked>
-            <span class="toggle-slider"></span>
-          </label>
+      <div class="course-accordion" id="courseAccordion">
+        <!-- Section 1: History -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <div class="accordion-header-main">
+              <span class="section-title">Section 1: Welcome & History</span>
+              <span class="section-meta">4 / 4 | 8min</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide(0)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">1. AI Explained: Hero Intro</span>
+                <span class="lesson-meta">🎬 2min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(2)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">2. The Dartmouth Dream (1956)</span>
+                <span class="lesson-meta">📜 2min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(3)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">3. Historical Pioneers</span>
+                <span class="lesson-meta">👤 2min</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div id="dynamicNavItems">
-        <!-- Dynamically injected -->
+        <!-- Section 2: Concepts -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <div class="accordion-header-main">
+              <span class="section-title">Section 2: The Tangled Web</span>
+              <span class="section-meta">2 / 2 | 5min</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide(1)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">4. AI / ML / DL / GenAI Mesh</span>
+                <span class="lesson-meta">🕸️ 3min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(4)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">5. Biological Inspiration</span>
+                <span class="lesson-meta">🧠 2min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Neural Networks -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <div class="accordion-header-main">
+              <span class="section-title">Section 3: Neural Networks</span>
+              <span class="section-meta">3 / 3 | 10min</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide(5)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">6. ANN Architecture Visualizer</span>
+                <span class="lesson-meta">🏗️ 3min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(6)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">7. Single Neuron (Interactive)</span>
+                <span class="lesson-meta">⚡ 4min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(7)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">8. Training: Football Analogy</span>
+                <span class="lesson-meta">⚽ 3min</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Modern Era -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <div class="accordion-header-main">
+              <span class="section-title">Section 4: The Modern Explosion</span>
+              <span class="section-meta">2 / 3 | 12min</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide(9)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">9. Why Now? The 3 Pillars</span>
+                <span class="lesson-meta">🔋 4min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="goToSlide(10)">
+              <input type="checkbox" checked readonly>
+              <div class="lesson-info">
+                <span class="lesson-name">10. 70-Year Evolution</span>
+                <span class="lesson-meta">📈 4min</span>
+              </div>
+            </div>
+            <div class="course-lesson" onclick="openGenAIModalDirectly()">
+              <input type="checkbox">
+              <div class="lesson-info">
+                <span class="lesson-name">11. GenAI Creation Workshop</span>
+                <span class="lesson-meta">✨ 4min</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
 
