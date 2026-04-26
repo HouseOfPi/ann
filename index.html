@@ -128,43 +128,46 @@
         <div class="ribbon-text">Quick Nav</div>
       </div>
       
-      <div class="side-nav-header" style="justify-content: space-between; padding: 25px 22px;">
-        <span style="font-size: 18px; font-weight: 800; letter-spacing: -0.2px;">Course content</span>
-        <button class="nav-close-btn" onclick="toggleMenu()" style="background: none; border: none; color: var(--text-main); font-size: 20px; cursor: pointer; padding: 5px;">&times;</button>
+      <div class="course-nav-header">
+        <div class="course-nav-titlewrap">
+          <span class="course-nav-title">Content</span>
+        </div>
+        <button class="course-nav-close" onclick="toggleMenu()" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
       
       <div class="course-accordion" id="courseAccordion">
         <!-- Section 1: History -->
-        <div class="accordion-item">
+        <div class="accordion-item open">
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <div class="accordion-header-main">
               <span class="section-title">Section 1: Origins of AI</span>
-              <span class="section-meta">4 Lessons | 12min</span>
             </div>
             <span class="chevron">▼</span>
           </div>
           <div class="accordion-content">
             <div class="course-lesson" onclick="goToSlide(0)">
               <div class="lesson-info">
-                <span class="lesson-name">1. AI Explained: Hero Intro</span>
+                <span class="lesson-name">AI Explained: Hero Intro</span>
                 <span class="lesson-meta">🎬 2min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(1)">
               <div class="lesson-info">
-                <span class="lesson-name">2. The Complexity Mesh</span>
+                <span class="lesson-name">The Complexity Mesh</span>
                 <span class="lesson-meta">🕸️ 3min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(2)">
               <div class="lesson-info">
-                <span class="lesson-name">3. The Dartmouth Dream</span>
+                <span class="lesson-name">The Dartmouth Dream</span>
                 <span class="lesson-meta">📜 3min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(3)">
               <div class="lesson-info">
-                <span class="lesson-name">4. Historical Pioneers</span>
+                <span class="lesson-name">Historical Pioneers</span>
                 <span class="lesson-meta">👤 4min</span>
               </div>
             </div>
@@ -176,26 +179,25 @@
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <div class="accordion-header-main">
               <span class="section-title">Section 2: Biological Roots</span>
-              <span class="section-meta">3 Lessons | 10min</span>
             </div>
             <span class="chevron">▼</span>
           </div>
           <div class="accordion-content">
             <div class="course-lesson" onclick="goToSlide(4)">
               <div class="lesson-info">
-                <span class="lesson-name">5. Biological Inspiration</span>
+                <span class="lesson-name">Biological Inspiration</span>
                 <span class="lesson-meta">🧠 3min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(5)">
               <div class="lesson-info">
-                <span class="lesson-name">6. ANN Architecture</span>
+                <span class="lesson-name">ANN Architecture</span>
                 <span class="lesson-meta">🏗️ 3min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(6)">
               <div class="lesson-info">
-                <span class="lesson-name">7. Single Neuron Interaction</span>
+                <span class="lesson-name">Single Neuron Interaction</span>
                 <span class="lesson-meta">⚡ 4min</span>
               </div>
             </div>
@@ -207,26 +209,25 @@
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <div class="accordion-header-main">
               <span class="section-title">Section 3: Training & Power</span>
-              <span class="section-meta">3 Lessons | 15min</span>
             </div>
             <span class="chevron">▼</span>
           </div>
           <div class="accordion-content">
             <div class="course-lesson" onclick="goToSlide(7)">
               <div class="lesson-info">
-                <span class="lesson-name">8. Learning Without Rules</span>
+                <span class="lesson-name">Learning Without Rules</span>
                 <span class="lesson-meta">⚽ 4min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(8)">
               <div class="lesson-info">
-                <span class="lesson-name">9. Robot Football Simulation</span>
+                <span class="lesson-name">Robot Football Simulation</span>
                 <span class="lesson-meta">🎮 6min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="goToSlide(9)">
               <div class="lesson-info">
-                <span class="lesson-name">10. Why Now? The 3 Pillars</span>
+                <span class="lesson-name">Why Now? The 3 Pillars</span>
                 <span class="lesson-meta">🔋 5min</span>
               </div>
             </div>
@@ -238,20 +239,19 @@
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <div class="accordion-header-main">
               <span class="section-title">Section 4: Modern Explosion</span>
-              <span class="section-meta">2 Lessons | 10min</span>
             </div>
             <span class="chevron">▼</span>
           </div>
           <div class="accordion-content">
             <div class="course-lesson" onclick="goToSlide(10)">
               <div class="lesson-info">
-                <span class="lesson-name">11. 70-Year Evolution</span>
+                <span class="lesson-name">70-Year Evolution</span>
                 <span class="lesson-meta">📈 4min</span>
               </div>
             </div>
             <div class="course-lesson" onclick="openGenAIModalDirectly()">
               <div class="lesson-info">
-                <span class="lesson-name">12. GenAI Creation Workshop</span>
+                <span class="lesson-name">GenAI Creation Workshop</span>
                 <span class="lesson-meta">✨ 6min</span>
               </div>
             </div>
@@ -282,14 +282,14 @@
 
             <div class="title">
               <span class="t1">AI Explained</span>
-              <span class="t2">Neural Network and Deep Learning</span>
+              <span class="t2">Machine Learning & Neural Networks</span>
             </div>
 
 
             <div class="hero-meta">
               <div class="hero-scratch-label">
                 <span class="hero-scratch-icon">⚡</span>
-                <span class="hero-scratch-text">Neural networks from scratch with <strong>Python</strong></span>
+                <span class="hero-scratch-text">Learn from scratch with <strong>Python</strong></span>
               </div>
             </div>
 
