@@ -401,9 +401,9 @@
       .palette-paper-white .nav-ribbon,
       .palette-mint .nav-ribbon,
       .palette-plum .nav-ribbon {
-        background: rgba(0, 0, 0, 0.15);
-        border-color: rgba(0, 0, 0, 0.2);
-        box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+        background: var(--s2-gold);
+        border-color: transparent;
+        box-shadow: -3px 0 14px rgba(0,0,0,0.18);
       }
       
       .light-mode .ribbon-text,
@@ -411,7 +411,7 @@
       .palette-paper-white .ribbon-text,
       .palette-mint .ribbon-text,
       .palette-plum .ribbon-text {
-        color: #e27b5e; /* Vibrant orange from the theme */
+        color: rgba(0,0,0,0.75);
         font-weight: 900;
         text-shadow: none;
       }
@@ -421,12 +421,12 @@
       .palette-paper-white .ribbon-line,
       .palette-mint .ribbon-line,
       .palette-plum .ribbon-line {
-        background: #e27b5e;
-        box-shadow: 0 0 8px rgba(226, 123, 94, 0.4);
+        background: rgba(0,0,0,0.5);
+        box-shadow: none;
       }
 
       .nav-ribbon:hover {
-        background: rgba(255, 255, 255, 0.12);
+        filter: brightness(1.1);
         width: 42px;
         left: -42px;
       }
@@ -4919,125 +4919,282 @@
       .clickable-card { cursor: pointer; transition: transform 0.2s, background 0.2s; }
       .clickable-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.06); }
       .light-mode .clickable-card:hover { background: rgba(0,0,0,0.04); }
-      /* ─── COURSE CONTENT ACCORDION ─── */
+      /* ─── COURSE CONTENT NAV (MODERN REDESIGN) ─── */
+      .course-nav-header {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 22px 20px 16px;
+      }
+      .course-nav-header::after {
+        content: '';
+        position: absolute;
+        left: 20px; right: 20px; bottom: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(var(--s2-gold-rgb),0.35), transparent);
+      }
+      .course-nav-titlewrap { display: flex; flex-direction: column; gap: 4px; line-height: 1; }
+      .course-nav-eyebrow {
+        font-family: var(--font-accent, inherit);
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: 2.4px;
+        text-transform: uppercase;
+        color: var(--s2-gold);
+        opacity: 0.85;
+      }
+      .course-nav-title {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.6px;
+        color: var(--text-main);
+        background: linear-gradient(180deg, var(--text-main), color-mix(in srgb, var(--text-main) 70%, transparent));
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+      .course-nav-close {
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 50%;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: transform 0.25s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      }
+      .course-nav-close:hover {
+        background: rgba(var(--s2-gold-rgb),0.12);
+        color: var(--s2-gold);
+        border-color: rgba(var(--s2-gold-rgb),0.4);
+        transform: rotate(90deg);
+      }
+      .light-mode .course-nav-close {
+        background: rgba(0,0,0,0.025);
+        border-color: rgba(0,0,0,0.1);
+      }
+      .light-mode .course-nav-close:hover {
+        background: rgba(var(--s2-gold-rgb),0.1);
+        border-color: rgba(var(--s2-gold-rgb),0.45);
+        color: var(--s2-gold);
+      }
+
       .course-accordion {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        padding: 0 8px;
+        gap: 6px;
+        padding: 14px 12px 20px;
         overflow-y: auto;
         flex: 1;
-        margin-bottom: 20px;
+        scroll-behavior: smooth;
       }
       .course-accordion::-webkit-scrollbar { width: 4px; }
-      .course-accordion::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+      .course-accordion::-webkit-scrollbar-thumb {
+        background: rgba(var(--s2-gold-rgb),0.25);
+        border-radius: 4px;
+      }
+      .course-accordion::-webkit-scrollbar-thumb:hover { background: rgba(var(--s2-gold-rgb),0.45); }
 
       .accordion-item {
-        border-radius: 12px;
+        position: relative;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.06);
         overflow: hidden;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
+        transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      }
+      .light-mode .accordion-item {
+        background: rgba(0,0,0,0.018);
+        border-color: rgba(0,0,0,0.05);
+      }
+      .accordion-item:hover {
+        border-color: rgba(var(--s2-gold-rgb),0.18);
       }
       .accordion-item.open {
-        background: rgba(255, 255, 255, 0.02);
-        border-color: rgba(255, 255, 255, 0.05);
-        margin-bottom: 8px;
+        background: linear-gradient(180deg, rgba(var(--s2-gold-rgb),0.08), rgba(var(--s2-gold-rgb),0.02));
+        border-color: rgba(var(--s2-gold-rgb),0.28);
+        box-shadow: 0 6px 22px -10px rgba(var(--s2-gold-rgb),0.5);
+      }
+      .light-mode .accordion-item.open {
+        background: linear-gradient(180deg, rgba(var(--s2-gold-rgb),0.09), rgba(var(--s2-gold-rgb),0.02));
+        border-color: rgba(var(--s2-gold-rgb),0.32);
+        box-shadow: 0 6px 18px -10px rgba(var(--s2-gold-rgb),0.45);
       }
 
       .accordion-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 16px 14px;
+        gap: 12px;
+        padding: 13px 14px;
         cursor: pointer;
-        background: rgba(255, 255, 255, 0.03);
-        transition: all 0.2s ease;
+        border-radius: 14px;
+        transition: background 0.2s ease;
       }
-      .accordion-header:hover {
-        background: rgba(255, 255, 255, 0.06);
+      .accordion-header:hover { background: rgba(255,255,255,0.03); }
+      .light-mode .accordion-header:hover { background: rgba(0,0,0,0.025); }
+      .accordion-item.open .accordion-header { background: transparent; }
+
+      .section-num {
+        flex-shrink: 0;
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-accent, inherit);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: var(--text-dim);
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 9px;
+        transition: all 0.3s ease;
       }
-      .accordion-item.open .accordion-header {
-        background: rgba(255, 255, 255, 0.04);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      .light-mode .section-num {
+        background: rgba(0,0,0,0.03);
+        border-color: rgba(0,0,0,0.08);
+      }
+      .accordion-item:hover .section-num {
+        color: var(--text-main);
+        border-color: rgba(var(--s2-gold-rgb),0.3);
+      }
+      .accordion-item.open .section-num {
+        color: #fff;
+        background: linear-gradient(135deg, var(--s2-gold), color-mix(in srgb, var(--s2-gold) 75%, #ff9d3d));
+        border-color: transparent;
+        box-shadow: 0 4px 12px -3px rgba(var(--s2-gold-rgb),0.6);
       }
 
       .accordion-header-main {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 3px;
+        flex: 1;
+        min-width: 0;
+      }
+      .section-eyebrow {
+        font-family: var(--font-accent, inherit);
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        opacity: 0.55;
+        transition: color 0.25s ease, opacity 0.25s ease;
+      }
+      .accordion-item.open .section-eyebrow {
+        color: var(--s2-gold);
+        opacity: 0.95;
       }
       .section-title {
-        font-size: 14px;
+        font-size: 13.5px;
         font-weight: 700;
         color: var(--text-main);
-        line-height: 1.2;
-      }
-      .section-meta {
-        font-size: 11px;
-        color: var(--text-dim);
-        opacity: 0.7;
+        line-height: 1.25;
+        letter-spacing: -0.1px;
       }
 
       .chevron {
-        font-size: 10px;
-        transition: transform 0.3s ease;
-        opacity: 0.5;
-        color: var(--text-main);
+        flex-shrink: 0;
+        width: 22px; height: 22px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--text-dim);
+        opacity: 0.55;
+        transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1), color 0.25s ease, opacity 0.25s ease;
       }
+      .accordion-header:hover .chevron { opacity: 0.9; color: var(--text-main); }
       .accordion-item.open .chevron {
         transform: rotate(180deg);
         opacity: 1;
+        color: var(--s2-gold);
       }
 
       .accordion-content {
-        display: none;
-        padding: 5px 0;
-        animation: slideDown 0.3s ease-out;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        padding: 0 8px;
+        transition: max-height 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+                    opacity 0.3s ease,
+                    padding 0.3s ease;
       }
       .accordion-item.open .accordion-content {
-        display: block;
-      }
-
-      @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        max-height: 600px;
+        opacity: 1;
+        padding: 4px 8px 10px;
       }
 
       .course-lesson {
-        display: flex;
-        align-items: flex-start;
-        gap: 15px;
-        padding: 12px 18px;
-        cursor: pointer;
-        transition: all 0.2s ease;
         position: relative;
-      }
-      .course-lesson:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
-      .course-lesson.active {
-        background: rgba(var(--s2-gold-rgb), 0.1);
-        border-right: 3px solid var(--s2-gold);
-      }
-
-      .lesson-info {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-      .lesson-name {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--text-main);
-        line-height: 1.4;
-      }
-      .lesson-meta {
-        font-size: 11px;
-        color: var(--text-dim);
-        opacity: 0.6;
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 12px;
+        padding: 9px 12px 9px 16px;
+        margin: 2px 0;
+        cursor: pointer;
+        border-radius: 9px;
+        transition: background 0.2s ease, transform 0.2s ease, padding 0.2s ease;
+      }
+      .course-lesson::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        width: 3px; height: 0;
+        background: var(--s2-gold);
+        border-radius: 3px;
+        transform: translateY(-50%);
+        transition: height 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      .lesson-dot {
+        flex-shrink: 0;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.25);
+        transition: all 0.25s ease;
+      }
+      .light-mode .lesson-dot {
+        background: rgba(0,0,0,0.12);
+        border-color: rgba(0,0,0,0.18);
+      }
+      .course-lesson:hover {
+        background: rgba(var(--s2-gold-rgb),0.06);
+        transform: translateX(2px);
+      }
+      .course-lesson:hover::before { height: 16px; opacity: 0.5; }
+      .course-lesson:hover .lesson-dot {
+        background: rgba(var(--s2-gold-rgb),0.5);
+        border-color: rgba(var(--s2-gold-rgb),0.7);
+      }
+      .course-lesson:hover .lesson-name { color: var(--text-main); }
+
+      .course-lesson.active {
+        background: linear-gradient(90deg, rgba(var(--s2-gold-rgb),0.18), rgba(var(--s2-gold-rgb),0.04));
+      }
+      .course-lesson.active::before {
+        height: 22px;
+        box-shadow: 0 0 12px rgba(var(--s2-gold-rgb),0.7);
+      }
+      .course-lesson.active .lesson-dot {
+        background: var(--s2-gold);
+        border-color: var(--s2-gold);
+        box-shadow: 0 0 0 3px rgba(var(--s2-gold-rgb),0.18);
+      }
+      .course-lesson.active .lesson-name {
+        color: var(--s2-gold);
+        font-weight: 600;
       }
 
-      .nav-divider { display: none; } /* Hide old dividers if any */
+      .lesson-name {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--text-dim);
+        line-height: 1.35;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s ease, font-weight 0.2s ease;
+      }
+      .lesson-meta, .lesson-info, .section-meta { display: none; }
+      .nav-divider { display: none; }

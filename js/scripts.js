@@ -1692,7 +1692,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 1;
+      let currentSlideIdx = 0;
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
@@ -2619,8 +2619,5 @@
       // Init dynamic nav components
       updateNavigationButtons();
       
-      // Auto-open first section on load
-      document.addEventListener('DOMContentLoaded', () => {
-        const firstHeader = document.querySelector('.accordion-header');
-        if (firstHeader) toggleAccordion(firstHeader);
-      });
+      // Mark first lesson active on load
+      syncSlider(0);
