@@ -334,7 +334,7 @@
       /* ─── 04. GLOBAL NAVIGATION (INNOVATIVE CLICKABLE RIBBON) ────────────── */
       .side-nav-panel {
         position: fixed;
-        right: -320px; /* Fully hidden */
+        right: -310px; /* Hidden, but handles showing the ribbon handle */
         top: 20px;
         width: 310px;
         height: calc(100vh - 40px);
@@ -396,6 +396,35 @@
         z-index: 1001;
       }
       
+      .light-mode .nav-ribbon,
+      .palette-warm-linen .nav-ribbon,
+      .palette-paper-white .nav-ribbon,
+      .palette-mint .nav-ribbon,
+      .palette-plum .nav-ribbon {
+        background: rgba(0, 0, 0, 0.15);
+        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+      }
+      
+      .light-mode .ribbon-text,
+      .palette-warm-linen .ribbon-text,
+      .palette-paper-white .ribbon-text,
+      .palette-mint .ribbon-text,
+      .palette-plum .ribbon-text {
+        color: #e27b5e; /* Vibrant orange from the theme */
+        font-weight: 900;
+        text-shadow: none;
+      }
+
+      .light-mode .ribbon-line,
+      .palette-warm-linen .ribbon-line,
+      .palette-paper-white .ribbon-line,
+      .palette-mint .ribbon-line,
+      .palette-plum .ribbon-line {
+        background: #e27b5e;
+        box-shadow: 0 0 8px rgba(226, 123, 94, 0.4);
+      }
+
       .nav-ribbon:hover {
         background: rgba(255, 255, 255, 0.12);
         width: 42px;
@@ -4989,32 +5018,6 @@
       .course-lesson.active {
         background: rgba(var(--s2-gold-rgb), 0.1);
         border-right: 3px solid var(--s2-gold);
-      }
-
-      .course-lesson input[type="checkbox"] {
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-radius: 4px;
-        margin-top: 2px;
-        cursor: pointer;
-        position: relative;
-        flex-shrink: 0;
-      }
-      .course-lesson input[type="checkbox"]:checked {
-        background: #7c3aed; /* Match User's theme color from screenshot */
-        border-color: #7c3aed;
-      }
-      .course-lesson input[type="checkbox"]:checked::after {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 12px;
-        font-weight: 900;
       }
 
       .lesson-info {
