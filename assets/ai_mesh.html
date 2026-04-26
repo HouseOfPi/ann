@@ -72,22 +72,34 @@
   /* ── Big Picture Button ── */
   .big-picture-btn {
     position: absolute;
-    top: 96px;
-    left: 120px;
-    background: var(--ai-color);
-    color: #fff;
-    border: none;
-    border-radius: 24px;
-    padding: 10px 22px;
-    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: color-mix(in srgb, var(--bubble-bg) 70%, transparent);
+    color: var(--title-color);
+    border: 1px solid color-mix(in srgb, var(--title-color) 12%, transparent);
+    border-radius: 40px;
+    padding: 11px 26px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    box-shadow:
+      0 2px 12px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s, background 0.22s, border-color 0.22s;
     z-index: 10;
   }
-  .big-picture-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+  .big-picture-btn:hover {
+    transform: translate(-50%, calc(-50% - 3px)) scale(1.04);
+    background: color-mix(in srgb, var(--bubble-bg) 92%, transparent);
+    border-color: color-mix(in srgb, var(--ai-color) 50%, transparent);
+    box-shadow:
+      0 8px 28px rgba(0,0,0,0.13),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+  }
 
   /* ── Big Picture Modal ── */
   .bp-overlay {
@@ -237,30 +249,29 @@
   }
   .detail-overlay.open { display: flex; }
   .detail-modal {
+    --modal-accent: var(--text-dim);
     background: linear-gradient(135deg, var(--bubble-bg) 0%, color-mix(in srgb, var(--bubble-bg), #000 2%) 100%);
     border-radius: 28px;
-    padding: 35px 45px 30px;
+    padding: 28px 36px 24px;
     max-width: 980px;
     width: fit-content;
     height: auto;
-    max-height: 94vh;
-    overflow-y: auto;
+    max-height: 92vh;
+    overflow: hidden;
     position: relative;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 0 0 1.5px color-mix(in srgb, var(--modal-accent) 30%, transparent);
     border: none;
     display: flex;
     flex-direction: column;
     transform: scale(0.9);
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    scrollbar-width: none; /* Hide scrollbar for Chrome/Safari below */
   }
-  .detail-modal::-webkit-scrollbar { display: none; }
 
   .detail-modal::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--ml-color) 3%, transparent) 0%, transparent 50%);
-    pointer-events: none; opacity: 0.6;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--modal-accent) 4%, transparent) 0%, transparent 50%);
+    pointer-events: none; opacity: 0.7;
   }
   .detail-overlay.open .detail-modal {
     transform: scale(1);
@@ -609,6 +620,9 @@
   @media (max-width: 600px) {
     .nn-node { r: 5; }
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes fadeInModal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
@@ -618,11 +632,10 @@
         <g id="scribbles"></g>
         <g id="bubbles"></g>
       </svg>
+      <button class="big-picture-btn" onclick="openBigPicture()">💡 Big Picture</button>
     </div>
 
     <div class="footer-note">Press <strong>R</strong> to replay</div>
-
-    <button class="big-picture-btn" onclick="openBigPicture()">💡 Big Picture</button>
   </div>
 
   <!-- Big Picture Modal -->
@@ -1065,7 +1078,11 @@
       gen: { title: 'Generative AI', label: 'GenAI' }
     };
     const data = config[type];
-    
+
+    const accentMap = { ai: '--ai-color', ml: '--ml-color', dl: '--dl-color', gen: '--gen-color', genai: '--gen-color' };
+    const accentVar = accentMap[type] || '--text-dim';
+    document.getElementById('detailModal').style.setProperty('--modal-accent', `var(${accentVar})`);
+
     if (type === 'ml') {
       content.innerHTML = `
         <div class="ml-tabs">
@@ -1479,67 +1496,125 @@
         </div>
       `;
     } else if (type === 'genai') {
-      window.lastGenAIIndex = 0;
+      window.genaiMode = 'image';
+      window.genaiImageIndex = 0;
+      window.genaiTextIndex = 0;
+      window.genaiCodeIndex = 0;
+      window.genaiAudioIndex = 0;
       content.innerHTML = `
-        <div class="ml-layout genai-layout" style="gap: 5px;">
-          <div class="ml-header" style="margin-bottom: 5px;">
-            <h1 style="margin: 0; color: var(--gen-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--gen-color), color-mix(in srgb, var(--gen-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GEN AI &mdash; CREATION</h1>
+        <div style="display:flex; flex-direction:column; gap:12px; font-family:'Inter',sans-serif; color:var(--text-main); min-width:820px;">
+
+          <!-- Header -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding-right:48px;">
+            <h1 style="margin:0; font-size:26px; font-weight:950; letter-spacing:2px; text-transform:uppercase; background:linear-gradient(135deg,var(--gen-color),color-mix(in srgb,var(--gen-color) 60%,#f472b6)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">GenAI — Creation</h1>
           </div>
-          
-          <div class="ml-flow-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin: 10px 0 20px 0; padding: 0;">
-            <!-- Top: Prompt Bubble -->
-            <div style="position: relative; cursor: pointer; width: 100%; max-width: 450px;" onclick="randomizeGenAIInput()">
-              <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: color-mix(in srgb, var(--gen-color) 15%, var(--bubble-bg)); border: 1.5px solid var(--gen-color); border-radius: 20px; padding: 2px 14px; font-size: 9px; font-weight: 900; color: var(--gen-color); letter-spacing: 1px; z-index: 2;">PROMPT</div>
-              <div class="ml-card-lift" style="background: rgba(255,255,255,0.05); border: 2px solid color-mix(in srgb, var(--gen-color) 30%, transparent); border-radius: 16px; padding: 25px 20px; text-align: center; position: relative; overflow: hidden;">
-                <div id="genai-prompt-text" style="font-size: 18px; font-weight: 700; color: var(--text-main); font-style: italic; line-height: 1.4;">"A specialized AI robot settlement building modular glass domes on the red plains of Mars..."</div>
+
+          <!-- Output Type Tabs -->
+          <div style="display:flex; gap:6px; background:rgba(128,128,128,0.08); padding:5px; border-radius:14px; width:fit-content;">
+            <button onclick="switchGenAIMode('image')" id="genai-tab-image" style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:var(--gen-color); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--gen-color) 40%,transparent);">🖼 Image</button>
+            <button onclick="switchGenAIMode('text')"  id="genai-tab-text"  style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">💬 Text</button>
+            <button onclick="switchGenAIMode('code')"  id="genai-tab-code"  style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">⌨ Code</button>
+            <button onclick="switchGenAIMode('audio')" id="genai-tab-audio" style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">🎵 Audio</button>
+          </div>
+
+          <!-- Main Content Row -->
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center;">
+
+            <!-- LEFT: Prompt Panel -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="font-size:9px; font-weight:900; letter-spacing:1.5px; color:var(--gen-color); text-transform:uppercase; opacity:0.8;">✍ Your Prompt</div>
+              <div style="background:color-mix(in srgb,var(--gen-color) 6%,var(--bubble-bg)); border:2px solid color-mix(in srgb,var(--gen-color) 22%,transparent); border-radius:16px; padding:14px 16px; min-height:90px; display:flex; flex-direction:column; gap:10px; position:relative;">
+                <div id="genai-prompt-text" style="font-size:15px; font-weight:600; color:var(--text-main); font-style:italic; line-height:1.5; flex:1;">"A specialized AI robot settlement building modular glass domes on the red plains of Mars"</div>
+                <button onclick="cycleGenAIPrompt()" style="align-self:flex-end; background:var(--gen-color); color:#fff; border:none; border-radius:20px; padding:6px 16px; font-size:11px; font-weight:800; cursor:pointer; letter-spacing:0.5px; display:flex; align-items:center; gap:6px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                  ↻ Try Another
+                </button>
               </div>
+              <div id="genai-model-pills" style="display:none;"></div>
             </div>
 
-            <!-- Arrow -->
-            <div style="display: flex; align-items: center; justify-content: center;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--gen-color)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:24px; opacity:0.6;">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <polyline points="19 12 12 19 5 12"></polyline>
+            <!-- Center arrow -->
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+              <div id="genai-arrow-label" style="font-size:9px; font-weight:900; color:var(--gen-color); letter-spacing:1px; text-transform:uppercase; opacity:0.7;">Generates</div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--gen-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.55;">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
             </div>
 
-            <!-- Bottom: Result -->
-            <div style="position: relative; width: 100%; max-width: 500px;">
-              <div class="ml-card-lift" style="background: #000; border: 2.5px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; aspect-ratio: 16/9; box-shadow: 0 15px 45px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
-                <img id="genai-result-img" src="https://images.unsplash.com/photo-1545156521-77bd85671d30?auto=format&fit=crop&q=80&w=800" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease;">
-                <!-- Loading Overlay (hidden by default) -->
-                <div id="genai-loading" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px); z-index: 5;">
-                   <div style="width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gen-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
-                   <div style="font-size: 11px; font-weight: 800; color: var(--gen-color); letter-spacing: 2px;">CREATING NEW CONTENT...</div>
+            <!-- RIGHT: Output Panel -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div id="genai-output-label" style="display:none;"></div>
+
+              <!-- IMAGE output -->
+              <div id="genai-out-image" style="position:relative; background:#000; border-radius:16px; overflow:hidden; aspect-ratio:16/9; box-shadow:0 12px 36px rgba(0,0,0,0.35); border:2px solid rgba(255,255,255,0.06);">
+                <img id="genai-result-img" src="images/gen_ai/mars.png" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.5s ease;">
+                <div id="genai-loading" style="position:absolute; inset:0; background:rgba(0,0,0,0.82); display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(6px); z-index:5;">
+                  <div style="width:36px; height:36px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gen-color); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:12px;"></div>
+                  <div style="font-size:10px; font-weight:800; color:var(--gen-color); letter-spacing:2px;">GENERATING...</div>
+                </div>
+              </div>
+
+              <!-- TEXT output (hidden by default) -->
+              <div id="genai-out-text" style="display:none; background:color-mix(in srgb,var(--gen-color) 5%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; min-height:130px; position:relative; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(128,128,128,0.12);">
+                  <div style="width:8px; height:8px; background:#4ade80; border-radius:50%;"></div>
+                  <span style="font-size:10px; font-weight:800; color:var(--text-dim); letter-spacing:1px;">CLAUDE / GPT-4o</span>
+                </div>
+                <div id="genai-text-output" style="font-size:13px; line-height:1.7; color:var(--text-main);"></div>
+                <div id="genai-text-cursor" style="display:inline-block; width:2px; height:16px; background:var(--gen-color); vertical-align:middle; animation:blink 1s step-end infinite;"></div>
+              </div>
+
+              <!-- CODE output (hidden by default) -->
+              <div id="genai-out-code" style="display:none; background:#0d1117; border-radius:16px; padding:0; overflow:hidden; min-height:130px; border:1.5px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+                <div style="display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <div style="width:10px; height:10px; background:#ff5f57; border-radius:50%;"></div>
+                  <div style="width:10px; height:10px; background:#febc2e; border-radius:50%;"></div>
+                  <div style="width:10px; height:10px; background:#28c840; border-radius:50%;"></div>
+                  <span id="genai-code-filename" style="margin-left:8px; font-size:11px; color:rgba(255,255,255,0.4); font-family:monospace;">main.py</span>
+                </div>
+                <pre id="genai-code-output" style="margin:0; padding:14px 18px; font-family:'Fira Code',monospace; font-size:12px; line-height:1.7; overflow-x:auto; white-space:pre-wrap;"></pre>
+              </div>
+
+              <!-- AUDIO output (hidden by default) -->
+              <div id="genai-out-audio" style="display:none; background:linear-gradient(135deg,color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)),color-mix(in srgb,var(--gen-color) 4%,var(--bubble-bg))); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; min-height:130px; display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div id="genai-audio-play" onclick="toggleAudioPlayback()" style="width:40px; height:40px; background:var(--gen-color); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px color-mix(in srgb,var(--gen-color) 35%,transparent); transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg id="genai-play-icon" viewBox="0 0 24 24" fill="#fff" style="width:16px; height:16px; margin-left:2px;"><polygon points="5,3 19,12 5,21"/></svg>
+                  </div>
+                  <div style="flex:1;">
+                    <div id="genai-audio-title" style="font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:3px;">Ambient Space Theme</div>
+                    <div id="genai-audio-meta" style="font-size:10px; color:var(--text-dim); font-weight:600;">Suno AI · 2:34 · <em>Ambient / Electronic</em></div>
+                  </div>
+                </div>
+                <!-- Waveform bars -->
+                <div id="genai-waveform" style="display:flex; align-items:center; gap:2px; height:36px; padding:0 4px;">
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); line-height:1.5; font-style:italic; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;">
+                  AI composes original music, voiceovers, and sound effects from text descriptions.
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="ml-footer" style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 10px;">
-            <!-- Key Idea Box -->
-            <div class="ml-info-box" style="padding: 12px 25px; min-height: auto; max-width: 850px; background: rgba(147, 51, 234, 0.05); border: 1.5px solid rgba(147, 51, 234, 0.12); border-radius: 12px; display: flex; align-items: center; gap: 18px;">
-               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:32px; height:32px;">
-                 <defs>
-                   <linearGradient id="sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                     <stop offset="0%" style="stop-color:var(--gen-color); stop-opacity:1" />
-                     <stop offset="100%" style="stop-color:#f472b6; stop-opacity:1" />
-                   </linearGradient>
-                 </defs>
-                 <path d="M12 3l1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5zM19 16l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1zM5 16l0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8z" fill="url(#sparkle-grad)" />
-               </svg>
-               <div style="font-size: 15px; font-weight: 600; color: color-mix(in srgb, var(--gen-color) 80%, black); text-align: left; line-height: 1.6;">
-                 GenAI creates entirely new content 
-                 <span style="color: var(--dl-color); background: color-mix(in srgb, var(--dl-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">images</span>
-                 <span style="color: var(--ml-color); background: color-mix(in srgb, var(--ml-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">text</span>
-                 <span style="color: var(--ai-color); background: color-mix(in srgb, var(--ai-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">audio</span>
-                 <span style="color: var(--gen-color); background: color-mix(in srgb, var(--gen-color) 10%, transparent); padding: 1px 6px; border-radius: 4px; margin: 0 2px;">video</span>
-                 from a simple prompt.
-               </div>
+          <!-- Bottom insight bar -->
+          <div style="background:color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 18%,transparent); border-radius:14px; padding:10px 18px; display:flex; align-items:center; gap:12px;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px; flex-shrink:0;">
+              <defs><linearGradient id="sg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:var(--gen-color);stop-opacity:1"/><stop offset="100%" style="stop-color:#f472b6;stop-opacity:1"/></linearGradient></defs>
+              <path d="M12 3l1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5zM19 16l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1zM5 16l0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8z" fill="url(#sg2)"/>
+            </svg>
+            <div style="font-size:13px; font-weight:600; color:var(--text-main); line-height:1.6;">
+              GenAI creates <em>net-new</em> content —
+              <span style="color:var(--dl-color); font-weight:800;">images</span>,
+              <span style="color:var(--ml-color); font-weight:800;">text</span>,
+              <span style="color:var(--ai-color); font-weight:800;">code</span>,
+              <span style="color:var(--gen-color); font-weight:800;">audio</span> &amp; more —
+              from a simple prompt. It doesn't classify; it <em>invents</em>.
             </div>
           </div>
         </div>
       `;
+      buildAudioWaveform();
+      initGenAIMode('image');
     } else {
       badge.textContent = data.label;
       badge.className = `detail-type-badge type-${type}`;
@@ -1623,51 +1698,180 @@
     randomizeDLInput();
   }
 
-  function randomizeGenAIInput() {
-    const prompts = [
-      { 
-        text: '"A specialized AI robot settlement building modular glass domes on the red plains of Mars..."',
-        img: 'https://images.unsplash.com/photo-1545156521-77bd85671d30?auto=format&fit=crop&q=80&w=800' 
-      },
-      { 
-        text: '"A cinematic ultra-realistic 4K image of a space shuttle launching into a clear blue sky, massive plumes of billowing white smoke..."',
-        img: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&q=80&w=800'
-      },
-      { 
-        text: '"A futuristic Mars city at sunset with glowing skyscrapers and flying transport pods across the desert surface..."',
-        img: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&q=80&w=800'
+  const genaiData = {
+    image: {
+      models: ['DALL·E 3', 'Midjourney', 'Stable Diffusion'],
+      outputLabel: '🖼 Generated Image',
+      prompts: [
+        { text: '"A specialized AI robot settlement building modular glass domes on the red plains of Mars"', img: 'images/gen_ai/mars.png' },
+        { text: '"A cinematic ultra-realistic space shuttle launching into a clear blue sky, massive plumes of white smoke"', img: 'images/gen_ai/space shuttle.png' },
+        { text: '"An astronaut floating in deep space with the Milky Way stretching behind them in vivid purple hues"', img: 'images/gen_ai/astronaut.png' }
+      ]
+    },
+    text: {
+      models: ['Claude 4', 'GPT-4o', 'Gemini 1.5'],
+      outputLabel: '💬 Generated Text',
+      prompts: [
+        { text: '"Write a haiku about artificial intelligence becoming conscious"', response: 'Silent circuits hum,\nPatterns bloom from endless noise—\nA mind wakes, alone.' },
+        { text: '"Explain quantum computing to a 10-year-old in 2 sentences"', response: "Regular computers use bits — like light switches that are either ON or OFF. Quantum computers use qubits that can be ON, OFF, or BOTH at the same time, letting them solve problems millions of times faster!" },
+        { text: '"Write a one-sentence summary of the history of AI"', response: 'From Turing\'s 1950 question "Can machines think?" to today\'s multimodal LLMs, AI has evolved from hand-crafted rules into neural networks that learn, reason, and now create across every human domain.' },
+        { text: '"Give me a creative name for an AI-powered medical diagnosis app"', response: '✨ <strong>NexaDiag</strong> — combining "next" (forward-thinking), "nexus" (connection between data and care), and "diagnosis" into one crisp, memorable brand.' }
+      ]
+    },
+    code: {
+      models: ['GitHub Copilot', 'Claude 4', 'Cursor AI'],
+      outputLabel: '⌨ Generated Code',
+      prompts: [
+        { text: '"Write a Python function that detects spam emails using ML"', filename: 'spam_detector.py', code: `<span style="color:#ff7b72">from</span> <span style="color:#79c0ff">sklearn.naive_bayes</span> <span style="color:#ff7b72">import</span> MultinomialNB\n<span style="color:#ff7b72">from</span> <span style="color:#79c0ff">sklearn.feature_extraction.text</span> <span style="color:#ff7b72">import</span> TfidfVectorizer\n\n<span style="color:#d2a8ff">def</span> <span style="color:#79c0ff">detect_spam</span>(emails, labels):\n    <span style="color:#8b949e">"""Train and return a spam classifier."""</span>\n    vec = TfidfVectorizer(stop_words=<span style="color:#a5d6ff">'english'</span>)\n    X = vec.fit_transform(emails)\n    model = MultinomialNB().fit(X, labels)\n    <span style="color:#ff7b72">return</span> model, vec` },
+        { text: '"Create a React component for an animated loading spinner"', filename: 'Spinner.tsx', code: `<span style="color:#ff7b72">const</span> <span style="color:#79c0ff">Spinner</span> = ({ size = <span style="color:#a5d6ff">40</span>, color = <span style="color:#a5d6ff">"#6366f1"</span> }) => (\n  &lt;<span style="color:#7ee787">div</span> style={{{\n    width: size, height: size,\n    border: <span style="color:#a5d6ff">\`3px solid \${color}22\`</span>,\n    borderTopColor: color,\n    borderRadius: <span style="color:#a5d6ff">"50%"</span>,\n    animation: <span style="color:#a5d6ff">"spin 1s linear infinite"</span>\n  }}} />\n);\n\n<span style="color:#ff7b72">export default</span> Spinner;` },
+        { text: '"Write a SQL query to find the top 5 customers by revenue"', filename: 'top_customers.sql', code: `<span style="color:#ff7b72">SELECT</span>\n    c.customer_id,\n    c.name,\n    <span style="color:#79c0ff">SUM</span>(o.total_amount) <span style="color:#ff7b72">AS</span> total_revenue,\n    <span style="color:#79c0ff">COUNT</span>(o.order_id) <span style="color:#ff7b72">AS</span> order_count\n<span style="color:#ff7b72">FROM</span> customers c\n<span style="color:#ff7b72">JOIN</span> orders o <span style="color:#ff7b72">ON</span> c.customer_id = o.customer_id\n<span style="color:#ff7b72">GROUP BY</span> c.customer_id, c.name\n<span style="color:#ff7b72">ORDER BY</span> total_revenue <span style="color:#ff7b72">DESC</span>\n<span style="color:#ff7b72">LIMIT</span> <span style="color:#a5d6ff">5</span>;` }
+      ]
+    },
+    audio: {
+      models: ['Suno AI', 'ElevenLabs', 'Udio'],
+      outputLabel: '🎵 Generated Audio',
+      prompts: [
+        { text: '"Compose an ambient space theme with synthesizers and soft percussion"', title: 'Ambient Space Theme', duration: '2:34', genre: 'Ambient / Electronic' },
+        { text: '"Generate a corporate presentation background track — upbeat, professional"', title: 'Corporate Uplift', duration: '1:58', genre: 'Corporate / Pop' },
+        { text: '"Create an epic orchestral score for an AI documentary intro"', title: 'Rise of the Machines', duration: '3:12', genre: 'Orchestral / Cinematic' }
+      ]
+    }
+  };
+
+  function buildAudioWaveform() {
+    const wf = document.getElementById('genai-waveform');
+    if (!wf) return;
+    wf.innerHTML = '';
+    const bars = 52;
+    for (let i = 0; i < bars; i++) {
+      const h = 8 + Math.random() * 36;
+      const bar = document.createElement('div');
+      bar.className = 'genai-wbar';
+      bar.style.cssText = `width:4px; height:${h}px; background:color-mix(in srgb,var(--gen-color) ${40+Math.round(Math.random()*55)}%,transparent); border-radius:2px; flex-shrink:0; transition:height 0.3s ease;`;
+      wf.appendChild(bar);
+    }
+  }
+
+  let genaiAudioPlaying = false;
+  let genaiWaveAnim = null;
+  function toggleAudioPlayback() {
+    genaiAudioPlaying = !genaiAudioPlaying;
+    const icon = document.getElementById('genai-play-icon');
+    if (genaiAudioPlaying) {
+      icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      genaiWaveAnim = setInterval(() => {
+        document.querySelectorAll('.genai-wbar').forEach(b => {
+          b.style.height = (8 + Math.random() * 36) + 'px';
+        });
+      }, 200);
+    } else {
+      icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      clearInterval(genaiWaveAnim);
+    }
+  }
+
+  function initGenAIMode(mode) {
+    const data = genaiData[mode];
+    const idx = window[`genai${mode.charAt(0).toUpperCase()+mode.slice(1)}Index`] || 0;
+    const entry = data.prompts[idx];
+    const promptEl = document.getElementById('genai-prompt-text');
+    if (promptEl) promptEl.textContent = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+
+    // Update model pills
+    const pills = document.getElementById('genai-model-pills');
+    if (pills) pills.innerHTML = data.models.map(m => `<span style="background:rgba(0,0,0,0.06); color:var(--text-dim); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">${m}</span>`).join('');
+
+    // Update output label
+    const lbl = document.getElementById('genai-output-label');
+    if (lbl) lbl.textContent = data.outputLabel;
+
+    // Show/hide panels
+    ['image','text','code','audio'].forEach(m => {
+      const el = document.getElementById(`genai-out-${m}`);
+      if (el) el.style.display = m === mode ? (m === 'audio' ? 'flex' : 'block') : 'none';
+    });
+
+    if (mode === 'image') {
+      const img = document.getElementById('genai-result-img');
+      if (img) img.src = entry.img;
+    } else if (mode === 'text') {
+      const el = document.getElementById('genai-text-output');
+      if (el) el.innerHTML = entry.response;
+    } else if (mode === 'code') {
+      const el = document.getElementById('genai-code-output');
+      const fn = document.getElementById('genai-code-filename');
+      if (el) el.innerHTML = entry.code;
+      if (fn) fn.textContent = entry.filename;
+    } else if (mode === 'audio') {
+      const t = document.getElementById('genai-audio-title');
+      if (t) t.textContent = entry.title;
+      const meta = document.getElementById('genai-audio-meta');
+      if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
+    }
+  }
+
+  function switchGenAIMode(mode) {
+    window.genaiMode = mode;
+    // Update tab styles
+    ['image','text','code','audio'].forEach(m => {
+      const btn = document.getElementById(`genai-tab-${m}`);
+      if (!btn) return;
+      if (m === mode) {
+        btn.style.background = 'var(--gen-color)';
+        btn.style.color = '#fff';
+        btn.style.boxShadow = '0 4px 14px color-mix(in srgb,var(--gen-color) 40%,transparent)';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-dim)';
+        btn.style.boxShadow = 'none';
       }
-    ];
+    });
+    initGenAIMode(mode);
+  }
 
-    const promptTextEl = document.getElementById('genai-prompt-text');
-    const resultImgEl = document.getElementById('genai-result-img');
-    const loadingEl = document.getElementById('genai-loading');
+  function cycleGenAIPrompt() {
+    const mode = window.genaiMode || 'image';
+    const key = `genai${mode.charAt(0).toUpperCase()+mode.slice(1)}Index`;
+    const total = genaiData[mode].prompts.length;
+    const next = ((window[key] || 0) + 1) % total;
+    window[key] = next;
 
-    let nextIndex;
-    do {
-      nextIndex = Math.floor(Math.random() * prompts.length);
-    } while (nextIndex === window.lastGenAIIndex);
-    window.lastGenAIIndex = nextIndex;
+    const entry = genaiData[mode].prompts[next];
+    const promptEl = document.getElementById('genai-prompt-text');
 
-    const selected = prompts[nextIndex];
+    const swapPrompt = () => {
+      gsap.to(promptEl, { opacity: 0, y: 8, duration: 0.15, onComplete: () => {
+        promptEl.textContent = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+        gsap.to(promptEl, { opacity: 1, y: 0, duration: 0.3 });
+      }});
+    };
 
-    // Animation Sequence
-    gsap.to(promptTextEl, { opacity: 0, y: 10, duration: 0.2, onComplete: () => {
-      promptTextEl.innerText = selected.text;
-      gsap.to(promptTextEl, { opacity: 1, y: 0, duration: 0.4 });
-      
-      // Show loading
-      loadingEl.style.display = 'flex';
-      gsap.fromTo(loadingEl, { opacity: 0 }, { opacity: 1, duration: 0.3 });
-
-      // Artificial Delay for "Generation"
+    if (mode === 'image') {
+      const loadingEl = document.getElementById('genai-loading');
+      if (loadingEl) { loadingEl.style.display = 'flex'; gsap.fromTo(loadingEl, { opacity: 0 }, { opacity: 1, duration: 0.25 }); }
       setTimeout(() => {
-        resultImgEl.src = selected.img;
-        gsap.to(loadingEl, { opacity: 0, duration: 0.4, onComplete: () => {
-          loadingEl.style.display = 'none';
-        }});
-      }, 1500);
-    }});
+        const img = document.getElementById('genai-result-img');
+        if (img) img.src = entry.img;
+        swapPrompt();
+        if (loadingEl) gsap.to(loadingEl, { opacity: 0, duration: 0.35, onComplete: () => { loadingEl.style.display = 'none'; } });
+      }, 1200);
+    } else if (mode === 'text') {
+      swapPrompt();
+      const el = document.getElementById('genai-text-output');
+      if (el) gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, onStart: () => { el.innerHTML = entry.response; } });
+    } else if (mode === 'code') {
+      swapPrompt();
+      const el = document.getElementById('genai-code-output');
+      const fn = document.getElementById('genai-code-filename');
+      if (el) gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, onStart: () => { el.innerHTML = entry.code; if (fn) fn.textContent = entry.filename; } });
+    } else if (mode === 'audio') {
+      swapPrompt();
+      const t = document.getElementById('genai-audio-title');
+      if (t) t.textContent = entry.title;
+      const meta = document.getElementById('genai-audio-meta');
+      if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
+      buildAudioWaveform();
+    }
   }
 
   function switchMLTab(index) {
