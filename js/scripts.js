@@ -1696,19 +1696,6 @@
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
-      // Set default slide (page 2) as active on load
-      presentationSections[currentSlideIdx].classList.add("active-slide");
-      presentationSections[currentSlideIdx].style.opacity = "1";
-      presentationSections[currentSlideIdx].style.visibility = "visible";
-      presentationSections[currentSlideIdx].style.transform = "scale(1)";
-
-      // Trigger title animation if we are starting on the 1st page
-      if (currentSlideIdx === 0) {
-        setTimeout(() => {
-          if (typeof animateSlideOneTitle === 'function') animateSlideOneTitle();
-        }, 500);
-      }
-
       // --- Dynamic Slide Management ---
       // Map: slide id → group label shown above it (only the FIRST slide of a group gets a label)
       const NAV_GROUPS = {
@@ -1721,6 +1708,7 @@
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
         'slideMesh': 'The Complexity',
+        'slideWhyML': 'Why Machine Learning?',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -1735,6 +1723,7 @@
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
         { id: 'slideMesh', enabled: true },
+        { id: 'slideWhyML', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
         { id: 'slideNine', enabled: true },
@@ -1759,6 +1748,20 @@
 
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
+
+      // Activate default slide (slideWhyML) on load
+      {
+        const activeSlides = getActiveSlides();
+        const idx = activeSlides.findIndex(el => el.id === 'slideWhyML');
+        currentSlideIdx = idx >= 0 ? idx : 0;
+        const el = activeSlides[currentSlideIdx];
+        if (el) {
+          el.classList.add("active-slide");
+          el.style.opacity = "1";
+          el.style.visibility = "visible";
+          el.style.transform = "scale(1)";
+        }
+      }
 
       function saveSlideState() {
         const activeBefore = getActiveSlides();

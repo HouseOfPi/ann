@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Why we need machine learning — tabbed explainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0a; }
+  body { font-family: "Inter", system-ui, sans-serif; }
+  #root { position: absolute; inset: 0; }
+  *, *::before, *::after { box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root" data-screen-label="Why we need ML · tabbed"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="animations.jsx"></script>
+<script type="text/babel" src="scenes/common.jsx"></script>
+<script type="text/babel" src="scenes/scene1-title.jsx"></script>
+<script type="text/babel" src="scenes/scene2-rules.jsx"></script>
+<script type="text/babel" src="scenes/scene3-transition.jsx"></script>
+<script type="text/babel" src="scenes/scene4-ml.jsx"></script>
+<script type="text/babel" src="scenes/scene6-bridge.jsx"></script>
+<script type="text/babel" src="scenes/scene7-machine.jsx"></script>
+<script type="text/babel" src="scenes/scene5-outro.jsx"></script>
+
+<script type="text/babel">
+  // Two animations, two tabs. Each is a self-contained Stage that re-mounts
+  // when its tab is selected — that resets the playhead and starts fresh.
+  //
+  // Tab A · "Spam filter"      → Title → Rules → Transition → ML → Outro       (~32s)
+  // Tab B · "Machine failure"  → Bridge title → Machine (rules + ML) → Outro   (~22s)
+
+  const TABS = [
+    { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 32 },
+    { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 24 },
+  ];
+
+  function SpamStage() {
+    return (
+      <Stage width={1920} height={1080} duration={32} background={COLORS.bg} persistKey="why-ml-spam">
+        <SceneTitle      start={0}  end={3} />
+        <SceneRules      start={3}  end={15} />
+        <SceneTransition start={15} end={18} />
+        <SceneML         start={18} end={30} />
+        <SpamOutro       start={30} end={32} />
+      </Stage>
+    );
+  }
+
+  function MachineStage() {
+    return (
+      <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine">
+        <MachineIntro start={0}  end={3} />
+        <SceneMachine start={3}  end={22} />
+        <MachineOutro start={22} end={24} />
+      </Stage>
+    );
+  }
+
+  // Tab A's outro is the original "Learn from data, not from rules." card,
+  // re-aliased so its props match the new shorter timeline.
+  function SpamOutro({ start, end }) {
+    return <SceneOutro start={start} end={end} />;
+  }
+
+  function MachineIntro({ start, end }) {
+    return <SceneBridge start={start} end={end} />;
+  }
+  function MachineOutro({ start, end }) {
+    return (
+      <Sprite start={start} end={end}>
+        {({ localTime, duration }) => {
+          const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
+          const exit  = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
+          const op = enter * (1 - exit);
+          return (
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: COLORS.bg,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: op,
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{
+                  fontFamily: FONTS.serif,
+                  fontSize: 88, fontWeight: 400,
+                  color: COLORS.ink,
+                  letterSpacing: '-0.025em', lineHeight: 1.05,
+                }}>
+                  Patterns over <em style={{ fontStyle: 'italic', color: COLORS.accent }}>thresholds</em>.
+                </div>
+                <div style={{
+                  marginTop: 36,
+                  fontFamily: FONTS.mono,
+                  fontSize: 13, letterSpacing: '0.32em',
+                  color: COLORS.inkMuted, textTransform: 'uppercase',
+                }}>
+                  That's machine learning.
+                </div>
+              </div>
+            </div>
+          );
+        }}
+      </Sprite>
+    );
+  }
+
+  function App() {
+    const [tab, setTab] = React.useState(() => {
+      try {
+        return localStorage.getItem('why-ml:tab') || 'spam';
+      } catch { return 'spam'; }
+    });
+
+    React.useEffect(() => {
+      try { localStorage.setItem('why-ml:tab', tab); } catch {}
+      const root = document.getElementById('root');
+      if (root) {
+        const labels = { spam: 'Spam filter', machine: 'Machine failure' };
+        root.setAttribute('data-screen-label', `Tab · ${labels[tab]}`);
+      }
+    }, [tab]);
+
+    return (
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        background: '#0a0a0a',
+      }}>
+        {/* Top bar with title + tabs */}
+        <header style={{
+          flexShrink: 0,
+          padding: '14px 28px',
+          background: '#111110',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', alignItems: 'center', gap: 28,
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', gap: 12,
+            color: COLORS.bg,
+          }}>
+            <div style={{
+              fontFamily: FONTS.serif, fontSize: 22, fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}>
+              Why we need <em style={{ fontStyle: 'italic', color: 'oklch(78% 0.10 200)' }}>machine learning</em>
+            </div>
+            <div style={{
+              fontFamily: FONTS.mono, fontSize: 11, letterSpacing: '0.22em',
+              color: 'rgba(246,244,239,0.45)', textTransform: 'uppercase',
+            }}>
+              Lesson 01
+            </div>
+          </div>
+
+          {/* Tab strip */}
+          <div role="tablist" style={{
+            marginLeft: 'auto',
+            display: 'flex', gap: 6,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 10,
+            padding: 4,
+          }}>
+            {TABS.map(t => {
+              const active = t.id === tab;
+              return (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setTab(t.id)}
+                  style={{
+                    appearance: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '10px 18px',
+                    borderRadius: 7,
+                    background: active ? COLORS.bg : 'transparent',
+                    color: active ? COLORS.ink : 'rgba(246,244,239,0.65)',
+                    fontFamily: FONTS.sans,
+                    fontSize: 13, fontWeight: 600, letterSpacing: '-0.005em',
+                    display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2,
+                    transition: 'background 160ms, color 160ms',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'left',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.background = 'transparent';
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                    <span style={{
+                      width: 16, height: 16, borderRadius: 4,
+                      background: t.id === 'spam' ? COLORS.spam : COLORS.accent,
+                      opacity: active ? 1 : 0.55,
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      color: COLORS.paper, fontFamily: FONTS.mono, fontSize: 9, fontWeight: 700,
+                      flexShrink: 0,
+                    }}>
+                      {t.id === 'spam' ? '✉' : '⚙'}
+                    </span>
+                    {t.label}
+                  </span>
+                  <span style={{
+                    fontFamily: FONTS.mono, fontSize: 10, fontWeight: 500,
+                    letterSpacing: '0.10em',
+                    color: active ? COLORS.inkMuted : 'rgba(246,244,239,0.40)',
+                    textTransform: 'uppercase',
+                    marginLeft: 24,
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {t.subtitle} · {t.duration}s
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </header>
+
+        {/* Stage area — re-mounts on tab change so each animation restarts */}
+        <main style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+          {tab === 'spam'    && <SpamStage    key="spam" />}
+          {tab === 'machine' && <MachineStage key="machine" />}
+        </main>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

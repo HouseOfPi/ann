@@ -1,0 +1,3039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Why we need machine learning — tabbed explainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0a0a0a; }
+  body { font-family: "Inter", system-ui, sans-serif; }
+  #root { position: absolute; inset: 0; }
+  *, *::before, *::after { box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root" data-screen-label="Why we need ML · tabbed"></div>
+
+<script src="react.min.js"></script>
+<script src="react-dom.min.js"></script>
+<script src="babel.min.js"></script>
+
+<script type="text/babel">
+
+// animations.jsx
+// Reusable animation starter: Stage, Timeline, Sprite, easing helpers.
+// Usage (in an HTML file that loads React + Babel):
+//
+//   <Stage width={1280} height={720} duration={10} background="#f6f4ef">
+//     <MyScene />
+//   </Stage>
+//
+// Inside <Stage>, any child can call useTime() to read the current
+// playhead (seconds). Or wrap content in <Sprite start={1} end={4}>...</Sprite>
+// to only render during that window -- children receive a `localTime` and
+// `progress` via the useSprite() hook.
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Easing functions (hand-rolled, Popmotion-style) ─────────────────────────
+// All easings take t ∈ [0,1] and return eased t ∈ [0,1] (may overshoot for back/elastic).
+const Easing = {
+  linear: (t) => t,
+
+  // Quad
+  easeInQuad:    (t) => t * t,
+  easeOutQuad:   (t) => t * (2 - t),
+  easeInOutQuad: (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+
+  // Cubic
+  easeInCubic:    (t) => t * t * t,
+  easeOutCubic:   (t) => (--t) * t * t + 1,
+  easeInOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
+
+  // Quart
+  easeInQuart:    (t) => t * t * t * t,
+  easeOutQuart:   (t) => 1 - (--t) * t * t * t,
+  easeInOutQuart: (t) => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t),
+
+  // Expo
+  easeInExpo:  (t) => (t === 0 ? 0 : Math.pow(2, 10 * (t - 1))),
+  easeOutExpo: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+  easeInOutExpo: (t) => {
+    if (t === 0) return 0;
+    if (t === 1) return 1;
+    if (t < 0.5) return 0.5 * Math.pow(2, 20 * t - 10);
+    return 1 - 0.5 * Math.pow(2, -20 * t + 10);
+  },
+
+  // Sine
+  easeInSine:    (t) => 1 - Math.cos((t * Math.PI) / 2),
+  easeOutSine:   (t) => Math.sin((t * Math.PI) / 2),
+  easeInOutSine: (t) => -(Math.cos(Math.PI * t) - 1) / 2,
+
+  // Back (overshoot)
+  easeOutBack: (t) => {
+    const c1 = 1.70158, c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  },
+  easeInBack: (t) => {
+    const c1 = 1.70158, c3 = c1 + 1;
+    return c3 * t * t * t - c1 * t * t;
+  },
+  easeInOutBack: (t) => {
+    const c1 = 1.70158, c2 = c1 * 1.525;
+    return t < 0.5
+      ? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
+      : (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+  },
+
+  // Elastic
+  easeOutElastic: (t) => {
+    const c4 = (2 * Math.PI) / 3;
+    if (t === 0) return 0;
+    if (t === 1) return 1;
+    return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+  },
+};
+
+// ── Core interpolation helpers ──────────────────────────────────────────────
+
+// Clamp a value to [min, max]
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+// interpolate([0, 0.5, 1], [0, 100, 50], ease?) -> fn(t)
+// Popmotion-style: linearly maps t across input keyframes to output values,
+// with optional easing per segment (single fn or array of fns).
+function interpolate(input, output, ease = Easing.linear) {
+  return (t) => {
+    if (t <= input[0]) return output[0];
+    if (t >= input[input.length - 1]) return output[output.length - 1];
+    for (let i = 0; i < input.length - 1; i++) {
+      if (t >= input[i] && t <= input[i + 1]) {
+        const span = input[i + 1] - input[i];
+        const local = span === 0 ? 0 : (t - input[i]) / span;
+        const easeFn = Array.isArray(ease) ? (ease[i] || Easing.linear) : ease;
+        const eased = easeFn(local);
+        return output[i] + (output[i + 1] - output[i]) * eased;
+      }
+    }
+    return output[output.length - 1];
+  };
+}
+
+// animate({from, to, start, end, ease})(t) — simpler single-segment tween.
+// Returns `from` before `start`, `to` after `end`.
+function animate({ from = 0, to = 1, start = 0, end = 1, ease = Easing.easeInOutCubic }) {
+  return (t) => {
+    if (t <= start) return from;
+    if (t >= end) return to;
+    const local = (t - start) / (end - start);
+    return from + (to - from) * ease(local);
+  };
+}
+
+// ── Timeline context ────────────────────────────────────────────────────────
+
+const TimelineContext = React.createContext({ time: 0, duration: 10, playing: false });
+
+const useTime = () => React.useContext(TimelineContext).time;
+const useTimeline = () => React.useContext(TimelineContext);
+
+// ── Sprite ──────────────────────────────────────────────────────────────────
+// Renders children only when the playhead is inside [start, end]. Provides
+// a sub-context with `localTime` (seconds since start) and `progress` (0..1).
+//
+//   <Sprite start={2} end={5}>
+//     {({ localTime, progress }) => <Thing x={progress * 100} />}
+//   </Sprite>
+//
+// Or as a plain wrapper — children can call useSprite() themselves.
+
+const SpriteContext = React.createContext({ localTime: 0, progress: 0, duration: 0 });
+const useSprite = () => React.useContext(SpriteContext);
+
+function Sprite({ start = 0, end = Infinity, children, keepMounted = false }) {
+  const { time } = useTimeline();
+  const visible = time >= start && time <= end;
+  if (!visible && !keepMounted) return null;
+
+  const duration = end - start;
+  const localTime = Math.max(0, time - start);
+  const progress = duration > 0 && isFinite(duration)
+    ? clamp(localTime / duration, 0, 1)
+    : 0;
+
+  const value = { localTime, progress, duration, visible };
+
+  return (
+    <SpriteContext.Provider value={value}>
+      {typeof children === 'function' ? children(value) : children}
+    </SpriteContext.Provider>
+  );
+}
+
+// ── Sample sprite components ────────────────────────────────────────────────
+
+// TextSprite: fades/slides text in on entry, holds, then fades out on exit.
+// Props: text, x, y, size, color, font, entryDur, exitDur, align
+function TextSprite({
+  text,
+  x = 0, y = 0,
+  size = 48,
+  color = '#111',
+  font = 'Inter, system-ui, sans-serif',
+  weight = 600,
+  entryDur = 0.45,
+  exitDur = 0.35,
+  entryEase = Easing.easeOutBack,
+  exitEase = Easing.easeInCubic,
+  align = 'left',
+  letterSpacing = '-0.01em',
+}) {
+  const { localTime, duration } = useSprite();
+  const exitStart = Math.max(0, duration - exitDur);
+
+  let opacity = 1;
+  let ty = 0;
+
+  if (localTime < entryDur) {
+    const t = entryEase(clamp(localTime / entryDur, 0, 1));
+    opacity = t;
+    ty = (1 - t) * 16;
+  } else if (localTime > exitStart) {
+    const t = exitEase(clamp((localTime - exitStart) / exitDur, 0, 1));
+    opacity = 1 - t;
+    ty = -t * 8;
+  }
+
+  const translateX = align === 'center' ? '-50%' : align === 'right' ? '-100%' : '0';
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      transform: `translate(${translateX}, ${ty}px)`,
+      opacity,
+      fontFamily: font,
+      fontSize: size,
+      fontWeight: weight,
+      color,
+      letterSpacing,
+      whiteSpace: 'pre',
+      lineHeight: 1.1,
+      willChange: 'transform, opacity',
+    }}>
+      {text}
+    </div>
+  );
+}
+
+// ImageSprite: scales + fades in; optional Ken Burns drift during hold.
+function ImageSprite({
+  src,
+  x = 0, y = 0,
+  width = 400, height = 300,
+  entryDur = 0.6,
+  exitDur = 0.4,
+  kenBurns = false,
+  kenBurnsScale = 1.08,
+  radius = 12,
+  fit = 'cover',
+  placeholder = null, // {label: string} for striped placeholder
+}) {
+  const { localTime, duration } = useSprite();
+  const exitStart = Math.max(0, duration - exitDur);
+
+  let opacity = 1;
+  let scale = 1;
+
+  if (localTime < entryDur) {
+    const t = Easing.easeOutCubic(clamp(localTime / entryDur, 0, 1));
+    opacity = t;
+    scale = 0.96 + 0.04 * t;
+  } else if (localTime > exitStart) {
+    const t = Easing.easeInCubic(clamp((localTime - exitStart) / exitDur, 0, 1));
+    opacity = 1 - t;
+    scale = (kenBurns ? kenBurnsScale : 1) + 0.02 * t;
+  } else if (kenBurns) {
+    const holdSpan = exitStart - entryDur;
+    const holdT = holdSpan > 0 ? (localTime - entryDur) / holdSpan : 0;
+    scale = 1 + (kenBurnsScale - 1) * holdT;
+  }
+
+  const content = placeholder ? (
+    <div style={{
+      width: '100%', height: '100%',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'repeating-linear-gradient(135deg, #e9e6df 0 10px, #dcd8cf 10px 20px)',
+      color: '#6b6458',
+      fontFamily: 'JetBrains Mono, ui-monospace, monospace',
+      fontSize: 13,
+      letterSpacing: '0.04em',
+      textTransform: 'uppercase',
+    }}>
+      {placeholder.label || 'image'}
+    </div>
+  ) : (
+    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: fit, display: 'block' }} />
+  );
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width, height,
+      opacity,
+      transform: `scale(${scale})`,
+      transformOrigin: 'center',
+      borderRadius: radius,
+      overflow: 'hidden',
+      willChange: 'transform, opacity',
+    }}>
+      {content}
+    </div>
+  );
+}
+
+// RectSprite: simple rectangle that animates position/size/color via props.
+// Useful demo primitive — takes a `render` fn for per-frame customization.
+function RectSprite({
+  x = 0, y = 0,
+  width = 100, height = 100,
+  color = '#111',
+  radius = 8,
+  entryDur = 0.4,
+  exitDur = 0.3,
+  render, // optional: (ctx) => style overrides
+}) {
+  const spriteCtx = useSprite();
+  const { localTime, duration } = spriteCtx;
+  const exitStart = Math.max(0, duration - exitDur);
+
+  let opacity = 1;
+  let scale = 1;
+
+  if (localTime < entryDur) {
+    const t = Easing.easeOutBack(clamp(localTime / entryDur, 0, 1));
+    opacity = clamp(localTime / entryDur, 0, 1);
+    scale = 0.4 + 0.6 * t;
+  } else if (localTime > exitStart) {
+    const t = Easing.easeInQuad(clamp((localTime - exitStart) / exitDur, 0, 1));
+    opacity = 1 - t;
+    scale = 1 - 0.15 * t;
+  }
+
+  const overrides = render ? render(spriteCtx) : {};
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width, height,
+      background: color,
+      borderRadius: radius,
+      opacity,
+      transform: `scale(${scale})`,
+      transformOrigin: 'center',
+      willChange: 'transform, opacity',
+      ...overrides,
+    }} />
+  );
+}
+
+
+function Stage({
+  width = 1280,
+  height = 720,
+  duration = 10,
+  background = '#f6f4ef',
+  fps = 60,
+  loop = true,
+  autoplay = true,
+  persistKey = 'animstage',
+  children,
+}) {
+  const [time, setTime] = React.useState(() => {
+    try {
+      const v = parseFloat(localStorage.getItem(persistKey + ':t') || '0');
+      return isFinite(v) ? clamp(v, 0, duration) : 0;
+    } catch { return 0; }
+  });
+  const [playing, setPlaying] = React.useState(autoplay);
+  const [hoverTime, setHoverTime] = React.useState(null);
+  const [scale, setScale] = React.useState(1);
+
+  const stageRef = React.useRef(null);
+  const canvasRef = React.useRef(null);
+  const rafRef = React.useRef(null);
+  const lastTsRef = React.useRef(null);
+
+  // Persist playhead
+  React.useEffect(() => {
+    try { localStorage.setItem(persistKey + ':t', String(time)); } catch {}
+  }, [time, persistKey]);
+
+  // Auto-scale to fit viewport
+  React.useEffect(() => {
+    if (!stageRef.current) return;
+    const el = stageRef.current;
+    const measure = () => {
+      const barH = 44; // playback bar height
+      const s = Math.min(
+        el.clientWidth / width,
+        (el.clientHeight - barH) / height
+      );
+      setScale(Math.max(0.05, s));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener('resize', measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [width, height]);
+
+  // Animation loop
+  React.useEffect(() => {
+    if (!playing) {
+      lastTsRef.current = null;
+      return;
+    }
+    const step = (ts) => {
+      if (lastTsRef.current == null) lastTsRef.current = ts;
+      const dt = (ts - lastTsRef.current) / 1000;
+      lastTsRef.current = ts;
+      setTime((t) => {
+        let next = t + dt;
+        if (next >= duration) {
+          if (loop) next = next % duration;
+          else { next = duration; setPlaying(false); }
+        }
+        return next;
+      });
+      rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      lastTsRef.current = null;
+    };
+  }, [playing, duration, loop]);
+
+  // Keyboard: space = play/pause, ← → = seek
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setPlaying(p => !p);
+      } else if (e.code === 'ArrowLeft') {
+        setTime(t => clamp(t - (e.shiftKey ? 1 : 0.1), 0, duration));
+      } else if (e.code === 'ArrowRight') {
+        setTime(t => clamp(t + (e.shiftKey ? 1 : 0.1), 0, duration));
+      } else if (e.key === '0' || e.code === 'Home') {
+        setTime(0);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [duration]);
+
+  const displayTime = hoverTime != null ? hoverTime : time;
+
+  const ctxValue = React.useMemo(
+    () => ({ time: displayTime, duration, playing, setTime, setPlaying }),
+    [displayTime, duration, playing]
+  );
+
+  return (
+    <div
+      ref={stageRef}
+      style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center',
+        background: '#0a0a0a',
+        fontFamily: 'Inter, system-ui, sans-serif',
+      }}
+    >
+      {/* Canvas area — vertically centered in remaining space */}
+      <div style={{
+        flex: 1,
+        width: '100%',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+        minHeight: 0,
+      }}>
+        <div
+          ref={canvasRef}
+          style={{
+            width, height,
+            background,
+            position: 'relative',
+            transform: `scale(${scale})`,
+            transformOrigin: 'center',
+            flexShrink: 0,
+            boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+            overflow: 'hidden',
+          }}
+        >
+          <TimelineContext.Provider value={ctxValue}>
+            {children}
+          </TimelineContext.Provider>
+        </div>
+      </div>
+
+      {/* Playback bar — stacked below canvas, never overlapping */}
+      <PlaybackBar
+        time={displayTime}
+        actualTime={time}
+        duration={duration}
+        playing={playing}
+        onPlayPause={() => setPlaying(p => !p)}
+        onReset={() => { setTime(0); }}
+        onSeek={(t) => setTime(t)}
+        onHover={(t) => setHoverTime(t)}
+      />
+    </div>
+  );
+}
+
+// ── Playback bar ────────────────────────────────────────────────────────────
+// Play/pause, return-to-begin, scrub track, time display.
+// Uses fixed-width time fields so layout doesn't thrash.
+
+function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, onHover }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+
+  const timeFromEvent = React.useCallback((e) => {
+    const rect = trackRef.current.getBoundingClientRect();
+    const x = clamp((e.clientX - rect.left) / rect.width, 0, 1);
+    return x * duration;
+  }, [duration]);
+
+  const onTrackMove = (e) => {
+    if (!trackRef.current) return;
+    const t = timeFromEvent(e);
+    if (dragging) {
+      onSeek(t);
+    } else {
+      onHover(t);
+    }
+  };
+
+  const onTrackLeave = () => {
+    if (!dragging) onHover(null);
+  };
+
+  const onTrackDown = (e) => {
+    setDragging(true);
+    const t = timeFromEvent(e);
+    onSeek(t);
+    onHover(null);
+  };
+
+  React.useEffect(() => {
+    if (!dragging) return;
+    const onUp = () => setDragging(false);
+    const onMove = (e) => {
+      if (!trackRef.current) return;
+      const t = timeFromEvent(e);
+      onSeek(t);
+    };
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('mousemove', onMove);
+    return () => {
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('mousemove', onMove);
+    };
+  }, [dragging, timeFromEvent, onSeek]);
+
+  const pct = duration > 0 ? (time / duration) * 100 : 0;
+  const fmt = (t) => {
+    const total = Math.max(0, t);
+    const m = Math.floor(total / 60);
+    const s = Math.floor(total % 60);
+    const cs = Math.floor((total * 100) % 100);
+    return `${String(m).padStart(1, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
+  };
+
+  const mono = 'JetBrains Mono, ui-monospace, SFMono-Regular, monospace';
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 12,
+      padding: '8px 16px',
+      background: 'rgba(20,20,20,0.92)',
+      borderTop: '1px solid rgba(255,255,255,0.08)',
+      width: '100%',
+      maxWidth: 680,
+      alignSelf: 'center',
+
+      borderRadius: 8,
+      color: '#f6f4ef',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      userSelect: 'none',
+      flexShrink: 0,
+    }}>
+      <IconButton onClick={onReset} title="Return to start (0)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3 2v10M12 2L5 7l7 5V2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round"/>
+        </svg>
+      </IconButton>
+      <IconButton onClick={onPlayPause} title="Play/pause (space)">
+        {playing ? (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <rect x="3" y="2" width="3" height="10" fill="currentColor"/>
+            <rect x="8" y="2" width="3" height="10" fill="currentColor"/>
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 2l9 5-9 5V2z" fill="currentColor"/>
+          </svg>
+        )}
+      </IconButton>
+
+      {/* Current time: fixed width so it doesn't thrash */}
+      <div style={{
+        fontFamily: mono,
+        fontSize: 12,
+        fontVariantNumeric: 'tabular-nums',
+        width: 64, textAlign: 'right',
+        color: '#f6f4ef',
+      }}>
+        {fmt(time)}
+      </div>
+
+      {/* Scrub track */}
+      <div
+        ref={trackRef}
+        onMouseMove={onTrackMove}
+        onMouseLeave={onTrackLeave}
+        onMouseDown={onTrackDown}
+        style={{
+          flex: 1,
+          height: 22,
+          position: 'relative',
+          cursor: 'pointer',
+          display: 'flex', alignItems: 'center',
+        }}
+      >
+        <div style={{
+          position: 'absolute',
+          left: 0, right: 0, height: 4,
+          background: 'rgba(255,255,255,0.12)',
+          borderRadius: 2,
+        }}/>
+        <div style={{
+          position: 'absolute',
+          left: 0, width: `${pct}%`, height: 4,
+          background: 'oklch(72% 0.12 250)',
+          borderRadius: 2,
+        }}/>
+        <div style={{
+          position: 'absolute',
+          left: `${pct}%`, top: '50%',
+          width: 12, height: 12,
+          marginLeft: -6, marginTop: -6,
+          background: '#fff',
+          borderRadius: 6,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+        }}/>
+      </div>
+
+      {/* Duration: fixed width */}
+      <div style={{
+        fontFamily: mono,
+        fontSize: 12,
+        fontVariantNumeric: 'tabular-nums',
+        width: 64, textAlign: 'left',
+        color: 'rgba(246,244,239,0.55)',
+      }}>
+        {fmt(duration)}
+      </div>
+    </div>
+  );
+}
+
+function IconButton({ children, onClick, title }) {
+  const [hover, setHover] = React.useState(false);
+  return (
+    <button
+      onClick={onClick}
+      title={title}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        width: 28, height: 28,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: hover ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 6,
+        color: '#f6f4ef',
+        cursor: 'pointer',
+        padding: 0,
+        transition: 'background 120ms',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+
+Object.assign(window, {
+  Easing, interpolate, animate, clamp,
+  TimelineContext, useTime, useTimeline,
+  Sprite, SpriteContext, useSprite,
+  TextSprite, ImageSprite, RectSprite,
+  Stage, PlaybackBar,
+});
+
+// Shared components and constants
+
+const PALETTE_SETS = {
+  'Warm Linen':  { bg: '#f4f1ea', bgAlt: '#ebe6db', ink: '#1a1815', inkSoft: '#5c574e', inkMuted: '#8a8478', rule: '#d4cfc2', paper: '#fdfbf6', accent: 'oklch(58% 0.09 200)', spam: 'oklch(58% 0.13 30)', ham: 'oklch(62% 0.09 150)' },
+  'Paper White': { bg: '#ffffff', bgAlt: '#f0f0f0', ink: '#111111', inkSoft: '#444444', inkMuted: '#888888', rule: '#dddddd', paper: '#ffffff', accent: 'oklch(55% 0.12 220)', spam: 'oklch(55% 0.15 30)',  ham: 'oklch(58% 0.10 150)' },
+  'Midnight':    { bg: '#0d0d0d', bgAlt: '#1a1a1a', ink: '#f0ece4', inkSoft: '#a09890', inkMuted: '#605850', rule: '#2a2820', paper: '#1a1815', accent: 'oklch(68% 0.10 200)', spam: 'oklch(65% 0.15 30)',  ham: 'oklch(68% 0.10 150)' },
+  'Mint':        { bg: '#f0f7f4', bgAlt: '#e0eeea', ink: '#0f2820', inkSoft: '#3a5a4a', inkMuted: '#7a9a8a', rule: '#c0ddd4', paper: '#f8fcfa', accent: 'oklch(55% 0.12 170)', spam: 'oklch(55% 0.15 30)',  ham: 'oklch(55% 0.12 150)' },
+  'Plum':        { bg: '#f5f0f7', bgAlt: '#ebe0ef', ink: '#200f28', inkSoft: '#5a3a6a', inkMuted: '#9a7aaa', rule: '#d8c8e0', paper: '#fdf8ff', accent: 'oklch(55% 0.12 300)', spam: 'oklch(55% 0.15 30)',  ham: 'oklch(58% 0.10 150)' },
+};
+
+const COLORS = { ...PALETTE_SETS['Warm Linen'] };
+
+window.addEventListener('message', (e) => {
+  const { type, palette } = e.data || {};
+  if (type !== 'SET_THEME') return;
+  const set = PALETTE_SETS[palette] || (e.data.mode === 'dark' ? PALETTE_SETS['Midnight'] : PALETTE_SETS['Warm Linen']);
+  Object.assign(COLORS, set);
+  document.body.style.background = COLORS.bg;
+  // Re-render root so all components pick up the new COLORS object
+  const root = document.getElementById('root');
+  if (root && window.__whyMlRoot) {
+    window.__whyMlRoot.render(React.createElement(App));
+  }
+});
+
+const FONTS = {
+  sans: '"Inter", system-ui, -apple-system, sans-serif',
+  mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
+  serif: '"Instrument Serif", Georgia, serif',
+};
+
+// A simple envelope card. Can be tagged spam/ham/unknown.
+function Envelope({
+  x, y, width = 220, height = 130,
+  subject = '',
+  preview = '',
+  label = null, // 'spam' | 'ham' | null
+  rotation = 0,
+  scale = 1,
+  opacity = 1,
+  shadow = true,
+}) {
+  const labelColor = label === 'spam' ? COLORS.spam : label === 'ham' ? COLORS.ham : null;
+  const labelText = label === 'spam' ? 'SPAM' : label === 'ham' ? 'NOT SPAM' : null;
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width, height,
+      transform: `translate(-50%, -50%) rotate(${rotation}deg) scale(${scale})`,
+      transformOrigin: 'center',
+      opacity,
+      background: COLORS.paper,
+      border: `1px solid ${COLORS.rule}`,
+      borderRadius: 4,
+      boxShadow: shadow ? '0 6px 20px rgba(40,30,15,0.10), 0 1px 2px rgba(40,30,15,0.06)' : 'none',
+      padding: '14px 16px',
+      display: 'flex', flexDirection: 'column', gap: 6,
+      fontFamily: FONTS.sans,
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',
+        color: COLORS.inkMuted, textTransform: 'uppercase',
+      }}>
+        Inbox · 9:42
+      </div>
+      <div style={{
+        fontSize: 15, fontWeight: 600, color: COLORS.ink,
+        lineHeight: 1.25,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}>
+        {subject}
+      </div>
+      <div style={{
+        fontSize: 12, color: COLORS.inkSoft, lineHeight: 1.35,
+        flex: 1,
+        overflow: 'hidden',
+      }}>
+        {preview}
+      </div>
+      {labelText && (
+        <div style={{
+          alignSelf: 'flex-start',
+          fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+          padding: '3px 8px',
+          background: labelColor,
+          color: COLORS.paper,
+          borderRadius: 2,
+        }}>
+          {labelText}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// A line of code (mono).
+function CodeLine({ children, color = COLORS.ink, indent = 0, opacity = 1 }) {
+  return (
+    <div style={{
+      fontFamily: FONTS.mono,
+      fontSize: 18,
+      color,
+      opacity,
+      paddingLeft: indent * 24,
+      lineHeight: 1.6,
+      whiteSpace: 'pre',
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// Caption pinned bottom-center
+function Caption({ text, opacity = 1 }) {
+  return (
+    <div style={{
+      position: 'absolute',
+      left: '50%', bottom: 60,
+      transform: 'translateX(-50%)',
+      opacity,
+      fontFamily: FONTS.sans,
+      fontSize: 22,
+      fontWeight: 500,
+      color: COLORS.inkSoft,
+      letterSpacing: '-0.01em',
+      textAlign: 'center',
+    }}>
+      {text}
+    </div>
+  );
+}
+
+Object.assign(window, { COLORS, FONTS, Envelope, CodeLine, Caption });
+// Scene 1: Title card. 0 - 3s
+// "Why do we need Machine Learning?"
+
+function SceneTitle({ start = 0, end = 3 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.8, 0, 1));
+        const exit = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
+        const opacity = enter * (1 - exit);
+        const ty = (1 - enter) * 24 - exit * 12;
+
+        // Slow pan/scale for life
+        const scale = 1 + localTime * 0.012;
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            background: COLORS.bg,
+          }}>
+            <div style={{
+              opacity,
+              transform: `translateY(${ty}px) scale(${scale})`,
+              textAlign: 'center',
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 14, letterSpacing: '0.32em',
+                color: COLORS.inkMuted,
+                textTransform: 'uppercase',
+                marginBottom: 32,
+              }}>
+                Lesson 01 · Introduction
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 96,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.05,
+              }}>
+                Why do we need
+                <br/>
+                <em style={{ fontStyle: 'italic', color: COLORS.accent }}>machine learning?</em>
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+Object.assign(window, { SceneTitle });
+// Scene 2: The rule-based approach. 3 - 15s
+// Show an inbox with a spam email, developer writes if-statements,
+// rules pile up, spammer changes tactics, more rules added, chaos.
+
+function SceneRules({ start = 3, end = 15 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const t = localTime;
+
+        // Crossfade in/out
+        const fadeIn  = clamp(t / 0.5, 0, 1);
+        const fadeOut = 1 - clamp((t - (duration - 0.6)) / 0.6, 0, 1);
+        const opacity = Easing.easeOutCubic(fadeIn) * fadeOut;
+
+        // Section header
+        const headerOp = clamp((t - 0.0) / 0.5, 0, 1);
+
+        // Email card slides in
+        const emailIn = Easing.easeOutCubic(clamp((t - 0.4) / 0.7, 0, 1));
+        const emailX  = -260 + emailIn * 260; // ends at 0 offset
+
+        // Code block reveals line by line
+        // Lines arrive at t=2.0, 2.6, 3.2, 3.8, 4.4, 5.0, 5.6, 6.2, 6.8
+        const lineTimes = [2.0, 2.6, 3.2, 3.8, 4.4, 5.0, 5.6, 6.2, 6.8];
+        const lineOps = lineTimes.map((lt) => clamp((t - lt) / 0.3, 0, 1));
+
+        // Spammer adapts moment: at t≈7.5, the email morphs to "F R E E"
+        const morphT = clamp((t - 7.5) / 0.4, 0, 1);
+
+        // "Rule misses" indicator
+        const missOp = clamp((t - 8.0) / 0.4, 0, 1) * (1 - clamp((t - 10.5) / 0.4, 0, 1));
+
+        // After miss, more lines arrive at t=8.8, 9.4, 10.0
+        const moreLineOps = [8.8, 9.4, 10.0].map((lt) => clamp((t - lt) / 0.3, 0, 1));
+
+        // Final "endless rules" feel: code block scrolls, dim
+        const chaosT = clamp((t - 10.6) / 1.0, 0, 1);
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            opacity,
+            background: COLORS.bg,
+            fontFamily: FONTS.sans,
+          }}>
+            {/* Header */}
+            <div style={{
+              position: 'absolute',
+              top: 90, left: 120,
+              opacity: headerOp,
+              transform: `translateY(${(1 - headerOp) * 8}px)`,
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 14, letterSpacing: '0.28em',
+                color: COLORS.accent,
+                textTransform: 'uppercase',
+                marginBottom: 16,
+                fontWeight: 600,
+              }}>
+                The traditional way
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 72,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.0,
+              }}>
+                Write a rule for <em style={{ fontStyle: 'italic', color: COLORS.accent }}>every</em> case.
+              </div>
+            </div>
+
+            {/* Email card on the left */}
+            <div style={{
+              position: 'absolute',
+              left: 120,
+              top: 340,
+              width: 720,
+              opacity: emailIn,
+              transform: `translateY(${(1 - emailIn) * 20}px)`,
+              background: COLORS.paper,
+              border: `1px solid ${COLORS.rule}`,
+              borderRadius: 8,
+              boxShadow: '0 18px 48px rgba(40,30,15,0.12), 0 2px 4px rgba(40,30,15,0.06)',
+              padding: '32px 36px',
+              display: 'flex', flexDirection: 'column', gap: 18,
+              fontFamily: FONTS.sans,
+            }}>
+              {/* Mail header bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                paddingBottom: 18,
+                borderBottom: `1px solid ${COLORS.rule}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 22,
+                    background: 'oklch(82% 0.06 60)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: COLORS.paper,
+                    fontSize: 16, fontWeight: 700,
+                    fontFamily: FONTS.sans,
+                  }}>
+                    P
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
+                      Prizes Department
+                    </div>
+                    <div style={{
+                      fontFamily: FONTS.mono,
+                      fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.04em',
+                    }}>
+                      prizes@offers-mail.co
+                    </div>
+                  </div>
+                </div>
+                <div style={{
+                  fontFamily: FONTS.mono,
+                  fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}>
+                  9:42 AM
+                </div>
+              </div>
+
+              {/* Subject line — single line, ellipsis if needed; crossfade morph */}
+              <div style={{
+                position: 'relative',
+                height: 38,
+              }}>
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  fontSize: 28, fontWeight: 700, color: COLORS.ink,
+                  letterSpacing: '-0.02em', lineHeight: 1.1,
+                  opacity: 1 - morphT,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>
+                  You're a WINNER — claim your FREE gift
+                </div>
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  fontSize: 28, fontWeight: 700, color: COLORS.spam,
+                  letterSpacing: '-0.02em', lineHeight: 1.1,
+                  opacity: morphT,
+                  whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                }}>
+                  You're a W1NNER — claim ur F R E E gift
+                </div>
+              </div>
+
+              {/* Preview body */}
+              <div style={{
+                fontSize: 16, color: COLORS.inkSoft, lineHeight: 1.55,
+              }}>
+                Click here now. Limited time offer. $$$ guaranteed.
+                <br/>Act fast — only 3 left!
+              </div>
+
+              {/* Spam tag flickers in when rule catches it */}
+              <div style={{
+                alignSelf: 'flex-start',
+                marginTop: 6,
+                fontFamily: FONTS.mono,
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
+                padding: '6px 12px',
+                background: COLORS.spam,
+                color: COLORS.paper,
+                borderRadius: 3,
+                whiteSpace: 'nowrap',
+                opacity: clamp((t - 4.6) / 0.3, 0, 1) * (1 - morphT * 0.95),
+              }}>
+                ✓ FLAGGED · SPAM
+              </div>
+            </div>
+
+            {/* "Rule missed!" badge — sits to the right of the email card */}
+            <div style={{
+              position: 'absolute',
+              left: 120 + 720 - 60,
+              top: 308,
+              opacity: missOp,
+              transform: `scale(${0.7 + missOp * 0.3}) rotate(-6deg)`,
+              transformOrigin: 'center',
+              background: COLORS.spam,
+              color: COLORS.paper,
+              fontFamily: FONTS.mono,
+              fontSize: 14, fontWeight: 700, letterSpacing: '0.12em',
+              padding: '10px 16px',
+              borderRadius: 4,
+              boxShadow: '0 12px 28px rgba(180,60,20,0.32)',
+            }}>
+              ✕ NOT FLAGGED
+            </div>
+
+            {/* Code block on the right */}
+            <CodeBlock
+              x={960} y={300}
+              width={840}
+              lineOps={lineOps}
+              moreLineOps={moreLineOps}
+              chaosT={chaosT}
+            />
+
+            {/* Bottom caption */}
+            <CaptionLine t={t} />
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+function CodeBlock({ x, y, width, lineOps, moreLineOps, chaosT }) {
+  // The block can scroll up under chaosT to suggest "more rules forever"
+  const scroll = chaosT * 80;
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width, height: 460,
+      background: '#1a1815',
+      borderRadius: 8,
+      overflow: 'hidden',
+      boxShadow: '0 16px 40px rgba(20,15,5,0.30)',
+      fontFamily: FONTS.mono,
+    }}>
+      {/* Window chrome */}
+      <div style={{
+        height: 32, background: '#262320',
+        borderBottom: '1px solid #33302b',
+        display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px',
+      }}>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{
+          marginLeft: 14,
+          color: '#8a8478', fontSize: 12, letterSpacing: '0.08em',
+        }}>
+          spam_filter.py
+        </div>
+      </div>
+
+      <div style={{
+        padding: '20px 24px',
+        transform: `translateY(${-scroll}px)`,
+        transition: 'none',
+      }}>
+        <Line op={lineOps[0]} color="#8a8478">{`# Filter spam by checking subject lines`}</Line>
+        <Line op={lineOps[1]} color="#e6dfce">
+          <span style={{ color: '#c79e6b' }}>def</span>{' '}
+          <span style={{ color: '#9bbf80' }}>is_spam</span>(<span style={{ color: '#e6dfce' }}>email</span>):
+        </Line>
+
+        <Line op={lineOps[2]} color="#e6dfce" indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"FREE"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.subject:
+        </Line>
+        <Line op={lineOps[2]} color="#e6dfce" indent={2}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={lineOps[3]} color="#e6dfce" indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"WINNER"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.subject:
+        </Line>
+        <Line op={lineOps[3]} color="#e6dfce" indent={2}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={lineOps[4]} color="#e6dfce" indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"CLICK HERE"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.body:
+        </Line>
+        <Line op={lineOps[4]} color="#e6dfce" indent={2}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={lineOps[5]} color="#e6dfce" indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"$$$"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.body:
+        </Line>
+        <Line op={lineOps[5]} color="#e6dfce" indent={2}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={lineOps[6]} color="#e6dfce" indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"limited time"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.body:
+        </Line>
+        <Line op={lineOps[6]} color="#e6dfce" indent={2}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        {/* Lines added after spammer adapts — highlighted */}
+        <Line op={moreLineOps[0]} color="#e6dfce" indent={1} highlight>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"F R E E"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.subject:
+        </Line>
+        <Line op={moreLineOps[0]} color="#e6dfce" indent={2} highlight>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={moreLineOps[1]} color="#e6dfce" indent={1} highlight>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"W1NNER"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.subject:
+        </Line>
+        <Line op={moreLineOps[1]} color="#e6dfce" indent={2} highlight>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        <Line op={moreLineOps[2]} color="#e6dfce" indent={1} highlight>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>"\\u2728 FR\\u00C9E \\u2728"</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.subject:
+        </Line>
+        <Line op={moreLineOps[2]} color="#e6dfce" indent={2} highlight>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+
+        {/* The endless rules under chaos */}
+        <ChaosLines op={chaosT} />
+      </div>
+    </div>
+  );
+}
+
+function Line({ children, op = 1, color = '#e6dfce', indent = 0, highlight = false }) {
+  return (
+    <div style={{
+      fontSize: 16,
+      color,
+      opacity: op,
+      paddingLeft: indent * 24,
+      paddingRight: 8,
+      lineHeight: 1.65,
+      whiteSpace: 'pre',
+      transform: `translateY(${(1 - op) * 6}px)`,
+      background: highlight ? `rgba(217, 130, 90, ${0.10 * op})` : 'transparent',
+      marginLeft: -8,
+      paddingLeft: indent * 24 + 8,
+      borderLeft: highlight ? `2px solid ${COLORS.spam}` : '2px solid transparent',
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function ChaosLines({ op }) {
+  const phrases = [
+    '"act now"', '"meds"', '"discount"', '"crypto"',
+    '"\\u00DCRGENT"', '"v.i.a.g.r.a"', '"nigerian prince"',
+    '"!!1!"', '"f-r-e-e"', '"w!nner"',
+  ];
+  return (
+    <div style={{ opacity: op }}>
+      {phrases.map((p, i) => (
+        <Line key={i} op={op * clamp((op - i * 0.05), 0, 1)} indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          <span style={{ color: '#d68b6b' }}>{p}</span>{' '}
+          <span style={{ color: '#c79e6b' }}>in</span> email.body:{' '}
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </Line>
+      ))}
+    </div>
+  );
+}
+
+function CaptionLine({ t }) {
+  // Three captions cycle:
+  // 1) "Catch a 'FREE' email — easy, write a rule." 1.5 – 7.0
+  // 2) "But spammers adapt..." 7.4 – 10.5
+  // 3) "...and the rules never end." 10.6 – end
+  const caps = [
+    { text: 'Spot the spam keyword. Add an if-statement.', start: 1.5, end: 7.0 },
+    { text: 'But spammers adapt. The wording changes.',     start: 7.4, end: 10.5 },
+    { text: 'And the rules never end.',                       start: 10.6, end: 12.0 },
+  ];
+  return (
+    <>
+      {caps.map((c, i) => {
+        const fadeIn = clamp((t - c.start) / 0.4, 0, 1);
+        const fadeOut = 1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1);
+        const op = Easing.easeOutCubic(fadeIn) * fadeOut;
+        if (op <= 0.001) return null;
+        return (
+          <div key={i} style={{
+            position: 'absolute',
+            left: '50%', bottom: 60,
+            transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
+            opacity: op,
+            fontFamily: FONTS.sans,
+            fontSize: 22, fontWeight: 500,
+            color: COLORS.inkSoft,
+            letterSpacing: '-0.01em',
+            textAlign: 'center',
+          }}>
+            {c.text}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+Object.assign(window, { SceneRules });
+// Scene 3: Transition / pivot. 15 - 18s
+// "There's a better way."
+
+function SceneTransition({ start = 15, end = 18 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
+        const exit  = clamp((localTime - (duration - 0.4)) / 0.4, 0, 1);
+        const opacity = enter * (1 - exit);
+
+        // Subtle horizontal drift
+        const drift = (localTime / duration) * 12 - 6;
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.ink,
+            color: COLORS.bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity,
+          }}>
+            <div style={{
+              textAlign: 'center',
+              transform: `translateX(${drift}px)`,
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 13, letterSpacing: '0.32em',
+                color: 'oklch(72% 0.10 200)',
+                textTransform: 'uppercase',
+                marginBottom: 28,
+                opacity: clamp(localTime / 0.6, 0, 1),
+              }}>
+                There's a better way
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 110,
+                fontWeight: 400,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.0,
+              }}>
+                Don't write rules.
+                <br/>
+                <em style={{ fontStyle: 'italic', color: 'oklch(78% 0.10 200)' }}>
+                  Show examples.
+                </em>
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+Object.assign(window, { SceneTransition });
+// Scene 4: The ML approach. 18 - 30s
+// Stacks of labeled emails (spam + not-spam) flow into a Model box.
+// The Model "learns" (animation), then classifies new emails.
+
+function SceneML({ start = 18, end = 30 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const t = localTime;
+        const fadeIn  = Easing.easeOutCubic(clamp(t / 0.5, 0, 1));
+        const fadeOut = 1 - clamp((t - (duration - 0.5)) / 0.5, 0, 1);
+        const opacity = fadeIn * fadeOut;
+
+        // Header
+        const headerOp = clamp((t - 0.0) / 0.5, 0, 1);
+
+        // Phase 1: 0.5 - 4.0  Stacks of labeled emails appear on left
+        // Phase 2: 2.5 - 6.5  Emails stream into Model
+        // Phase 3: 5.0 - 8.0  Model "learning" animation (pulses)
+        // Phase 4: 7.5 - 11.5 New emails arrive on right, get classified
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg, opacity,
+            fontFamily: FONTS.sans,
+          }}>
+            {/* Header */}
+            <div style={{
+              position: 'absolute',
+              top: 50, left: 80,
+              opacity: headerOp,
+              transform: `translateY(${(1 - headerOp) * 8}px)`,
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 12, letterSpacing: '0.24em',
+                color: COLORS.accent,
+                textTransform: 'uppercase',
+                marginBottom: 10,
+              }}>
+                The ML way
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 52,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.05,
+              }}>
+                Feed it labeled examples. It learns the pattern.
+              </div>
+            </div>
+
+            {/* Three stages: Training data (left) -> Model (center) -> Predictions (right) */}
+            <TrainingData t={t} />
+            <ModelBox t={t} />
+            <Predictions t={t} />
+
+            {/* Stage labels */}
+            <StageLabel x={300}  y={760} t={t} appear={0.3}  text="LABELED EXAMPLES" />
+            <StageLabel x={960}  y={760} t={t} appear={4.5}  text="MODEL LEARNS" />
+            <StageLabel x={1620} y={760} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
+
+            {/* Bottom caption that changes */}
+            <MLCaption t={t} duration={duration} />
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+// ── Training data: stacks of labeled mini-envelopes ──────────────────────────
+
+function TrainingData({ t }) {
+  // 8 emails: 4 spam, 4 ham. They appear staggered, then "stream" toward model.
+  const items = [
+    { type: 'spam', subject: 'WIN $1,000,000 NOW',    yOffset: -180 },
+    { type: 'ham',  subject: 'Lunch tomorrow?',        yOffset: -120 },
+    { type: 'spam', subject: 'Cheap meds online',      yOffset: -60  },
+    { type: 'ham',  subject: 'Q3 review draft',        yOffset: 0    },
+    { type: 'spam', subject: 'Click for free iPhone',  yOffset: 60   },
+    { type: 'ham',  subject: 'Dinner Friday',          yOffset: 120  },
+    { type: 'spam', subject: 'Verify your account!!!', yOffset: 180  },
+    { type: 'ham',  subject: 'Project status update',  yOffset: 240  },
+  ];
+
+  return (
+    <>
+      {items.map((it, i) => {
+        const appearAt  = 0.5 + i * 0.18;
+        const streamAt  = 2.6 + i * 0.18;
+        const arriveAt  = streamAt + 1.2;
+
+        const appear = Easing.easeOutBack(clamp((t - appearAt) / 0.5, 0, 1));
+        const stream = Easing.easeInOutCubic(clamp((t - streamAt) / 1.2, 0, 1));
+
+        const startX = 300;
+        const endX   = 960;       // model center
+        const startY = 410 + it.yOffset;
+        const endY   = 470;       // model center y
+
+        const x = startX + (endX - startX) * stream;
+        const y = startY + (endY - startY) * stream;
+
+        // Fade out as it reaches the model
+        const swallow = clamp((t - arriveAt) / 0.3, 0, 1);
+        const op = appear * (1 - swallow);
+        const scale = appear * (1 - 0.4 * stream);
+
+        return (
+          <MiniEnvelope
+            key={i}
+            x={x} y={y}
+            type={it.type}
+            subject={it.subject}
+            opacity={op}
+            scale={scale}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function MiniEnvelope({ x, y, type, subject, opacity, scale = 1 }) {
+  const labelColor = type === 'spam' ? COLORS.spam : COLORS.ham;
+  const labelText  = type === 'spam' ? 'SPAM' : 'NOT SPAM';
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width: 240, height: 76,
+      transform: `translate(-50%, -50%) scale(${scale})`,
+      transformOrigin: 'center',
+      opacity,
+      background: COLORS.paper,
+      border: `1px solid ${COLORS.rule}`,
+      borderRadius: 5,
+      boxShadow: '0 4px 12px rgba(40,30,15,0.10)',
+      padding: '10px 14px',
+      display: 'flex', flexDirection: 'column', gap: 6,
+      fontFamily: FONTS.sans,
+    }}>
+      <div style={{
+        fontSize: 13, fontWeight: 600, color: COLORS.ink,
+        letterSpacing: '-0.01em',
+        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>
+        {subject}
+      </div>
+      <div style={{
+        alignSelf: 'flex-start',
+        fontSize: 9, fontWeight: 700, letterSpacing: '0.12em',
+        padding: '2px 7px',
+        background: labelColor,
+        color: COLORS.paper,
+        borderRadius: 2,
+      }}>
+        {labelText}
+      </div>
+    </div>
+  );
+}
+
+// ── Model box ────────────────────────────────────────────────────────────────
+
+function ModelBox({ t }) {
+  // Box appears around t=1.0
+  const appear = Easing.easeOutCubic(clamp((t - 1.0) / 0.6, 0, 1));
+
+  // "Active learning" pulses while emails stream in (t 2.5 – 7.5)
+  const learning = clamp((t - 2.5) / 0.4, 0, 1) * (1 - clamp((t - 7.5) / 0.5, 0, 1));
+
+  // After training (t > 7.5), it becomes "trained" — solid accent
+  const trained = clamp((t - 7.5) / 0.6, 0, 1);
+
+  // Pulse: subtle scale oscillation while learning
+  const pulse = learning > 0.01
+    ? 1 + Math.sin(t * 6) * 0.015 * learning
+    : 1;
+
+  const cx = 960, cy = 470;
+  const w = 360, h = 240;
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: cx, top: cy,
+      width: w, height: h,
+      transform: `translate(-50%, -50%) scale(${appear * pulse})`,
+      transformOrigin: 'center',
+      opacity: appear,
+    }}>
+      {/* Outer card */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: COLORS.paper,
+        border: `2px solid ${trained > 0.5 ? COLORS.accent : COLORS.rule}`,
+        borderRadius: 12,
+        boxShadow: '0 16px 40px rgba(40,30,15,0.14)',
+        transition: 'border-color 200ms',
+      }}/>
+
+      {/* Glow when learning */}
+      <div style={{
+        position: 'absolute', inset: -8,
+        borderRadius: 18,
+        background: `radial-gradient(circle at center, ${COLORS.accent}, transparent 70%)`,
+        opacity: learning * 0.25,
+        filter: 'blur(20px)',
+        zIndex: -1,
+      }}/>
+
+      {/* Neural-net-ish dots inside */}
+      <NeuralNet t={t} learning={learning} trained={trained} />
+
+      {/* Label */}
+      <div style={{
+        position: 'absolute',
+        left: 0, right: 0, bottom: 14,
+        textAlign: 'center',
+        fontFamily: FONTS.mono,
+        fontSize: 11, letterSpacing: '0.18em',
+        color: trained > 0.5 ? COLORS.accent : COLORS.inkMuted,
+        textTransform: 'uppercase',
+        fontWeight: 600,
+      }}>
+        {trained > 0.5 ? 'Trained Model' : (learning > 0.1 ? 'Learning…' : 'Model')}
+      </div>
+    </div>
+  );
+}
+
+function NeuralNet({ t, learning, trained }) {
+  // 3 layers: 3 -> 4 -> 2 nodes
+  const layers = [
+    [{ x: 60, y: 60 }, { x: 60, y: 110 }, { x: 60, y: 160 }],
+    [{ x: 175, y: 45 }, { x: 175, y: 90 }, { x: 175, y: 135 }, { x: 175, y: 180 }],
+    [{ x: 290, y: 80 }, { x: 290, y: 145 }],
+  ];
+
+  // Build edges
+  const edges = [];
+  for (let i = 0; i < layers.length - 1; i++) {
+    for (const a of layers[i]) {
+      for (const b of layers[i + 1]) {
+        edges.push({ a, b });
+      }
+    }
+  }
+
+  return (
+    <svg width="360" height="220" style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}>
+      {edges.map((e, i) => {
+        // Phase modulation creates the "signal flowing" feeling
+        const phase = (t * 1.2 + i * 0.15) % 1;
+        const intensity = learning * (0.4 + 0.6 * Math.sin(phase * Math.PI * 2));
+        const baseOp = 0.25 + trained * 0.35;
+        return (
+          <line
+            key={i}
+            x1={e.a.x} y1={e.a.y} x2={e.b.x} y2={e.b.y}
+            stroke={COLORS.accent}
+            strokeWidth={1 + intensity * 1.2}
+            opacity={baseOp + intensity * 0.5}
+          />
+        );
+      })}
+      {layers.flat().map((n, i) => (
+        <circle
+          key={i}
+          cx={n.x} cy={n.y} r={6}
+          fill={trained > 0.5 ? COLORS.accent : COLORS.paper}
+          stroke={COLORS.accent}
+          strokeWidth={1.6}
+        />
+      ))}
+    </svg>
+  );
+}
+
+// ── Predictions ──────────────────────────────────────────────────────────────
+
+function Predictions({ t }) {
+  // 3 new emails arrive after training (t > 7.8). Each gets classified.
+  const items = [
+    { subject: '🎁 Free Rolex! Click NOW',  text: 'Limited time only — claim your...', type: 'spam', delay: 0.0 },
+    { subject: 'Re: Q3 review draft',         text: 'Thanks — I left a few comments on...', type: 'ham',  delay: 0.9 },
+    { subject: 'CRYPTO 1000x guarantee',      text: 'Send 1 BTC, get 1000 back...',     type: 'spam', delay: 1.8 },
+  ];
+
+  return (
+    <>
+      {items.map((it, i) => {
+        const arriveAt = 7.8 + it.delay;
+        const labelAt  = arriveAt + 0.7;
+
+        const arrive = Easing.easeOutCubic(clamp((t - arriveAt) / 0.6, 0, 1));
+        const labelOp = Easing.easeOutBack(clamp((t - labelAt) / 0.4, 0, 1));
+
+        const startX = 1200, endX = 1620;
+        const x = startX + (endX - startX) * arrive;
+        const y = 320 + i * 130;
+
+        return (
+          <PredictionCard
+            key={i}
+            x={x} y={y}
+            subject={it.subject}
+            text={it.text}
+            type={it.type}
+            cardOp={arrive}
+            labelOp={labelOp}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
+  const labelColor = type === 'spam' ? COLORS.spam : COLORS.ham;
+  const labelText  = type === 'spam' ? 'SPAM' : 'NOT SPAM';
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      width: 320, height: 100,
+      transform: `translate(-50%, -50%)`,
+      opacity: cardOp,
+      background: COLORS.paper,
+      border: `1px solid ${COLORS.rule}`,
+      borderRadius: 6,
+      boxShadow: '0 6px 18px rgba(40,30,15,0.10)',
+      padding: '12px 16px',
+      display: 'flex', flexDirection: 'column', gap: 4,
+      fontFamily: FONTS.sans,
+    }}>
+      <div style={{
+        fontSize: 14, fontWeight: 600, color: COLORS.ink,
+        letterSpacing: '-0.01em',
+        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>
+        {subject}
+      </div>
+      <div style={{
+        fontSize: 12, color: COLORS.inkSoft, lineHeight: 1.35,
+        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>
+        {text}
+      </div>
+      {/* Predicted label slides in from right */}
+      <div style={{
+        position: 'absolute',
+        right: 14, top: '50%',
+        transform: `translateY(-50%) translateX(${(1 - labelOp) * 20}px)`,
+        opacity: labelOp,
+        fontSize: 10, fontWeight: 700, letterSpacing: '0.12em',
+        padding: '5px 10px',
+        background: labelColor,
+        color: COLORS.paper,
+        borderRadius: 2,
+      }}>
+        {labelText}
+      </div>
+    </div>
+  );
+}
+
+function StageLabel({ x, y, t, appear, text }) {
+  const op = clamp((t - appear) / 0.5, 0, 1);
+  return (
+    <div style={{
+      position: 'absolute',
+      left: x, top: y,
+      transform: `translate(-50%, 0) translateY(${(1 - op) * 6}px)`,
+      opacity: op,
+      fontFamily: FONTS.mono,
+      fontSize: 13, letterSpacing: '0.22em',
+      color: COLORS.inkMuted,
+      fontWeight: 600,
+      textTransform: 'uppercase',
+      textAlign: 'center',
+    }}>
+      {text}
+    </div>
+  );
+}
+
+function MLCaption({ t, duration }) {
+  const caps = [
+    { text: 'Show the model thousands of emails — each labeled spam or not spam.', start: 0.6, end: 4.5 },
+    { text: 'It finds patterns no human could write down by hand.',                  start: 4.6, end: 7.6 },
+    { text: 'Now it can label new emails on its own — even ones it has never seen.', start: 7.7, end: duration },
+  ];
+  return (
+    <>
+      {caps.map((c, i) => {
+        const fadeIn = clamp((t - c.start) / 0.4, 0, 1);
+        const fadeOut = 1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1);
+        const op = Easing.easeOutCubic(fadeIn) * fadeOut;
+        if (op <= 0.001) return null;
+        return (
+          <div key={i} style={{
+            position: 'absolute',
+            left: '50%', bottom: 50,
+            transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
+            opacity: op,
+            fontFamily: FONTS.sans,
+            fontSize: 22, fontWeight: 500,
+            color: COLORS.inkSoft,
+            letterSpacing: '-0.01em',
+            textAlign: 'center',
+            maxWidth: 1100,
+          }}>
+            {c.text}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+Object.assign(window, { SceneML });
+// Scene 6: Bridge between spam example and machine failure example. 30 - 33s.
+// "It's not just spam."
+
+function SceneBridge({ start = 30, end = 33 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
+        const exit  = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
+        const op = enter * (1 - exit);
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: op,
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 14, letterSpacing: '0.32em',
+                color: COLORS.inkMuted,
+                textTransform: 'uppercase',
+                marginBottom: 28,
+                opacity: clamp(localTime / 0.6, 0, 1),
+              }}>
+                Another example
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 96,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.05,
+                transform: `scale(${1 + localTime * 0.006})`,
+              }}>
+                When will this machine
+                <br/>
+                <em style={{ fontStyle: 'italic', color: COLORS.accent }}>
+                  break down?
+                </em>
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+Object.assign(window, { SceneBridge });
+// Scene 7: Predictive maintenance example. 33 - 48s.
+// Show a factory machine with live sensor readings.
+// Phase A (33-39s): Rule-based -- if temp>80 OR vibration>5: alert. Misses subtle patterns.
+// Phase B (39-48s): ML learns from history: a chart of past sensor logs labeled
+//   FAILED/OK; the model learns the multi-variable boundary; correctly predicts
+//   the next failure where rules missed it.
+
+function SceneMachine({ start = 33, end = 48 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const t = localTime;
+        const fadeIn  = Easing.easeOutCubic(clamp(t / 0.5, 0, 1));
+        const fadeOut = 1 - clamp((t - (duration - 0.5)) / 0.5, 0, 1);
+        const opacity = fadeIn * fadeOut;
+
+        // Phase split: rule-based (0-7.5) vs ML (8-end)
+        // Rules section opacity
+        const rulesOp = clamp((t - 0.3) / 0.5, 0, 1) * (1 - clamp((t - 7.5) / 0.6, 0, 1));
+        // ML section opacity
+        const mlOp    = clamp((t - 7.9) / 0.6, 0, 1);
+
+        const headerOp = clamp(t / 0.5, 0, 1);
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg, opacity,
+            fontFamily: FONTS.sans,
+          }}>
+            {/* Header */}
+            <div style={{
+              position: 'absolute',
+              top: 80, left: 120,
+              opacity: headerOp,
+              transform: `translateY(${(1 - headerOp) * 8}px)`,
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 14, letterSpacing: '0.28em',
+                color: COLORS.accent,
+                textTransform: 'uppercase',
+                marginBottom: 14,
+                fontWeight: 600,
+              }}>
+                Predictive maintenance
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 64,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.025em',
+                lineHeight: 1.0,
+              }}>
+                {t < 7.5 ? (
+                  <>Sensors say <em style={{ fontStyle: 'italic', color: COLORS.spam }}>everything's fine</em>… until it isn't.</>
+                ) : (
+                  <>Let the model learn from <em style={{ fontStyle: 'italic', color: COLORS.accent }}>thousands</em> of past runs.</>
+                )}
+              </div>
+            </div>
+
+            {/* Rule-based phase */}
+            {rulesOp > 0.01 && <RulePhase t={t} op={rulesOp} />}
+
+            {/* ML phase */}
+            {mlOp > 0.01 && <MLPhase t={t} op={mlOp} />}
+
+            <MachineCaption t={t} duration={duration} />
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+// ── Rule-based phase ─────────────────────────────────────────────────────────
+// Left: stylized industrial machine with 4 live sensor gauges.
+// Right: simple rule code. The machine fails despite all sensors looking "ok".
+
+function RulePhase({ t, op }) {
+  // Gauge values evolve over rule phase (0-6s):
+  //   t=0.5 — boot up, all green, normal
+  //   t=2.5 — slow creep, still under thresholds
+  //   t=4.5 — failure happens, but no single threshold tripped
+  //   t=5.0 — machine "breaks" (red flash, but rules didn't fire)
+  const phase = clamp((t - 0.5) / 4.5, 0, 1); // 0..1 over rule window
+
+  // Sensors: temp (°C), vibration (mm/s), pressure (psi), runtime (hrs)
+  // Each has thresholds; values stay BELOW thresholds individually.
+  const temp      = 62 + phase * 14;        // 62 -> 76  (threshold 80)
+  const vibration = 2.4 + phase * 2.1;      // 2.4 -> 4.5 (threshold 5.0)
+  const pressure  = 92 + phase * 5;         // 92 -> 97  (threshold 110)
+  const runtime   = 4120 + phase * 280;     // 4120 -> 4400 (threshold 5000)
+
+  const failed = t > 4.5;
+  const failFlash = clamp((t - 4.5) / 0.2, 0, 1) * (1 - clamp((t - 5.5) / 0.5, 0, 1));
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      opacity: op,
+    }}>
+      {/* Machine illustration card */}
+      <div style={{
+        position: 'absolute',
+        left: 120, top: 320,
+        width: 720, height: 560,
+        background: COLORS.paper,
+        border: `1px solid ${COLORS.rule}`,
+        borderRadius: 10,
+        boxShadow: '0 18px 48px rgba(40,30,15,0.10)',
+        padding: 32,
+        display: 'flex', flexDirection: 'column', gap: 22,
+      }}>
+        {/* Card header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          paddingBottom: 16,
+          borderBottom: `1px solid ${COLORS.rule}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <StatusDot failed={failed} flash={failFlash} />
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+                Press M-204 · Line 3
+              </div>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+              }}>
+                LIVE · TELEMETRY
+              </div>
+            </div>
+          </div>
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: 12, fontWeight: 600,
+            color: failed ? COLORS.spam : COLORS.ham,
+            letterSpacing: '0.14em',
+          }}>
+            {failed ? '✕ OFFLINE' : '● RUNNING'}
+          </div>
+        </div>
+
+        {/* Machine schematic */}
+        <MachineSchematic failed={failed} flash={failFlash} t={t} />
+
+        {/* Sensor gauges */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <Gauge label="Temperature"  value={temp}      unit="°C"   threshold={80}   />
+          <Gauge label="Vibration"    value={vibration} unit="mm/s" threshold={5.0}  digits={1} />
+          <Gauge label="Pressure"     value={pressure}  unit="psi"  threshold={110}  />
+          <Gauge label="Runtime"      value={runtime}   unit="hrs"  threshold={5000} digits={0} />
+        </div>
+      </div>
+
+      {/* Rule code on the right */}
+      <RuleCode t={t} failed={failed} />
+
+      {/* Big "FAILED · NO ALERT" badge */}
+      {failFlash > 0 && (
+        <div style={{
+          position: 'absolute',
+          left: 120 + 720 - 60, top: 290,
+          transform: `scale(${0.7 + failFlash * 0.4}) rotate(-5deg)`,
+          opacity: failFlash,
+          background: COLORS.spam,
+          color: COLORS.paper,
+          fontFamily: FONTS.mono,
+          fontSize: 14, fontWeight: 700, letterSpacing: '0.12em',
+          padding: '12px 18px',
+          borderRadius: 4,
+          boxShadow: '0 14px 32px rgba(180,60,20,0.36)',
+        }}>
+          ✕ FAILED · NO ALERT FIRED
+        </div>
+      )}
+
+      {/* "Why did it fail?" explainer card -- appears after the failure */}
+      <WhyItFailed t={t} />
+    </div>
+  );
+}
+
+function WhyItFailed({ t }) {
+  // Appears at t≈5.0 (just after failure), holds until end of rule phase (~7.4).
+  const op = clamp((t - 5.0) / 0.5, 0, 1) * (1 - clamp((t - 7.3) / 0.4, 0, 1));
+  if (op <= 0.001) return null;
+
+  const factors = [
+    { label: 'Vibration trending up',  detail: '+0.4 mm/s over 6 hours' },
+    { label: 'Oil aged past 35 days',  detail: 'lubrication thinning' },
+    { label: 'High load + warm room',  detail: '78% load, 31 °C ambient' },
+  ];
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: 920, top: 760,
+      width: 880,
+      opacity: op,
+      transform: `translateY(${(1 - op) * 12}px)`,
+      background: COLORS.paper,
+      border: `2px solid ${COLORS.spam}`,
+      borderRadius: 10,
+      boxShadow: '0 18px 48px rgba(180,60,20,0.16)',
+      padding: '22px 26px',
+      display: 'flex', flexDirection: 'column', gap: 14,
+      fontFamily: FONTS.sans,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+      }}>
+        <div style={{
+          fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.22em',
+          color: COLORS.spam, textTransform: 'uppercase', fontWeight: 700,
+        }}>
+          So why did it fail?
+        </div>
+        <div style={{
+          fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMuted,
+          letterSpacing: '0.1em',
+        }}>
+          POST-MORTEM
+        </div>
+      </div>
+      <div style={{
+        fontFamily: FONTS.serif, fontSize: 24, fontWeight: 400,
+        color: COLORS.ink, letterSpacing: '-0.015em', lineHeight: 1.25,
+      }}>
+        Three small things, <em style={{ fontStyle: 'italic', color: COLORS.spam }}>at the same time</em>.
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        {factors.map((f, i) => (
+          <div key={i} style={{
+            padding: '10px 12px',
+            background: COLORS.bgAlt,
+            borderRadius: 5,
+            borderLeft: `3px solid ${COLORS.spam}`,
+            opacity: clamp(op * 1.2 - i * 0.08, 0, 1),
+          }}>
+            <div style={{
+              fontSize: 13, fontWeight: 600, color: COLORS.ink,
+              letterSpacing: '-0.005em', marginBottom: 3,
+            }}>
+              {f.label}
+            </div>
+            <div style={{
+              fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkSoft,
+            }}>
+              {f.detail}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{
+        fontSize: 13, color: COLORS.inkSoft, fontStyle: 'italic', lineHeight: 1.4,
+      }}>
+        No single sensor crossed a line. Their <span style={{ color: COLORS.spam, fontStyle: 'normal', fontWeight: 600 }}>combination</span> did.
+      </div>
+    </div>
+  );
+}
+
+function StatusDot({ failed, flash }) {
+  const color = failed ? COLORS.spam : COLORS.ham;
+  return (
+    <div style={{
+      width: 14, height: 14, borderRadius: 7,
+      background: color,
+      boxShadow: `0 0 0 ${4 + flash * 6}px ${color}33`,
+    }}/>
+  );
+}
+
+function MachineSchematic({ failed, flash, t }) {
+  // Subtle vibration: sin wave with phase
+  const wobble = failed ? (1 - flash) * 2 : Math.sin(t * 8) * 0.6;
+  return (
+    <div style={{
+      flex: 1,
+      background: failed
+        ? `linear-gradient(${COLORS.bgAlt}, ${COLORS.bgAlt})`
+        : `linear-gradient(${COLORS.bgAlt}, ${COLORS.bg})`,
+      borderRadius: 8,
+      position: 'relative',
+      overflow: 'hidden',
+      minHeight: 180,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transform: `translateX(${wobble}px)`,
+      transition: 'transform 60ms linear',
+    }}>
+      {/* Stylized machine: a rectangular body, two gears, a piston */}
+      <svg width="380" height="170" viewBox="0 0 380 170" style={{ display: 'block' }}>
+        {/* Base */}
+        <rect x="20" y="120" width="340" height="14" fill={COLORS.inkMuted} opacity="0.4" rx="2"/>
+        {/* Body */}
+        <rect x="60" y="40" width="240" height="80" rx="6"
+              fill={COLORS.paper}
+              stroke={failed ? COLORS.spam : COLORS.ink}
+              strokeWidth="2"/>
+        {/* Steam/smoke when failed */}
+        {failed && (
+          <>
+            <circle cx={250} cy={30 - flash * 14} r={8 + flash * 4} fill={COLORS.inkMuted} opacity={0.4 * (1 - flash * 0.5)}/>
+            <circle cx={262} cy={20 - flash * 18} r={6 + flash * 3} fill={COLORS.inkMuted} opacity={0.3 * (1 - flash * 0.5)}/>
+            <circle cx={244} cy={14 - flash * 22} r={5 + flash * 2} fill={COLORS.inkMuted} opacity={0.25 * (1 - flash * 0.5)}/>
+          </>
+        )}
+        {/* Gears */}
+        <Gear cx={110} cy={80} r={22} t={t} failed={failed}/>
+        <Gear cx={170} cy={80} r={16} t={t * -1.4} failed={failed}/>
+        {/* Piston */}
+        <rect x="220" y={70 + Math.sin(t * 6) * 4} width="60" height="20"
+              fill={failed ? COLORS.spam : COLORS.accent}
+              opacity={failed ? 0.5 : 0.8}/>
+        {/* Exhaust pipe */}
+        <rect x={240} y={28} width={16} height={12} fill={COLORS.inkMuted} opacity="0.5"/>
+      </svg>
+    </div>
+  );
+}
+
+function Gear({ cx, cy, r, t, failed }) {
+  const angle = (t * 60) % 360; // degrees
+  const teeth = 8;
+  const teethArr = Array.from({ length: teeth });
+  return (
+    <g transform={`rotate(${angle} ${cx} ${cy})`}>
+      <circle cx={cx} cy={cy} r={r} fill="none"
+              stroke={failed ? COLORS.spam : COLORS.ink}
+              strokeWidth="2"/>
+      {teethArr.map((_, i) => {
+        const a = (i / teeth) * Math.PI * 2;
+        const x1 = cx + Math.cos(a) * r;
+        const y1 = cy + Math.sin(a) * r;
+        const x2 = cx + Math.cos(a) * (r + 5);
+        const y2 = cy + Math.sin(a) * (r + 5);
+        return (
+          <line key={i}
+                x1={x1} y1={y1} x2={x2} y2={y2}
+                stroke={failed ? COLORS.spam : COLORS.ink}
+                strokeWidth="2"/>
+        );
+      })}
+      <circle cx={cx} cy={cy} r={4} fill={failed ? COLORS.spam : COLORS.ink}/>
+    </g>
+  );
+}
+
+function Gauge({ label, value, unit, threshold, digits = 1 }) {
+  const pct = clamp(value / threshold, 0, 1);
+  const isHigh = pct > 0.85;
+  const fmtVal = digits === 0
+    ? Math.round(value).toLocaleString()
+    : value.toFixed(digits);
+  return (
+    <div style={{
+      background: COLORS.bgAlt,
+      border: `1px solid ${COLORS.rule}`,
+      borderRadius: 6,
+      padding: '10px 14px',
+      display: 'flex', flexDirection: 'column', gap: 6,
+    }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+      }}>
+        <div style={{
+          fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+          color: COLORS.inkMuted, textTransform: 'uppercase',
+        }}>
+          {label}
+        </div>
+        <div style={{
+          fontFamily: FONTS.mono,
+          fontSize: 11, color: COLORS.inkMuted,
+        }}>
+          max {threshold}{unit}
+        </div>
+      </div>
+      <div style={{
+        fontFamily: FONTS.mono,
+        fontSize: 22, fontWeight: 600,
+        color: isHigh ? 'oklch(60% 0.13 60)' : COLORS.ink,
+        letterSpacing: '-0.01em',
+      }}>
+        {fmtVal} <span style={{ fontSize: 13, color: COLORS.inkMuted, fontWeight: 500 }}>{unit}</span>
+      </div>
+      {/* Bar */}
+      <div style={{ height: 4, background: COLORS.rule, borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{
+          width: `${pct * 100}%`, height: '100%',
+          background: isHigh ? 'oklch(60% 0.13 60)' : COLORS.ham,
+          transition: 'width 100ms linear',
+        }}/>
+      </div>
+    </div>
+  );
+}
+
+function RuleCode({ t, failed }) {
+  // Lines reveal at 1.0, 1.5, 2.0, 2.5, 3.0
+  const reveal = [1.0, 1.5, 2.0, 2.5, 3.0].map(x => clamp((t - x) / 0.3, 0, 1));
+  return (
+    <div style={{
+      position: 'absolute',
+      left: 920, top: 320,
+      width: 880,
+      background: '#1a1815',
+      borderRadius: 8,
+      overflow: 'hidden',
+      boxShadow: '0 16px 40px rgba(20,15,5,0.30)',
+      fontFamily: FONTS.mono,
+    }}>
+      <div style={{
+        height: 32, background: '#262320',
+        borderBottom: '1px solid #33302b',
+        display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px',
+      }}>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{
+          marginLeft: 14,
+          color: '#8a8478', fontSize: 12, letterSpacing: '0.08em',
+        }}>
+          maintenance_rules.py
+        </div>
+      </div>
+      <div style={{ padding: '20px 24px' }}>
+        <RLine op={reveal[0]} color="#8a8478"># Hand-tuned thresholds</RLine>
+        <RLine op={reveal[1]} color="#e6dfce">
+          <span style={{ color: '#c79e6b' }}>def</span>{' '}
+          <span style={{ color: '#9bbf80' }}>will_fail</span>(s):
+        </RLine>
+        <RLine op={reveal[2]} indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          s.temp <span style={{ color: '#c79e6b' }}>{'>'}</span> <span style={{ color: '#d68b6b' }}>80</span>:{' '}
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </RLine>
+        <RLine op={reveal[2]} indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          s.vibration <span style={{ color: '#c79e6b' }}>{'>'}</span> <span style={{ color: '#d68b6b' }}>5.0</span>:{' '}
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </RLine>
+        <RLine op={reveal[3]} indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          s.pressure <span style={{ color: '#c79e6b' }}>{'>'}</span> <span style={{ color: '#d68b6b' }}>110</span>:{' '}
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </RLine>
+        <RLine op={reveal[3]} indent={1}>
+          <span style={{ color: '#c79e6b' }}>if</span>{' '}
+          s.runtime <span style={{ color: '#c79e6b' }}>{'>'}</span> <span style={{ color: '#d68b6b' }}>5000</span>:{' '}
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>True</span>
+        </RLine>
+        <RLine op={reveal[4]} indent={1}>
+          <span style={{ color: '#c79e6b' }}>return</span>{' '}
+          <span style={{ color: '#9bbf80' }}>False</span>
+        </RLine>
+
+        {/* Output of will_fail() printed at bottom */}
+        <div style={{
+          marginTop: 24,
+          paddingTop: 16,
+          borderTop: '1px dashed #33302b',
+          opacity: clamp((t - 3.6) / 0.4, 0, 1),
+          fontSize: 14,
+        }}>
+          <div style={{ color: '#8a8478', marginBottom: 6 }}>{'>>>'} will_fail(sensors)</div>
+          <div style={{
+            color: failed ? '#9bbf80' : '#9bbf80',
+            fontSize: 22, fontWeight: 700,
+          }}>
+            False
+          </div>
+          <div style={{
+            color: COLORS.spam,
+            opacity: clamp((t - 4.6) / 0.3, 0, 1),
+            marginTop: 12,
+            fontSize: 13,
+          }}>
+            # but the machine just failed.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RLine({ children, op = 1, color = '#e6dfce', indent = 0 }) {
+  return (
+    <div style={{
+      fontSize: 16, color, opacity: op,
+      paddingLeft: indent * 24,
+      lineHeight: 1.7, whiteSpace: 'pre',
+      transform: `translateY(${(1 - op) * 4}px)`,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ── ML phase ─────────────────────────────────────────────────────────────────
+// A scatter plot of past runs (temp vs vibration). Failures (spam color) and
+// OK runs (ham color) are interleaved — no single threshold separates them.
+// The model learns a curved decision boundary. Then a NEW point is added in
+// the danger zone and the model correctly predicts FAILURE.
+
+function MLPhase({ t, op }) {
+  // t inside scene; ML phase localT starts at scene t = 7.9
+  const localT = t - 7.9;
+
+  // Phase A: scatter dots appear (0 - 2.5s)
+  // Phase B: decision boundary draws (2.5 - 5s)
+  // Phase C: new point appears + classified (5.5 - 8.5s)
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      opacity: op,
+    }}>
+      {/* Scatter chart card */}
+      <ScatterChart localT={localT} />
+
+      {/* Right column: training examples + prediction */}
+      <PredictionPanel localT={localT} />
+    </div>
+  );
+}
+
+function ScatterChart({ localT }) {
+  // Past runs: each is { temp, vib, label }
+  const runs = React.useMemo(() => {
+    const ok = [];
+    const fail = [];
+    // OK cluster: low-mid temp & vib
+    for (let i = 0; i < 22; i++) {
+      ok.push({
+        x: 60 + Math.random() * 28,        // temp 60-88
+        y: 1.5 + Math.random() * 3.0,      // vib 1.5-4.5
+      });
+    }
+    // FAIL cluster: high temp + vib together, BUT also some at moderate temp
+    // & high vib, or moderate vib & high temp -- the boundary is a curve.
+    for (let i = 0; i < 14; i++) {
+      const a = Math.random();
+      if (a < 0.5) {
+        fail.push({
+          x: 75 + Math.random() * 20,      // 75-95
+          y: 4.0 + Math.random() * 3.0,    // 4-7
+        });
+      } else if (a < 0.8) {
+        fail.push({
+          x: 65 + Math.random() * 12,
+          y: 5.2 + Math.random() * 1.8,
+        });
+      } else {
+        fail.push({
+          x: 82 + Math.random() * 10,
+          y: 3.5 + Math.random() * 1.0,
+        });
+      }
+    }
+    return { ok, fail };
+  }, []);
+
+  // Plot dimensions
+  const W = 640, H = 480;
+  const padL = 60, padR = 30, padT = 30, padB = 50;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const xMin = 55, xMax = 100;
+  const yMin = 1, yMax = 8;
+  const sx = (v) => padL + ((v - xMin) / (xMax - xMin)) * chartW;
+  const sy = (v) => padT + (1 - (v - yMin) / (yMax - yMin)) * chartH;
+
+  // Decision boundary: a curve in (x=temp, y=vib) space. Failures roughly
+  // on the upper-right side of: y > 8 - 0.07*x   (i.e. vib + 0.07*temp > 8)
+  // Draw the curve over [xMin, xMax].
+  const boundaryPoints = [];
+  for (let xv = xMin; xv <= xMax; xv += 1) {
+    const yv = 8 - 0.07 * xv + Math.sin((xv - xMin) * 0.18) * 0.4;
+    boundaryPoints.push([sx(xv), sy(yv)]);
+  }
+  const boundaryPath = 'M ' + boundaryPoints.map(p => p.join(' ')).join(' L ');
+
+  // Phase progressions (localT = ML scene t)
+  const dotsAppear = Easing.easeOutCubic(clamp(localT / 2.0, 0, 1));
+  const boundaryDraw = clamp((localT - 2.5) / 2.0, 0, 1);
+  const newPointAppear = Easing.easeOutBack(clamp((localT - 5.5) / 0.5, 0, 1));
+  const newPointClassify = clamp((localT - 6.4) / 0.4, 0, 1);
+
+  // The new test point: at temp=78, vib=4.6 — moderate on each, BUT crosses
+  // the curved boundary => model predicts FAIL.
+  const newPt = { x: 78, y: 4.6 };
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: 120, top: 320,
+      width: 720,
+      background: COLORS.paper,
+      border: `1px solid ${COLORS.rule}`,
+      borderRadius: 10,
+      boxShadow: '0 18px 48px rgba(40,30,15,0.10)',
+      padding: 28,
+    }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+        marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+          Past runs · 12 months
+        </div>
+        <div style={{
+          fontFamily: FONTS.mono,
+          fontSize: 11, letterSpacing: '0.1em',
+          color: COLORS.inkMuted, textTransform: 'uppercase',
+        }}>
+          n = {runs.ok.length + runs.fail.length}
+        </div>
+      </div>
+
+      <svg width={W} height={H} style={{ display: 'block', overflow: 'visible' }}>
+        {/* Axes */}
+        <line x1={padL} y1={padT} x2={padL} y2={padT + chartH} stroke={COLORS.rule} strokeWidth="1.5"/>
+        <line x1={padL} y1={padT + chartH} x2={padL + chartW} y2={padT + chartH} stroke={COLORS.rule} strokeWidth="1.5"/>
+
+        {/* Axis labels */}
+        <text x={padL + chartW / 2} y={H - 8} textAnchor="middle"
+              fill={COLORS.inkMuted}
+              style={{ fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          TEMPERATURE (°C)
+        </text>
+        <text x={16} y={padT + chartH / 2} textAnchor="middle"
+              fill={COLORS.inkMuted}
+              transform={`rotate(-90 16 ${padT + chartH / 2})`}
+              style={{ fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          VIBRATION (mm/s)
+        </text>
+
+        {/* Tick marks */}
+        {[60, 70, 80, 90, 100].map(v => (
+          <g key={`tx${v}`}>
+            <line x1={sx(v)} y1={padT + chartH} x2={sx(v)} y2={padT + chartH + 4}
+                  stroke={COLORS.inkMuted} strokeWidth="1"/>
+            <text x={sx(v)} y={padT + chartH + 18} textAnchor="middle"
+                  fill={COLORS.inkMuted}
+                  style={{ fontFamily: FONTS.mono, fontSize: 11 }}>{v}</text>
+          </g>
+        ))}
+        {[2, 4, 6, 8].map(v => (
+          <g key={`ty${v}`}>
+            <line x1={padL - 4} y1={sy(v)} x2={padL} y2={sy(v)}
+                  stroke={COLORS.inkMuted} strokeWidth="1"/>
+            <text x={padL - 8} y={sy(v) + 4} textAnchor="end"
+                  fill={COLORS.inkMuted}
+                  style={{ fontFamily: FONTS.mono, fontSize: 11 }}>{v}</text>
+          </g>
+        ))}
+
+        {/* Decision boundary — drawn progressively */}
+        <path
+          d={boundaryPath}
+          stroke={COLORS.accent}
+          strokeWidth="3"
+          fill="none"
+          strokeDasharray={boundaryPoints.length * 6}
+          strokeDashoffset={(1 - boundaryDraw) * boundaryPoints.length * 6}
+          opacity={boundaryDraw}
+        />
+        {/* Boundary fill on the FAIL side */}
+        {boundaryDraw > 0.95 && (
+          <path
+            d={boundaryPath + ` L ${sx(xMax)} ${padT} L ${padL} ${padT} Z`}
+            fill={COLORS.spam}
+            opacity={0.06 * clamp((localT - 4.4) / 0.4, 0, 1)}
+          />
+        )}
+
+        {/* OK dots */}
+        {runs.ok.map((r, i) => {
+          const op = clamp(dotsAppear * 1.2 - i * 0.02, 0, 1);
+          return (
+            <circle key={`ok${i}`}
+                    cx={sx(r.x)} cy={sy(r.y)} r={6}
+                    fill={COLORS.ham} opacity={op * 0.85}/>
+          );
+        })}
+        {/* FAIL dots */}
+        {runs.fail.map((r, i) => {
+          const op = clamp(dotsAppear * 1.2 - i * 0.02, 0, 1);
+          return (
+            <g key={`f${i}`} opacity={op}>
+              <line x1={sx(r.x) - 5} y1={sy(r.y) - 5} x2={sx(r.x) + 5} y2={sy(r.y) + 5}
+                    stroke={COLORS.spam} strokeWidth="2.5"/>
+              <line x1={sx(r.x) - 5} y1={sy(r.y) + 5} x2={sx(r.x) + 5} y2={sy(r.y) - 5}
+                    stroke={COLORS.spam} strokeWidth="2.5"/>
+            </g>
+          );
+        })}
+
+        {/* New test point */}
+        {newPointAppear > 0.01 && (
+          <g opacity={newPointAppear}>
+            <circle cx={sx(newPt.x)} cy={sy(newPt.y)} r={10 + (1 - newPointClassify) * 8}
+                    fill="none"
+                    stroke={newPointClassify > 0 ? COLORS.spam : COLORS.ink}
+                    strokeWidth="2"
+                    opacity={1 - newPointClassify * 0.4}/>
+            <circle cx={sx(newPt.x)} cy={sy(newPt.y)} r={7}
+                    fill={newPointClassify > 0.5 ? COLORS.spam : COLORS.ink}/>
+          </g>
+        )}
+      </svg>
+
+      {/* Legend */}
+      <div style={{
+        display: 'flex', gap: 24, marginTop: 4,
+        fontFamily: FONTS.mono, fontSize: 12, color: COLORS.inkSoft,
+        letterSpacing: '0.06em',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 12, height: 12, borderRadius: 6, background: COLORS.ham }}/>
+          OK · ran fine
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ position: 'relative', width: 12, height: 12 }}>
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: `linear-gradient(45deg, transparent 45%, ${COLORS.spam} 45%, ${COLORS.spam} 55%, transparent 55%),
+                          linear-gradient(-45deg, transparent 45%, ${COLORS.spam} 45%, ${COLORS.spam} 55%, transparent 55%)`,
+            }}/>
+          </div>
+          FAILED
+        </div>
+        <div style={{
+          marginLeft: 'auto',
+          display: 'flex', alignItems: 'center', gap: 8,
+          opacity: clamp((localT - 2.5) / 0.5, 0, 1),
+        }}>
+          <div style={{ width: 18, height: 3, background: COLORS.accent }}/>
+          MODEL'S DECISION BOUNDARY
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PredictionPanel({ localT }) {
+  // Right side: list a few sensor inputs of the new test, then the model's
+  // verdict ("WILL FAIL · 94%").
+  const newRowOp = clamp((localT - 5.4) / 0.5, 0, 1);
+  const verdictOp = clamp((localT - 6.6) / 0.5, 0, 1);
+
+  const features = [
+    { label: 'Temperature',  v: '78 °C' },
+    { label: 'Vibration',    v: '4.6 mm/s' },
+    { label: 'Pressure',     v: '102 psi' },
+    { label: 'Runtime',      v: '4,820 hrs' },
+    { label: 'Oil age',      v: '38 days' },
+    { label: 'Last service', v: '17 days' },
+    { label: 'Ambient',      v: '31 °C' },
+    { label: 'Load',         v: '78 %' },
+  ];
+
+  // Confidence ramps from 0 to 0.94
+  const conf = clamp((localT - 6.8) / 1.4, 0, 0.94);
+
+  return (
+    <div style={{
+      position: 'absolute',
+      left: 920, top: 320,
+      width: 880,
+      display: 'flex', flexDirection: 'column', gap: 18,
+    }}>
+      {/* New incoming reading */}
+      <div style={{
+        background: COLORS.paper,
+        border: `1px solid ${COLORS.rule}`,
+        borderRadius: 10,
+        boxShadow: '0 12px 32px rgba(40,30,15,0.08)',
+        padding: 24,
+        opacity: newRowOp,
+        transform: `translateY(${(1 - newRowOp) * 12}px)`,
+      }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+          marginBottom: 14,
+        }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+            New reading · M-204 · this morning
+          </div>
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+          }}>
+            8 FEATURES
+          </div>
+        </div>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr',
+          gap: 10,
+        }}>
+          {features.map((f, i) => (
+            <div key={i} style={{
+              padding: '10px 12px',
+              background: COLORS.bgAlt,
+              borderRadius: 5,
+              opacity: clamp(newRowOp * 1.2 - i * 0.04, 0, 1),
+            }}>
+              <div style={{
+                fontFamily: FONTS.mono, fontSize: 10, letterSpacing: '0.1em',
+                color: COLORS.inkMuted, textTransform: 'uppercase',
+                marginBottom: 4,
+              }}>
+                {f.label}
+              </div>
+              <div style={{
+                fontFamily: FONTS.mono, fontSize: 16, fontWeight: 600,
+                color: COLORS.ink,
+              }}>
+                {f.v}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{
+          marginTop: 14,
+          fontSize: 13, color: COLORS.inkSoft, fontStyle: 'italic',
+        }}>
+          No single threshold is tripped. Old rules say <span style={{ color: COLORS.ham, fontStyle: 'normal', fontWeight: 600 }}>OK</span>.
+        </div>
+      </div>
+
+      {/* Model verdict */}
+      <div style={{
+        background: COLORS.ink,
+        borderRadius: 10,
+        boxShadow: '0 18px 48px rgba(20,15,5,0.30)',
+        padding: 28,
+        opacity: verdictOp,
+        transform: `translateY(${(1 - verdictOp) * 16}px)`,
+        color: COLORS.bg,
+      }}>
+        <div style={{
+          fontFamily: FONTS.mono,
+          fontSize: 12, letterSpacing: '0.22em',
+          color: 'oklch(72% 0.10 200)',
+          textTransform: 'uppercase',
+          marginBottom: 12,
+          fontWeight: 600,
+        }}>
+          Trained model · Verdict
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', gap: 18,
+        }}>
+          <div style={{
+            fontFamily: FONTS.serif,
+            fontSize: 56, fontWeight: 400,
+            color: COLORS.spam,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.0,
+          }}>
+            Will fail soon.
+          </div>
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: 32, fontWeight: 700,
+            color: COLORS.bg,
+            fontVariantNumeric: 'tabular-nums',
+          }}>
+            {(conf * 100).toFixed(0)}%
+          </div>
+        </div>
+        <div style={{
+          marginTop: 14,
+          height: 6, background: 'rgba(255,255,255,0.12)', borderRadius: 3, overflow: 'hidden',
+        }}>
+          <div style={{
+            width: `${conf * 100}%`, height: '100%',
+            background: COLORS.spam,
+            transition: 'width 80ms linear',
+          }}/>
+        </div>
+        <div style={{
+          marginTop: 14,
+          fontSize: 14, color: 'rgba(246,244,239,0.7)', lineHeight: 1.5,
+        }}>
+          Schedule maintenance in next 48 h. Top drivers:
+          <span style={{ color: COLORS.bg, fontWeight: 600 }}> vibration trend</span>,
+          <span style={{ color: COLORS.bg, fontWeight: 600 }}> oil age</span>,
+          <span style={{ color: COLORS.bg, fontWeight: 600 }}> runtime since last service</span>.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MachineCaption({ t, duration }) {
+  const caps = [
+    { text: 'Engineers tune thresholds for each sensor — temperature, vibration, pressure, runtime.', start: 1.2, end: 4.2 },
+    { text: "Sensors stay just below every threshold — and the machine fails anyway.",                start: 4.4, end: 5.0 },
+    { text: 'It failed because three small things happened together — no rule could catch that.',     start: 5.2, end: 7.4 },
+    { text: 'ML reads thousands of past runs and learns what failure actually looks like.',           start: 8.5, end: 12.5 },
+    { text: 'Subtle pattern across many features → confident, early warning.',                         start: 12.7, end: duration },
+  ];
+  return (
+    <>
+      {caps.map((c, i) => {
+        const fadeIn = clamp((t - c.start) / 0.4, 0, 1);
+        const fadeOut = 1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1);
+        const op = Easing.easeOutCubic(fadeIn) * fadeOut;
+        if (op <= 0.001) return null;
+        return (
+          <div key={i} style={{
+            position: 'absolute',
+            left: '50%', bottom: 40,
+            transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
+            opacity: op,
+            fontFamily: FONTS.sans,
+            fontSize: 22, fontWeight: 500,
+            color: COLORS.inkSoft,
+            letterSpacing: '-0.01em',
+            textAlign: 'center',
+            maxWidth: 1400,
+          }}>
+            {c.text}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+Object.assign(window, { SceneMachine });
+// Scene 5: Closing card. 30 - 34s
+// "Learn from data, not rules."
+
+  function SceneOutro({ start = 48, end = 52 }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.6, 0, 1));
+        const exit  = clamp((localTime - (duration - 0.6)) / 0.6, 0, 1);
+        const op = enter * (1 - exit);
+        const scale = 1 + localTime * 0.008;
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: op,
+          }}>
+            <div style={{
+              textAlign: 'center',
+              transform: `scale(${scale})`,
+            }}>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 96,
+                fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.05,
+              }}>
+                Learn from <em style={{ fontStyle: 'italic', color: COLORS.accent }}>data</em>,
+                <br/>
+                not from rules.
+              </div>
+              <div style={{
+                marginTop: 48,
+                fontFamily: FONTS.mono,
+                fontSize: 14, letterSpacing: '0.32em',
+                color: COLORS.inkMuted,
+                textTransform: 'uppercase',
+                opacity: clamp((localTime - 0.8) / 0.6, 0, 1),
+              }}>
+                That's machine learning.
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+Object.assign(window, { SceneOutro });
+
+const TABS = [
+  { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 32 },
+  { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 24 },
+];
+
+function SpamStage() {
+  return (
+    <Stage width={1920} height={1080} duration={32} background={COLORS.bg} persistKey="why-ml-spam">
+      <SceneTitle      start={0}  end={3} />
+      <SceneRules      start={3}  end={15} />
+      <SceneTransition start={15} end={18} />
+      <SceneML         start={18} end={30} />
+      <SpamOutro       start={30} end={32} />
+    </Stage>
+  );
+}
+
+function MachineStage() {
+  return (
+    <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine">
+      <MachineIntro start={0}  end={3} />
+      <SceneMachine start={3}  end={22} />
+      <MachineOutro start={22} end={24} />
+    </Stage>
+  );
+}
+
+function SpamOutro({ start, end }) {
+  return <SceneOutro start={start} end={end} />;
+}
+
+function MachineIntro({ start, end }) {
+  return <SceneBridge start={start} end={end} />;
+}
+function MachineOutro({ start, end }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
+        const exit  = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
+        const op = enter * (1 - exit);
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: op,
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 88, fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.025em', lineHeight: 1.05,
+              }}>
+                Patterns over <em style={{ fontStyle: 'italic', color: COLORS.accent }}>thresholds</em>.
+              </div>
+              <div style={{
+                marginTop: 36,
+                fontFamily: FONTS.mono,
+                fontSize: 13, letterSpacing: '0.32em',
+                color: COLORS.inkMuted, textTransform: 'uppercase',
+              }}>
+                That's machine learning.
+              </div>
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
+}
+
+function App() {
+  const [tab, setTab] = React.useState(() => {
+    try {
+      return localStorage.getItem('why-ml:tab') || 'spam';
+    } catch { return 'spam'; }
+  });
+
+  React.useEffect(() => {
+    try { localStorage.setItem('why-ml:tab', tab); } catch {}
+    const root = document.getElementById('root');
+    if (root) {
+      const labels = { spam: 'Spam filter', machine: 'Machine failure' };
+      root.setAttribute('data-screen-label', `Tab · ${labels[tab]}`);
+    }
+  }, [tab]);
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      display: 'flex', flexDirection: 'column',
+      background: '#0a0a0a',
+    }}>
+      <header style={{
+        flexShrink: 0,
+        padding: '14px 28px',
+        background: '#111110',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        display: 'flex', alignItems: 'center', gap: 28,
+      }}>
+        <div role="tablist" style={{
+          marginLeft: 'auto',
+          display: 'flex', gap: 6,
+          background: 'rgba(255,255,255,0.04)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 10,
+          padding: 4,
+        }}>
+          {TABS.map(t => {
+            const active = t.id === tab;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(t.id)}
+                style={{
+                  appearance: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '10px 18px',
+                  borderRadius: 7,
+                  background: active ? COLORS.bg : 'transparent',
+                  color: active ? COLORS.ink : 'rgba(246,244,239,0.65)',
+                  fontFamily: FONTS.sans,
+                  fontSize: 13, fontWeight: 600, letterSpacing: '-0.005em',
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2,
+                  transition: 'background 160ms, color 160ms',
+                  whiteSpace: 'nowrap',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                  <span style={{
+                    width: 16, height: 16, borderRadius: 4,
+                    background: t.id === 'spam' ? COLORS.spam : COLORS.accent,
+                    opacity: active ? 1 : 0.55,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    color: COLORS.paper, fontFamily: FONTS.mono, fontSize: 9, fontWeight: 700,
+                    flexShrink: 0,
+                  }}>
+                    {t.id === 'spam' ? '✉' : '⚙'}
+                  </span>
+                  {t.label}
+                </span>
+                <span style={{
+                  fontFamily: FONTS.mono, fontSize: 10, fontWeight: 500,
+                  letterSpacing: '0.10em',
+                  color: active ? COLORS.inkMuted : 'rgba(246,244,239,0.40)',
+                  textTransform: 'uppercase',
+                  marginLeft: 24,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {t.subtitle} · {t.duration}s
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </header>
+
+      <main style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+        {tab === 'spam'    && <SpamStage    key="spam" />}
+        {tab === 'machine' && <MachineStage key="machine" />}
+      </main>
+    </div>
+  );
+}
+
+window.__whyMlRoot = ReactDOM.createRoot(document.getElementById('root'));
+window.__whyMlRoot.render(<App />);
+</script>
+</body>
+</html>
