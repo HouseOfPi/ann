@@ -671,8 +671,9 @@ function ScatterChart({ localT }) {
           stroke={COLORS.accent}
           strokeWidth="3"
           fill="none"
-          strokeDasharray={boundaryPoints.length * 6}
-          strokeDashoffset={(1 - boundaryDraw) * boundaryPoints.length * 6}
+          pathLength="1"
+          strokeDasharray="1"
+          strokeDashoffset={1 - boundaryDraw}
           opacity={boundaryDraw}
         />
         {/* Boundary fill on the FAIL side */}

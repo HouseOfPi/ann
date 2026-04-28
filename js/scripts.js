@@ -2028,11 +2028,12 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
-            // Full refresh the iframe source or trigger animation
             if (incoming.id === 'slideMesh' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else if (incoming.id === 'slideWhyML' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else {
                const currentSrc = frame.src;

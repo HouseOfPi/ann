@@ -355,12 +355,7 @@ function Stage({
   persistKey = 'animstage',
   children,
 }) {
-  const [time, setTime] = React.useState(() => {
-    try {
-      const v = parseFloat(localStorage.getItem(persistKey + ':t') || '0');
-      return isFinite(v) ? clamp(v, 0, duration) : 0;
-    } catch { return 0; }
-  });
+  const [time, setTime] = React.useState(0);
   const [playing, setPlaying] = React.useState(autoplay);
   const [hoverTime, setHoverTime] = React.useState(null);
   const [scale, setScale] = React.useState(1);
@@ -370,20 +365,15 @@ function Stage({
   const rafRef = React.useRef(null);
   const lastTsRef = React.useRef(null);
 
-  // Persist playhead
-  React.useEffect(() => {
-    try { localStorage.setItem(persistKey + ':t', String(time)); } catch {}
-  }, [time, persistKey]);
 
   // Auto-scale to fit viewport
   React.useEffect(() => {
     if (!stageRef.current) return;
     const el = stageRef.current;
     const measure = () => {
-      const barH = 44; // playback bar height
       const s = Math.min(
         el.clientWidth / width,
-        (el.clientHeight - barH) / height
+        el.clientHeight / height
       );
       setScale(Math.max(0.05, s));
     };
@@ -443,6 +433,19 @@ function Stage({
     return () => window.removeEventListener('keydown', onKey);
   }, [duration]);
 
+  // Scroll: forward/backward scrub
+  React.useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const onWheel = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY !== 0 ? e.deltaY : -e.deltaX;
+      setTime(t => clamp(t + delta * 0.015, 0, duration));
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [duration]);
+
   const displayTime = hoverTime != null ? hoverTime : time;
 
   const ctxValue = React.useMemo(
@@ -453,21 +456,24 @@ function Stage({
   return (
     <div
       ref={stageRef}
+      onClick={() => setPlaying(p => !p)}
       style={{
         position: 'absolute', inset: 0,
         display: 'flex', flexDirection: 'column',
-        alignItems: 'center',
-        background: '#0a0a0a',
+        background,
         fontFamily: 'Inter, system-ui, sans-serif',
+        overflow: 'hidden',
+        cursor: 'pointer',
       }}
     >
-      {/* Canvas area — vertically centered in remaining space */}
+      {/* Canvas area — contain-scaled, centered, background bleeds to edges */}
       <div style={{
         flex: 1,
         width: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden',
         minHeight: 0,
+        background,
       }}>
         <div
           ref={canvasRef}
@@ -478,7 +484,6 @@ function Stage({
             transform: `scale(${scale})`,
             transformOrigin: 'center',
             flexShrink: 0,
-            boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
             overflow: 'hidden',
           }}
         >
@@ -487,18 +492,6 @@ function Stage({
           </TimelineContext.Provider>
         </div>
       </div>
-
-      {/* Playback bar — stacked below canvas, never overlapping */}
-      <PlaybackBar
-        time={displayTime}
-        actualTime={time}
-        duration={duration}
-        playing={playing}
-        onPlayPause={() => setPlaying(p => !p)}
-        onReset={() => { setTime(0); }}
-        onSeek={(t) => setTime(t)}
-        onHover={(t) => setHoverTime(t)}
-      />
     </div>
   );
 }
@@ -569,14 +562,10 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
     <div style={{
       display: 'flex', alignItems: 'center', gap: 12,
       padding: '8px 16px',
-      background: 'rgba(20,20,20,0.92)',
-      borderTop: '1px solid rgba(255,255,255,0.08)',
+      background: COLORS.bgAlt,
+      borderTop: `1px solid ${COLORS.rule}`,
       width: '100%',
-      maxWidth: 680,
-      alignSelf: 'center',
-
-      borderRadius: 8,
-      color: '#f6f4ef',
+      color: COLORS.ink,
       fontFamily: 'Inter, system-ui, sans-serif',
       userSelect: 'none',
       flexShrink: 0,
@@ -605,7 +594,7 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
         fontSize: 12,
         fontVariantNumeric: 'tabular-nums',
         width: 64, textAlign: 'right',
-        color: '#f6f4ef',
+        color: COLORS.inkSoft,
       }}>
         {fmt(time)}
       </div>
@@ -627,13 +616,13 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
         <div style={{
           position: 'absolute',
           left: 0, right: 0, height: 4,
-          background: 'rgba(255,255,255,0.12)',
+          background: COLORS.rule,
           borderRadius: 2,
         }}/>
         <div style={{
           position: 'absolute',
           left: 0, width: `${pct}%`, height: 4,
-          background: 'oklch(72% 0.12 250)',
+          background: COLORS.accent,
           borderRadius: 2,
         }}/>
         <div style={{
@@ -641,9 +630,9 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
           left: `${pct}%`, top: '50%',
           width: 12, height: 12,
           marginLeft: -6, marginTop: -6,
-          background: '#fff',
+          background: COLORS.ink,
           borderRadius: 6,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
         }}/>
       </div>
 
@@ -653,7 +642,7 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
         fontSize: 12,
         fontVariantNumeric: 'tabular-nums',
         width: 64, textAlign: 'left',
-        color: 'rgba(246,244,239,0.55)',
+        color: COLORS.inkMuted,
       }}>
         {fmt(duration)}
       </div>
@@ -672,10 +661,10 @@ function IconButton({ children, onClick, title }) {
       style={{
         width: 28, height: 28,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: hover ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: hover ? COLORS.rule : 'transparent',
+        border: `1px solid ${COLORS.rule}`,
         borderRadius: 6,
-        color: '#f6f4ef',
+        color: COLORS.inkSoft,
         cursor: 'pointer',
         padding: 0,
         transition: 'background 120ms',
@@ -708,8 +697,14 @@ const PALETTE_SETS = {
 const COLORS = { ...PALETTE_SETS['Warm Linen'] };
 
 window.addEventListener('message', (e) => {
-  const { type, palette } = e.data || {};
+  const { type } = e.data || {};
+  if (type === 'RESTART_ANIMATION' && window.__whyMlRoot) {
+    window.__whyMlRestartKey = (window.__whyMlRestartKey || 0) + 1;
+    window.__whyMlRoot.render(React.createElement(App, { restartKey: window.__whyMlRestartKey }));
+    return;
+  }
   if (type !== 'SET_THEME') return;
+  const { palette } = e.data;
   const set = PALETTE_SETS[palette] || (e.data.mode === 'dark' ? PALETTE_SETS['Midnight'] : PALETTE_SETS['Warm Linen']);
   Object.assign(COLORS, set);
   document.body.style.background = COLORS.bg;
@@ -860,15 +855,6 @@ function SceneTitle({ start = 0, end = 3 }) {
               transform: `translateY(${ty}px) scale(${scale})`,
               textAlign: 'center',
             }}>
-              <div style={{
-                fontFamily: FONTS.mono,
-                fontSize: 14, letterSpacing: '0.32em',
-                color: COLORS.inkMuted,
-                textTransform: 'uppercase',
-                marginBottom: 32,
-              }}>
-                Lesson 01 · Introduction
-              </div>
               <div style={{
                 fontFamily: FONTS.serif,
                 fontSize: 96,
@@ -2530,8 +2516,9 @@ function ScatterChart({ localT }) {
           stroke={COLORS.accent}
           strokeWidth="3"
           fill="none"
-          strokeDasharray={boundaryPoints.length * 6}
-          strokeDashoffset={(1 - boundaryDraw) * boundaryPoints.length * 6}
+          pathLength="1"
+          strokeDasharray="1"
+          strokeDashoffset={1 - boundaryDraw}
           opacity={boundaryDraw}
         />
         {/* Boundary fill on the FAIL side */}
@@ -2928,7 +2915,7 @@ function MachineOutro({ start, end }) {
   );
 }
 
-function App() {
+function App({ restartKey = 0 }) {
   const [tab, setTab] = React.useState(() => {
     try {
       return localStorage.getItem('why-ml:tab') || 'spam';
@@ -2948,22 +2935,22 @@ function App() {
     <div style={{
       position: 'absolute', inset: 0,
       display: 'flex', flexDirection: 'column',
-      background: '#0a0a0a',
+      background: COLORS.bg,
     }}>
       <header style={{
         flexShrink: 0,
-        padding: '14px 28px',
-        background: '#111110',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '10px 20px',
+        background: COLORS.bg,
+        borderBottom: `1px solid ${COLORS.rule}`,
         display: 'flex', alignItems: 'center', gap: 28,
       }}>
         <div role="tablist" style={{
           marginLeft: 'auto',
-          display: 'flex', gap: 6,
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 10,
-          padding: 4,
+          display: 'flex', gap: 4,
+          background: COLORS.bgAlt,
+          border: `1px solid ${COLORS.rule}`,
+          borderRadius: 8,
+          padding: 3,
         }}>
           {TABS.map(t => {
             const active = t.id === tab;
@@ -2977,31 +2964,32 @@ function App() {
                   appearance: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  padding: '10px 18px',
-                  borderRadius: 7,
-                  background: active ? COLORS.bg : 'transparent',
-                  color: active ? COLORS.ink : 'rgba(246,244,239,0.65)',
+                  padding: '8px 14px',
+                  borderRadius: 6,
+                  background: active ? COLORS.paper : 'transparent',
+                  color: active ? COLORS.ink : COLORS.inkMuted,
                   fontFamily: FONTS.sans,
-                  fontSize: 13, fontWeight: 600, letterSpacing: '-0.005em',
-                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2,
+                  fontSize: 12, fontWeight: 600, letterSpacing: '-0.005em',
+                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1,
                   transition: 'background 160ms, color 160ms',
                   whiteSpace: 'nowrap',
                   textAlign: 'left',
+                  boxShadow: active ? `0 1px 3px rgba(0,0,0,0.08)` : 'none',
                 }}
                 onMouseEnter={(e) => {
-                  if (!active) e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  if (!active) e.currentTarget.style.background = COLORS.bgAlt;
                 }}
                 onMouseLeave={(e) => {
                   if (!active) e.currentTarget.style.background = 'transparent';
                 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 7, whiteSpace: 'nowrap' }}>
                   <span style={{
-                    width: 16, height: 16, borderRadius: 4,
+                    width: 14, height: 14, borderRadius: 3,
                     background: t.id === 'spam' ? COLORS.spam : COLORS.accent,
                     opacity: active ? 1 : 0.55,
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    color: COLORS.paper, fontFamily: FONTS.mono, fontSize: 9, fontWeight: 700,
+                    color: COLORS.paper, fontFamily: FONTS.mono, fontSize: 8, fontWeight: 700,
                     flexShrink: 0,
                   }}>
                     {t.id === 'spam' ? '✉' : '⚙'}
@@ -3009,11 +2997,11 @@ function App() {
                   {t.label}
                 </span>
                 <span style={{
-                  fontFamily: FONTS.mono, fontSize: 10, fontWeight: 500,
+                  fontFamily: FONTS.mono, fontSize: 9, fontWeight: 500,
                   letterSpacing: '0.10em',
-                  color: active ? COLORS.inkMuted : 'rgba(246,244,239,0.40)',
+                  color: active ? COLORS.inkMuted : COLORS.rule,
                   textTransform: 'uppercase',
-                  marginLeft: 24,
+                  marginLeft: 21,
                   whiteSpace: 'nowrap',
                 }}>
                   {t.subtitle} · {t.duration}s
@@ -3025,8 +3013,8 @@ function App() {
       </header>
 
       <main style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        {tab === 'spam'    && <SpamStage    key="spam" />}
-        {tab === 'machine' && <MachineStage key="machine" />}
+        {tab === 'spam'    && <SpamStage    key={`spam-${restartKey}`} />}
+        {tab === 'machine' && <MachineStage key={`machine-${restartKey}`} />}
       </main>
     </div>
   );
