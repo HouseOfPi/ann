@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hero Network</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: transparent;
+    overflow: hidden;
+    width: 100%; height: 100%;
+  }
+  #root { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="babel.min.js"></script>
+<script src="react.min.js"></script>
+<script src="react-dom.min.js"></script>
+
+<script type="text/babel">
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+const TimelineContext = React.createContext({ time: 0 });
+const useTime = () => React.useContext(TimelineContext).time;
+
+const PALETTES = {
+  "warm-linen": {
+    bg:"#f4ede0", bgGlow:"#fbf6ec", bgEdge:"#e8dfcc",
+    ink:"#1a1714", inkDim:"rgba(26,23,20,0.55)",
+    accent:"#3a6df0", accent2:"#e87a5d", accent3:"#1a1714",
+    rule:"rgba(26,23,20,0.16)", light:true
+  },
+  "paper-white": {
+    bg:"#ffffff", bgGlow:"#f6f6f6", bgEdge:"#ececec",
+    ink:"#0a0a0a", inkDim:"rgba(10,10,10,0.55)",
+    accent:"#1f3df0", accent2:"#d9285a", accent3:"#0a0a0a",
+    rule:"rgba(10,10,10,0.14)", light:true
+  },
+  "midnight": {
+    bg:"#070b16", bgGlow:"#0f1830", bgEdge:"#02040a",
+    ink:"#f4f1ea", inkDim:"rgba(244,241,234,0.55)",
+    accent:"#5fd2f5", accent2:"#f5a623", accent3:"#9b7af0",
+    rule:"rgba(244,241,234,0.16)", light:false
+  },
+  "mint": {
+    bg:"#0d2620", bgGlow:"#143a2f", bgEdge:"#06140f",
+    ink:"#eef6f1", inkDim:"rgba(238,246,241,0.55)",
+    accent:"#7adcae", accent2:"#e87a5d", accent3:"#3aa37a",
+    rule:"rgba(238,246,241,0.16)", light:false
+  },
+  "plum": {
+    bg:"#1a0d1f", bgGlow:"#2a1530", bgEdge:"#0c0512",
+    ink:"#f4ecf4", inkDim:"rgba(244,236,244,0.55)",
+    accent:"#c78ee0", accent2:"#e08a1f", accent3:"#f0d4f5",
+    rule:"rgba(244,236,244,0.16)", light:false
+  },
+  "deep-navy": {
+    bg:"#0a1428", bgGlow:"#142340", bgEdge:"#04081a",
+    ink:"#eef2f8", inkDim:"rgba(238,242,248,0.55)",
+    accent:"#5fe8ec", accent2:"#4ee0a0", accent3:"#9ad0ff",
+    rule:"rgba(238,242,248,0.16)", light:false
+  },
+};
+
+const PALETTE_NAME_MAP = {
+  "warm linen":  "warm-linen",
+  "paper white": "paper-white",
+  "midnight":    "midnight",
+  "mint":        "mint",
+  "plum":        "plum",
+  "deep navy":   "deep-navy",
+};
+
+const DEFAULT_PALETTE = "deep-navy";
+
+const PaletteContext = React.createContext(PALETTES[DEFAULT_PALETTE]);
+const usePAL = () => React.useContext(PaletteContext);
+
+const lerp = (a, b, t) => a + (b - a) * t;
+const smoothstep = (a, b, t) => {
+  const x = Math.max(0, Math.min(1, (t - a) / (b - a)));
+  return x * x * (3 - 2 * x);
+};
+const rand = (seed) => {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+};
+
+// Network topology — same as intro_animation but centered for right-half view
+const LAYERS = [5, 7, 7, 4];
+const NETWORK = (() => {
+  // Center network in a 1000x1080 viewport (the right 55% of the slide)
+  const cx = 500, cy = 540, layerGap = 200;
+  const totalW = (LAYERS.length - 1) * layerGap;
+  const startX = cx - totalW / 2;
+  const nodes = [];
+  LAYERS.forEach((count, li) => {
+    const colH = (count - 1) * 80;
+    const startY = cy - colH / 2;
+    for (let i = 0; i < count; i++) {
+      const arrivalTime = 0.9 + li * 0.38 + i * 0.04;
+      nodes.push({ id:`${li}-${i}`, layer:li, idx:i,
+        x:startX+li*layerGap, y:startY+i*80, arrivalTime });
+    }
+  });
+  const edges = [];
+  for (let li = 0; li < LAYERS.length - 1; li++) {
+    const a = nodes.filter(n => n.layer === li);
+    const b = nodes.filter(n => n.layer === li + 1);
+    a.forEach(p => b.forEach(q => {
+      const drawStart = Math.max(p.arrivalTime, q.arrivalTime) + 0.05;
+      edges.push({ id:`${p.id}->${q.id}`, from:p, to:q, drawStart });
+    }));
+  }
+  return { nodes, edges };
+})();
+
+function ConvergingParticles() {
+  const PAL = usePAL();
+  const t = useTime();
+
+  const particles = React.useMemo(() =>
+    NETWORK.nodes.flatMap((n, ni) =>
+      Array.from({ length: 5 }, (_, k) => {
+        const seed = ni * 13 + k;
+        const angle = rand(seed * 1.91) * Math.PI * 2;
+        const dist  = 500 + rand(seed * 3.07) * 600;
+        return {
+          target: n,
+          startX: n.x + Math.cos(angle) * dist,
+          startY: n.y + Math.sin(angle) * dist,
+          flightStart: n.arrivalTime - 0.7 - rand(seed * 2.3) * 0.25,
+          flightEnd:   n.arrivalTime,
+          key: `${n.id}-p${k}`,
+          r: 1.8 + rand(seed * 4.1) * 1.8,
+        };
+      })
+    ), []
+  );
+
+  return (
+    <g>
+      {particles.map(p => {
+        const dur = p.flightEnd - p.flightStart;
+        const local = (t - p.flightStart) / dur;
+        if (local < 0 || local >= 1) return null;
+        const e = local * local * (3 - 2 * local);
+        const x = lerp(p.startX, p.target.x, e);
+        const y = lerp(p.startY, p.target.y, e);
+        const alpha = local < 0.8 ? 1 : (1 - local) / 0.2;
+        return (
+          <circle key={p.key} cx={x} cy={y} r={p.r}
+            fill={PAL.accent} opacity={alpha * 0.85} />
+        );
+      })}
+    </g>
+  );
+}
+
+function Edges() {
+  const PAL = usePAL();
+  const t = useTime();
+  const PULSE_START = 3.5;
+  const PULSE_PERIOD = 2.4;
+
+  return (
+    <g>
+      {NETWORK.edges.map((e, i) => {
+        const drawProgress = smoothstep(e.drawStart, e.drawStart + 0.35, t);
+        if (drawProgress === 0) return null;
+        const dx = e.to.x - e.from.x;
+        const dy = e.to.y - e.from.y;
+        const len = Math.hypot(dx, dy);
+        const dim = 0.45 + 0.35 * rand(i * 1.7);
+        const maxOp = (PAL.light ? 0.45 : 0.55) * dim;
+        const dashOffset = (1 - drawProgress) * len;
+        return (
+          <line key={e.id}
+            x1={e.from.x} y1={e.from.y} x2={e.to.x} y2={e.to.y}
+            stroke={PAL.accent} strokeWidth={0.9}
+            strokeDasharray={len} strokeDashoffset={dashOffset}
+            opacity={maxOp} />
+        );
+      })}
+
+      {t > PULSE_START && NETWORK.edges.map((e, i) => {
+        if (t < e.drawStart + 0.4) return null;
+        const stagger = rand(i * 2.1) * PULSE_PERIOD;
+        const phase = ((t - PULSE_START - stagger) % PULSE_PERIOD + PULSE_PERIOD) % PULSE_PERIOD / PULSE_PERIOD;
+        if (phase > 0.45) return null;
+        const k = phase / 0.45;
+        const x = lerp(e.from.x, e.to.x, k);
+        const y = lerp(e.from.y, e.to.y, k);
+        return (
+          <circle key={`pulse-${e.id}`} cx={x} cy={y} r={2.4}
+            fill={PAL.accent2} opacity={(1 - k) * 0.9} />
+        );
+      })}
+    </g>
+  );
+}
+
+function Nodes() {
+  const PAL = usePAL();
+  const t = useTime();
+  return (
+    <g>
+      {NETWORK.nodes.map((n, i) => {
+        const form = smoothstep(n.arrivalTime, n.arrivalTime + 0.3, t);
+        if (form === 0) return null;
+        const flashScale = form < 0.5
+          ? 1 + 0.6 * Math.sin(form * Math.PI)
+          : 1;
+        const PULSE_START = 3.5;
+        let activation = 0;
+        if (t > PULSE_START) {
+          const layerPhase = (t - PULSE_START - n.layer * 0.35) % 2.4 / 2.4;
+          activation = Math.max(0, 1 - Math.abs(layerPhase - 0.12) / 0.18);
+          activation *= 0.5 + 0.5 * rand(i * 3.7);
+        }
+        const r = (8 + activation * 5) * flashScale;
+        const baseOp1 = PAL.light ? 0.04 : 0.06;
+        const baseOp2 = PAL.light ? 0.08 : 0.12;
+        const glowOp  = form * (baseOp1 + activation * 0.28);
+        const glow2Op = form * (baseOp2 + activation * 0.35);
+
+        return (
+          <g key={n.id}>
+            {form < 0.9 && (
+              <circle cx={n.x} cy={n.y}
+                r={(r + 20) * (1 - form * 0.8)}
+                fill="none" stroke={PAL.accent}
+                strokeWidth={1.5}
+                opacity={form * (1 - form) * 3} />
+            )}
+            <circle cx={n.x} cy={n.y} r={r+14} fill={PAL.accent} opacity={glowOp} />
+            <circle cx={n.x} cy={n.y} r={r+6}  fill={PAL.accent} opacity={glow2Op} />
+            <circle cx={n.x} cy={n.y} r={r}     fill="transparent" stroke={PAL.accent}
+              strokeWidth={1.6} opacity={form} />
+            <circle cx={n.x} cy={n.y} r={Math.max(0,r-3)} fill={PAL.accent}
+              opacity={form * (0.4 + activation * 0.6)} />
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+function Camera({ children }) {
+  const t = useTime();
+  const zoom = 0.82 + smoothstep(0, 8, t) * 0.05;
+  const px = Math.sin(t * 0.25) * 6;
+  const py = Math.cos(t * 0.2) * 5;
+  return (
+    <g style={{
+      transformOrigin: "500px 540px",
+      transform: `translate(${px}px,${py}px) scale(${zoom})`
+    }}>
+      {children}
+    </g>
+  );
+}
+
+function Scene() {
+  return (
+    <svg viewBox="0 0 1000 1080"
+      style={{ display:"block", width:"1000px", height:"1080px", background:"transparent" }}>
+      <Camera>
+        <ConvergingParticles />
+        <Edges />
+        <Nodes />
+      </Camera>
+    </svg>
+  );
+}
+
+function LoopStage({ children }) {
+  const [time, setTime] = React.useState(0);
+  const [scale, setScale] = React.useState(1);
+
+  React.useEffect(() => {
+    let raf;
+    const start = performance.now();
+    const tick = (now) => { setTime((now - start) / 1000); raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  React.useEffect(() => {
+    const fit = () => {
+      // Scale to fill width; the viewBox is 1000x1080, so width-based scale works
+      setScale(window.innerWidth / 1000);
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
+
+  const ctxValue = React.useMemo(() => ({ time }), [time]);
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, overflow: "hidden",
+      display: "flex", alignItems: "center", justifyContent: "center"
+    }}>
+      <div style={{
+        transformOrigin: "center center",
+        transform: `scale(${scale})`,
+        width: "1000px",
+        height: "1080px",
+        flexShrink: 0,
+      }}>
+        <TimelineContext.Provider value={ctxValue}>
+          {children}
+        </TimelineContext.Provider>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [palKey, setPalKey] = React.useState(DEFAULT_PALETTE);
+  const pal = PALETTES[palKey] || PALETTES[DEFAULT_PALETTE];
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      if (!e.data || e.data.type !== 'SET_THEME') return;
+      const raw = (e.data.palette || '').toLowerCase().trim();
+      const key = PALETTES[raw]
+        ? raw
+        : PALETTE_NAME_MAP[raw]
+        || (e.data.mode === 'light' ? 'warm-linen' : 'deep-navy');
+      if (PALETTES[key]) setPalKey(key);
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  return (
+    <PaletteContext.Provider value={pal}>
+      <LoopStage>
+        <Scene />
+      </LoopStage>
+    </PaletteContext.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

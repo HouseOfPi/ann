@@ -393,6 +393,14 @@
   .car-flow-step { opacity: 0; }
   .car-flow-arrow-step { opacity: 0; }
 
+  .def-pillar-card {
+    cursor: default;
+    transition: border-color 0.3s ease;
+  }
+  .def-pillar-card.revealed {
+    cursor: default;
+  }
+
   /* Centered Hover Reveals */
   .model-section-wrap { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
@@ -1173,18 +1181,18 @@
 
             <!-- Three-pillar cards — each revealed individually -->
             <div style="display: flex; gap: 22px; justify-content: center; flex-wrap: wrap;">
-              <div id="def-step-card1" class="car-flow-step" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div style="font-size: 28px; margin-bottom: 8px;">📥</div>
+              <div id="def-step-card1" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
+                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">📥</div>
                 <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Feed Data</div>
                 <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">Show the model thousands of examples — prices, images, text, measurements.</div>
               </div>
-              <div id="def-step-card2" class="car-flow-step" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div style="font-size: 28px; margin-bottom: 8px;">⚙️</div>
+              <div id="def-step-card2" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
+                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">⚙️</div>
                 <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Find Patterns</div>
                 <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">The algorithm adjusts itself, finding hidden relationships in the data.</div>
               </div>
-              <div id="def-step-card3" class="car-flow-step" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div style="font-size: 28px; margin-bottom: 8px;">🎯</div>
+              <div id="def-step-card3" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
+                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">🎯</div>
                 <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Make Predictions</div>
                 <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">Given new, unseen inputs — the model predicts the right answer.</div>
               </div>
@@ -1970,6 +1978,17 @@
     advanceFlow();
   }
 
+  function attachCardHover(el) {
+    el.addEventListener('mouseenter', () => {
+      gsap.to(el, { y: -7, scale: 1.03, duration: 0.45, ease: 'power3.out',
+                    boxShadow: '0 16px 40px rgba(107,155,122,0.18)' });
+    });
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, { y: 0, scale: 1, duration: 0.55, ease: 'elastic.out(1, 0.5)',
+                    boxShadow: '0 0 0 0px rgba(107,155,122,0)' });
+    });
+  }
+
   function revealElement(el, delay, isArrow) {
     if (isArrow) {
       gsap.fromTo(el,
@@ -1981,7 +2000,15 @@
       gsap.fromTo(el,
         { opacity: 0, y: 36, scale: 0.9 },
         { opacity: 1, y: 0, scale: 1, duration: 1.0, delay,
-          ease: 'expo.out'
+          ease: 'expo.out',
+          onComplete: () => {
+            if (el.classList.contains('def-pillar-card')) {
+              el.classList.add('revealed');
+              attachCardHover(el);
+              const icon = el.querySelector('[data-float]');
+              if (icon) gsap.to(icon, { y: -5, duration: 1.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+            }
+          }
         }
       );
     }
