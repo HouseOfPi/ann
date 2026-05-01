@@ -836,11 +836,60 @@ Object.assign(window, { COLORS, FONTS, Envelope, CodeLine, Caption });
 // Scene 1: Title card. 0 - 3s
 // "Why do we need Machine Learning?"
 
-function SceneTitle() {
-  return null;
+function SceneProblemCard({ start = 0, end = 3, sub, main, detail }) {
+  return (
+    <Sprite start={start} end={end}>
+      {({ localTime, duration }) => {
+        const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
+        const exit  = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
+        const op = enter * (1 - exit);
+
+        return (
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: COLORS.bg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: op,
+          }}>
+            <div style={{ textAlign: 'center', maxWidth: 1000 }}>
+              <div style={{
+                fontFamily: FONTS.mono,
+                fontSize: 16, letterSpacing: '0.32em',
+                color: COLORS.inkMuted,
+                textTransform: 'uppercase',
+                marginBottom: 28,
+                opacity: clamp(localTime / 0.6, 0, 1),
+              }}>
+                {sub}
+              </div>
+              <div style={{
+                fontFamily: FONTS.serif,
+                fontSize: 80, fontWeight: 400,
+                color: COLORS.ink,
+                letterSpacing: '-0.025em', lineHeight: 1.1,
+                marginBottom: detail ? 24 : 0,
+              }}>
+                {main}
+              </div>
+              {detail && (
+                <div style={{
+                  fontFamily: FONTS.sans,
+                  fontSize: 28, color: COLORS.inkSoft,
+                  lineHeight: 1.4,
+                  opacity: clamp((localTime - 0.3) / 0.6, 0, 1),
+                }}>
+                  {detail}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }}
+    </Sprite>
+  );
 }
 
-Object.assign(window, { SceneTitle });
+Object.assign(window, { SceneProblemCard });
 // Scene 2: The rule-based approach. 3 - 15s
 // Show an inbox with a spam email, developer writes if-statements,
 // rules pile up, spammer changes tactics, more rules added, chaos.
@@ -886,17 +935,12 @@ function SceneRules({ start = 3, end = 15 }) {
             opacity,
             background: COLORS.bg,
             fontFamily: FONTS.sans,
-          <div style={{
-            position: 'absolute', inset: 0,
-            opacity,
-            background: COLORS.bg,
-            fontFamily: FONTS.sans,
           }}>
             {/* Email card on the left */}
             <div style={{
               position: 'absolute',
               left: 100,
-              top: 340,
+              top: 260,
               width: 820,
               opacity: emailIn,
               transform: `translateY(${(1 - emailIn) * 20}px)`,
@@ -1002,7 +1046,7 @@ function SceneRules({ start = 3, end = 15 }) {
             <div style={{
               position: 'absolute',
               left: 120 + 720 - 60,
-              top: 308,
+              top: 228,
               opacity: missOp,
               transform: `scale(${0.7 + missOp * 0.3}) rotate(-6deg)`,
               transformOrigin: 'center',
@@ -1019,7 +1063,7 @@ function SceneRules({ start = 3, end = 15 }) {
 
             {/* Code block on the right */}
             <CodeBlock
-              x={1000} y={300}
+              x={1000} y={220}
               width={820}
               lineOps={lineOps}
               moreLineOps={moreLineOps}
@@ -1327,11 +1371,7 @@ function SceneML({ start = 18, end = 30 }) {
         return (
           <div style={{
             position: 'absolute', inset: 0,
-            background: COLORS.bg, opacity,
-            fontFamily: FONTS.sans,
-          <div style={{
-            position: 'absolute', inset: 0,
-            opacity: 1 - outroOp,
+            opacity,
             background: COLORS.bg,
             fontFamily: FONTS.sans,
           }}>
@@ -1341,9 +1381,9 @@ function SceneML({ start = 18, end = 30 }) {
             <Predictions t={t} />
 
             {/* Stage labels */}
-            <StageLabel x={300}  y={940} t={t} appear={0.3}  text="LABELED EXAMPLES" />
-            <StageLabel x={960}  y={940} t={t} appear={4.5}  text="MODEL LEARNS" />
-            <StageLabel x={1620} y={940} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
+            <StageLabel x={300}  y={860} t={t} appear={0.3}  text="LABELED EXAMPLES" />
+            <StageLabel x={960}  y={860} t={t} appear={4.5}  text="MODEL LEARNS" />
+            <StageLabel x={1620} y={860} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
 
             {/* Bottom caption that changes */}
             <MLCaption t={t} duration={duration} />
@@ -1381,8 +1421,8 @@ function TrainingData({ t }) {
 
         const startX = 300;
         const endX   = 960;       // model center
-        const startY = 560 + it.yOffset;
-        const endY   = 560;       // model center y
+        const startY = 480 + it.yOffset;
+        const endY   = 480;       // model center y
 
         const x = startX + (endX - startX) * stream;
         const y = startY + (endY - startY) * stream;
@@ -1464,7 +1504,7 @@ function ModelBox({ t }) {
     ? 1 + Math.sin(t * 6) * 0.015 * learning
     : 1;
 
-  const cx = 960, cy = 560;
+  const cx = 960, cy = 480;
   const w = 620, h = 420;
 
   return (
@@ -1595,7 +1635,7 @@ function Predictions({ t }) {
 
         const startX = 1200, endX = 1620;
         const x = startX + (endX - startX) * arrive;
-        const y = 320 + i * 240;
+        const y = 240 + i * 240;
 
         return (
           <PredictionCard
@@ -1844,7 +1884,7 @@ function RulePhase({ t, op }) {
       {/* Machine illustration card */}
       <div style={{
         position: 'absolute',
-        left: 100, top: 320,
+        left: 100, top: 240,
         width: 820, height: 640,
         background: COLORS.paper,
         border: `1px solid ${COLORS.rule}`,
@@ -1902,7 +1942,7 @@ function RulePhase({ t, op }) {
       {failFlash > 0 && (
         <div style={{
           position: 'absolute',
-          left: 100 + 820 - 60, top: 290,
+          left: 100 + 820 - 60, top: 210,
           transform: `scale(${0.7 + failFlash * 0.4}) rotate(-5deg)`,
           opacity: failFlash,
           background: COLORS.spam,
@@ -1937,7 +1977,7 @@ function WhyItFailed({ t }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 1000, top: 700,
+      left: 1000, top: 620,
       width: 820,
       opacity: op,
       transform: `translateY(${(1 - op) * 12}px)`,
@@ -2145,7 +2185,7 @@ function RuleCode({ t, failed }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 1000, top: 320,
+      left: 1000, top: 240,
       width: 820, height: 620,
       background: '#1a1815',
       borderRadius: 12,
@@ -2342,7 +2382,7 @@ function ScatterChart({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 100, top: 320,
+      left: 100, top: 240,
       width: 820,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
@@ -2516,7 +2556,7 @@ function PredictionPanel({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 1000, top: 320,
+      left: 1000, top: 240,
       width: 820,
       display: 'flex', flexDirection: 'column', gap: 24,
     }}>
@@ -2744,11 +2784,15 @@ const TABS = [
 function SpamStage({ onTime }) {
   return (
     <Stage width={1920} height={1080} duration={36} background={COLORS.bg} persistKey="why-ml-spam" onTime={onTime}>
-      <SceneTitle      start={0}  end={3} />
-      <SceneRules      start={3}  end={15} />
-      <SceneTransition start={15} end={18} />
-      <SceneML         start={18} end={34} />
-      <SpamOutro       start={34} end={36} />
+      <SceneProblemCard start={0} end={3} 
+        sub="The Spam Problem" 
+        main="The internet is drowning in spam." 
+        detail="Over 160 billion junk emails are sent daily. How do we build a system that catches them all?" 
+      />
+      <SceneRules       start={3}  end={15} />
+      <SceneTransition  start={15} end={18} />
+      <SceneML          start={18} end={34} />
+      <SpamOutro        start={34} end={36} />
     </Stage>
   );
 }
@@ -2756,9 +2800,13 @@ function SpamStage({ onTime }) {
 function MachineStage({ onTime }) {
   return (
     <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine" onTime={onTime}>
-      <MachineIntro start={0}  end={3} />
-      <SceneMachine start={3}  end={22} />
-      <MachineOutro start={22} end={24} />
+      <SceneProblemCard start={0} end={3} 
+        sub="The Maintenance Problem" 
+        main="When machines fail, factories stop." 
+        detail="A single unexpected breakdown can cost millions. Can we predict failures before they happen?" 
+      />
+      <SceneMachine     start={3}  end={22} />
+      <MachineOutro     start={22} end={24} />
     </Stage>
   );
 }
@@ -2830,13 +2878,13 @@ function App({ restartKey = 0 }) {
   // Determine dynamic title based on tab and stageTime
   const getDynamicTitle = () => {
     if (tab === 'spam') {
-      if (stageTime < 3)  return { sub: 'WHY MACHINE LEARNING?', main: 'Why Machine Learning?' };
+      if (stageTime < 3)  return { sub: 'WHY MACHINE LEARNING?', main: 'The Spam Problem.' };
       if (stageTime < 15) return { sub: 'THE TRADITIONAL WAY', main: 'Write a rule for every case.' };
       if (stageTime < 18) return { sub: 'THE PROBLEM', main: 'Rules are brittle.' };
       if (stageTime < 34) return { sub: 'THE ML WAY', main: 'Feed it labeled examples. It learns the pattern.' };
       return { sub: 'SUMMARY', main: 'Patterns over rules.' };
     } else {
-      if (stageTime < 3)   return { sub: 'WHY MACHINE LEARNING?', main: 'A harder problem.' };
+      if (stageTime < 3)   return { sub: 'WHY MACHINE LEARNING?', main: 'The Maintenance Problem.' };
       if (stageTime < 10.5) return { sub: 'PREDICTIVE MAINTENANCE', main: "Sensors say everything's fine... until it isn't." };
       if (stageTime < 22)  return { sub: 'PREDICTIVE MAINTENANCE', main: 'Let the model learn from thousands of past runs.' };
       return { sub: 'SUMMARY', main: 'Patterns over thresholds.' };
@@ -2857,12 +2905,12 @@ function App({ restartKey = 0 }) {
         background: COLORS.bg,
         borderBottom: `1px solid ${COLORS.rule}`,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        height: 100,
+        height: 140,
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{
             fontFamily: FONTS.mono,
-            fontSize: 12, letterSpacing: '0.24em',
+            fontSize: 16, letterSpacing: '0.24em',
             color: COLORS.accent,
             textTransform: 'uppercase',
             fontWeight: 600,
@@ -2871,10 +2919,10 @@ function App({ restartKey = 0 }) {
           </div>
           <div style={{
             fontFamily: FONTS.serif,
-            fontSize: 28, fontWeight: 400,
+            fontSize: 48, fontWeight: 400,
             color: COLORS.ink,
             letterSpacing: '-0.015em',
-            lineHeight: 1.1,
+            lineHeight: 1.0,
           }}>
             {main}
           </div>
