@@ -109,14 +109,21 @@ const NETWORK = (() => {
     const colH = (count - 1) * 80;
     const startY = cy - colH / 2;
     for (let i = 0; i < count; i++) {
-      nodes.push({ id:`${li}-${i}`, layer:li, idx:i, x:startX+li*layerGap, y:startY+i*80 });
+      // arrivalTime: layer 0 lands at ~0.9s, each layer 0.35s later, nodes within layer staggered
+      const arrivalTime = 0.9 + li * 0.38 + i * 0.04;
+      nodes.push({ id:`${li}-${i}`, layer:li, idx:i,
+        x:startX+li*layerGap, y:startY+i*80, arrivalTime });
     }
   });
   const edges = [];
   for (let li = 0; li < LAYERS.length - 1; li++) {
     const a = nodes.filter(n => n.layer === li);
     const b = nodes.filter(n => n.layer === li + 1);
-    a.forEach(p => b.forEach(q => edges.push({ id:`${p.id}->${q.id}`, from:p, to:q })));
+    a.forEach(p => b.forEach(q => {
+      // Edge draws in after both endpoint nodes have arrived
+      const drawStart = Math.max(p.arrivalTime, q.arrivalTime) + 0.05;
+      edges.push({ id:`${p.id}->${q.id}`, from:p, to:q, drawStart });
+    }));
   }
   return { nodes, edges };
 })();
@@ -158,104 +165,152 @@ function Backdrop() {
   );
 }
 
-// ── Converging Particles ──────────────────────────────────────────────────────
+// ── Converging Particles — fly toward node, vanish on arrival ─────────────────
 function ConvergingParticles() {
   const PAL = usePAL();
   const t = useTime();
+
+  // 5 particles per node, each from a different random direction
   const particles = React.useMemo(() =>
     NETWORK.nodes.flatMap((n, ni) =>
-      Array.from({ length: 3 }, (_, k) => {
-        const seed = ni * 7 + k;
+      Array.from({ length: 5 }, (_, k) => {
+        const seed = ni * 13 + k;
+        // Start positions spread wide around the whole viewport
+        const angle = rand(seed * 1.91) * Math.PI * 2;
+        const dist  = 600 + rand(seed * 3.07) * 700;
         return {
           target: n,
-          startX: 960 + (rand(seed * 1.3) - 0.5) * 2400,
-          startY: 540 + (rand(seed * 2.7) - 0.5) * 1400,
-          delay: rand(seed * 3.1) * 0.4,
-          key: `${n.id}-${k}`
+          startX: n.x + Math.cos(angle) * dist,
+          startY: n.y + Math.sin(angle) * dist,
+          // flight ends exactly at the node's arrivalTime
+          flightStart: n.arrivalTime - 0.7 - rand(seed * 2.3) * 0.25,
+          flightEnd:   n.arrivalTime,
+          key: `${n.id}-p${k}`,
+          r: 1.8 + rand(seed * 4.1) * 1.8,
         };
       })
     ), []
   );
+
   return (
     <g>
       {particles.map(p => {
-        const local = (t - p.delay) / 1.4;
-        if (local < 0 || local > 1.6) return null;
-        const e = smoothstep(0, 1, Math.min(1, local));
+        const dur = p.flightEnd - p.flightStart;
+        const local = (t - p.flightStart) / dur;
+        if (local < 0 || local >= 1) return null;
+        // ease-in: slow start, fast finish — like being pulled in
+        const e = local * local * (3 - 2 * local); // smoothstep
         const x = lerp(p.startX, p.target.x, e);
         const y = lerp(p.startY, p.target.y, e);
-        const alpha = local < 1 ? local : Math.max(0, 1.6 - local) / 0.6;
-        return <circle key={p.key} cx={x} cy={y} r={2.5} fill={PAL.accent} opacity={alpha * 0.9} />;
+        // fade out as they approach the node (last 20%)
+        const alpha = local < 0.8 ? 1 : (1 - local) / 0.2;
+        return (
+          <circle key={p.key} cx={x} cy={y} r={p.r}
+            fill={PAL.accent} opacity={alpha * 0.85} />
+        );
       })}
     </g>
   );
 }
 
-// ── Edges + pulses ────────────────────────────────────────────────────────────
+// ── Edges — draw in after both endpoint nodes have formed ─────────────────────
 function Edges() {
   const PAL = usePAL();
   const t = useTime();
-  const edgeAlpha = smoothstep(1.6, 2.6, t) * (PAL.light ? 0.45 : 0.55);
-  const pulse = (li) => {
-    const base = 3.0 + li * 0.35;
-    const localT = t - base;
-    if (localT < 0) return null;
-    return localT % 2.6 / 2.6;
-  };
+
+  // Pulse signals travel after all edges are drawn (~t=3.5)
+  const PULSE_START = 3.5;
+  const PULSE_PERIOD = 2.4;
+
   return (
     <g>
       {NETWORK.edges.map((e, i) => {
-        const dim = 0.55 + 0.45 * rand(i * 1.7);
+        const drawProgress = smoothstep(e.drawStart, e.drawStart + 0.35, t);
+        if (drawProgress === 0) return null;
+
+        const dx = e.to.x - e.from.x;
+        const dy = e.to.y - e.from.y;
+        const len = Math.hypot(dx, dy);
+        const dim = 0.45 + 0.35 * rand(i * 1.7);
+        const maxOp = (PAL.light ? 0.45 : 0.55) * dim;
+
+        // Stroke-dashoffset draws the line from source to target
+        const dashOffset = (1 - drawProgress) * len;
+
         return (
           <line key={e.id}
             x1={e.from.x} y1={e.from.y} x2={e.to.x} y2={e.to.y}
-            stroke={PAL.accent} strokeWidth={0.8} opacity={edgeAlpha * dim} />
+            stroke={PAL.accent} strokeWidth={0.9}
+            strokeDasharray={len} strokeDashoffset={dashOffset}
+            opacity={maxOp} />
         );
       })}
-      {t > 3 && NETWORK.edges.map((e, i) => {
-        const phase = pulse(e.from.layer);
-        if (phase === null) return null;
-        const stagger = rand(i * 2.1) * 0.15;
-        const p = (phase - stagger + 1) % 1;
-        if (p > 0.45) return null;
-        const k = p / 0.45;
+
+      {/* Pulse signals along formed edges */}
+      {t > PULSE_START && NETWORK.edges.map((e, i) => {
+        if (t < e.drawStart + 0.4) return null;
+        const stagger = rand(i * 2.1) * PULSE_PERIOD;
+        const phase = ((t - PULSE_START - stagger) % PULSE_PERIOD + PULSE_PERIOD) % PULSE_PERIOD / PULSE_PERIOD;
+        if (phase > 0.45) return null;
+        const k = phase / 0.45;
         const x = lerp(e.from.x, e.to.x, k);
         const y = lerp(e.from.y, e.to.y, k);
         return (
           <circle key={`pulse-${e.id}`} cx={x} cy={y} r={2.4}
-            fill={PAL.accent2} opacity={(1 - k) * 0.95} />
+            fill={PAL.accent2} opacity={(1 - k) * 0.9} />
         );
       })}
     </g>
   );
 }
 
-// ── Nodes ─────────────────────────────────────────────────────────────────────
+// ── Nodes — materialise exactly when their particles arrive ───────────────────
 function Nodes() {
   const PAL = usePAL();
   const t = useTime();
   return (
     <g>
       {NETWORK.nodes.map((n, i) => {
-        const appear = smoothstep(1.4 + i * 0.02, 1.9 + i * 0.02, t);
-        if (appear === 0) return null;
-        const layerStart = 3.0 + n.layer * 0.35;
+        // Formation: burst in over 0.3s after arrivalTime
+        const form = smoothstep(n.arrivalTime, n.arrivalTime + 0.3, t);
+        if (form === 0) return null;
+
+        // Brief flash/overshoot on formation (scale > 1 then settles)
+        const flashScale = form < 0.5
+          ? 1 + 0.6 * Math.sin(form * Math.PI)  // swell up
+          : 1;                                    // settle at 1
+
+        // Ongoing activation pulse after network is fully formed
+        const PULSE_START = 3.5;
         let activation = 0;
-        if (t > layerStart) {
-          const phase = (t - layerStart) % 2.6 / 2.6;
-          activation = Math.max(0, 1 - Math.abs(phase - 0.12) / 0.18);
+        if (t > PULSE_START) {
+          const layerPhase = (t - PULSE_START - n.layer * 0.35) % 2.4 / 2.4;
+          activation = Math.max(0, 1 - Math.abs(layerPhase - 0.12) / 0.18);
           activation *= 0.5 + 0.5 * rand(i * 3.7);
         }
-        const r = 8 + activation * 5;
-        const glow = activation;
+
+        const r = (8 + activation * 5) * flashScale;
         const baseOp1 = PAL.light ? 0.04 : 0.06;
         const baseOp2 = PAL.light ? 0.08 : 0.12;
+        const glowOp  = form * (baseOp1 + activation * 0.28);
+        const glow2Op = form * (baseOp2 + activation * 0.35);
+
         return (
-          <g key={n.id} opacity={appear}>
-            <circle cx={n.x} cy={n.y} r={r+14} fill={PAL.accent} opacity={baseOp1 + glow*0.28} />
-            <circle cx={n.x} cy={n.y} r={r+6}  fill={PAL.accent} opacity={baseOp2 + glow*0.35} />
-            <circle cx={n.x} cy={n.y} r={r}     fill={PAL.bg} stroke={PAL.accent} strokeWidth={1.6} />
-            <circle cx={n.x} cy={n.y} r={r-3}   fill={PAL.accent} opacity={0.4 + glow*0.6} />
+          <g key={n.id}>
+            {/* Formation burst ring */}
+            {form < 0.9 && (
+              <circle cx={n.x} cy={n.y}
+                r={(r + 20) * (1 - form * 0.8)}
+                fill="none" stroke={PAL.accent}
+                strokeWidth={1.5}
+                opacity={form * (1 - form) * 3} />
+            )}
+            <circle cx={n.x} cy={n.y} r={r+14} fill={PAL.accent} opacity={glowOp} />
+            <circle cx={n.x} cy={n.y} r={r+6}  fill={PAL.accent} opacity={glow2Op} />
+            <circle cx={n.x} cy={n.y} r={r}     fill={PAL.bg} stroke={PAL.accent}
+              strokeWidth={1.6} opacity={form} />
+            <circle cx={n.x} cy={n.y} r={Math.max(0,r-3)} fill={PAL.accent}
+              opacity={form * (0.4 + activation * 0.6)} />
           </g>
         );
       })}
@@ -435,7 +490,7 @@ const BRAIN_EDGES = (() => {
 function BrainBadge() {
   const PAL = usePAL();
   const t = useTime();
-  const enter = smoothstep(0.6, 1.6, t);
+  const enter = smoothstep(2.0, 3.0, t);
   if (enter === 0) return null;
   const cx=1750, cy=145, R=88;
   const yaw = t*0.7;
@@ -553,7 +608,9 @@ function BadgeFrame({ hue, draw, t, children }) {
                    filter:`drop-shadow(0 0 6px ${hue.bright})` }} />
       </g>
       <circle cx={80} cy={80} r={52} stroke={hue.mid} strokeWidth="1" opacity={ringInner*0.5} fill="none" />
-      <circle cx={80} cy={80} r={50} fill={hue.bright} opacity={ringInner*0.04} />
+      {/* Dark filled interior so icon pops against the background */}
+      <circle cx={80} cy={80} r={50} fill="#050e1a" opacity={ringInner*0.82} />
+      <circle cx={80} cy={80} r={50} fill={hue.bright} opacity={ringInner*0.06} />
       {[0,90,180,270].map(ang => {
         const a = ang*Math.PI/180;
         return <line key={ang}
@@ -569,32 +626,158 @@ function BadgeFrame({ hue, draw, t, children }) {
 }
 
 function BrainSymbol({ hue, t, reveal }) {
-  const len=1100, dashOff=(1-reveal)*len, c=hue.bright;
-  const dots=[{x:68,y:72,ph:0},{x:92,y:78,ph:1.1},{x:78,y:92,ph:2.2},{x:96,y:90,ph:3.3}];
+  const c = hue.bright;
+  const glow = `drop-shadow(0 0 3px ${c})`;
+  const glowS = `drop-shadow(0 0 5px ${c})`;
+
+  // Outer brain silhouette — realistic rounded top, narrowing stem at base
+  const outerLen = 320;
+  const outerOff = (1 - reveal) * outerLen;
+
+  // Left hemisphere outer lobes
+  const leftLen = 420;
+  const leftOff = (1 - reveal) * leftLen;
+
+  // Right hemisphere outer lobes
+  const rightLen = 420;
+  const rightOff = (1 - reveal) * rightLen;
+
+  // Internal folds draw in slightly after outline
+  const foldReveal = Math.max(0, (reveal - 0.3) / 0.7);
+  const foldOff = (len) => (1 - foldReveal) * len;
+
+  // Circuit dots with pulse
+  const dots = [
+    { x:62, y:74, ph:0.0 },
+    { x:72, y:88, ph:0.8 },
+    { x:60, y:96, ph:1.6 },
+    { x:98, y:74, ph:2.4 },
+    { x:88, y:90, ph:1.2 },
+    { x:99, y:100, ph:3.1 },
+  ];
+
   return (
-    <g>
-      <path d="M78 52 C62 52 52 62 52 74 C46 76 42 82 42 90 C42 98 46 104 52 106 C52 116 60 122 72 122 L78 122 Z"
-        stroke={c} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" fill="none"
-        strokeDasharray={len} strokeDashoffset={dashOff}
-        style={{filter:`drop-shadow(0 0 4px ${c})`}} />
-      <path d="M82 52 C98 52 108 62 108 74 C114 76 118 82 118 90 C118 98 114 104 108 106 C108 116 100 122 88 122 L82 122 Z"
-        stroke={c} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" fill="none"
-        strokeDasharray={len} strokeDashoffset={dashOff}
-        style={{filter:`drop-shadow(0 0 4px ${c})`}} />
-      <line x1={80} y1={52} x2={80} y2={122} stroke={c} strokeWidth="1.6" opacity={reveal*0.55} strokeDasharray="2 4" />
-      <path d="M62 70 C58 76 62 82 68 82 C66 88 70 94 76 92" stroke={c} strokeWidth="1.6" opacity={reveal*0.7} fill="none" strokeLinecap="round" />
-      <path d="M98 70 C102 76 98 82 92 82 C94 88 90 94 84 92" stroke={c} strokeWidth="1.6" opacity={reveal*0.7} fill="none" strokeLinecap="round" />
-      <path d="M58 102 C64 98 76 98 80 102" stroke={c} strokeWidth="1.6" opacity={reveal*0.7} fill="none" strokeLinecap="round" />
-      <path d="M102 102 C96 98 84 98 80 102" stroke={c} strokeWidth="1.6" opacity={reveal*0.7} fill="none" strokeLinecap="round" />
-      {dots.map((d,i) => {
-        const p = 0.6+0.4*Math.sin(t*2.5+d.ph);
+    <g style={{filter: reveal > 0.5 ? glowS : 'none'}}>
+
+      {/* ── Outer silhouette: full brain cross-section ── */}
+      {/* Left half outer edge */}
+      <path
+        d="M80 44 C72 44 63 46 57 52 C50 58 45 66 44 74 C42 82 44 90 46 96 C48 104 52 110 56 114 C60 118 66 120 72 120 L80 120"
+        stroke={c} strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round"
+        strokeDasharray={leftLen} strokeDashoffset={leftOff}
+        style={{filter:glow}} />
+
+      {/* Right half outer edge */}
+      <path
+        d="M80 44 C88 44 97 46 103 52 C110 58 115 66 116 74 C118 82 116 90 114 96 C112 104 108 110 104 114 C100 118 94 120 88 120 L80 120"
+        stroke={c} strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round"
+        strokeDasharray={rightLen} strokeDashoffset={rightOff}
+        style={{filter:glow}} />
+
+      {/* Top bump — frontal lobe crown */}
+      <path
+        d="M57 52 C60 45 70 40 80 40 C90 40 100 45 103 52"
+        stroke={c} strokeWidth="2.8" fill="none" strokeLinecap="round"
+        strokeDasharray={outerLen} strokeDashoffset={outerOff}
+        style={{filter:glow}} />
+
+      {/* ── Corpus callosum — central divider ── */}
+      <line x1={80} y1={44} x2={80} y2={120}
+        stroke={c} strokeWidth="1.4" opacity={reveal * 0.5}
+        strokeDasharray="3 4" strokeLinecap="round" />
+
+      {/* ── LEFT hemisphere gyri (brain folds) ── */}
+      {/* Frontal lobe top fold */}
+      <path d="M57 52 C54 58 56 64 60 65 C56 67 53 73 57 76"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.9}
+        strokeDasharray={60} strokeDashoffset={foldOff(60)} />
+
+      {/* Parietal fold */}
+      <path d="M47 78 C51 75 57 76 60 80 C57 84 52 85 49 90"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.85}
+        strokeDasharray={55} strokeDashoffset={foldOff(55)} />
+
+      {/* Temporal fold */}
+      <path d="M55 90 C58 86 65 86 67 91 C64 96 58 97 56 102"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.85}
+        strokeDasharray={55} strokeDashoffset={foldOff(55)} />
+
+      {/* Occipital fold left */}
+      <path d="M62 100 C65 97 72 97 73 102 C70 107 64 108 62 112"
+        stroke={c} strokeWidth="1.6" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.75}
+        strokeDasharray={50} strokeDashoffset={foldOff(50)} />
+
+      {/* Inner left mid fold */}
+      <path d="M68 68 C65 73 67 79 72 80 C69 85 70 91 75 92"
+        stroke={c} strokeWidth="1.5" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.7}
+        strokeDasharray={60} strokeDashoffset={foldOff(60)} />
+
+      {/* ── RIGHT hemisphere gyri ── */}
+      {/* Frontal lobe top fold */}
+      <path d="M103 52 C106 58 104 64 100 65 C104 67 107 73 103 76"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.9}
+        strokeDasharray={60} strokeDashoffset={foldOff(60)} />
+
+      {/* Parietal fold */}
+      <path d="M113 78 C109 75 103 76 100 80 C103 84 108 85 111 90"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.85}
+        strokeDasharray={55} strokeDashoffset={foldOff(55)} />
+
+      {/* Temporal fold */}
+      <path d="M105 90 C102 86 95 86 93 91 C96 96 102 97 104 102"
+        stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.85}
+        strokeDasharray={55} strokeDashoffset={foldOff(55)} />
+
+      {/* Occipital fold right */}
+      <path d="M98 100 C95 97 88 97 87 102 C90 107 96 108 98 112"
+        stroke={c} strokeWidth="1.6" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.75}
+        strokeDasharray={50} strokeDashoffset={foldOff(50)} />
+
+      {/* Inner right mid fold — circuit style */}
+      <path d="M92 68 C95 73 93 79 88 80 C91 85 90 91 85 92"
+        stroke={c} strokeWidth="1.5" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.7}
+        strokeDasharray={60} strokeDashoffset={foldOff(60)} />
+
+      {/* ── Cerebellum — small ridged bulge at base ── */}
+      <path d="M72 120 C70 124 68 126 72 128 C75 130 78 129 80 128 C82 129 85 130 88 128 C92 126 90 124 88 120"
+        stroke={c} strokeWidth="1.6" fill="none" strokeLinecap="round"
+        opacity={foldReveal * 0.8}
+        strokeDasharray={70} strokeDashoffset={foldOff(70)} />
+      <line x1={76} y1={121} x2={76} y2={128} stroke={c} strokeWidth="1" opacity={foldReveal*0.6} />
+      <line x1={80} y1={120} x2={80} y2={129} stroke={c} strokeWidth="1" opacity={foldReveal*0.6} />
+      <line x1={84} y1={121} x2={84} y2={128} stroke={c} strokeWidth="1" opacity={foldReveal*0.6} />
+
+      {/* ── Circuit dots — AI blend ── */}
+      {dots.map((d, i) => {
+        const p = 0.55 + 0.45 * Math.sin(t * 2.2 + d.ph);
         return (
-          <g key={i}>
-            <circle cx={d.x} cy={d.y} r={3+p*0.6} fill={c} opacity={reveal*0.25} />
-            <circle cx={d.x} cy={d.y} r={1.6}     fill={c} opacity={reveal*p} />
+          <g key={i} opacity={foldReveal}>
+            <circle cx={d.x} cy={d.y} r={3.5} fill={c} opacity={0.15} />
+            <circle cx={d.x} cy={d.y} r={1.8} fill={c} opacity={p}
+              style={{filter:`drop-shadow(0 0 3px ${c})`}} />
           </g>
         );
       })}
+
+      {/* Small circuit lines connecting some dots */}
+      <line x1={62} y1={74} x2={68} y2={74} stroke={c} strokeWidth="1"
+        opacity={foldReveal * 0.5} strokeDasharray="3 2" />
+      <line x1={98} y1={74} x2={92} y2={74} stroke={c} strokeWidth="1"
+        opacity={foldReveal * 0.5} strokeDasharray="3 2" />
+      <line x1={72} y1={88} x2={72} y2={96} stroke={c} strokeWidth="1"
+        opacity={foldReveal * 0.45} strokeDasharray="2 2" />
+      <line x1={88} y1={90} x2={88} y2={100} stroke={c} strokeWidth="1"
+        opacity={foldReveal * 0.45} strokeDasharray="2 2" />
     </g>
   );
 }
