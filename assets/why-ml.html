@@ -354,11 +354,16 @@ function Stage({
   autoplay = true,
   persistKey = 'animstage',
   children,
+  onTime,
 }) {
   const [time, setTime] = React.useState(0);
   const [playing, setPlaying] = React.useState(autoplay);
   const [hoverTime, setHoverTime] = React.useState(null);
   const [scale, setScale] = React.useState(1);
+
+  React.useEffect(() => {
+    if (onTime) onTime(time);
+  }, [time, onTime]);
 
   const stageRef = React.useRef(null);
   const canvasRef = React.useRef(null);
@@ -831,48 +836,8 @@ Object.assign(window, { COLORS, FONTS, Envelope, CodeLine, Caption });
 // Scene 1: Title card. 0 - 3s
 // "Why do we need Machine Learning?"
 
-function SceneTitle({ start = 0, end = 3 }) {
-  return (
-    <Sprite start={start} end={end}>
-      {({ localTime, duration }) => {
-        const enter = Easing.easeOutCubic(clamp(localTime / 0.8, 0, 1));
-        const exit = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
-        const opacity = enter * (1 - exit);
-        const ty = (1 - enter) * 24 - exit * 12;
-
-        // Slow pan/scale for life
-        const scale = 1 + localTime * 0.012;
-
-        return (
-          <div style={{
-            position: 'absolute', inset: 0,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            background: COLORS.bg,
-          }}>
-            <div style={{
-              opacity,
-              transform: `translateY(${ty}px) scale(${scale})`,
-              textAlign: 'center',
-            }}>
-              <div style={{
-                fontFamily: FONTS.serif,
-                fontSize: 110,
-                fontWeight: 400,
-                color: COLORS.ink,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.05,
-              }}>
-                Why do we need
-                <br/>
-                <em style={{ fontStyle: 'italic', color: COLORS.accent }}>machine learning?</em>
-              </div>
-            </div>
-          </div>
-        );
-      }}
-    </Sprite>
-  );
+function SceneTitle() {
+  return null;
 }
 
 Object.assign(window, { SceneTitle });
@@ -921,36 +886,12 @@ function SceneRules({ start = 3, end = 15 }) {
             opacity,
             background: COLORS.bg,
             fontFamily: FONTS.sans,
+          <div style={{
+            position: 'absolute', inset: 0,
+            opacity,
+            background: COLORS.bg,
+            fontFamily: FONTS.sans,
           }}>
-            {/* Header */}
-            <div style={{
-              position: 'absolute',
-              top: 60, left: 100,
-              opacity: headerOp,
-              transform: `translateY(${(1 - headerOp) * 8}px)`,
-            }}>
-              <div style={{
-                fontFamily: FONTS.mono,
-                fontSize: 18, letterSpacing: '0.28em',
-                color: COLORS.accent,
-                textTransform: 'uppercase',
-                marginBottom: 16,
-                fontWeight: 600,
-              }}>
-                The traditional way
-              </div>
-              <div style={{
-                fontFamily: FONTS.serif,
-                fontSize: 88,
-                fontWeight: 400,
-                color: COLORS.ink,
-                letterSpacing: '-0.025em',
-                lineHeight: 1.0,
-              }}>
-                Write a rule for <em style={{ fontStyle: 'italic', color: COLORS.accent }}>every</em> case.
-              </div>
-            </div>
-
             {/* Email card on the left */}
             <div style={{
               position: 'absolute',
@@ -1388,35 +1329,12 @@ function SceneML({ start = 18, end = 30 }) {
             position: 'absolute', inset: 0,
             background: COLORS.bg, opacity,
             fontFamily: FONTS.sans,
+          <div style={{
+            position: 'absolute', inset: 0,
+            opacity: 1 - outroOp,
+            background: COLORS.bg,
+            fontFamily: FONTS.sans,
           }}>
-            {/* Header */}
-            <div style={{
-              position: 'absolute',
-              top: 30, left: 80,
-              opacity: headerOp,
-              transform: `translateY(${(1 - headerOp) * 8}px)`,
-            }}>
-              <div style={{
-                fontFamily: FONTS.mono,
-                fontSize: 24, letterSpacing: '0.24em',
-                color: COLORS.accent,
-                textTransform: 'uppercase',
-                marginBottom: 16,
-              }}>
-                The ML way
-              </div>
-              <div style={{
-                fontFamily: FONTS.serif,
-                fontSize: 100,
-                fontWeight: 400,
-                color: COLORS.ink,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.05,
-              }}>
-                Feed it labeled examples. It learns the pattern.
-              </div>
-            </div>
-
             {/* Three stages: Training data (left) -> Model (center) -> Predictions (right) */}
             <TrainingData t={t} />
             <ModelBox t={t} />
@@ -1882,39 +1800,6 @@ function SceneMachine({ start = 33, end = 48 }) {
             background: COLORS.bg, opacity,
             fontFamily: FONTS.sans,
           }}>
-            {/* Header */}
-            <div style={{
-              position: 'absolute',
-              top: 60, left: 100,
-              opacity: headerOp,
-              transform: `translateY(${(1 - headerOp) * 8}px)`,
-            }}>
-              <div style={{
-                fontFamily: FONTS.mono,
-                fontSize: 18, letterSpacing: '0.28em',
-                color: COLORS.accent,
-                textTransform: 'uppercase',
-                marginBottom: 16,
-                fontWeight: 600,
-              }}>
-                Predictive maintenance
-              </div>
-              <div style={{
-                fontFamily: FONTS.serif,
-                fontSize: 78,
-                fontWeight: 400,
-                color: COLORS.ink,
-                letterSpacing: '-0.025em',
-                lineHeight: 1.0,
-              }}>
-                {t < 7.5 ? (
-                  <>Sensors say <em style={{ fontStyle: 'italic', color: COLORS.spam }}>everything's fine</em>… until it isn't.</>
-                ) : (
-                  <>Let the model learn from <em style={{ fontStyle: 'italic', color: COLORS.accent }}>thousands</em> of past runs.</>
-                )}
-              </div>
-            </div>
-
             {/* Rule-based phase */}
             {rulesOp > 0.01 && <RulePhase t={t} op={rulesOp} />}
 
@@ -2856,9 +2741,9 @@ const TABS = [
   { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 24 },
 ];
 
-function SpamStage() {
+function SpamStage({ onTime }) {
   return (
-    <Stage width={1920} height={1080} duration={36} background={COLORS.bg} persistKey="why-ml-spam">
+    <Stage width={1920} height={1080} duration={36} background={COLORS.bg} persistKey="why-ml-spam" onTime={onTime}>
       <SceneTitle      start={0}  end={3} />
       <SceneRules      start={3}  end={15} />
       <SceneTransition start={15} end={18} />
@@ -2868,9 +2753,9 @@ function SpamStage() {
   );
 }
 
-function MachineStage() {
+function MachineStage({ onTime }) {
   return (
-    <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine">
+    <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine" onTime={onTime}>
       <MachineIntro start={0}  end={3} />
       <SceneMachine start={3}  end={22} />
       <MachineOutro start={22} end={24} />
@@ -2931,6 +2816,8 @@ function App({ restartKey = 0 }) {
     } catch { return 'spam'; }
   });
 
+  const [stageTime, setStageTime] = React.useState(0);
+
   React.useEffect(() => {
     try { localStorage.setItem('why-ml:tab', tab); } catch {}
     const root = document.getElementById('root');
@@ -2940,6 +2827,24 @@ function App({ restartKey = 0 }) {
     }
   }, [tab]);
 
+  // Determine dynamic title based on tab and stageTime
+  const getDynamicTitle = () => {
+    if (tab === 'spam') {
+      if (stageTime < 3)  return { sub: 'WHY MACHINE LEARNING?', main: 'Why Machine Learning?' };
+      if (stageTime < 15) return { sub: 'THE TRADITIONAL WAY', main: 'Write a rule for every case.' };
+      if (stageTime < 18) return { sub: 'THE PROBLEM', main: 'Rules are brittle.' };
+      if (stageTime < 34) return { sub: 'THE ML WAY', main: 'Feed it labeled examples. It learns the pattern.' };
+      return { sub: 'SUMMARY', main: 'Patterns over rules.' };
+    } else {
+      if (stageTime < 3)   return { sub: 'WHY MACHINE LEARNING?', main: 'A harder problem.' };
+      if (stageTime < 10.5) return { sub: 'PREDICTIVE MAINTENANCE', main: "Sensors say everything's fine... until it isn't." };
+      if (stageTime < 22)  return { sub: 'PREDICTIVE MAINTENANCE', main: 'Let the model learn from thousands of past runs.' };
+      return { sub: 'SUMMARY', main: 'Patterns over thresholds.' };
+    }
+  };
+
+  const { sub, main } = getDynamicTitle();
+
   return (
     <div style={{
       position: 'absolute', inset: 0,
@@ -2948,13 +2853,33 @@ function App({ restartKey = 0 }) {
     }}>
       <header style={{
         flexShrink: 0,
-        padding: '10px 20px',
+        padding: '12px 32px',
         background: COLORS.bg,
         borderBottom: `1px solid ${COLORS.rule}`,
-        display: 'flex', alignItems: 'center', gap: 28,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: 100,
       }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div style={{
+            fontFamily: FONTS.mono,
+            fontSize: 12, letterSpacing: '0.24em',
+            color: COLORS.accent,
+            textTransform: 'uppercase',
+            fontWeight: 600,
+          }}>
+            {sub}
+          </div>
+          <div style={{
+            fontFamily: FONTS.serif,
+            fontSize: 28, fontWeight: 400,
+            color: COLORS.ink,
+            letterSpacing: '-0.015em',
+            lineHeight: 1.1,
+          }}>
+            {main}
+          </div>
+        </div>
         <div role="tablist" style={{
-          marginLeft: 'auto',
           display: 'flex', gap: 4,
           background: COLORS.bgAlt,
           border: `1px solid ${COLORS.rule}`,
@@ -3022,8 +2947,8 @@ function App({ restartKey = 0 }) {
       </header>
 
       <main style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        {tab === 'spam'    && <SpamStage    key={`spam-${restartKey}`} />}
-        {tab === 'machine' && <MachineStage key={`machine-${restartKey}`} />}
+        {tab === 'spam'    && <SpamStage    onTime={setStageTime} key={`spam-${restartKey}`} />}
+        {tab === 'machine' && <MachineStage onTime={setStageTime} key={`machine-${restartKey}`} />}
       </main>
     </div>
   );
