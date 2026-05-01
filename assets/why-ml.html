@@ -795,10 +795,10 @@ function CodeLine({ children, color = COLORS.ink, indent = 0, opacity = 1 }) {
   return (
     <div style={{
       fontFamily: FONTS.mono,
-      fontSize: 18,
+      fontSize: 22,
       color,
       opacity,
-      paddingLeft: indent * 24,
+      paddingLeft: indent * 32,
       lineHeight: 1.6,
       whiteSpace: 'pre',
     }}>
@@ -816,7 +816,7 @@ function Caption({ text, opacity = 1 }) {
       transform: 'translateX(-50%)',
       opacity,
       fontFamily: FONTS.sans,
-      fontSize: 22,
+      fontSize: 26,
       fontWeight: 500,
       color: COLORS.inkSoft,
       letterSpacing: '-0.01em',
@@ -857,7 +857,7 @@ function SceneTitle({ start = 0, end = 3 }) {
             }}>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 96,
+                fontSize: 110,
                 fontWeight: 400,
                 color: COLORS.ink,
                 letterSpacing: '-0.02em',
@@ -925,13 +925,13 @@ function SceneRules({ start = 3, end = 15 }) {
             {/* Header */}
             <div style={{
               position: 'absolute',
-              top: 90, left: 120,
+              top: 60, left: 100,
               opacity: headerOp,
               transform: `translateY(${(1 - headerOp) * 8}px)`,
             }}>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 14, letterSpacing: '0.28em',
+                fontSize: 18, letterSpacing: '0.28em',
                 color: COLORS.accent,
                 textTransform: 'uppercase',
                 marginBottom: 16,
@@ -941,7 +941,7 @@ function SceneRules({ start = 3, end = 15 }) {
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 72,
+                fontSize: 88,
                 fontWeight: 400,
                 color: COLORS.ink,
                 letterSpacing: '-0.025em',
@@ -954,17 +954,17 @@ function SceneRules({ start = 3, end = 15 }) {
             {/* Email card on the left */}
             <div style={{
               position: 'absolute',
-              left: 120,
+              left: 100,
               top: 340,
-              width: 720,
+              width: 820,
               opacity: emailIn,
               transform: `translateY(${(1 - emailIn) * 20}px)`,
               background: COLORS.paper,
               border: `1px solid ${COLORS.rule}`,
-              borderRadius: 8,
-              boxShadow: '0 18px 48px rgba(40,30,15,0.12), 0 2px 4px rgba(40,30,15,0.06)',
-              padding: '32px 36px',
-              display: 'flex', flexDirection: 'column', gap: 18,
+              borderRadius: 10,
+              boxShadow: '0 24px 64px rgba(40,30,15,0.12), 0 2px 4px rgba(40,30,15,0.06)',
+              padding: '40px 44px',
+              display: 'flex', flexDirection: 'column', gap: 20,
               fontFamily: FONTS.sans,
             }}>
               {/* Mail header bar */}
@@ -973,24 +973,24 @@ function SceneRules({ start = 3, end = 15 }) {
                 paddingBottom: 18,
                 borderBottom: `1px solid ${COLORS.rule}`,
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <div style={{
-                    width: 44, height: 44, borderRadius: 22,
+                    width: 52, height: 52, borderRadius: 26,
                     background: 'oklch(82% 0.06 60)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: COLORS.paper,
-                    fontSize: 16, fontWeight: 700,
+                    fontSize: 20, fontWeight: 700,
                     fontFamily: FONTS.sans,
                   }}>
                     P
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.ink }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <div style={{ fontSize: 19, fontWeight: 600, color: COLORS.ink }}>
                       Prizes Department
                     </div>
                     <div style={{
                       fontFamily: FONTS.mono,
-                      fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.04em',
+                      fontSize: 14, color: COLORS.inkMuted, letterSpacing: '0.04em',
                     }}>
                       prizes@offers-mail.co
                     </div>
@@ -998,7 +998,7 @@ function SceneRules({ start = 3, end = 15 }) {
                 </div>
                 <div style={{
                   fontFamily: FONTS.mono,
-                  fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+                  fontSize: 14, color: COLORS.inkMuted, letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
@@ -1010,11 +1010,11 @@ function SceneRules({ start = 3, end = 15 }) {
               {/* Subject line — single line, ellipsis if needed; crossfade morph */}
               <div style={{
                 position: 'relative',
-                height: 38,
+                height: 44,
               }}>
                 <div style={{
                   position: 'absolute', inset: 0,
-                  fontSize: 28, fontWeight: 700, color: COLORS.ink,
+                  fontSize: 36, fontWeight: 700, color: COLORS.ink,
                   letterSpacing: '-0.02em', lineHeight: 1.1,
                   opacity: 1 - morphT,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -1023,7 +1023,7 @@ function SceneRules({ start = 3, end = 15 }) {
                 </div>
                 <div style={{
                   position: 'absolute', inset: 0,
-                  fontSize: 28, fontWeight: 700, color: COLORS.spam,
+                  fontSize: 36, fontWeight: 700, color: COLORS.spam,
                   letterSpacing: '-0.02em', lineHeight: 1.1,
                   opacity: morphT,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -1034,7 +1034,7 @@ function SceneRules({ start = 3, end = 15 }) {
 
               {/* Preview body */}
               <div style={{
-                fontSize: 16, color: COLORS.inkSoft, lineHeight: 1.55,
+                fontSize: 22, color: COLORS.inkSoft, lineHeight: 1.55,
               }}>
                 Click here now. Limited time offer. $$$ guaranteed.
                 <br/>Act fast — only 3 left!
@@ -1045,11 +1045,11 @@ function SceneRules({ start = 3, end = 15 }) {
                 alignSelf: 'flex-start',
                 marginTop: 6,
                 fontFamily: FONTS.mono,
-                fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
-                padding: '6px 12px',
+                fontSize: 14, fontWeight: 700, letterSpacing: '0.14em',
+                padding: '8px 16px',
                 background: COLORS.spam,
                 color: COLORS.paper,
-                borderRadius: 3,
+                borderRadius: 4,
                 whiteSpace: 'nowrap',
                 opacity: clamp((t - 4.6) / 0.3, 0, 1) * (1 - morphT * 0.95),
               }}>
@@ -1078,8 +1078,8 @@ function SceneRules({ start = 3, end = 15 }) {
 
             {/* Code block on the right */}
             <CodeBlock
-              x={960} y={300}
-              width={840}
+              x={1000} y={300}
+              width={820}
               lineOps={lineOps}
               moreLineOps={moreLineOps}
               chaosT={chaosT}
@@ -1096,13 +1096,13 @@ function SceneRules({ start = 3, end = 15 }) {
 
 function CodeBlock({ x, y, width, lineOps, moreLineOps, chaosT }) {
   // The block can scroll up under chaosT to suggest "more rules forever"
-  const scroll = chaosT * 80;
+  const scroll = chaosT * 1000;
 
   return (
     <div style={{
       position: 'absolute',
       left: x, top: y,
-      width, height: 460,
+      width, height: 620,
       background: '#1a1815',
       borderRadius: 8,
       overflow: 'hidden',
@@ -1228,12 +1228,11 @@ function CodeBlock({ x, y, width, lineOps, moreLineOps, chaosT }) {
 function Line({ children, op = 1, color = '#e6dfce', indent = 0, highlight = false }) {
   return (
     <div style={{
-      fontSize: 16,
+      fontSize: 22,
       color,
       opacity: op,
-      paddingLeft: indent * 24,
-      paddingRight: 8,
-      lineHeight: 1.65,
+      paddingLeft: indent * 32,
+      lineHeight: 1.45,
       whiteSpace: 'pre',
       transform: `translateY(${(1 - op) * 6}px)`,
       background: highlight ? `rgba(217, 130, 90, ${0.10 * op})` : 'transparent',
@@ -1287,11 +1286,11 @@ function CaptionLine({ t }) {
         return (
           <div key={i} style={{
             position: 'absolute',
-            left: '50%', bottom: 60,
+            left: '50%', bottom: 30,
             transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
             opacity: op,
             fontFamily: FONTS.sans,
-            fontSize: 22, fontWeight: 500,
+            fontSize: 26, fontWeight: 500,
             color: COLORS.inkSoft,
             letterSpacing: '-0.01em',
             textAlign: 'center',
@@ -1343,7 +1342,7 @@ function SceneTransition({ start = 15, end = 18 }) {
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 110,
+                fontSize: 88,
                 fontWeight: 400,
                 letterSpacing: '-0.02em',
                 lineHeight: 1.0,
@@ -1379,10 +1378,10 @@ function SceneML({ start = 18, end = 30 }) {
         // Header
         const headerOp = clamp((t - 0.0) / 0.5, 0, 1);
 
-        // Phase 1: 0.5 - 4.0  Stacks of labeled emails appear on left
-        // Phase 2: 2.5 - 6.5  Emails stream into Model
-        // Phase 3: 5.0 - 8.0  Model "learning" animation (pulses)
-        // Phase 4: 7.5 - 11.5 New emails arrive on right, get classified
+        // Phase 1: 0.5 - 5.0  Stacks of labeled emails appear on left
+        // Phase 2: 2.8 - 8.5  Emails stream into Model (Slower)
+        // Phase 3: 6.5 - 10.0 Model "learning" animation (pulses)
+        // Phase 4: 9.5 - 15.5 New emails arrive on right, get classified
 
         return (
           <div style={{
@@ -1393,22 +1392,22 @@ function SceneML({ start = 18, end = 30 }) {
             {/* Header */}
             <div style={{
               position: 'absolute',
-              top: 50, left: 80,
+              top: 30, left: 80,
               opacity: headerOp,
               transform: `translateY(${(1 - headerOp) * 8}px)`,
             }}>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 12, letterSpacing: '0.24em',
+                fontSize: 24, letterSpacing: '0.24em',
                 color: COLORS.accent,
                 textTransform: 'uppercase',
-                marginBottom: 10,
+                marginBottom: 16,
               }}>
                 The ML way
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 52,
+                fontSize: 100,
                 fontWeight: 400,
                 color: COLORS.ink,
                 letterSpacing: '-0.02em',
@@ -1424,9 +1423,9 @@ function SceneML({ start = 18, end = 30 }) {
             <Predictions t={t} />
 
             {/* Stage labels */}
-            <StageLabel x={300}  y={760} t={t} appear={0.3}  text="LABELED EXAMPLES" />
-            <StageLabel x={960}  y={760} t={t} appear={4.5}  text="MODEL LEARNS" />
-            <StageLabel x={1620} y={760} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
+            <StageLabel x={300}  y={940} t={t} appear={0.3}  text="LABELED EXAMPLES" />
+            <StageLabel x={960}  y={940} t={t} appear={4.5}  text="MODEL LEARNS" />
+            <StageLabel x={1620} y={940} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
 
             {/* Bottom caption that changes */}
             <MLCaption t={t} duration={duration} />
@@ -1442,30 +1441,30 @@ function SceneML({ start = 18, end = 30 }) {
 function TrainingData({ t }) {
   // 8 emails: 4 spam, 4 ham. They appear staggered, then "stream" toward model.
   const items = [
-    { type: 'spam', subject: 'WIN $1,000,000 NOW',    yOffset: -180 },
-    { type: 'ham',  subject: 'Lunch tomorrow?',        yOffset: -120 },
-    { type: 'spam', subject: 'Cheap meds online',      yOffset: -60  },
-    { type: 'ham',  subject: 'Q3 review draft',        yOffset: 0    },
-    { type: 'spam', subject: 'Click for free iPhone',  yOffset: 60   },
+    { type: 'spam', subject: 'WIN $1,000,000 NOW',    yOffset: -280 },
+    { type: 'ham',  subject: 'Lunch tomorrow?',        yOffset: -200 },
+    { type: 'spam', subject: 'Cheap meds online',      yOffset: -120 },
+    { type: 'ham',  subject: 'Q3 review draft',        yOffset: -40  },
+    { type: 'spam', subject: 'Click for free iPhone',  yOffset: 40   },
     { type: 'ham',  subject: 'Dinner Friday',          yOffset: 120  },
-    { type: 'spam', subject: 'Verify your account!!!', yOffset: 180  },
-    { type: 'ham',  subject: 'Project status update',  yOffset: 240  },
+    { type: 'spam', subject: 'Verify your account!!!', yOffset: 200  },
+    { type: 'ham',  subject: 'Project status update',  yOffset: 280  },
   ];
 
   return (
     <>
       {items.map((it, i) => {
-        const appearAt  = 0.5 + i * 0.18;
-        const streamAt  = 2.6 + i * 0.18;
-        const arriveAt  = streamAt + 1.2;
+        const appearAt  = 0.5 + i * 0.25;
+        const streamAt  = 2.8 + i * 0.25;
+        const arriveAt  = streamAt + 1.6;
 
         const appear = Easing.easeOutBack(clamp((t - appearAt) / 0.5, 0, 1));
-        const stream = Easing.easeInOutCubic(clamp((t - streamAt) / 1.2, 0, 1));
+        const stream = Easing.easeInOutCubic(clamp((t - streamAt) / 1.6, 0, 1));
 
         const startX = 300;
         const endX   = 960;       // model center
-        const startY = 410 + it.yOffset;
-        const endY   = 470;       // model center y
+        const startY = 560 + it.yOffset;
+        const endY   = 560;       // model center y
 
         const x = startX + (endX - startX) * stream;
         const y = startY + (endY - startY) * stream;
@@ -1497,20 +1496,20 @@ function MiniEnvelope({ x, y, type, subject, opacity, scale = 1 }) {
     <div style={{
       position: 'absolute',
       left: x, top: y,
-      width: 240, height: 76,
+      width: 550, height: 172,
       transform: `translate(-50%, -50%) scale(${scale})`,
       transformOrigin: 'center',
       opacity,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
-      borderRadius: 5,
-      boxShadow: '0 4px 12px rgba(40,30,15,0.10)',
-      padding: '10px 14px',
-      display: 'flex', flexDirection: 'column', gap: 6,
+      borderRadius: 14,
+      boxShadow: '0 16px 48px rgba(40,30,15,0.14)',
+      padding: '28px 32px',
+      display: 'flex', flexDirection: 'column', gap: 16,
       fontFamily: FONTS.sans,
     }}>
       <div style={{
-        fontSize: 13, fontWeight: 600, color: COLORS.ink,
+        fontSize: 28, fontWeight: 600, color: COLORS.ink,
         letterSpacing: '-0.01em',
         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
       }}>
@@ -1518,11 +1517,11 @@ function MiniEnvelope({ x, y, type, subject, opacity, scale = 1 }) {
       </div>
       <div style={{
         alignSelf: 'flex-start',
-        fontSize: 9, fontWeight: 700, letterSpacing: '0.12em',
-        padding: '2px 7px',
+        fontSize: 20, fontWeight: 700, letterSpacing: '0.12em',
+        padding: '6px 16px',
         background: labelColor,
         color: COLORS.paper,
-        borderRadius: 2,
+        borderRadius: 5,
       }}>
         {labelText}
       </div>
@@ -1536,19 +1535,19 @@ function ModelBox({ t }) {
   // Box appears around t=1.0
   const appear = Easing.easeOutCubic(clamp((t - 1.0) / 0.6, 0, 1));
 
-  // "Active learning" pulses while emails stream in (t 2.5 – 7.5)
-  const learning = clamp((t - 2.5) / 0.4, 0, 1) * (1 - clamp((t - 7.5) / 0.5, 0, 1));
+  // "Active learning" pulses while emails stream in (t 2.8 – 9.0)
+  const learning = clamp((t - 2.8) / 0.5, 0, 1) * (1 - clamp((t - 9.0) / 0.6, 0, 1));
 
-  // After training (t > 7.5), it becomes "trained" — solid accent
-  const trained = clamp((t - 7.5) / 0.6, 0, 1);
+  // After training (t > 9.0), it becomes "trained" — solid accent
+  const trained = clamp((t - 9.0) / 0.7, 0, 1);
 
   // Pulse: subtle scale oscillation while learning
   const pulse = learning > 0.01
     ? 1 + Math.sin(t * 6) * 0.015 * learning
     : 1;
 
-  const cx = 960, cy = 470;
-  const w = 360, h = 240;
+  const cx = 960, cy = 560;
+  const w = 620, h = 420;
 
   return (
     <div style={{
@@ -1585,10 +1584,10 @@ function ModelBox({ t }) {
       {/* Label */}
       <div style={{
         position: 'absolute',
-        left: 0, right: 0, bottom: 14,
+        left: 0, right: 0, bottom: 24,
         textAlign: 'center',
         fontFamily: FONTS.mono,
-        fontSize: 11, letterSpacing: '0.18em',
+        fontSize: 20, letterSpacing: '0.18em',
         color: trained > 0.5 ? COLORS.accent : COLORS.inkMuted,
         textTransform: 'uppercase',
         fontWeight: 600,
@@ -1618,8 +1617,14 @@ function NeuralNet({ t, learning, trained }) {
   }
 
   return (
-    <svg width="360" height="220" style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}>
+    <svg width="620" height="400" style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}>
       {edges.map((e, i) => {
+        // Build edge coordinates relative to new size
+        const ax = (e.a.x / 360) * 620;
+        const ay = (e.a.y / 220) * 400;
+        const bx = (e.b.x / 360) * 620;
+        const by = (e.b.y / 220) * 400;
+
         // Phase modulation creates the "signal flowing" feeling
         const phase = (t * 1.2 + i * 0.15) % 1;
         const intensity = learning * (0.4 + 0.6 * Math.sin(phase * Math.PI * 2));
@@ -1627,22 +1632,26 @@ function NeuralNet({ t, learning, trained }) {
         return (
           <line
             key={i}
-            x1={e.a.x} y1={e.a.y} x2={e.b.x} y2={e.b.y}
+            x1={ax} y1={ay} x2={bx} y2={by}
             stroke={COLORS.accent}
-            strokeWidth={1 + intensity * 1.2}
+            strokeWidth={2 + intensity * 3}
             opacity={baseOp + intensity * 0.5}
           />
         );
       })}
-      {layers.flat().map((n, i) => (
-        <circle
-          key={i}
-          cx={n.x} cy={n.y} r={6}
-          fill={trained > 0.5 ? COLORS.accent : COLORS.paper}
-          stroke={COLORS.accent}
-          strokeWidth={1.6}
-        />
-      ))}
+      {layers.flat().map((n, i) => {
+        const nx = (n.x / 360) * 620;
+        const ny = (n.y / 220) * 400;
+        return (
+          <circle
+            key={i}
+            cx={nx} cy={ny} r={10}
+            fill={trained > 0.5 ? COLORS.accent : COLORS.paper}
+            stroke={COLORS.accent}
+            strokeWidth={3}
+          />
+        );
+      })}
     </svg>
   );
 }
@@ -1660,15 +1669,15 @@ function Predictions({ t }) {
   return (
     <>
       {items.map((it, i) => {
-        const arriveAt = 7.8 + it.delay;
-        const labelAt  = arriveAt + 0.7;
+        const arriveAt = 9.8 + it.delay * 1.4;
+        const labelAt  = arriveAt + 0.9;
 
         const arrive = Easing.easeOutCubic(clamp((t - arriveAt) / 0.6, 0, 1));
         const labelOp = Easing.easeOutBack(clamp((t - labelAt) / 0.4, 0, 1));
 
         const startX = 1200, endX = 1620;
         const x = startX + (endX - startX) * arrive;
-        const y = 320 + i * 130;
+        const y = 320 + i * 240;
 
         return (
           <PredictionCard
@@ -1693,26 +1702,26 @@ function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
     <div style={{
       position: 'absolute',
       left: x, top: y,
-      width: 320, height: 100,
+      width: 550, height: 172,
       transform: `translate(-50%, -50%)`,
       opacity: cardOp,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
-      borderRadius: 6,
-      boxShadow: '0 6px 18px rgba(40,30,15,0.10)',
-      padding: '12px 16px',
-      display: 'flex', flexDirection: 'column', gap: 4,
+      borderRadius: 14,
+      boxShadow: '0 16px 48px rgba(40,30,15,0.14)',
+      padding: '28px 32px',
+      display: 'flex', flexDirection: 'column', gap: 14,
       fontFamily: FONTS.sans,
     }}>
       <div style={{
-        fontSize: 14, fontWeight: 600, color: COLORS.ink,
+        fontSize: 28, fontWeight: 600, color: COLORS.ink,
         letterSpacing: '-0.01em',
         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
       }}>
         {subject}
       </div>
       <div style={{
-        fontSize: 12, color: COLORS.inkSoft, lineHeight: 1.35,
+        fontSize: 24, color: COLORS.inkSoft, lineHeight: 1.45,
         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
       }}>
         {text}
@@ -1720,14 +1729,14 @@ function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
       {/* Predicted label slides in from right */}
       <div style={{
         position: 'absolute',
-        right: 14, top: '50%',
+        right: 28, top: '50%',
         transform: `translateY(-50%) translateX(${(1 - labelOp) * 20}px)`,
         opacity: labelOp,
-        fontSize: 10, fontWeight: 700, letterSpacing: '0.12em',
-        padding: '5px 10px',
+        fontSize: 20, fontWeight: 700, letterSpacing: '0.12em',
+        padding: '10px 20px',
         background: labelColor,
         color: COLORS.paper,
-        borderRadius: 2,
+        borderRadius: 5,
       }}>
         {labelText}
       </div>
@@ -1775,7 +1784,7 @@ function MLCaption({ t, duration }) {
             transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
             opacity: op,
             fontFamily: FONTS.sans,
-            fontSize: 22, fontWeight: 500,
+            fontSize: 26, fontWeight: 500,
             color: COLORS.inkSoft,
             letterSpacing: '-0.01em',
             textAlign: 'center',
@@ -1876,23 +1885,23 @@ function SceneMachine({ start = 33, end = 48 }) {
             {/* Header */}
             <div style={{
               position: 'absolute',
-              top: 80, left: 120,
+              top: 60, left: 100,
               opacity: headerOp,
               transform: `translateY(${(1 - headerOp) * 8}px)`,
             }}>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 14, letterSpacing: '0.28em',
+                fontSize: 18, letterSpacing: '0.28em',
                 color: COLORS.accent,
                 textTransform: 'uppercase',
-                marginBottom: 14,
+                marginBottom: 16,
                 fontWeight: 600,
               }}>
                 Predictive maintenance
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 64,
+                fontSize: 78,
                 fontWeight: 400,
                 color: COLORS.ink,
                 letterSpacing: '-0.025em',
@@ -1950,14 +1959,14 @@ function RulePhase({ t, op }) {
       {/* Machine illustration card */}
       <div style={{
         position: 'absolute',
-        left: 120, top: 320,
-        width: 720, height: 560,
+        left: 100, top: 320,
+        width: 820, height: 640,
         background: COLORS.paper,
         border: `1px solid ${COLORS.rule}`,
-        borderRadius: 10,
-        boxShadow: '0 18px 48px rgba(40,30,15,0.10)',
-        padding: 32,
-        display: 'flex', flexDirection: 'column', gap: 22,
+        borderRadius: 12,
+        boxShadow: '0 24px 64px rgba(40,30,15,0.12)',
+        padding: 40,
+        display: 'flex', flexDirection: 'column', gap: 28,
       }}>
         {/* Card header */}
         <div style={{
@@ -1968,12 +1977,12 @@ function RulePhase({ t, op }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <StatusDot failed={failed} flash={failFlash} />
             <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color: COLORS.ink }}>
                 Press M-204 · Line 3
               </div>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+                fontSize: 14, color: COLORS.inkMuted, letterSpacing: '0.12em',
               }}>
                 LIVE · TELEMETRY
               </div>
@@ -1981,7 +1990,7 @@ function RulePhase({ t, op }) {
           </div>
           <div style={{
             fontFamily: FONTS.mono,
-            fontSize: 12, fontWeight: 600,
+            fontSize: 15, fontWeight: 600,
             color: failed ? COLORS.spam : COLORS.ham,
             letterSpacing: '0.14em',
           }}>
@@ -2008,16 +2017,16 @@ function RulePhase({ t, op }) {
       {failFlash > 0 && (
         <div style={{
           position: 'absolute',
-          left: 120 + 720 - 60, top: 290,
+          left: 100 + 820 - 60, top: 290,
           transform: `scale(${0.7 + failFlash * 0.4}) rotate(-5deg)`,
           opacity: failFlash,
           background: COLORS.spam,
           color: COLORS.paper,
           fontFamily: FONTS.mono,
-          fontSize: 14, fontWeight: 700, letterSpacing: '0.12em',
-          padding: '12px 18px',
+          fontSize: 18, fontWeight: 700, letterSpacing: '0.12em',
+          padding: '14px 22px',
           borderRadius: 4,
-          boxShadow: '0 14px 32px rgba(180,60,20,0.36)',
+          boxShadow: '0 16px 48px rgba(180,60,20,0.36)',
         }}>
           ✕ FAILED · NO ALERT FIRED
         </div>
@@ -2043,30 +2052,30 @@ function WhyItFailed({ t }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 920, top: 760,
-      width: 880,
+      left: 1000, top: 700,
+      width: 820,
       opacity: op,
       transform: `translateY(${(1 - op) * 12}px)`,
       background: COLORS.paper,
       border: `2px solid ${COLORS.spam}`,
-      borderRadius: 10,
-      boxShadow: '0 18px 48px rgba(180,60,20,0.16)',
-      padding: '22px 26px',
-      display: 'flex', flexDirection: 'column', gap: 14,
+      borderRadius: 12,
+      boxShadow: '0 24px 64px rgba(180,60,20,0.16)',
+      padding: '28px 32px',
+      display: 'flex', flexDirection: 'column', gap: 20,
       fontFamily: FONTS.sans,
     }}>
       <div style={{
         display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
       }}>
         <div style={{
-          fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.22em',
+          fontFamily: FONTS.mono, fontSize: 16, letterSpacing: '0.22em',
           color: COLORS.spam, textTransform: 'uppercase', fontWeight: 700,
         }}>
           So why did it fail?
         </div>
         <div style={{
-          fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMuted,
-          letterSpacing: '0.1em',
+          fontFamily: FONTS.mono, fontSize: 14, color: COLORS.inkMuted,
+          letterSpacing: '0.12em',
         }}>
           POST-MORTEM
         </div>
@@ -2077,23 +2086,23 @@ function WhyItFailed({ t }) {
       }}>
         Three small things, <em style={{ fontStyle: 'italic', color: COLORS.spam }}>at the same time</em>.
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
         {factors.map((f, i) => (
           <div key={i} style={{
-            padding: '10px 12px',
+            padding: '14px 18px',
             background: COLORS.bgAlt,
-            borderRadius: 5,
-            borderLeft: `3px solid ${COLORS.spam}`,
+            borderRadius: 6,
+            borderLeft: `4px solid ${COLORS.spam}`,
             opacity: clamp(op * 1.2 - i * 0.08, 0, 1),
           }}>
             <div style={{
-              fontSize: 13, fontWeight: 600, color: COLORS.ink,
-              letterSpacing: '-0.005em', marginBottom: 3,
+              fontSize: 16, fontWeight: 600, color: COLORS.ink,
+              letterSpacing: '-0.005em', marginBottom: 4,
             }}>
               {f.label}
             </div>
             <div style={{
-              fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkSoft,
+              fontFamily: FONTS.mono, fontSize: 13, color: COLORS.inkSoft,
             }}>
               {f.detail}
             </div>
@@ -2101,7 +2110,7 @@ function WhyItFailed({ t }) {
         ))}
       </div>
       <div style={{
-        fontSize: 13, color: COLORS.inkSoft, fontStyle: 'italic', lineHeight: 1.4,
+        fontSize: 16, color: COLORS.inkSoft, fontStyle: 'italic', lineHeight: 1.4,
       }}>
         No single sensor crossed a line. Their <span style={{ color: COLORS.spam, fontStyle: 'normal', fontWeight: 600 }}>combination</span> did.
       </div>
@@ -2205,33 +2214,33 @@ function Gauge({ label, value, unit, threshold, digits = 1 }) {
     <div style={{
       background: COLORS.bgAlt,
       border: `1px solid ${COLORS.rule}`,
-      borderRadius: 6,
-      padding: '10px 14px',
-      display: 'flex', flexDirection: 'column', gap: 6,
+      borderRadius: 10,
+      padding: '16px 20px',
+      display: 'flex', flexDirection: 'column', gap: 10,
     }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
       }}>
         <div style={{
-          fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+          fontSize: 14, fontWeight: 600, letterSpacing: '0.1em',
           color: COLORS.inkMuted, textTransform: 'uppercase',
         }}>
           {label}
         </div>
         <div style={{
           fontFamily: FONTS.mono,
-          fontSize: 11, color: COLORS.inkMuted,
+          fontSize: 14, color: COLORS.inkMuted,
         }}>
           max {threshold}{unit}
         </div>
       </div>
       <div style={{
         fontFamily: FONTS.mono,
-        fontSize: 22, fontWeight: 600,
+        fontSize: 28, fontWeight: 600,
         color: isHigh ? 'oklch(60% 0.13 60)' : COLORS.ink,
         letterSpacing: '-0.01em',
       }}>
-        {fmtVal} <span style={{ fontSize: 13, color: COLORS.inkMuted, fontWeight: 500 }}>{unit}</span>
+        {fmtVal} <span style={{ fontSize: 16, color: COLORS.inkMuted, fontWeight: 500 }}>{unit}</span>
       </div>
       {/* Bar */}
       <div style={{ height: 4, background: COLORS.rule, borderRadius: 2, overflow: 'hidden' }}>
@@ -2251,25 +2260,25 @@ function RuleCode({ t, failed }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 920, top: 320,
-      width: 880,
+      left: 1000, top: 320,
+      width: 820, height: 620,
       background: '#1a1815',
-      borderRadius: 8,
+      borderRadius: 12,
       overflow: 'hidden',
-      boxShadow: '0 16px 40px rgba(20,15,5,0.30)',
+      boxShadow: '0 24px 64px rgba(20,15,5,0.30)',
       fontFamily: FONTS.mono,
     }}>
       <div style={{
-        height: 32, background: '#262320',
+        height: 38, background: '#262320',
         borderBottom: '1px solid #33302b',
-        display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px',
+        display: 'flex', alignItems: 'center', gap: 8, padding: '0 16px',
       }}>
-        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
-        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
-        <div style={{ width: 10, height: 10, borderRadius: 5, background: '#5c574e' }}/>
+        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#5c574e' }}/>
+        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#5c574e' }}/>
+        <div style={{ width: 12, height: 12, borderRadius: 6, background: '#5c574e' }}/>
         <div style={{
-          marginLeft: 14,
-          color: '#8a8478', fontSize: 12, letterSpacing: '0.08em',
+          marginLeft: 16,
+          color: '#8a8478', fontSize: 14, letterSpacing: '0.08em',
         }}>
           maintenance_rules.py
         </div>
@@ -2341,9 +2350,9 @@ function RuleCode({ t, failed }) {
 function RLine({ children, op = 1, color = '#e6dfce', indent = 0 }) {
   return (
     <div style={{
-      fontSize: 16, color, opacity: op,
-      paddingLeft: indent * 24,
-      lineHeight: 1.7, whiteSpace: 'pre',
+      fontSize: 22, color, opacity: op,
+      paddingLeft: indent * 32,
+      lineHeight: 1.45, whiteSpace: 'pre',
       transform: `translateY(${(1 - op) * 4}px)`,
     }}>
       {children}
@@ -2448,24 +2457,24 @@ function ScatterChart({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 120, top: 320,
-      width: 720,
+      left: 100, top: 320,
+      width: 820,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
-      borderRadius: 10,
-      boxShadow: '0 18px 48px rgba(40,30,15,0.10)',
-      padding: 28,
+      borderRadius: 12,
+      boxShadow: '0 24px 64px rgba(40,30,15,0.12)',
+      padding: 36,
     }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-        marginBottom: 16,
+        marginBottom: 20,
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+        <div style={{ fontSize: 20, fontWeight: 700, color: COLORS.ink }}>
           Past runs · 12 months
         </div>
         <div style={{
           fontFamily: FONTS.mono,
-          fontSize: 11, letterSpacing: '0.1em',
+          fontSize: 14, letterSpacing: '0.12em',
           color: COLORS.inkMuted, textTransform: 'uppercase',
         }}>
           n = {runs.ok.length + runs.fail.length}
@@ -2478,26 +2487,26 @@ function ScatterChart({ localT }) {
         <line x1={padL} y1={padT + chartH} x2={padL + chartW} y2={padT + chartH} stroke={COLORS.rule} strokeWidth="1.5"/>
 
         {/* Axis labels */}
-        <text x={padL + chartW / 2} y={H - 8} textAnchor="middle"
+        <text x={padL + chartW / 2} y={H - 4} textAnchor="middle"
               fill={COLORS.inkMuted}
-              style={{ fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              style={{ fontFamily: FONTS.mono, fontSize: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           TEMPERATURE (°C)
         </text>
-        <text x={16} y={padT + chartH / 2} textAnchor="middle"
+        <text x={12} y={padT + chartH / 2} textAnchor="middle"
               fill={COLORS.inkMuted}
-              transform={`rotate(-90 16 ${padT + chartH / 2})`}
-              style={{ fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              transform={`rotate(-90 12 ${padT + chartH / 2})`}
+              style={{ fontFamily: FONTS.mono, fontSize: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           VIBRATION (mm/s)
         </text>
 
         {/* Tick marks */}
         {[60, 70, 80, 90, 100].map(v => (
           <g key={`tx${v}`}>
-            <line x1={sx(v)} y1={padT + chartH} x2={sx(v)} y2={padT + chartH + 4}
-                  stroke={COLORS.inkMuted} strokeWidth="1"/>
-            <text x={sx(v)} y={padT + chartH + 18} textAnchor="middle"
+            <line x1={sx(v)} y1={padT + chartH} x2={sx(v)} y2={padT + chartH + 6}
+                  stroke={COLORS.inkMuted} strokeWidth="1.5"/>
+            <text x={sx(v)} y={padT + chartH + 24} textAnchor="middle"
                   fill={COLORS.inkMuted}
-                  style={{ fontFamily: FONTS.mono, fontSize: 11 }}>{v}</text>
+                  style={{ fontFamily: FONTS.mono, fontSize: 15 }}>{v}</text>
           </g>
         ))}
         {[2, 4, 6, 8].map(v => (
@@ -2622,30 +2631,30 @@ function PredictionPanel({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 920, top: 320,
-      width: 880,
-      display: 'flex', flexDirection: 'column', gap: 18,
+      left: 1000, top: 320,
+      width: 820,
+      display: 'flex', flexDirection: 'column', gap: 24,
     }}>
       {/* New incoming reading */}
       <div style={{
         background: COLORS.paper,
         border: `1px solid ${COLORS.rule}`,
-        borderRadius: 10,
-        boxShadow: '0 12px 32px rgba(40,30,15,0.08)',
-        padding: 24,
+        borderRadius: 12,
+        boxShadow: '0 16px 40px rgba(40,30,15,0.08)',
+        padding: 32,
         opacity: newRowOp,
         transform: `translateY(${(1 - newRowOp) * 12}px)`,
       }}>
         <div style={{
           display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-          marginBottom: 14,
+          marginBottom: 18,
         }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: COLORS.ink }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: COLORS.ink }}>
             New reading · M-204 · this morning
           </div>
           <div style={{
             fontFamily: FONTS.mono,
-            fontSize: 11, color: COLORS.inkMuted, letterSpacing: '0.1em',
+            fontSize: 14, color: COLORS.inkMuted, letterSpacing: '0.12em',
           }}>
             8 FEATURES
           </div>
@@ -2656,20 +2665,20 @@ function PredictionPanel({ localT }) {
         }}>
           {features.map((f, i) => (
             <div key={i} style={{
-              padding: '10px 12px',
+              padding: '12px 14px',
               background: COLORS.bgAlt,
-              borderRadius: 5,
+              borderRadius: 6,
               opacity: clamp(newRowOp * 1.2 - i * 0.04, 0, 1),
             }}>
               <div style={{
-                fontFamily: FONTS.mono, fontSize: 10, letterSpacing: '0.1em',
+                fontFamily: FONTS.mono, fontSize: 12, letterSpacing: '0.1em',
                 color: COLORS.inkMuted, textTransform: 'uppercase',
-                marginBottom: 4,
+                marginBottom: 6,
               }}>
                 {f.label}
               </div>
               <div style={{
-                fontFamily: FONTS.mono, fontSize: 16, fontWeight: 600,
+                fontFamily: FONTS.mono, fontSize: 20, fontWeight: 600,
                 color: COLORS.ink,
               }}>
                 {f.v}
@@ -2678,8 +2687,8 @@ function PredictionPanel({ localT }) {
           ))}
         </div>
         <div style={{
-          marginTop: 14,
-          fontSize: 13, color: COLORS.inkSoft, fontStyle: 'italic',
+          marginTop: 18,
+          fontSize: 15, color: COLORS.inkSoft, fontStyle: 'italic',
         }}>
           No single threshold is tripped. Old rules say <span style={{ color: COLORS.ham, fontStyle: 'normal', fontWeight: 600 }}>OK</span>.
         </div>
@@ -2688,29 +2697,29 @@ function PredictionPanel({ localT }) {
       {/* Model verdict */}
       <div style={{
         background: COLORS.ink,
-        borderRadius: 10,
-        boxShadow: '0 18px 48px rgba(20,15,5,0.30)',
-        padding: 28,
+        borderRadius: 12,
+        boxShadow: '0 24px 64px rgba(20,15,5,0.30)',
+        padding: 36,
         opacity: verdictOp,
         transform: `translateY(${(1 - verdictOp) * 16}px)`,
         color: COLORS.bg,
       }}>
         <div style={{
           fontFamily: FONTS.mono,
-          fontSize: 12, letterSpacing: '0.22em',
+          fontSize: 15, letterSpacing: '0.22em',
           color: 'oklch(72% 0.10 200)',
           textTransform: 'uppercase',
-          marginBottom: 12,
+          marginBottom: 16,
           fontWeight: 600,
         }}>
           Trained model · Verdict
         </div>
         <div style={{
-          display: 'flex', alignItems: 'baseline', gap: 18,
+          display: 'flex', alignItems: 'baseline', gap: 24,
         }}>
           <div style={{
             fontFamily: FONTS.serif,
-            fontSize: 56, fontWeight: 400,
+            fontSize: 72, fontWeight: 400,
             color: COLORS.spam,
             letterSpacing: '-0.025em',
             lineHeight: 1.0,
@@ -2719,7 +2728,7 @@ function PredictionPanel({ localT }) {
           </div>
           <div style={{
             fontFamily: FONTS.mono,
-            fontSize: 32, fontWeight: 700,
+            fontSize: 42, fontWeight: 700,
             color: COLORS.bg,
             fontVariantNumeric: 'tabular-nums',
           }}>
@@ -2737,8 +2746,8 @@ function PredictionPanel({ localT }) {
           }}/>
         </div>
         <div style={{
-          marginTop: 14,
-          fontSize: 14, color: 'rgba(246,244,239,0.7)', lineHeight: 1.5,
+          marginTop: 20,
+          fontSize: 16, color: 'rgba(246,244,239,0.7)', lineHeight: 1.5,
         }}>
           Schedule maintenance in next 48 h. Top drivers:
           <span style={{ color: COLORS.bg, fontWeight: 600 }}> vibration trend</span>,
@@ -2768,11 +2777,11 @@ function MachineCaption({ t, duration }) {
         return (
           <div key={i} style={{
             position: 'absolute',
-            left: '50%', bottom: 40,
+            left: '50%', bottom: 30,
             transform: `translateX(-50%) translateY(${(1 - fadeIn) * 8}px)`,
             opacity: op,
             fontFamily: FONTS.sans,
-            fontSize: 22, fontWeight: 500,
+            fontSize: 26, fontWeight: 500,
             color: COLORS.inkSoft,
             letterSpacing: '-0.01em',
             textAlign: 'center',
@@ -2812,7 +2821,7 @@ Object.assign(window, { SceneMachine });
             }}>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 96,
+                fontSize: 110,
                 fontWeight: 400,
                 color: COLORS.ink,
                 letterSpacing: '-0.02em',
@@ -2843,18 +2852,18 @@ Object.assign(window, { SceneMachine });
 Object.assign(window, { SceneOutro });
 
 const TABS = [
-  { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 32 },
+  { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 36 },
   { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 24 },
 ];
 
 function SpamStage() {
   return (
-    <Stage width={1920} height={1080} duration={32} background={COLORS.bg} persistKey="why-ml-spam">
+    <Stage width={1920} height={1080} duration={36} background={COLORS.bg} persistKey="why-ml-spam">
       <SceneTitle      start={0}  end={3} />
       <SceneRules      start={3}  end={15} />
       <SceneTransition start={15} end={18} />
-      <SceneML         start={18} end={30} />
-      <SpamOutro       start={30} end={32} />
+      <SceneML         start={18} end={34} />
+      <SpamOutro       start={34} end={36} />
     </Stage>
   );
 }
