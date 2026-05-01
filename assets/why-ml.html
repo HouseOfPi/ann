@@ -1381,9 +1381,9 @@ function SceneML({ start = 18, end = 30 }) {
             <Predictions t={t} />
 
             {/* Stage labels */}
-            <StageLabel x={300}  y={860} t={t} appear={0.3}  text="LABELED EXAMPLES" />
+            <StageLabel x={315}  y={860} t={t} appear={0.3}  text="LABELED EXAMPLES" />
             <StageLabel x={960}  y={860} t={t} appear={4.5}  text="MODEL LEARNS" />
-            <StageLabel x={1620} y={860} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
+            <StageLabel x={1605} y={860} t={t} appear={7.8}  text="NEW EMAILS · CLASSIFIED" />
 
             {/* Bottom caption that changes */}
             <MLCaption t={t} duration={duration} />
@@ -1419,7 +1419,7 @@ function TrainingData({ t }) {
         const appear = Easing.easeOutBack(clamp((t - appearAt) / 0.5, 0, 1));
         const stream = Easing.easeInOutCubic(clamp((t - streamAt) / 1.6, 0, 1));
 
-        const startX = 300;
+        const startX = 315;
         const endX   = 960;       // model center
         const startY = 480 + it.yOffset;
         const endY   = 480;       // model center y
@@ -1454,7 +1454,7 @@ function MiniEnvelope({ x, y, type, subject, opacity, scale = 1 }) {
     <div style={{
       position: 'absolute',
       left: x, top: y,
-      width: 550, height: 172,
+      width: 480, height: 172,
       transform: `translate(-50%, -50%) scale(${scale})`,
       transformOrigin: 'center',
       opacity,
@@ -1633,7 +1633,7 @@ function Predictions({ t }) {
         const arrive = Easing.easeOutCubic(clamp((t - arriveAt) / 0.6, 0, 1));
         const labelOp = Easing.easeOutBack(clamp((t - labelAt) / 0.4, 0, 1));
 
-        const startX = 1200, endX = 1620;
+        const startX = 1200, endX = 1605;
         const x = startX + (endX - startX) * arrive;
         const y = 240 + i * 240;
 
@@ -1660,7 +1660,7 @@ function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
     <div style={{
       position: 'absolute',
       left: x, top: y,
-      width: 550, height: 172,
+      width: 480, height: 172,
       transform: `translate(-50%, -50%)`,
       opacity: cardOp,
       background: COLORS.paper,
@@ -1675,12 +1675,14 @@ function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
         fontSize: 28, fontWeight: 600, color: COLORS.ink,
         letterSpacing: '-0.01em',
         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        paddingRight: 160,
       }}>
         {subject}
       </div>
       <div style={{
         fontSize: 24, color: COLORS.inkSoft, lineHeight: 1.45,
         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        paddingRight: 160,
       }}>
         {text}
       </div>
@@ -2382,7 +2384,7 @@ function ScatterChart({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 100, top: 240,
+      left: 60, top: 240,
       width: 820,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
@@ -2556,7 +2558,7 @@ function PredictionPanel({ localT }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 1000, top: 240,
+      left: 1060, top: 240,
       width: 820,
       display: 'flex', flexDirection: 'column', gap: 24,
     }}>
