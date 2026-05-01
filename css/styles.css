@@ -262,6 +262,14 @@
       }
       /* Palette 6 — Dark (default) uses :root values, no class needed */
 
+      /* Match #slideOne background to the intro animation scene background per palette */
+      #slideOne                        { background: #0a1428; } /* deep-navy default */
+      .palette-warm-linen  #slideOne   { background: #f4ede0; }
+      .palette-paper-white #slideOne   { background: #ffffff; }
+      .palette-midnight    #slideOne   { background: #070b16; }
+      .palette-mint        #slideOne   { background: #0d2620; }
+      .palette-plum        #slideOne   { background: #1a0d1f; }
+
       /* Remove cyan/turquoise gradients from dark palettes for clean backgrounds */
       .palette-midnight { background-image: none; }
 

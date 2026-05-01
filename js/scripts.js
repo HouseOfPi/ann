@@ -2,22 +2,23 @@
       let isLightMode = false; // used by drawBrain canvas — managed by setMode()
       let soundEnabled = true; // managed by toggleSound()
 
-      const bc = document.getElementById("brain"),
-        bx = bc.getContext("2d");
+      const bc = document.getElementById("brain");
+      const bx = bc ? bc.getContext("2d") : null;
       let BW, BH;
       function resizeBrain() {
+        if (!bc || !bx) return;
         const r = window.devicePixelRatio || 1;
         BW = window.innerWidth;
         BH = window.innerHeight;
         bc.width = BW * r;
         bc.height = BH * r;
         bx.setTransform(r, 0, 0, r, 0, 0);
-        
+
         // Reset all background initializations to force recalculation of positions
         dualInited = false;
-        synapseNodes = []; nexusNodes = []; streamParticles = []; 
+        synapseNodes = []; nexusNodes = []; streamParticles = [];
         stormNodes = []; ballNodes = []; annNodes = [];
-        
+
         buildBrain();
       }
       setTimeout(resizeBrain, 50);
@@ -36,6 +37,7 @@
       });
 
       function buildBrain() {
+        if (!bc || !bx) return;
         nodes = [];
         edges = [];
         // Much simpler, elegant amount of nodes
@@ -96,7 +98,7 @@
         heroBg = mode;
         synapseNodes = []; synapseParticles2 = [];
         nexusNodes = []; streamParticles = []; stormNodes = []; ballNodes = []; annNodes = []; annPulses = []; annParticles = []; dualInited = false;
-        bx.clearRect(0, 0, BW, BH);
+        if (bx) bx.clearRect(0, 0, BW, BH);
         // Toggle left-align class and divider for Dual mode
         const uiEl = document.querySelector('#slideOne .ui');
         if (uiEl) uiEl.classList.toggle('ui-left', mode === 'dual');
@@ -1005,6 +1007,7 @@
       /* ── D. MAIN RENDER LOOP ── */
       let bt = 0;
       function drawBrain() {
+        if (!bc || !bx) return;
         if (!BW || !BH) {
           requestAnimationFrame(drawBrain);
           return;
@@ -2125,12 +2128,10 @@
         gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 1.3 });
       }
 
-      // Don't auto-fire — set everything visible as a fallback, animation plays on slide entry
-      gsap.set(".hero-eyebrow", { opacity: 0 });
-      gsap.set(".t1 span", { opacity: 0 });
-      gsap.set(".t2 span", { opacity: 0 });
-      gsap.set(".hero-tagline", { opacity: 0 });
-      gsap.set(".hero-meta", { opacity: 0 });
+      // Fire title animation if slideOne is the starting slide, otherwise leave visible
+      if (document.getElementById('slideOne')?.classList.contains('active-slide')) {
+        setTimeout(() => animateSlideOneTitle(), 400);
+      }
 
       // Divider fade in (dual mode only)
       if (document.querySelector('.hero-divider.visible')) {
