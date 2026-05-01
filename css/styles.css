@@ -930,8 +930,9 @@
       /* Left-align hero content in Dual mode */
       .ui.ui-left {
         align-items: flex-start;
-        padding-left: 8vw;
+        padding-left: 11.5vw;
         justify-content: center;
+        margin-top: -40px;
       }
       .ui.ui-left .title-wrap {
         width: auto;
@@ -942,8 +943,9 @@
       /* Tagline positioned on the right side, under the animation */
       .ui.ui-left .hero-tagline {
         position: absolute;
-        left: 75%;
-        top: 72%;
+        left: 70.5%;
+        bottom: 44px;
+        top: auto;
         transform: translateX(-50%);
         width: max-content;
         white-space: nowrap;
@@ -966,11 +968,15 @@
         font-family: var(--font-heading);
         font-weight: 800;
         font-size: clamp(42px, 6vw, 92px);
-        line-height: 1.04;
+        line-height: 1;
         letter-spacing: -2px;
         margin: 0;
         white-space: normal;
         position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.35em;
       }
       /* Subtle ambient glow behind the title */
       .title::before {
@@ -994,19 +1000,19 @@
         100% { opacity: 1; }
       }
       .t1 {
-        display: block;
+        display: inline-block;
         color: var(--text-main);
         opacity: 1;
         transition: color 0.7s;
         text-shadow: 0 0 80px rgba(255,255,255,0.06);
       }
       .t2 {
-        display: block;
+        display: inline-block;
         font-size: 0.42em;
         font-weight: 400;
         letter-spacing: -0.5px;
-        line-height: 1.2;
-        margin-top: 0.25em;
+        line-height: 1;
+        margin-top: 0;
         opacity: 1;
         background: var(--hero-gradient);
         -webkit-background-clip: text;
@@ -1355,7 +1361,7 @@
       .hero-quote-float {
         position: absolute;
         bottom: 44px;
-        left: clamp(50px, 8vw, 120px);
+        left: 11.5vw;
         max-width: 420px;
         display: flex;
         gap: 16px;

@@ -472,7 +472,7 @@
         const layers = isMobile ? [3, 4, 3] : [3, 5, 5, 3];
         dualAnnLayerCount = layers.length;
         
-        const centerX = BW * 0.75;
+        const centerX = BW * 0.705;
         const annSpread = isMobile ? BW * 0.30 : Math.min(BW * 0.35, 500);
         const annLeft = centerX - annSpread / 2;
         const totalW = annSpread;
@@ -481,7 +481,7 @@
 
         layers.forEach((count, li) => {
           const totalH = (count - 1) * nodeSpacingY;
-          const startY = (BH - totalH) / 2;
+          const startY = (BH - totalH) / 2 - 40;
           for (let j = 0; j < count; j++) {
             dualAnnNodes.push({
               x: annLeft + li * spacingX,
@@ -509,7 +509,7 @@
         // ═══════════════════════════════════════
         const isMob = BW < 768;
         const annSpreadDraw = isMob ? BW * 0.30 : Math.min(BW * 0.35, 500);
-        const ballCx = BW * 0.75, ballCy = BH * 0.5;
+        const ballCx = BW * 0.705, ballCy = BH * 0.45;
         const rotX = bt * 0.0018, rotY = bt * 0.0025;
         const baseRadius = annSpreadDraw * 0.45;
         const bPulse = 0.92 + Math.sin(bt * 0.006) * 0.08;
