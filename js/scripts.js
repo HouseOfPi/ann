@@ -1758,7 +1758,7 @@
       // Activate default slide (slideOne) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
+        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2068,31 +2068,6 @@
 
 
       // --- GSAP Hero Animations ---
-      function splitText(selector) {
-        const el = document.querySelector(selector);
-        if (!el) return;
-        const text = el.innerText;
-        el.innerHTML = "";
-        text.split("").forEach((char) => {
-          let span = document.createElement("span");
-          span.innerText = char === " " ? "\u00A0" : char;
-          span.style.display = "inline-block";
-
-          // For .t2 (gradient text), we need to re-apply the gradient to each inline-block span
-          // because webkit-background-clip: text requires background on the element holding the text.
-          if (selector === ".t2") {
-            span.style.background = "var(--text-gradient)";
-            span.style.webkitBackgroundClip = "text";
-            span.style.webkitTextFillColor = "transparent";
-          }
-
-          el.appendChild(span);
-        });
-      }
-
-      // Prepare the text
-      splitText(".t1");
-      splitText(".t2");
 
       // Keep side-nav in sync
       function syncSlider(index) {
@@ -2106,30 +2081,8 @@
       // SlideOne title entrance animation — callable on demand
       function animateSlideOneTitle() {
         // Reset all elements to invisible first
-        gsap.set(".hero-chapter", { opacity: 0, y: -10 });
-        gsap.set(".hero-eyebrow", { opacity: 0, y: -14 });
-        gsap.set(".t1 span", { opacity: 0, y: 55 });
-        gsap.set(".t2 span", { opacity: 0, y: 55 });
         gsap.set(".hero-tagline", { opacity: 0, y: 18, filter: "blur(6px)" });
         gsap.set(".hero-meta", { opacity: 0, y: 12 });
-
-        // Chapter 01 fade in
-        gsap.to(".hero-chapter", { opacity: 0.3, y: 0, duration: 0.8, ease: "power2.out" });
-
-        // Eyebrow badge slide down
-        gsap.to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", delay: 0.1 });
-
-        // Animate titles
-        gsap.to(".t1 span", {
-          duration: 1.1, y: 0, opacity: 1,
-          ease: "power4.out", stagger: 0.045, delay: 0.2,
-        });
-
-        // Animate "NETWORKS"
-        gsap.to(".t2 span", {
-          duration: 1.1, y: 0, opacity: 1,
-          ease: "power4.out", stagger: 0.045, delay: 0.38,
-        });
 
         // Tagline fade-in
         gsap.to(".hero-tagline", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out", delay: 1.0 });
