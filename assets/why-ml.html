@@ -360,6 +360,12 @@ function Stage({
   const [playing, setPlaying] = React.useState(autoplay);
   const [hoverTime, setHoverTime] = React.useState(null);
   const [scale, setScale] = React.useState(1);
+  const [controlsEnabled, setControlsEnabled] = React.useState(() => {
+    try {
+      return localStorage.getItem('ann_anim_controls') === 'true';
+    } catch(e) { return false; }
+  });
+
 
   React.useEffect(() => {
     if (onTime) onTime(time);
@@ -451,6 +457,18 @@ function Stage({
     return () => el.removeEventListener('wheel', onWheel);
   }, [duration]);
 
+  // Listen for controls visibility broadcast
+  React.useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data && e.data.type === 'SET_ANIM_CONTROLS') {
+        setControlsEnabled(e.data.enabled);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
+
   const displayTime = hoverTime != null ? hoverTime : time;
 
   const ctxValue = React.useMemo(
@@ -497,6 +515,20 @@ function Stage({
           </TimelineContext.Provider>
         </div>
       </div>
+
+      {controlsEnabled && (
+        <div onClick={e => e.stopPropagation()}>
+          <PlaybackBar 
+            time={time} 
+            duration={duration} 
+            playing={playing} 
+            onPlayPause={() => setPlaying(p => !p)}
+            onReset={() => { setTime(0); setPlaying(true); }}
+            onSeek={setTime}
+            onHover={setHoverTime}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -1734,7 +1766,7 @@ function MLCaption({ t, duration }) {
     <>
       {caps.map((c, i) => {
         const fadeIn = clamp((t - c.start) / 0.4, 0, 1);
-        const fadeOut = 1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1);
+        const fadeOut = c.end === duration ? 1 : (1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1));
         const op = Easing.easeOutCubic(fadeIn) * fadeOut;
         if (op <= 0.001) return null;
         return (
@@ -2698,7 +2730,7 @@ function MachineCaption({ t, duration }) {
     <>
       {caps.map((c, i) => {
         const fadeIn = clamp((t - c.start) / 0.4, 0, 1);
-        const fadeOut = 1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1);
+        const fadeOut = c.end === duration ? 1 : (1 - clamp((t - (c.end - 0.4)) / 0.4, 0, 1));
         const op = Easing.easeOutCubic(fadeIn) * fadeOut;
         if (op <= 0.001) return null;
         return (
@@ -2731,8 +2763,7 @@ Object.assign(window, { SceneMachine });
     <Sprite start={start} end={end}>
       {({ localTime, duration }) => {
         const enter = Easing.easeOutCubic(clamp(localTime / 0.6, 0, 1));
-        const exit  = clamp((localTime - (duration - 0.6)) / 0.6, 0, 1);
-        const op = enter * (1 - exit);
+        const op = enter;
         const scale = 1 + localTime * 0.008;
 
         return (
@@ -2779,13 +2810,13 @@ Object.assign(window, { SceneMachine });
 Object.assign(window, { SceneOutro });
 
 const TABS = [
-  { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 36 },
-  { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 24 },
+  { id: 'spam',    label: 'Spam filter',     subtitle: 'Text classification',     duration: 34.5 },
+  { id: 'machine', label: 'Machine failure', subtitle: 'Predictive maintenance',  duration: 23 },
 ];
 
 function SpamStage({ onTime }) {
   return (
-    <Stage width={1920} height={1080} duration={36} background={COLORS.bg} persistKey="why-ml-spam" onTime={onTime}>
+    <Stage width={1920} height={1080} duration={34.5} background={COLORS.bg} persistKey="why-ml-spam" onTime={onTime} loop={false}>
       <SceneProblemCard start={0} end={3} 
         sub="The Spam Problem" 
         main="The internet is drowning in spam." 
@@ -2794,21 +2825,21 @@ function SpamStage({ onTime }) {
       <SceneRules       start={3}  end={15} />
       <SceneTransition  start={15} end={18} />
       <SceneML          start={18} end={34} />
-      <SpamOutro        start={34} end={36} />
+      <SpamOutro        start={34} end={34.5} />
     </Stage>
   );
 }
 
 function MachineStage({ onTime }) {
   return (
-    <Stage width={1920} height={1080} duration={24} background={COLORS.bg} persistKey="why-ml-machine" onTime={onTime}>
+    <Stage width={1920} height={1080} duration={23} background={COLORS.bg} persistKey="why-ml-machine" onTime={onTime} loop={false}>
       <SceneProblemCard start={0} end={3} 
         sub="The Maintenance Problem" 
         main="When machines fail, factories stop." 
         detail="A single unexpected breakdown can cost millions. Can we predict failures before they happen?" 
       />
       <SceneMachine     start={3}  end={22} />
-      <MachineOutro     start={22} end={24} />
+      <MachineOutro     start={22} end={23} />
     </Stage>
   );
 }
@@ -2825,8 +2856,7 @@ function MachineOutro({ start, end }) {
     <Sprite start={start} end={end}>
       {({ localTime, duration }) => {
         const enter = Easing.easeOutCubic(clamp(localTime / 0.5, 0, 1));
-        const exit  = clamp((localTime - (duration - 0.5)) / 0.5, 0, 1);
-        const op = enter * (1 - exit);
+        const op = enter;
         return (
           <div style={{
             position: 'absolute', inset: 0,

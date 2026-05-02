@@ -19,105 +19,122 @@
     <div class="settings-side" id="settingsSide">
       <div class="settings-group">
         <div class="settings-label">Color Palette</div>
-        <div class="palette-list" id="paletteList">
-          <button class="palette-row active" data-palette="warm-linen" onclick="setPalette('warm-linen')">
-            <div class="palette-swatches">
-              <span style="background:#f3f1e9"></span>
-              <span style="background:#1c1c1c"></span>
-              <span style="background:#4a8bdd"></span>
-              <span style="background:#e27b5e"></span>
+        <div class="settings-dropdown" id="paletteDropdown">
+          <div class="dropdown-trigger" onclick="toggleCustomDropdown('paletteDropdown')">
+            <div id="currentPaletteDisplay" class="dropdown-current">
+              <!-- Initialized by JS -->
+              <span class="palette-name">Warm Linen</span>
             </div>
-            <span class="palette-name">Warm Linen</span>
-            <span class="palette-check">✓</span>
-          </button>
-          <button class="palette-row" data-palette="paper-white" onclick="setPalette('paper-white')">
-            <div class="palette-swatches">
-              <span style="background:#ffffff;border:1px solid #ddd"></span>
-              <span style="background:#0a0a0a"></span>
-              <span style="background:#2e5bff"></span>
-              <span style="background:#d0465a"></span>
-            </div>
-            <span class="palette-name">Paper White</span>
-            <span class="palette-check">✓</span>
-          </button>
-          <button class="palette-row" data-palette="midnight" onclick="setPalette('midnight')">
-            <div class="palette-swatches">
-              <span style="background:#0a0a0f"></span>
-              <span style="background:#f5f5f5"></span>
-              <span style="background:#22d3ee"></span>
-              <span style="background:#f59e0b"></span>
-            </div>
-            <span class="palette-name">Midnight</span>
-            <span class="palette-check">✓</span>
-          </button>
-          <button class="palette-row" data-palette="mint" onclick="setPalette('mint')">
-            <div class="palette-swatches">
-              <span style="background:#eaf1ea"></span>
-              <span style="background:#0f2e1e"></span>
-              <span style="background:#2e7d5a"></span>
-              <span style="background:#d97355"></span>
-            </div>
-            <span class="palette-name">Mint</span>
-            <span class="palette-check">✓</span>
-          </button>
-          <button class="palette-row" data-palette="plum" onclick="setPalette('plum')">
-            <div class="palette-swatches">
-              <span style="background:#f5eaf3"></span>
-              <span style="background:#2b1a33"></span>
-              <span style="background:#9d4fb3"></span>
-              <span style="background:#d97706"></span>
-            </div>
-            <span class="palette-name">Plum</span>
-            <span class="palette-check">✓</span>
-          </button>
-          <button class="palette-row" data-palette="dark" onclick="setPalette('dark')">
-            <div class="palette-swatches">
-              <span style="background:#07101f"></span>
-              <span style="background:#f0f6ff"></span>
-              <span style="background:#22d3ee"></span>
-              <span style="background:#34d399"></span>
-            </div>
-            <span class="palette-name">Deep Navy</span>
-            <span class="palette-check">✓</span>
-          </button>
+            <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dropdown-menu" id="paletteList">
+            <button class="palette-row active" data-palette="warm-linen" onclick="setPalette('warm-linen'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#f3f1e9"></span>
+                <span style="background:#1c1c1c"></span>
+                <span style="background:#4a8bdd"></span>
+                <span style="background:#e27b5e"></span>
+              </div>
+              <span class="palette-name">Warm Linen</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="paper-white" onclick="setPalette('paper-white'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#ffffff;border:1px solid #ddd"></span>
+                <span style="background:#0a0a0a"></span>
+                <span style="background:#2e5bff"></span>
+                <span style="background:#d0465a"></span>
+              </div>
+              <span class="palette-name">Paper White</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="midnight" onclick="setPalette('midnight'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#0a0a0f"></span>
+                <span style="background:#f5f5f5"></span>
+                <span style="background:#22d3ee"></span>
+                <span style="background:#f59e0b"></span>
+              </div>
+              <span class="palette-name">Midnight</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="mint" onclick="setPalette('mint'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#eaf1ea"></span>
+                <span style="background:#0f2e1e"></span>
+                <span style="background:#2e7d5a"></span>
+                <span style="background:#d97355"></span>
+              </div>
+              <span class="palette-name">Mint</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="plum" onclick="setPalette('plum'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#f5eaf3"></span>
+                <span style="background:#2b1a33"></span>
+                <span style="background:#9d4fb3"></span>
+                <span style="background:#d97706"></span>
+              </div>
+              <span class="palette-name">Plum</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="dark" onclick="setPalette('dark'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#07101f"></span>
+                <span style="background:#f0f6ff"></span>
+                <span style="background:#22d3ee"></span>
+                <span style="background:#34d399"></span>
+              </div>
+              <span class="palette-name">Deep Navy</span>
+              <span class="palette-check">✓</span>
+            </button>
+          </div>
         </div>
-        <div class="palette-hint">Each palette defines the background, ink, and two accent hues used across the app.</div>
-      </div>
 
-      <div class="settings-group">
         <div class="settings-label">Hero Background</div>
-        <div class="settings-btns settings-bg-btns">
-          <button class="settings-btn bg-btn" data-bg="neural" onclick="setHeroBg('neural')">
-            <span class="bg-icon">⬡</span>Neural
-          </button>
-          <button class="settings-btn bg-btn" data-bg="synapse" onclick="setHeroBg('synapse')">
-            <span class="bg-icon">〰</span>Synapse
-          </button>
-
-
-          <button class="settings-btn bg-btn" data-bg="storm" onclick="setHeroBg('storm')">
-            <span class="bg-icon">⚡</span>Storm
-          </button>
-          <button class="settings-btn bg-btn" data-bg="ball" onclick="setHeroBg('ball')">
-            <span class="bg-icon">🧶</span>Ball
-          </button>
-
-          <button class="settings-btn bg-btn active" data-bg="dual" onclick="setHeroBg('dual')">
-            <span class="bg-icon">◐</span>Dual
-          </button>
+        <div class="settings-dropdown" id="bgDropdown">
+          <div class="dropdown-trigger" onclick="toggleCustomDropdown('bgDropdown')">
+            <div id="currentBgDisplay" class="dropdown-current">
+              <span class="bg-icon">◐</span>Dual
+            </div>
+            <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dropdown-menu settings-bg-btns">
+            <button class="palette-row bg-btn" data-bg="neural" onclick="setHeroBg('neural'); closeAllDropdowns()">
+              <span class="bg-icon">⬡</span>Neural
+            </button>
+            <button class="palette-row bg-btn" data-bg="synapse" onclick="setHeroBg('synapse'); closeAllDropdowns()">
+              <span class="bg-icon">〰</span>Synapse
+            </button>
+            <button class="palette-row bg-btn" data-bg="storm" onclick="setHeroBg('storm'); closeAllDropdowns()">
+              <span class="bg-icon">⚡</span>Storm
+            </button>
+            <button class="palette-row bg-btn" data-bg="ball" onclick="setHeroBg('ball'); closeAllDropdowns()">
+              <span class="bg-icon">🧶</span>Ball
+            </button>
+            <button class="palette-row bg-btn active" data-bg="dual" onclick="setHeroBg('dual'); closeAllDropdowns()">
+              <span class="bg-icon">◐</span>Dual
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="settings-group">
-        <div class="settings-label">Sound Effects</div>
-        <div class="settings-btns">
-            <div class="settings-item" style="padding: 0; width: 100%;">
-                <span class="settings-label" style="font-size: 13px; opacity: 0.85; letter-spacing: 0.3px;">Enable Interface Sounds</span>
-                <label class="toggle-switch" style="margin-left: auto;" title="Toggle all interface sounds and video audio">
-                    <input type="checkbox" id="soundToggle" checked onchange="toggleSound()">
-                    <span class="toggle-slider"></span>
-                </label>
-            </div>
+
+        <div class="settings-btns" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px;">
+            <span class="settings-label" style="font-family: var(--font-heading); font-size: 13px; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0; white-space: nowrap;">Interface Sounds</span>
+            <label class="toggle-switch" style="margin-left: auto;" title="Toggle all interface sounds and video audio">
+                <input type="checkbox" id="soundToggle" checked onchange="toggleSound()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="settings-btns" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; margin-top: 10px;">
+            <span class="settings-label" style="font-family: var(--font-heading); font-size: 13px; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0; white-space: nowrap;">Animation Controls</span>
+            <label class="toggle-switch" style="margin-left: auto;" title="Show or hide animation playback controls">
+                <input type="checkbox" id="animControlsToggle" onchange="toggleAnimControls()">
+                <span class="toggle-slider"></span>
+            </label>
         </div>
       </div>
     </div>

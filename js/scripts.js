@@ -106,6 +106,7 @@
         if (divEl) divEl.classList.toggle('visible', mode === 'dual');
         document.querySelectorAll('.bg-btn').forEach(b =>
           b.classList.toggle('active', b.dataset.bg === mode));
+        updateDropdownDisplays();
       }
 
       // ── SYNAPSE (elastic bezier network) ─────────────────────────────────
@@ -2345,6 +2346,7 @@
 
         // Refresh accent-dependent CSS vars / iframes
         if (typeof applyAccentVars === "function") applyAccentVars();
+        updateDropdownDisplays();
         document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
           if (frame.contentWindow) {
             frame.contentWindow.postMessage({
@@ -2366,6 +2368,7 @@
       // Force Warm Linen palette on load
       (function () {
         setPalette("warm-linen");
+        updateDropdownDisplays();
       })();
 
       function toggleSettings(e) {
@@ -2381,7 +2384,41 @@
         
         side.classList.toggle("open", isOpening);
         toggle.classList.toggle("open", isOpening);
+
+        // Close dropdowns if we're closing the side panel
+        if (!isOpening) closeAllDropdowns();
       }
+
+      function toggleCustomDropdown(id) {
+        const el = document.getElementById(id);
+        const isOpen = el.classList.contains('open');
+        closeAllDropdowns();
+        if (!isOpen) el.classList.add('open');
+      }
+
+      function closeAllDropdowns() {
+        document.querySelectorAll('.settings-dropdown').forEach(d => d.classList.remove('open'));
+      }
+
+      // Update dropdown trigger displays
+      function updateDropdownDisplays() {
+        // Update Palette Display
+        const activePalette = document.querySelector('.palette-row.active');
+        if (activePalette) {
+          const display = document.getElementById('currentPaletteDisplay');
+          const swatches = activePalette.querySelector('.palette-swatches').outerHTML;
+          const name = activePalette.querySelector('.palette-name').textContent;
+          display.innerHTML = `${swatches} <span class="palette-name">${name}</span>`;
+        }
+
+        // Update Hero Bg Display
+        const activeBg = document.querySelector('.bg-btn.active');
+        if (activeBg) {
+          const display = document.getElementById('currentBgDisplay');
+          display.innerHTML = activeBg.innerHTML;
+        }
+      }
+
 
       // Attach listener to menu toggle
       document.getElementById("menuToggle").addEventListener("click", toggleSettings);
@@ -2400,6 +2437,24 @@
         }
         localStorage.setItem('ann_sound_enabled', soundEnabled);
       }
+
+      function toggleAnimControls() {
+        const toggle = document.getElementById('animControlsToggle');
+        if (!toggle) return;
+        const enabled = toggle.checked;
+        localStorage.setItem('ann_anim_controls', enabled);
+        
+        // Broadcast to iframes
+        document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
+          if (frame.contentWindow) {
+            frame.contentWindow.postMessage({
+              type: "SET_ANIM_CONTROLS",
+              enabled: enabled
+            }, "*");
+          }
+        });
+      }
+
       
       // Initialize sound state from localStorage
       document.addEventListener('DOMContentLoaded', () => {
@@ -2516,6 +2571,11 @@
         const menuToggle = document.getElementById("menuToggle");
         const sideNav = document.getElementById("sideNav");
 
+        // Close custom dropdowns if clicking outside
+        if (!e.target.closest('.settings-dropdown')) {
+          closeAllDropdowns();
+        }
+
         // Close settings if open and click is outside
         if (settingsSide && settingsSide.classList.contains("open")) {
           if (!settingsSide.contains(e.target) && !menuToggle.contains(e.target)) {
@@ -2556,6 +2616,16 @@
       setMode(isLightMode ? 'light' : 'dark');
       setStyle(currentStyle);
       setAccent(currentAccent);
+
+      // Restore Anim Controls toggle state
+      (function() {
+        const enabled = localStorage.getItem('ann_anim_controls') === 'true';
+        const toggle = document.getElementById('animControlsToggle');
+        if (toggle) toggle.checked = enabled;
+        // Small delay to ensure iframes are ready if called early, 
+        // but setPalette already handles message passing on load.
+      })();
+
       
       // Initial progress bar logic removed per user request
 
