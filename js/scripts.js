@@ -1713,6 +1713,7 @@
         'slideOne': 'Neural Intro',
         'slideMesh': 'The Complexity',
         'slideWhyML': 'Why Machine Learning?',
+        'slideMLProcess': 'The ML Process',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -1728,6 +1729,7 @@
         { id: 'slideOne', enabled: true },
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyML', enabled: true },
+        { id: 'slideMLProcess', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
         { id: 'slideNine', enabled: true },
@@ -1739,7 +1741,7 @@
         { id: 'slideFour', enabled: false }
       ];
 
-      let slideState = JSON.parse(localStorage.getItem('ann_slide_state')) || DEFAULT_SLIDE_STATE;
+      let slideState = JSON.parse(localStorage.getItem('ann_slide_state_v2')) || DEFAULT_SLIDE_STATE;
       let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive'));
       if (hideInactive === null) hideInactive = true;
 
@@ -1756,7 +1758,7 @@
       // Activate default slide (slideOne) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -1771,7 +1773,7 @@
         const activeBefore = getActiveSlides();
         const currentId = activeBefore[currentSlideIdx]?.id;
         
-        localStorage.setItem('ann_slide_state', JSON.stringify(slideState));
+        localStorage.setItem('ann_slide_state_v2', JSON.stringify(slideState));
         renderQuickNav();
 
         const activeAfter = getActiveSlides();
@@ -1786,7 +1788,7 @@
       }
 
       function resetSlideState() {
-        localStorage.removeItem('ann_slide_state');
+        localStorage.removeItem('ann_slide_state_v2');
         location.reload();
       }
 

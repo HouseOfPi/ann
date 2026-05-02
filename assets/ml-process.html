@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>ML Process</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a1428;
+  color: #eef2f8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 52px 32px;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.header.visible { opacity: 1; }
+
+.eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; opacity: 0.4; margin-bottom: 8px;
+}
+.main-title {
+  font-size: clamp(26px, 3.2vw, 40px); font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.1;
+}
+.main-desc {
+  margin-top: 8px;
+  font-size: 13px; opacity: 0.45; font-weight: 400;
+}
+
+/* ── Cards row ── */
+.cards {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+
+/* Arrow connector */
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.arrow.visible { opacity: 1; }
+.arrow svg { width: 22px; height: 22px; opacity: 0.3; }
+
+/* Card */
+.card {
+  flex: 1;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, background 0.3s;
+}
+.card.visible { opacity: 1; transform: translateY(0); }
+.card:hover {
+  border-color: color-mix(in srgb, var(--c) 40%, transparent);
+  background: color-mix(in srgb, var(--c) 4%, transparent);
+}
+
+/* Coloured top strip */
+.card-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--c) 30%, transparent));
+  flex-shrink: 0;
+}
+
+.card-inner {
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card header */
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-badge {
+  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+  background: color-mix(in srgb, var(--c) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: var(--c);
+}
+.card-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.card-sub {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--c); opacity: 0.6;
+  margin-top: 2px;
+}
+
+/* Divider */
+.card-rule {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+/* Bullets */
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.bullet.visible { opacity: 0.75; transform: translateY(0); }
+.bullet-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--c); opacity: 0.7;
+  flex-shrink: 0; margin-top: 6px;
+}
+
+/* Chips at bottom of card */
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: auto;
+  padding-top: 4px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+}
+.card-chips.visible { opacity: 1; }
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 9px; border-radius: 20px;
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 25%, transparent);
+  color: var(--c); white-space: nowrap;
+}
+
+/* ── Summary bar ── */
+.summary {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.summary.visible { opacity: 1; }
+.sum-pill {
+  font-size: 12px; font-weight: 600;
+  padding: 6px 16px; border-radius: 6px;
+  background: color-mix(in srgb, var(--c) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 20%, transparent);
+  color: var(--c);
+}
+.sum-arrow { font-size: 14px; opacity: 0.25; }
+
+/* ── Light mode ── */
+body.light { background: #f4f1ea; color: #1a1815; }
+body.light .card { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.08); }
+body.light .card:hover { background: color-mix(in srgb, var(--c) 5%, transparent); }
+body.light .card-rule { background: rgba(0,0,0,0.07); }
+body.light .summary { border-top-color: rgba(0,0,0,0.08); }
+body.light .arrow svg { opacity: 0.2; }
+</style>
+</head>
+<body style="--c1:#5fe8ec; --c2:#4ee0a0; --c3:#a78bfa">
+
+<!-- Header -->
+<div class="header" id="header">
+  <div class="header-left">
+    <div class="eyebrow">Module 02 · Machine Learning</div>
+    <div class="main-title">The ML Process</div>
+    <div class="main-desc">How a machine learns from data — before any complex model is involved</div>
+  </div>
+</div>
+
+<!-- Three horizontal cards -->
+<div class="cards">
+
+  <!-- Card 1 -->
+  <div class="card c1" id="c1" style="--c:var(--c1)">
+    <div class="card-stripe"></div>
+    <div class="card-inner">
+      <div class="card-head">
+        <div class="card-badge">1</div>
+        <div>
+          <div class="card-title">Data Setup</div>
+          <div class="card-sub">Before training</div>
+        </div>
+      </div>
+      <div class="card-rule"></div>
+      <div class="bullets">
+        <div class="bullet c1" id="b1-1" style="--c:var(--c1)">
+          <div class="bullet-dot"></div>
+          <span>Import your dataset — spreadsheet, CSV, or database</span>
+        </div>
+        <div class="bullet c1" id="b1-2" style="--c:var(--c1)">
+          <div class="bullet-dot"></div>
+          <span>Clean it — handle missing values and fix inconsistencies</span>
+        </div>
+        <div class="bullet c1" id="b1-3" style="--c:var(--c1)">
+          <div class="bullet-dot"></div>
+          <span>Split into a training set and a separate test set</span>
+        </div>
+      </div>
+      <div class="card-chips c1" id="ch1" style="--c:var(--c1)">
+        <div class="chip">house_prices.csv</div>
+        <div class="chip">train 70% · test 30%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow" id="a1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14M13 6l6 6-6 6"/>
+    </svg>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card c2" id="c2" style="--c:var(--c2)">
+    <div class="card-stripe"></div>
+    <div class="card-inner">
+      <div class="card-head">
+        <div class="card-badge">2</div>
+        <div>
+          <div class="card-title">Model Building</div>
+          <div class="card-sub">The learning step</div>
+        </div>
+      </div>
+      <div class="card-rule"></div>
+      <div class="bullets">
+        <div class="bullet c2" id="b2-1" style="--c:var(--c2)">
+          <div class="bullet-dot"></div>
+          <span>Pick a model that suits the type of problem</span>
+        </div>
+        <div class="bullet c2" id="b2-2" style="--c:var(--c2)">
+          <div class="bullet-dot"></div>
+          <span>Train it on the training set — it learns the pattern</span>
+        </div>
+        <div class="bullet c2" id="b2-3" style="--c:var(--c2)">
+          <div class="bullet-dot"></div>
+          <span>Use it to make predictions on new, unseen data</span>
+        </div>
+      </div>
+      <div class="card-chips c2" id="ch2" style="--c:var(--c2)">
+        <div class="chip">model.fit(X_train, y)</div>
+        <div class="chip">model.predict(X_test)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow" id="a2">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12h14M13 6l6 6-6 6"/>
+    </svg>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card c3" id="c3" style="--c:var(--c3)">
+    <div class="card-stripe"></div>
+    <div class="card-inner">
+      <div class="card-head">
+        <div class="card-badge">3</div>
+        <div>
+          <div class="card-title">Performance Check</div>
+          <div class="card-sub">Did it learn well?</div>
+        </div>
+      </div>
+      <div class="card-rule"></div>
+      <div class="bullets">
+        <div class="bullet c3" id="b3-1" style="--c:var(--c3)">
+          <div class="bullet-dot"></div>
+          <span>Run the model on the test set it has never seen</span>
+        </div>
+        <div class="bullet c3" id="b3-2" style="--c:var(--c3)">
+          <div class="bullet-dot"></div>
+          <span>Compare predictions against actual values</span>
+        </div>
+        <div class="bullet c3" id="b3-3" style="--c:var(--c3)">
+          <div class="bullet-dot"></div>
+          <span>If results are poor — adjust, retrain, and try again</span>
+        </div>
+      </div>
+      <div class="card-chips c3" id="ch3" style="--c:var(--c3)">
+        <div class="chip">accuracy: 91%</div>
+        <div class="chip">MAE: 2,400</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Summary -->
+<div class="summary" id="summary">
+  <div class="sum-pill c1" style="--c:var(--c1)">Data Setup</div>
+  <div class="sum-arrow">→</div>
+  <div class="sum-pill c2" style="--c:var(--c2)">Model Building</div>
+  <div class="sum-arrow">→</div>
+  <div class="sum-pill c3" style="--c:var(--c3)">Performance Check</div>
+  <div class="sum-arrow">→</div>
+  <div class="sum-pill" style="--c:#b45309; opacity:0.7">Repeat if needed</div>
+</div>
+
+<script>
+const PALETTE_MAP = {
+  'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+  'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+  'Midnight':    { bg:'#0d0d0d', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+  'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
+  'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
+  'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+};
+
+function applyPalette(p) {
+  document.body.style.background = p.bg;
+  document.body.style.color = p.fg;
+  document.body.classList.toggle('light', p.light);
+  document.documentElement.style.setProperty('--c1', p.c1);
+  document.documentElement.style.setProperty('--c2', p.c2);
+  document.documentElement.style.setProperty('--c3', p.c3);
+  // Update per-card color vars
+  const c1els = document.querySelectorAll('.c1'); c1els.forEach(el => el.style.setProperty('--c', p.c1));
+  const c2els = document.querySelectorAll('.c2'); c2els.forEach(el => el.style.setProperty('--c', p.c2));
+  const c3els = document.querySelectorAll('.c3'); c3els.forEach(el => el.style.setProperty('--c', p.c3));
+}
+
+window.addEventListener('message', (e) => {
+  if (!e.data || e.data.type !== 'SET_THEME') return;
+  const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'dark' ? PALETTE_MAP['Deep Navy'] : PALETTE_MAP['Warm Linen']);
+  applyPalette(p);
+});
+
+function show(id, delay) {
+  setTimeout(() => { const el = document.getElementById(id); if (el) el.classList.add('visible'); }, delay);
+}
+
+show('header', 80);
+show('c1',  250);
+show('b1-1', 430); show('b1-2', 560); show('b1-3', 690);
+show('ch1',  700);
+show('a1',   750);
+show('c2',   800);
+show('b2-1', 980); show('b2-2', 1110); show('b2-3', 1240);
+show('ch2', 1250);
+show('a2',  1300);
+show('c3',  1350);
+show('b3-1',1530); show('b3-2', 1660); show('b3-3', 1790);
+show('ch3', 1800);
+show('summary', 2000);
+</script>
+</body>
+</html>
