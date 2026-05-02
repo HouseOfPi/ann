@@ -2,344 +2,382 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>ML Process</title>
+<title>The ML Process | Presentation</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
+:root {
+  --c1: #5fe8ec;
+  --c2: #4ee0a0;
+  --c3: #a78bfa;
+  --bg: #0a1428;
+  --fg: #eef2f8;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --card-radius: 24px;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; }
+
 body {
   font-family: 'Inter', sans-serif;
-  background: #0a1428;
-  color: #eef2f8;
+  background: var(--bg);
+  color: var(--fg);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 40px 52px 32px;
-  gap: 24px;
+  padding: 40px 60px;
+  gap: 40px;
+  transition: background 0.5s ease, color 0.5s ease;
 }
 
 /* ── Header ── */
 .header {
   flex-shrink: 0;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
 }
-.header.visible { opacity: 1; }
 
 .eyebrow {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
-  text-transform: uppercase; opacity: 0.4; margin-bottom: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--c2); opacity: 0.8;
 }
+
 .main-title {
-  font-size: clamp(26px, 3.2vw, 40px); font-weight: 800;
-  letter-spacing: -0.03em; line-height: 1.1;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 .main-desc {
-  margin-top: 8px;
-  font-size: 13px; opacity: 0.45; font-weight: 400;
+  font-size: 16px; opacity: 0.5; font-weight: 400;
+  max-width: 600px; line-height: 1.5;
 }
 
-/* ── Cards row ── */
-.cards {
+/* ── Cards Row ── */
+.cards-container {
   display: flex;
-  gap: 0;
   align-items: stretch;
+  gap: 12px;
+  position: relative;
 }
 
-/* Arrow connector */
-.arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 44px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.arrow.visible { opacity: 1; }
-.arrow svg { width: 22px; height: 22px; opacity: 0.3; }
-
-/* Card */
-.card {
+.card-wrapper {
   flex: 1;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.03);
   display: flex;
   flex-direction: column;
   gap: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, background 0.3s;
-}
-.card.visible { opacity: 1; transform: translateY(0); }
-.card:hover {
-  border-color: color-mix(in srgb, var(--c) 40%, transparent);
-  background: color-mix(in srgb, var(--c) 4%, transparent);
 }
 
-/* Coloured top strip */
-.card-stripe {
-  height: 4px;
-  background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--c) 30%, transparent));
-  flex-shrink: 0;
+.card {
+  flex: 1;
+  position: relative;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
+              background 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card:hover {
+  border-color: color-mix(in srgb, var(--cc) 50%, transparent);
+  background: color-mix(in srgb, var(--cc) 6%, transparent);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.card-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--cc) 15%, transparent), transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .card-inner {
-  padding: 22px 22px 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+/* Card Header */
+.card-header {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Card header */
-.card-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.card-badge {
-  width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
-  background: color-mix(in srgb, var(--c) 18%, transparent);
-  border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+.icon-box {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--cc) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cc) 30%, transparent);
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 800; color: var(--c);
-}
-.card-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
-.card-sub {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--c); opacity: 0.6;
-  margin-top: 2px;
+  color: var(--cc);
 }
 
-/* Divider */
-.card-rule {
-  height: 1px;
-  background: rgba(255,255,255,0.06);
-  flex-shrink: 0;
+.icon-box i { width: 28px; height: 28px; }
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.step-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; color: var(--cc); opacity: 0.6;
+  letter-spacing: 0.1em;
+}
+
+.card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
 }
 
 /* Bullets */
 .bullets {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
+
 .bullet {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.45;
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.bullet.visible { opacity: 0.75; transform: translateY(0); }
-.bullet-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--c); opacity: 0.7;
-  flex-shrink: 0; margin-top: 6px;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.7);
 }
 
-/* Chips at bottom of card */
-.card-chips {
+.bullet i {
+  width: 16px; height: 16px;
+  color: var(--cc);
+  flex-shrink: 0;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* Chips */
+.card-footer {
+  margin-top: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: auto;
-  padding-top: 4px;
-  opacity: 0;
-  transition: opacity 0.4s ease 0.2s;
-}
-.card-chips.visible { opacity: 1; }
-.chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  padding: 3px 9px; border-radius: 20px;
-  background: color-mix(in srgb, var(--c) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--c) 25%, transparent);
-  color: var(--c); white-space: nowrap;
+  gap: 8px;
 }
 
-/* ── Summary bar ── */
-.summary {
-  flex-shrink: 0;
+.chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 500;
+  padding: 6px 12px; border-radius: 8px;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--cc);
+  white-space: nowrap;
+}
+
+/* Connector Arrow */
+.arrow-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  opacity: 0;
-  transition: opacity 0.5s ease;
+  width: 40px;
+  flex-shrink: 0;
 }
-.summary.visible { opacity: 1; }
-.sum-pill {
-  font-size: 12px; font-weight: 600;
-  padding: 6px 16px; border-radius: 6px;
-  background: color-mix(in srgb, var(--c) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--c) 20%, transparent);
-  color: var(--c);
-}
-.sum-arrow { font-size: 14px; opacity: 0.25; }
 
-/* ── Light mode ── */
-body.light { background: #f4f1ea; color: #1a1815; }
-body.light .card { background: rgba(0,0,0,0.02); border-color: rgba(0,0,0,0.08); }
-body.light .card:hover { background: color-mix(in srgb, var(--c) 5%, transparent); }
-body.light .card-rule { background: rgba(0,0,0,0.07); }
-body.light .summary { border-top-color: rgba(0,0,0,0.08); }
-body.light .arrow svg { opacity: 0.2; }
+.connector {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--c-from), var(--c-to));
+  opacity: 0.2;
+  position: relative;
+}
+
+.connector::after {
+  content: '';
+  position: absolute;
+  right: -2px; top: 50%;
+  transform: translateY(-50%);
+  width: 6px; height: 6px;
+  border-top: 2px solid var(--c-to);
+  border-right: 2px solid var(--c-to);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* ── Summary Bar ── */
+.summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  opacity: 0;
+}
+
+.sum-node {
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--cc) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cc) 20%, transparent);
+  color: var(--cc);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sum-node i { width: 14px; height: 14px; }
+
+.sum-sep { opacity: 0.2; }
+
+/* ── Light Mode Adjustments ── */
+body.light {
+  --bg: #f4f1ea;
+  --fg: #1a1815;
+  --glass: rgba(0, 0, 0, 0.02);
+  --glass-border: rgba(0, 0, 0, 0.08);
+}
+
+body.light .main-title {
+  background: linear-gradient(135deg, #1a1815 0%, rgba(26,24,21,0.6) 100%);
+  -webkit-background-clip: text;
+}
+
+body.light .chip { background: rgba(0,0,0,0.05); }
+body.light .bullet { color: rgba(0,0,0,0.7); }
+
 </style>
 </head>
 <body style="--c1:#5fe8ec; --c2:#4ee0a0; --c3:#a78bfa">
 
-<!-- Header -->
 <div class="header" id="header">
-  <div class="header-left">
-    <div class="eyebrow">Module 02 · Machine Learning</div>
-    <div class="main-title">The ML Process</div>
-    <div class="main-desc">How a machine learns from data — before any complex model is involved</div>
+  <div class="eyebrow">Module 02 · Machine Learning</div>
+  <h1 class="main-title">The ML Process</h1>
+  <p class="main-desc">A structured workflow to transform raw data into intelligent predictions through iterative learning.</p>
+</div>
+
+<div class="cards-container">
+  <!-- Step 1 -->
+  <div class="card-wrapper">
+    <div class="card" id="card1" style="--cc:var(--c1)">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="icon-box"><i data-lucide="database"></i></div>
+          <div class="title-group">
+            <span class="step-number">PHASE 01</span>
+            <h2 class="card-title">Data Setup</h2>
+          </div>
+        </div>
+        <div class="bullets">
+          <div class="bullet"><i data-lucide="import"></i><span>Import your dataset from various sources</span></div>
+          <div class="bullet"><i data-lucide="eraser"></i><span>Clean & fix data inconsistencies</span></div>
+          <div class="bullet"><i data-lucide="split"></i><span>Split into training & test sets</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="chip">house_prices.csv</span>
+          <span class="chip">70/30 split</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-container">
+    <div class="connector" style="--c-from:var(--c1); --c-to:var(--c2)"></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="card-wrapper">
+    <div class="card" id="card2" style="--cc:var(--c2)">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="icon-box"><i data-lucide="cpu"></i></div>
+          <div class="title-group">
+            <span class="step-number">PHASE 02</span>
+            <h2 class="card-title">Model Building</h2>
+          </div>
+        </div>
+        <div class="bullets">
+          <div class="bullet"><i data-lucide="pencil-ruler"></i><span>Select model architecture</span></div>
+          <div class="bullet"><i data-lucide="zap"></i><span>Train on the patterns in data</span></div>
+          <div class="bullet"><i data-lucide="eye"></i><span>Predict on new, unseen features</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="chip">model.fit()</span>
+          <span class="chip">weights update</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-container">
+    <div class="connector" style="--c-from:var(--c2); --c-to:var(--c3)"></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card-wrapper">
+    <div class="card" id="card3" style="--cc:var(--c3)">
+      <div class="card-glow"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="icon-box"><i data-lucide="gauge"></i></div>
+          <div class="title-group">
+            <span class="step-number">PHASE 03</span>
+            <h2 class="card-title">Evaluation</h2>
+          </div>
+        </div>
+        <div class="bullets">
+          <div class="bullet"><i data-lucide="check-circle"></i><span>Verify accuracy on test set</span></div>
+          <div class="bullet"><i data-lucide="bar-chart-3"></i><span>Compare against actual labels</span></div>
+          <div class="bullet"><i data-lucide="refresh-cw"></i><span>Tune & iterate if needed</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="chip">accuracy: 91%</span>
+          <span class="chip">MAE: 2.4k</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Three horizontal cards -->
-<div class="cards">
-
-  <!-- Card 1 -->
-  <div class="card c1" id="c1" style="--c:var(--c1)">
-    <div class="card-stripe"></div>
-    <div class="card-inner">
-      <div class="card-head">
-        <div class="card-badge">1</div>
-        <div>
-          <div class="card-title">Data Setup</div>
-          <div class="card-sub">Before training</div>
-        </div>
-      </div>
-      <div class="card-rule"></div>
-      <div class="bullets">
-        <div class="bullet c1" id="b1-1" style="--c:var(--c1)">
-          <div class="bullet-dot"></div>
-          <span>Import your dataset — spreadsheet, CSV, or database</span>
-        </div>
-        <div class="bullet c1" id="b1-2" style="--c:var(--c1)">
-          <div class="bullet-dot"></div>
-          <span>Clean it — handle missing values and fix inconsistencies</span>
-        </div>
-        <div class="bullet c1" id="b1-3" style="--c:var(--c1)">
-          <div class="bullet-dot"></div>
-          <span>Split into a training set and a separate test set</span>
-        </div>
-      </div>
-      <div class="card-chips c1" id="ch1" style="--c:var(--c1)">
-        <div class="chip">house_prices.csv</div>
-        <div class="chip">train 70% · test 30%</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="arrow" id="a1">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 12h14M13 6l6 6-6 6"/>
-    </svg>
-  </div>
-
-  <!-- Card 2 -->
-  <div class="card c2" id="c2" style="--c:var(--c2)">
-    <div class="card-stripe"></div>
-    <div class="card-inner">
-      <div class="card-head">
-        <div class="card-badge">2</div>
-        <div>
-          <div class="card-title">Model Building</div>
-          <div class="card-sub">The learning step</div>
-        </div>
-      </div>
-      <div class="card-rule"></div>
-      <div class="bullets">
-        <div class="bullet c2" id="b2-1" style="--c:var(--c2)">
-          <div class="bullet-dot"></div>
-          <span>Pick a model that suits the type of problem</span>
-        </div>
-        <div class="bullet c2" id="b2-2" style="--c:var(--c2)">
-          <div class="bullet-dot"></div>
-          <span>Train it on the training set — it learns the pattern</span>
-        </div>
-        <div class="bullet c2" id="b2-3" style="--c:var(--c2)">
-          <div class="bullet-dot"></div>
-          <span>Use it to make predictions on new, unseen data</span>
-        </div>
-      </div>
-      <div class="card-chips c2" id="ch2" style="--c:var(--c2)">
-        <div class="chip">model.fit(X_train, y)</div>
-        <div class="chip">model.predict(X_test)</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="arrow" id="a2">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 12h14M13 6l6 6-6 6"/>
-    </svg>
-  </div>
-
-  <!-- Card 3 -->
-  <div class="card c3" id="c3" style="--c:var(--c3)">
-    <div class="card-stripe"></div>
-    <div class="card-inner">
-      <div class="card-head">
-        <div class="card-badge">3</div>
-        <div>
-          <div class="card-title">Performance Check</div>
-          <div class="card-sub">Did it learn well?</div>
-        </div>
-      </div>
-      <div class="card-rule"></div>
-      <div class="bullets">
-        <div class="bullet c3" id="b3-1" style="--c:var(--c3)">
-          <div class="bullet-dot"></div>
-          <span>Run the model on the test set it has never seen</span>
-        </div>
-        <div class="bullet c3" id="b3-2" style="--c:var(--c3)">
-          <div class="bullet-dot"></div>
-          <span>Compare predictions against actual values</span>
-        </div>
-        <div class="bullet c3" id="b3-3" style="--c:var(--c3)">
-          <div class="bullet-dot"></div>
-          <span>If results are poor — adjust, retrain, and try again</span>
-        </div>
-      </div>
-      <div class="card-chips c3" id="ch3" style="--c:var(--c3)">
-        <div class="chip">accuracy: 91%</div>
-        <div class="chip">MAE: 2,400</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Summary -->
-<div class="summary" id="summary">
-  <div class="sum-pill c1" style="--c:var(--c1)">Data Setup</div>
-  <div class="sum-arrow">→</div>
-  <div class="sum-pill c2" style="--c:var(--c2)">Model Building</div>
-  <div class="sum-arrow">→</div>
-  <div class="sum-pill c3" style="--c:var(--c3)">Performance Check</div>
-  <div class="sum-arrow">→</div>
-  <div class="sum-pill" style="--c:#b45309; opacity:0.7">Repeat if needed</div>
+<div class="summary-bar" id="summary">
+  <div class="sum-node" style="--cc:var(--c1)"><i data-lucide="database"></i> Setup</div>
+  <i data-lucide="chevron-right" class="sum-sep"></i>
+  <div class="sum-node" style="--cc:var(--c2)"><i data-lucide="cpu"></i> Build</div>
+  <i data-lucide="chevron-right" class="sum-sep"></i>
+  <div class="sum-node" style="--cc:var(--c3)"><i data-lucide="gauge"></i> Test</div>
+  <i data-lucide="chevron-right" class="sum-sep"></i>
+  <div class="sum-node" style="--cc:#fbbf24"><i data-lucide="refresh-ccw"></i> Iterate</div>
 </div>
 
 <script>
+// Initialize Icons
+lucide.createIcons();
+
 const PALETTE_MAP = {
   'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
   'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
@@ -350,16 +388,12 @@ const PALETTE_MAP = {
 };
 
 function applyPalette(p) {
-  document.body.style.background = p.bg;
-  document.body.style.color = p.fg;
+  document.body.style.setProperty('--bg', p.bg);
+  document.body.style.setProperty('--fg', p.fg);
   document.body.classList.toggle('light', p.light);
-  document.documentElement.style.setProperty('--c1', p.c1);
-  document.documentElement.style.setProperty('--c2', p.c2);
-  document.documentElement.style.setProperty('--c3', p.c3);
-  // Update per-card color vars
-  const c1els = document.querySelectorAll('.c1'); c1els.forEach(el => el.style.setProperty('--c', p.c1));
-  const c2els = document.querySelectorAll('.c2'); c2els.forEach(el => el.style.setProperty('--c', p.c2));
-  const c3els = document.querySelectorAll('.c3'); c3els.forEach(el => el.style.setProperty('--c', p.c3));
+  document.body.style.setProperty('--c1', p.c1);
+  document.body.style.setProperty('--c2', p.c2);
+  document.body.style.setProperty('--c3', p.c3);
 }
 
 window.addEventListener('message', (e) => {
@@ -368,23 +402,56 @@ window.addEventListener('message', (e) => {
   applyPalette(p);
 });
 
-function show(id, delay) {
-  setTimeout(() => { const el = document.getElementById(id); if (el) el.classList.add('visible'); }, delay);
-}
+// Entrance Animations
+window.addEventListener('load', () => {
+  const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
 
-show('header', 80);
-show('c1',  250);
-show('b1-1', 430); show('b1-2', 560); show('b1-3', 690);
-show('ch1',  700);
-show('a1',   750);
-show('c2',   800);
-show('b2-1', 980); show('b2-2', 1110); show('b2-3', 1240);
-show('ch2', 1250);
-show('a2',  1300);
-show('c3',  1350);
-show('b3-1',1530); show('b3-2', 1660); show('b3-3', 1790);
-show('ch3', 1800);
-show('summary', 2000);
+  tl.from("#header > *", {
+    y: 20,
+    opacity: 0,
+    stagger: 0.1,
+    duration: 0.8
+  });
+
+  tl.from(".card", {
+    y: 40,
+    opacity: 0,
+    stagger: 0.15,
+    duration: 0.8
+  }, "-=0.4");
+
+  tl.from(".connector", {
+    scaleX: 0,
+    transformOrigin: "left center",
+    opacity: 0,
+    stagger: 0.15,
+    duration: 0.8
+  }, "-=0.6");
+
+  tl.from(".bullet", {
+    x: -10,
+    opacity: 0,
+    stagger: 0.05,
+    duration: 0.5
+  }, "-=0.4");
+
+  tl.to("#summary", {
+    opacity: 1,
+    y: 0,
+    duration: 0.8
+  }, "-=0.2");
+});
+
+// Subtle Hover Interaction via JS if needed (though CSS handles most)
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    gsap.to(card.querySelector('.icon-box i'), { scale: 1.2, rotation: 5, duration: 0.3 });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card.querySelector('.icon-box i'), { scale: 1, rotation: 0, duration: 0.3 });
+  });
+});
 </script>
 </body>
 </html>
+

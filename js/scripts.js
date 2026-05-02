@@ -1991,6 +1991,9 @@
             isSlideAnimating = false;
             activeSlideTimeline = null;
             updateNavigationButtons();
+            
+            // Re-trigger intro animation if we land on slide 0
+            if (index === 0) animateSlideOneTitle();
           },
         });
         const tl = activeSlideTimeline;
@@ -2103,16 +2106,20 @@
       // SlideOne title entrance animation — callable on demand
       function animateSlideOneTitle() {
         // Reset all elements to invisible first
+        gsap.set(".hero-chapter", { opacity: 0, y: -10 });
         gsap.set(".hero-eyebrow", { opacity: 0, y: -14 });
         gsap.set(".t1 span", { opacity: 0, y: 55 });
         gsap.set(".t2 span", { opacity: 0, y: 55 });
         gsap.set(".hero-tagline", { opacity: 0, y: 18, filter: "blur(6px)" });
         gsap.set(".hero-meta", { opacity: 0, y: 12 });
 
-        // Eyebrow badge slide down
-        gsap.to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", delay: 0.05 });
+        // Chapter 01 fade in
+        gsap.to(".hero-chapter", { opacity: 0.3, y: 0, duration: 0.8, ease: "power2.out" });
 
-        // Animate "NEURAL"
+        // Eyebrow badge slide down
+        gsap.to(".hero-eyebrow", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", delay: 0.1 });
+
+        // Animate titles
         gsap.to(".t1 span", {
           duration: 1.1, y: 0, opacity: 1,
           ease: "power4.out", stagger: 0.045, delay: 0.2,
@@ -2131,10 +2138,13 @@
         gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 1.3 });
       }
 
-      // Fire title animation if slideOne is the starting slide, otherwise leave visible
-      if (document.getElementById('slideOne')?.classList.contains('active-slide')) {
-        setTimeout(() => animateSlideOneTitle(), 400);
-      }
+      // Fire title animation if slideOne is the starting slide
+      setTimeout(() => {
+        const slideOne = document.getElementById('slideOne');
+        if (slideOne && slideOne.classList.contains('active-slide')) {
+           animateSlideOneTitle();
+        }
+      }, 600);
 
       // Divider fade in (dual mode only)
       if (document.querySelector('.hero-divider.visible')) {
