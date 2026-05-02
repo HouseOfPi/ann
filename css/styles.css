@@ -939,7 +939,7 @@
       }
       .ui.ui-left .title-wrap {
         width: auto;
-        max-width: 45%; /* Narrowed to avoid the diagram */
+        max-width: 52%; /* Narrowed to avoid the diagram */
         text-align: left;
         align-items: flex-start;
       }
@@ -1027,6 +1027,174 @@
       .light-mode .t1 { text-shadow: none; }
       .light-mode .t2 { filter: drop-shadow(0 0 30px rgba(3,105,161,0.1)); }
 
+      /* === Hero Title — Professional, Palette-Agnostic === */
+      /* Uses only existing palette tokens: --text-main, --text-dim, --accent-main */
+
+      .hero-kicker {
+        font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--text-dim, var(--text-main));
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        position: relative;
+        z-index: 100;
+        animation: heroFadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.1s both;
+      }
+      .hero-kicker-line {
+        display: inline-block;
+        width: 0;
+        height: 1px;
+        background: var(--accent-main);
+        animation: heroKickerLine 0.9s cubic-bezier(0.22,0.61,0.36,1) 0.45s forwards;
+      }
+      .hero-kicker-text {
+        display: inline-block;
+        opacity: 0.85;
+      }
+
+      .hero-h1 {
+        font-size: clamp(4.5rem, 9vw, 8rem);
+        margin: 0;
+        position: relative;
+        z-index: 100;
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        color: var(--text-main);
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.22em;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+      .hero-h1-bold {
+        font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        color: var(--text-main);
+        display: inline-block;
+        animation: heroFadeUp 0.9s cubic-bezier(0.22,0.61,0.36,1) 0.25s both;
+      }
+      .hero-h1-italic {
+        font-family: "Cormorant Garamond", "Playfair Display", "Times New Roman", Georgia, serif;
+        font-style: italic;
+        font-weight: 600;
+        letter-spacing: 0;
+        color: var(--accent-main);
+        position: relative;
+        display: inline-block;
+        animation: heroFadeUp 0.9s cubic-bezier(0.22,0.61,0.36,1) 0.45s both;
+      }
+      .hero-h1-italic::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0.16em;
+        height: 2px;
+        background: currentColor;
+        opacity: 0.35;
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: heroUnderlineGrow 1.0s cubic-bezier(0.22,0.61,0.36,1) 1.15s forwards;
+      }
+
+      .hero-h2 {
+        font-family: "Inter", "Space Grotesk", system-ui, sans-serif;
+        font-size: clamp(1.4rem, 2.1vw, 1.85rem);
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        margin: 18px 0 30px 0;
+        position: relative;
+        z-index: 100;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--text-main);
+        white-space: nowrap;
+        animation: heroFadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.65s both;
+      }
+      .hero-h2-accent {
+        font-weight: 600;
+        color: var(--text-main);
+        position: relative;
+        z-index: 1;
+      }
+      .hero-h2-accent::before {
+        content: "";
+        position: absolute;
+        left: -6px; right: -6px;
+        bottom: 0;
+        height: 36%;
+        background: var(--accent-main);
+        opacity: 0.18;
+        border-radius: 2px;
+        z-index: -1;
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: heroHighlight 0.8s cubic-bezier(0.22,0.61,0.36,1) 1.35s forwards;
+      }
+      .hero-h2-amp {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 1.35em;
+        color: var(--accent-main);
+        opacity: 0.85;
+        line-height: 1;
+        margin: 0 2px;
+        display: inline-block;
+      }
+      .hero-h2-muted {
+        color: var(--text-main);
+        opacity: 1;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        position: relative;
+      }
+      .hero-h2-muted::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -4px;
+        height: 1px;
+        background: var(--accent-main);
+        opacity: 0.45;
+        transform-origin: left;
+        transform: scaleX(0);
+        animation: heroHighlight 0.9s cubic-bezier(0.22,0.61,0.36,1) 1.55s forwards;
+      }
+
+      @keyframes heroFadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes heroKickerLine {
+        from { width: 0; }
+        to   { width: 36px; }
+      }
+      @keyframes heroUnderlineGrow {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+      @keyframes heroHighlight {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hero-kicker, .hero-h1-bold, .hero-h1-italic, .hero-h2 {
+          animation: none;
+        }
+        .hero-kicker-line { width: 36px; animation: none; }
+        .hero-h1-italic::after { transform: scaleX(1); animation: none; }
+        .hero-h2-accent::before { transform: scaleX(1); animation: none; }
+      }
+
       /* Hero chapter counter */
       .hero-chapter {
         font-family: var(--font-accent);
@@ -1110,41 +1278,68 @@
 
       .hero-scratch-label {
         display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        padding: 9px 22px 9px 16px;
-        background: linear-gradient(135deg, rgba(34,211,238,0.08) 0%, rgba(52,211,153,0.05) 100%);
-        border: 1px solid rgba(34,211,238,0.2);
-        border-radius: 8px;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        transition: border-color 0.3s, background 0.3s;
+        align-items: baseline;
+        gap: 14px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        position: relative;
+        animation: heroFadeUp 0.7s cubic-bezier(0.22,0.61,0.36,1) 0.85s both;
       }
-      .hero-scratch-label:hover {
-        border-color: rgba(34,211,238,0.4);
-        background: linear-gradient(135deg, rgba(34,211,238,0.12) 0%, rgba(52,211,153,0.08) 100%);
+      .hero-scratch-label::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 0;
+        height: 1px;
+        background: var(--accent-main);
+        opacity: 0.6;
+        transform: translateY(-50%);
+        animation: heroScratchLine 1s cubic-bezier(0.22,0.61,0.36,1) 1.4s forwards;
+      }
+      .hero-scratch-label:hover::before {
+        opacity: 1;
+        width: 36px;
       }
       .hero-scratch-icon {
-        font-size: 15px;
-        filter: drop-shadow(0 0 6px rgba(34,211,238,0.4));
+        font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--text-dim, var(--text-main));
+        opacity: 0.65;
+        padding-left: 48px;
+        filter: none;
       }
       .hero-scratch-text {
-        font-family: var(--font-body);
-        font-size: 13px;
+        font-family: "Inter", "Space Grotesk", system-ui, sans-serif;
+        font-size: clamp(0.95rem, 1.15vw, 1.1rem);
         font-weight: 400;
-        letter-spacing: 0.3px;
-        color: rgba(255,255,255,0.7);
+        letter-spacing: 0;
+        color: var(--text-main);
+        opacity: 0.85;
       }
       .hero-scratch-text strong {
+        font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+        font-style: italic;
+        font-weight: 600;
         color: var(--accent-main);
-        font-weight: 700;
+        font-size: 1.15em;
+        margin-left: 4px;
       }
-      .light-mode .hero-scratch-label {
-        background: linear-gradient(135deg, rgba(3,105,161,0.06) 0%, rgba(5,150,105,0.04) 100%);
-        border-color: rgba(3,105,161,0.18);
+      .light-mode .hero-scratch-label,
+      .light-mode .hero-scratch-text,
+      .light-mode .hero-scratch-text strong { background: transparent; }
+
+      @keyframes heroScratchLine {
+        from { width: 0; }
+        to   { width: 36px; }
       }
-      .light-mode .hero-scratch-text { color: rgba(0,0,0,0.55); }
-      .light-mode .hero-scratch-text strong { color: #0369a1; }
       
       .python-label strong {
         color: var(--accent-main);
