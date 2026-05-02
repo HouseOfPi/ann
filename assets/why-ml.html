@@ -358,6 +358,7 @@ function Stage({
 }) {
   const [time, setTime] = React.useState(0);
   const [playing, setPlaying] = React.useState(autoplay);
+  const [playbackRate, setPlaybackRate] = React.useState(0.75);
   const [hoverTime, setHoverTime] = React.useState(null);
   const [scale, setScale] = React.useState(1);
   const [controlsEnabled, setControlsEnabled] = React.useState(() => {
@@ -409,7 +410,7 @@ function Stage({
       const dt = (ts - lastTsRef.current) / 1000;
       lastTsRef.current = ts;
       setTime((t) => {
-        let next = t + dt;
+        let next = t + dt * playbackRate;
         if (next >= duration) {
           if (loop) next = next % duration;
           else { next = duration; setPlaying(false); }
@@ -423,7 +424,7 @@ function Stage({
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       lastTsRef.current = null;
     };
-  }, [playing, duration, loop]);
+  }, [playing, duration, loop, playbackRate]);
 
   // Keyboard: space = play/pause, ← → = seek
   React.useEffect(() => {
@@ -522,6 +523,8 @@ function Stage({
             time={time} 
             duration={duration} 
             playing={playing} 
+            playbackRate={playbackRate}
+            setPlaybackRate={setPlaybackRate}
             onPlayPause={() => setPlaying(p => !p)}
             onReset={() => { setTime(0); setPlaying(true); }}
             onSeek={setTime}
@@ -537,7 +540,7 @@ function Stage({
 // Play/pause, return-to-begin, scrub track, time display.
 // Uses fixed-width time fields so layout doesn't thrash.
 
-function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, onHover }) {
+function PlaybackBar({ time, duration, playing, playbackRate, setPlaybackRate, onPlayPause, onReset, onSeek, onHover }) {
   const trackRef = React.useRef(null);
   const [dragging, setDragging] = React.useState(false);
 
@@ -599,6 +602,7 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
     <div style={{
       display: 'flex', alignItems: 'center', gap: 12,
       padding: '8px 16px',
+      paddingRight: 160, // Make room for next/prev buttons
       background: COLORS.bgAlt,
       borderTop: `1px solid ${COLORS.rule}`,
       width: '100%',
@@ -683,6 +687,35 @@ function PlaybackBar({ time, duration, playing, onPlayPause, onReset, onSeek, on
       }}>
         {fmt(duration)}
       </div>
+
+      {/* Speed control */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          const rates = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+          const idx = rates.indexOf(playbackRate);
+          const next = rates[(idx + 1) % rates.length];
+          setPlaybackRate(next);
+        }}
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: `1px solid ${COLORS.rule}`,
+          borderRadius: 4,
+          padding: '2px 8px',
+          color: COLORS.ink,
+          fontSize: 11,
+          fontWeight: 700,
+          fontFamily: mono,
+          cursor: 'pointer',
+          minWidth: 46,
+          textAlign: 'center',
+          transition: 'all 0.2s',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+      >
+        {playbackRate}x
+      </button>
     </div>
   );
 }
@@ -782,6 +815,7 @@ function Envelope({
       opacity,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
+      borderLeft: label ? `6px solid ${labelColor}` : `1px solid ${COLORS.rule}`,
       borderRadius: 4,
       boxShadow: shadow ? '0 6px 20px rgba(40,30,15,0.10), 0 1px 2px rgba(40,30,15,0.06)' : 'none',
       padding: '14px 16px',
@@ -1431,14 +1465,14 @@ function SceneML({ start = 18, end = 30 }) {
 function TrainingData({ t }) {
   // 8 emails: 4 spam, 4 ham. They appear staggered, then "stream" toward model.
   const items = [
-    { type: 'spam', subject: 'WIN $1,000,000 NOW',    yOffset: -280 },
-    { type: 'ham',  subject: 'Lunch tomorrow?',        yOffset: -200 },
-    { type: 'spam', subject: 'Cheap meds online',      yOffset: -120 },
-    { type: 'ham',  subject: 'Q3 review draft',        yOffset: -40  },
-    { type: 'spam', subject: 'Click for free iPhone',  yOffset: 40   },
-    { type: 'ham',  subject: 'Dinner Friday',          yOffset: 120  },
-    { type: 'spam', subject: 'Verify your account!!!', yOffset: 200  },
-    { type: 'ham',  subject: 'Project status update',  yOffset: 280  },
+    { type: 'spam', subject: 'WIN $1,000,000 NOW',    yOffset: -315 },
+    { type: 'ham',  subject: 'Lunch tomorrow?',        yOffset: -225 },
+    { type: 'spam', subject: 'Cheap meds online',      yOffset: -135 },
+    { type: 'ham',  subject: 'Q3 review draft',        yOffset: -45  },
+    { type: 'spam', subject: 'Click for free iPhone',  yOffset: 45   },
+    { type: 'ham',  subject: 'Dinner Friday',          yOffset: 135  },
+    { type: 'spam', subject: 'Verify your account!!!', yOffset: 225  },
+    { type: 'ham',  subject: 'Project status update',  yOffset: 315  },
   ];
 
   return (
@@ -1492,32 +1526,47 @@ function MiniEnvelope({ x, y, type, subject, opacity, scale = 1 }) {
       opacity,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
+      borderLeft: `10px solid ${labelColor}`, // Distinctive side bar
       borderRadius: 14,
       boxShadow: '0 16px 48px rgba(40,30,15,0.14)',
-      padding: '28px 32px',
-      display: 'flex', flexDirection: 'column', gap: 16,
+      padding: '24px 32px',
+      display: 'flex', flexDirection: 'column', gap: 12,
       fontFamily: FONTS.sans,
+      overflow: 'hidden',
     }}>
-      <div style={{
-        fontSize: 28, fontWeight: 600, color: COLORS.ink,
-        letterSpacing: '-0.01em',
-        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-      }}>
-        {subject}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{
+          fontSize: 28, fontWeight: 700, color: COLORS.ink,
+          letterSpacing: '-0.01em',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          flex: 1, marginRight: 16
+        }}>
+          {subject}
+        </div>
+        <div style={{
+          fontSize: 14, fontWeight: 800, letterSpacing: '0.12em',
+          padding: '6px 12px',
+          background: labelColor,
+          color: '#fff',
+          borderRadius: 6,
+          flexShrink: 0,
+          boxShadow: `0 4px 10px ${labelColor}44`
+        }}>
+          {labelText}
+        </div>
       </div>
       <div style={{
-        alignSelf: 'flex-start',
-        fontSize: 20, fontWeight: 700, letterSpacing: '0.12em',
-        padding: '6px 16px',
-        background: labelColor,
-        color: COLORS.paper,
-        borderRadius: 5,
+        fontSize: 18, color: COLORS.inkSoft,
+        opacity: 0.7,
+        fontFamily: FONTS.mono,
+        letterSpacing: '0.05em'
       }}>
-        {labelText}
+        {type === 'spam' ? 'Header analysis: Flagged' : 'Header analysis: Verified'}
       </div>
     </div>
   );
 }
+
 
 // ── Model box ────────────────────────────────────────────────────────────────
 
@@ -1697,6 +1746,7 @@ function PredictionCard({ x, y, subject, text, type, cardOp, labelOp }) {
       opacity: cardOp,
       background: COLORS.paper,
       border: `1px solid ${COLORS.rule}`,
+      borderLeft: `10px solid ${labelColor}`,
       borderRadius: 14,
       boxShadow: '0 16px 48px rgba(40,30,15,0.14)',
       padding: '28px 32px',
