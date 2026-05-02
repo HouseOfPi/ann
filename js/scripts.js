@@ -1755,10 +1755,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideOne) on load
+      // Activate default slide (slideMLProcess) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2266,7 +2266,12 @@
         document.querySelectorAll(".s7-iframe, .premium-iframe").forEach(frame => {
           frame.addEventListener("load", () => {
             const mode = document.body.classList.contains("light-mode") ? "light" : "dark";
-            frame.contentWindow.postMessage({ type: "SET_THEME", mode }, "*");
+            let palette = undefined;
+            const activePalBtn = document.querySelector('.palette-row.active');
+            if (activePalBtn && PALETTES[activePalBtn.dataset.palette]) {
+              palette = PALETTES[activePalBtn.dataset.palette].iframeName;
+            }
+            frame.contentWindow.postMessage({ type: "SET_THEME", mode, palette }, "*");
           });
         });
       })();
@@ -2330,9 +2335,9 @@
         else setPalette("midnight");
       };
 
-      // Force Warm Linen palette on load
+      // Force Midnight palette on load
       (function () {
-        setPalette("warm-linen");
+        setPalette("midnight");
         updateDropdownDisplays();
       })();
 
