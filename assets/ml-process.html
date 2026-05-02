@@ -65,99 +65,100 @@ body {
   max-width: 600px; line-height: 1.5;
 }
 
-/* ── Cards Row ── */
+/* ── Phases Row (boxless editorial layout) ── */
 .cards-container {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 64px;
+  row-gap: 0;
   position: relative;
+  padding-top: 28px;
 }
 
-.card-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+/* single thin rule across the top of the row */
+.cards-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--c1) 65%, transparent) 0%,
+    color-mix(in srgb, var(--c1) 65%, transparent) 33%,
+    color-mix(in srgb, var(--c2) 65%, transparent) 33%,
+    color-mix(in srgb, var(--c2) 65%, transparent) 66%,
+    color-mix(in srgb, var(--c3) 65%, transparent) 66%,
+    color-mix(in srgb, var(--c3) 65%, transparent) 100%);
+  opacity: 0.55;
 }
+
+.card-wrapper { display: contents; }
 
 .card {
-  flex: 1;
   position: relative;
-  border-radius: var(--card-radius);
-  border: 1px solid var(--glass-border);
-  background: var(--glass);
-  backdrop-filter: blur(12px);
+  background: transparent;
+  border: none;
+  padding: 8px 0 0 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  transition: border-color 0.4s cubic-bezier(0.23, 1, 0.32, 1), 
-              background 0.4s cubic-bezier(0.23, 1, 0.32, 1),
-              transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  gap: 22px;
 }
 
-.card:hover {
-  border-color: color-mix(in srgb, var(--cc) 50%, transparent);
-  background: color-mix(in srgb, var(--cc) 6%, transparent);
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.card-glow {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--cc) 15%, transparent), transparent 70%);
-  pointer-events: none;
-  opacity: 0.5;
-}
+.card-glow, .card-footer { display: none; }
 
 .card-inner {
-  padding: 32px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  height: 100%;
+  gap: 22px;
 }
 
-/* Card Header */
 .card-header {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
 }
 
 .icon-box {
-  width: 52px; height: 52px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--cc) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cc) 30%, transparent);
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cc) 12%, transparent);
+  border: none;
   display: flex; align-items: center; justify-content: center;
   color: var(--cc);
+  flex-shrink: 0;
 }
-
-.icon-box i { width: 28px; height: 28px; }
+.icon-box i { width: 20px; height: 20px; }
 
 .title-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .step-number {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 700; color: var(--cc); opacity: 0.6;
-  letter-spacing: 0.1em;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cc);
+  opacity: 0.85;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
 }
 
 .card-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
 }
 
-/* Bullets */
 .bullets {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .bullet {
@@ -165,93 +166,17 @@ body {
   align-items: flex-start;
   gap: 12px;
   font-size: 14px;
-  line-height: 1.5;
-  color: rgba(255,255,255,0.7);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--fg) 72%, transparent);
 }
 
 .bullet i {
-  width: 16px; height: 16px;
+  width: 14px; height: 14px;
   color: var(--cc);
   flex-shrink: 0;
-  margin-top: 2px;
-  opacity: 0.8;
+  margin-top: 4px;
+  opacity: 0.85;
 }
-
-/* Chips */
-.card-footer {
-  margin-top: auto;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; font-weight: 500;
-  padding: 6px 12px; border-radius: 8px;
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--cc);
-  white-space: nowrap;
-}
-
-/* Connector Arrow */
-.arrow-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  flex-shrink: 0;
-}
-
-.connector {
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, var(--c-from), var(--c-to));
-  opacity: 0.2;
-  position: relative;
-}
-
-.connector::after {
-  content: '';
-  position: absolute;
-  right: -2px; top: 50%;
-  transform: translateY(-50%);
-  width: 6px; height: 6px;
-  border-top: 2px solid var(--c-to);
-  border-right: 2px solid var(--c-to);
-  transform: translateY(-50%) rotate(45deg);
-}
-
-/* ── Summary Bar ── */
-.summary-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 24px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  opacity: 0;
-}
-
-.sum-node {
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 13px;
-  background: color-mix(in srgb, var(--cc) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cc) 20%, transparent);
-  color: var(--cc);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sum-node i { width: 14px; height: 14px; }
-
-.sum-sep { opacity: 0.2; }
 
 /* ── Light Mode Adjustments ── */
 body.light {
@@ -297,16 +222,8 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
           <div class="bullet"><i data-lucide="eraser"></i><span>Clean & fix data inconsistencies</span></div>
           <div class="bullet"><i data-lucide="split"></i><span>Split into training & test sets</span></div>
         </div>
-        <div class="card-footer">
-          <span class="chip">house_prices.csv</span>
-          <span class="chip">70/30 split</span>
-        </div>
       </div>
     </div>
-  </div>
-
-  <div class="arrow-container">
-    <div class="connector" style="--c-from:var(--c1); --c-to:var(--c2)"></div>
   </div>
 
   <!-- Step 2 -->
@@ -326,16 +243,8 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
           <div class="bullet"><i data-lucide="zap"></i><span>Train on the patterns in data</span></div>
           <div class="bullet"><i data-lucide="eye"></i><span>Predict on new, unseen features</span></div>
         </div>
-        <div class="card-footer">
-          <span class="chip">model.fit()</span>
-          <span class="chip">weights update</span>
-        </div>
       </div>
     </div>
-  </div>
-
-  <div class="arrow-container">
-    <div class="connector" style="--c-from:var(--c2); --c-to:var(--c3)"></div>
   </div>
 
   <!-- Step 3 -->
@@ -355,23 +264,9 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
           <div class="bullet"><i data-lucide="bar-chart-3"></i><span>Compare against actual labels</span></div>
           <div class="bullet"><i data-lucide="refresh-cw"></i><span>Tune & iterate if needed</span></div>
         </div>
-        <div class="card-footer">
-          <span class="chip">accuracy: 91%</span>
-          <span class="chip">MAE: 2.4k</span>
-        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div class="summary-bar" id="summary">
-  <div class="sum-node" style="--cc:var(--c1)"><i data-lucide="database"></i> Setup</div>
-  <i data-lucide="chevron-right" class="sum-sep"></i>
-  <div class="sum-node" style="--cc:var(--c2)"><i data-lucide="cpu"></i> Build</div>
-  <i data-lucide="chevron-right" class="sum-sep"></i>
-  <div class="sum-node" style="--cc:var(--c3)"><i data-lucide="gauge"></i> Test</div>
-  <i data-lucide="chevron-right" class="sum-sep"></i>
-  <div class="sum-node" style="--cc:#fbbf24"><i data-lucide="refresh-ccw"></i> Iterate</div>
 </div>
 
 <script>
