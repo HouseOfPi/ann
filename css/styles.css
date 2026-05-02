@@ -4808,7 +4808,7 @@
         background: var(--bg);
         position: absolute;
         top: 0; left: 0;
-        padding: 4vh 5vw;
+        padding: 2vh 5vw 4vh 5vw;
         box-sizing: border-box;
         overflow: hidden;
       }
