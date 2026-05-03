@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
@@ -30,88 +30,116 @@ body {
   color: var(--fg);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 20px 60px 40px 60px;
-  gap: 40px;
+  padding: 32px 50px 40px 50px;
+  gap: 0;
   transition: background 0.5s ease, color 0.5s ease;
 }
+.header { flex: 0 0 auto; }
+.cards-container {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+}
 
-/* ── Header ── */
+/* ── Header (editorial style) ── */
 .header {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 800px;
+  gap: 8px;
+  max-width: 100%;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
 }
 
-.eyebrow {
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.3em;
-  text-transform: uppercase; color: var(--c2); opacity: 0.8;
+.page-eyebrow {
+  font-family: 'JetBrains Mono', 'Outfit', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--c1);
+  opacity: 0.95;
+  margin-bottom: 2px;
 }
 
 .main-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(32px, 4vw, 52px); font-weight: 800;
-  letter-spacing: -0.04em; line-height: 1;
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-size: clamp(36px, 4.6vw, 60px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--fg);
+  background: none;
+  -webkit-text-fill-color: var(--fg);
+}
+.main-title em {
+  font-style: italic;
+  font-weight: 500;
 }
 
-.main-desc {
-  font-size: 16px; opacity: 0.5; font-weight: 400;
-  max-width: 600px; line-height: 1.5;
-}
-
-/* ── Phases Row (boxless editorial layout) ── */
+/* ── Phases Row (block-diagram pipeline) ── */
 .cards-container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 64px;
-  row-gap: 0;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  column-gap: 0;
+  align-items: stretch;
+  justify-items: stretch;
+  justify-content: center;
   position: relative;
-  padding-top: 28px;
-}
-
-/* single thin rule across the top of the row */
-.cards-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg,
-    color-mix(in srgb, var(--c1) 65%, transparent) 0%,
-    color-mix(in srgb, var(--c1) 65%, transparent) 33%,
-    color-mix(in srgb, var(--c2) 65%, transparent) 33%,
-    color-mix(in srgb, var(--c2) 65%, transparent) 66%,
-    color-mix(in srgb, var(--c3) 65%, transparent) 66%,
-    color-mix(in srgb, var(--c3) 65%, transparent) 100%);
-  opacity: 0.55;
+  padding-top: 12px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .card-wrapper { display: contents; }
 
 .card {
   position: relative;
-  background: transparent;
-  border: none;
-  padding: 8px 0 0 0;
+  background: linear-gradient(150deg,
+    color-mix(in srgb, var(--cc) 9%, transparent) 0%,
+    color-mix(in srgb, var(--cc) 2%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--cc) 28%, transparent);
+  border-radius: 18px;
+  padding: 22px 22px 20px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--cc) 8%, transparent) inset,
+    0 12px 40px -16px color-mix(in srgb, var(--cc) 35%, transparent);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--cc) 55%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--cc) 14%, transparent) inset,
+    0 18px 50px -18px color-mix(in srgb, var(--cc) 50%, transparent);
 }
 
-.card-glow, .card-footer { display: none; }
+.card-glow {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--cc) 18%, transparent) 0%, transparent 60%);
+  opacity: 0.65;
+}
+.card-footer { display: none; }
 
 .card-inner {
+  position: relative;
+  z-index: 1;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 18px;
 }
 
 .card-header {
@@ -121,15 +149,21 @@ body {
 }
 
 .icon-box {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--cc) 12%, transparent);
-  border: none;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cc) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cc) 35%, transparent);
   display: flex; align-items: center; justify-content: center;
   color: var(--cc);
   flex-shrink: 0;
+  box-shadow: 0 0 24px -8px color-mix(in srgb, var(--cc) 70%, transparent);
 }
-.icon-box i { width: 20px; height: 20px; }
+.icon-box i { width: 22px; height: 22px; }
+
+/* ── Connectors between blocks ── */
+.connector {
+  width: 80px;
+}
 
 .title-group {
   display: flex;
@@ -186,21 +220,609 @@ body.light {
   --glass-border: rgba(0, 0, 0, 0.08);
 }
 
-body.light .main-title {
-  background: linear-gradient(135deg, #1a1815 0%, rgba(26,24,21,0.6) 100%);
-  -webkit-background-clip: text;
-}
+body.light .main-title { color: var(--fg); -webkit-text-fill-color: var(--fg); }
+body.light .header { border-bottom-color: color-mix(in srgb, var(--fg) 18%, transparent); }
 
 body.light .chip { background: rgba(0,0,0,0.05); }
 body.light .bullet { color: rgba(0,0,0,0.7); }
+
+/* ── Clickable Card Header ── */
+.card-header-clickable {
+  cursor: pointer;
+  position: relative;
+  padding: 6px 8px 6px 0;
+  margin: -6px 0 -6px 0;
+  border-radius: 8px;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.card-header-clickable:hover {
+  transform: translateX(3px);
+  background: color-mix(in srgb, var(--cc) 6%, transparent);
+}
+.card-header-clickable:hover .icon-box {
+  background: color-mix(in srgb, var(--cc) 22%, transparent);
+  transform: scale(1.05);
+}
+.card-header-clickable .icon-box { transition: transform 0.25s ease, background 0.25s ease; }
+.card-header-clickable:hover .card-title { color: var(--cc); }
+.card-header-clickable .card-title { transition: color 0.25s ease; }
+.header-click-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cc);
+  opacity: 0;
+  margin-left: auto;
+  align-self: center;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateX(-4px);
+  white-space: nowrap;
+}
+.card-header-clickable:hover .header-click-hint { opacity: 0.85; transform: translateX(0); }
+
+/* ── Clickable Bullet ── */
+.bullet-clickable {
+  cursor: pointer;
+  position: relative;
+  border-radius: 6px;
+  padding: 2px 4px 2px 2px;
+  margin: -2px -4px -2px -2px;
+  transition: color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+.bullet-clickable:hover {
+  color: var(--cc);
+  transform: translateX(2px);
+  background: color-mix(in srgb, var(--cc) 5%, transparent);
+}
+.bullet-clickable:hover > i:first-child { opacity: 1; transform: scale(1.1); }
+.bullet-cta {
+  width: 12px !important; height: 12px !important;
+  margin-left: auto;
+  margin-top: 6px;
+  color: var(--cc);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateX(-3px);
+}
+.bullet-clickable:hover .bullet-cta { opacity: 0.85; transform: translateX(0); }
+
+/* ── Cell issue/clean states ── */
+.sheet-table td.cell-issue {
+  background: color-mix(in srgb, #f59e0b 22%, transparent);
+  color: #fbbf24;
+  font-weight: 600;
+  position: relative;
+}
+body.light .sheet-table td.cell-issue { color: #b45309; }
+.sheet-table td.cell-issue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px dashed #f59e0b;
+  pointer-events: none;
+  border-radius: 2px;
+  animation: cellPulse 1.4s ease-in-out infinite;
+}
+@keyframes cellPulse {
+  0%,100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.sheet-table td.cell-fixed {
+  background: color-mix(in srgb, var(--c2) 16%, transparent);
+  color: var(--c2);
+  font-weight: 600;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+.sheet-table td.cell-fixed::after { display: none; }
+
+/* Row drop animation (clean stage removes bad rows) */
+.sheet-table tr.row-dropping {
+  background: color-mix(in srgb, #ef4444 18%, transparent) !important;
+  transition: background 0.3s ease, opacity 0.45s ease, transform 0.45s ease;
+}
+.sheet-table tr.row-dropping td {
+  text-decoration: line-through;
+  text-decoration-color: #ef4444;
+  text-decoration-thickness: 1.5px;
+  color: color-mix(in srgb, var(--fg) 50%, transparent) !important;
+}
+.sheet-table tr.row-removed {
+  opacity: 0;
+  transform: translateX(20px) scale(0.95);
+  pointer-events: none;
+  height: 0;
+}
+.sheet-table tr.row-removed td {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border: 0 !important;
+  font-size: 0;
+  transition: padding 0.3s ease 0.45s, font-size 0.3s ease 0.45s, border 0.3s ease 0.45s;
+}
+
+/* Stage stepper inside modal */
+.stage-stepper {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  flex-wrap: wrap;
+}
+.stage-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 85%, transparent);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.stage-pill:hover { border-color: var(--c1); color: var(--fg); }
+.stage-pill.active {
+  background: color-mix(in srgb, var(--c1) 18%, transparent);
+  border-color: var(--c1);
+  color: var(--c1);
+}
+.stage-pill.done {
+  border-color: color-mix(in srgb, var(--c2) 60%, transparent);
+  color: var(--c2);
+}
+.stage-pill .pill-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.modal-overlay.active { display: flex; opacity: 1; }
+body.light .modal-overlay { background: rgba(20,18,15,0.55); }
+
+.modal-panel {
+  position: relative;
+  width: min(960px, 92vw);
+  max-height: 90vh;
+  background: var(--bg);
+  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+  border-radius: 18px;
+  padding: 26px 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  transform: translateY(20px) scale(0.96);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
+}
+.modal-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  padding-bottom: 14px;
+}
+.modal-head-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.modal-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-right: 44px; }
+.modal-overlay.active .modal-panel { transform: translateY(0) scale(1); opacity: 1; }
+
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--fg) 15%, transparent);
+  color: var(--fg);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.modal-close:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); transform: rotate(90deg); }
+.modal-close i { width: 16px; height: 16px; }
+
+.modal-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--c1);
+  opacity: 0.9;
+  margin-bottom: 2px;
+}
+.modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0;
+}
+.modal-sub {
+  font-size: 13px;
+  opacity: 0.78;
+  margin: 0;
+  color: color-mix(in srgb, var(--fg) 85%, transparent);
+  line-height: 1.5;
+  max-width: 560px;
+}
+
+/* ── Spreadsheet ── */
+.sheet-wrap {
+  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  display: flex;
+  flex-direction: column;
+  max-height: 360px;
+}
+.sheet-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fg) 25%, transparent) transparent;
+}
+.sheet-scroll::-webkit-scrollbar { width: 6px; }
+.sheet-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--fg) 25%, transparent); border-radius: 3px; }
+.sheet-table thead { position: sticky; top: 0; z-index: 1; }
+.sheet-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+.sheet-tabs i { width: 12px; height: 12px; opacity: 0.55; }
+.sheet-filename {
+  font-size: 11px;
+  opacity: 0.7;
+  letter-spacing: 0.04em;
+}
+
+.sheet-table { width: 100%; border-collapse: collapse; }
+.sheet-table th, .sheet-table td {
+  padding: 6px 14px;
+  text-align: left;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
+  white-space: nowrap;
+}
+.sheet-table th {
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fg) 92%, transparent);
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+.sheet-table th.target-col { color: var(--c3); }
+.sheet-table td {
+  color: color-mix(in srgb, var(--fg) 95%, transparent);
+  opacity: 1;
+  transform: translateY(0);
+}
+.sheet-table tbody.animating td { opacity: 0; transform: translateY(6px); }
+.sheet-table tbody.animating tr.row-loaded td { opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
+.sheet-table tr { position: relative; transition: background 0.45s ease; }
+
+.sheet-table tr.train-row { background: color-mix(in srgb, var(--c1) 16%, transparent); }
+.sheet-table tr.test-row  { background: color-mix(in srgb, var(--c3) 20%, transparent); }
+.sheet-table tr.train-row td:first-child::before,
+.sheet-table tr.test-row td:first-child::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.sheet-table tr.train-row td:first-child::before { background: var(--c1); }
+.sheet-table tr.test-row td:first-child::before  { background: var(--c3); }
+
+/* ── Split labels ── */
+.split-labels {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.split-labels.show { display: grid; }
+.split-labels.show { opacity: 1; transform: translateY(0); }
+.split-card {
+  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.split-card.train { border-left: 3px solid var(--c1); }
+.split-card.test  { border-left: 3px solid var(--c3); }
+.split-card .pct {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.split-card.train .pct { color: var(--c1); }
+.split-card.test  .pct { color: var(--c3); }
+.split-card .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.split-card .desc {
+  font-size: 12px;
+  opacity: 0.85;
+  line-height: 1.45;
+  margin-top: 2px;
+  color: color-mix(in srgb, var(--fg) 90%, transparent);
+}
+
+.modal-caption {
+  display: none;
+  font-size: 13px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  color: color-mix(in srgb, var(--fg) 92%, transparent);
+  font-style: italic;
+  padding: 4px 12px;
+  line-height: 1.5;
+}
+.modal-caption.show { display: block; }
+.modal-caption.show { opacity: 1; transform: translateY(0); }
+.modal-caption strong { color: var(--c2); font-style: normal; font-weight: 600; }
+
+/* ── View Tabs (Full vs Simplified dataset) ── */
+.view-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: -1px;
+  flex-wrap: wrap;
+}
+.view-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-bottom: 1px solid transparent;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--fg) 65%, transparent);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  z-index: 2;
+}
+.view-tab i { width: 14px; height: 14px; opacity: 0.85; }
+.view-tab em {
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-left: 2px;
+}
+.view-tab:hover { color: var(--fg); border-color: color-mix(in srgb, var(--fg) 30%, transparent); }
+.view-tab.active {
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  border-color: color-mix(in srgb, var(--fg) 18%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--fg) 6%, transparent);
+  color: var(--fg);
+}
+.view-tab.active em { color: var(--c1); opacity: 0.95; }
+.view-tab-note {
+  margin-left: auto;
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.6;
+  color: color-mix(in srgb, var(--fg) 80%, transparent);
+}
+
+/* ── Regression Chart (Model Building modal) ── */
+.regression-wrap {
+  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: 10px;
+  padding: 16px 18px 12px;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+}
+.regression-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 18px;
+  align-items: stretch;
+}
+@media (max-width: 720px) { .regression-grid { grid-template-columns: 1fr; } }
+
+.chart-svg {
+  width: 100%;
+  height: 280px;
+  display: block;
+  background: transparent;
+}
+.chart-axis { stroke: color-mix(in srgb, var(--fg) 35%, transparent); stroke-width: 1; }
+.chart-tick-label { fill: color-mix(in srgb, var(--fg) 70%, transparent); font: 500 10px 'JetBrains Mono', monospace; }
+.chart-axis-label { fill: color-mix(in srgb, var(--fg) 90%, transparent); font: 600 11px 'Outfit', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+.chart-grid { stroke: color-mix(in srgb, var(--fg) 12%, transparent); stroke-width: 1; stroke-dasharray: 3 4; }
+
+.data-point {
+  fill: var(--c2);
+  opacity: 0;
+  transition: opacity 0.4s ease, r 0.3s ease;
+}
+.data-point.show { opacity: 0.9; }
+.data-point.test-point { fill: var(--c3); }
+
+.fit-line {
+  stroke: var(--c2);
+  stroke-width: 2.5;
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c2) 50%, transparent));
+}
+.fit-line.show { opacity: 1; }
+
+.error-line {
+  stroke: #f59e0b;
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0;
+}
+.error-line.show { opacity: 0.6; }
+
+.predict-guide {
+  stroke: var(--c3);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  opacity: 0;
+}
+.predict-guide.show { opacity: 0.85; }
+
+.predict-point {
+  fill: var(--c3);
+  stroke: var(--bg);
+  stroke-width: 2;
+  opacity: 0;
+}
+.predict-point.show { opacity: 1; }
+
+.predict-label {
+  fill: var(--c3);
+  font: 700 12px 'Outfit', sans-serif;
+  opacity: 0;
+}
+.predict-label.show { opacity: 1; }
+
+/* Side panel: equation + stats */
+.model-panel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+}
+.equation-card {
+  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+.equation-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+.equation-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  line-height: 1.4;
+}
+.equation-formula .coef { color: var(--c2); transition: color 0.3s ease; }
+.equation-formula .var { color: var(--c1); }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat-box {
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.stat-box .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+.stat-box .val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--c2);
+  line-height: 1;
+}
+.stat-box.epoch .val { color: var(--c1); }
+
+.predict-result {
+  border: 1px solid color-mix(in srgb, var(--c3) 50%, transparent);
+  background: color-mix(in srgb, var(--c3) 12%, transparent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.predict-result.show { opacity: 1; transform: translateY(0); }
+.predict-result .lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c3);
+  margin-bottom: 4px;
+}
+.predict-result .val {
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.3;
+}
+.predict-result .val strong { color: var(--c3); }
 
 </style>
 </head>
 <body style="--c1:#5fe8ec; --c2:#4ee0a0; --c3:#a78bfa">
 
 <div class="header" id="header">
-  <h1 class="main-title">The ML Process</h1>
-  <p class="main-desc">A structured workflow to transform raw data into intelligent predictions through iterative learning.</p>
+  <span class="page-eyebrow">Let the data teach the model</span>
+  <h1 class="main-title">The <em>Workflow</em>.</h1>
 </div>
 
 <div class="cards-container">
@@ -209,12 +831,13 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
     <div class="card" id="card1" style="--cc:var(--c1)">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-header">
-          <div class="icon-box"><i data-lucide="file-stack"></i></div>
+        <div class="card-header card-header-clickable" id="dataSetupTrigger">
+          <div class="icon-box"><i data-lucide="table-2"></i></div>
           <div class="title-group">
             <span class="step-number">PHASE 01</span>
-            <h2 class="card-title">Data Setup</h2>
+            <h2 class="card-title">Data Gathering</h2>
           </div>
+          <span class="header-click-hint">click to preview</span>
         </div>
         <div class="bullets">
           <div class="bullet"><i data-lucide="import"></i><span>Import your dataset from various sources</span></div>
@@ -225,17 +848,21 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
     </div>
   </div>
 
+  <!-- Connector 1 → 2 -->
+  <div class="connector" style="--from:var(--c1); --to:var(--c2)"></div>
+
   <!-- Step 2 -->
   <div class="card-wrapper">
     <div class="card" id="card2" style="--cc:var(--c2)">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-header">
+        <div class="card-header card-header-clickable" id="modelBuildTrigger">
           <div class="icon-box"><i data-lucide="brain-circuit"></i></div>
           <div class="title-group">
             <span class="step-number">PHASE 02</span>
             <h2 class="card-title">Model Building</h2>
           </div>
+          <span class="header-click-hint">click to preview</span>
         </div>
         <div class="bullets">
           <div class="bullet"><i data-lucide="pencil-ruler"></i><span>Select model architecture</span></div>
@@ -245,6 +872,9 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
       </div>
     </div>
   </div>
+
+  <!-- Connector 2 → 3 -->
+  <div class="connector" style="--from:var(--c2); --to:var(--c3)"></div>
 
   <!-- Step 3 -->
   <div class="card-wrapper">
@@ -268,9 +898,584 @@ body.light .bullet { color: rgba(0,0,0,0.7); }
   </div>
 </div>
 
+<!-- ── Import Preview Modal ── -->
+<div class="modal-overlay" id="importModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-panel">
+    <button class="modal-close" id="modalClose" aria-label="Close"><i data-lucide="x"></i></button>
+    <div class="modal-head">
+      <div class="modal-head-left">
+        <h3 class="modal-title" id="modalTitle">Screen Time vs Stress</h3>
+      </div>
+      <div class="modal-head-right">
+        <div class="stage-stepper">
+          <button class="stage-pill" data-stage="import"><span class="pill-dot"></span>Import</button>
+          <button class="stage-pill" data-stage="clean"><span class="pill-dot"></span>Clean</button>
+          <button class="stage-pill" data-stage="split"><span class="pill-dot"></span>Split</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="view-tabs">
+      <button class="view-tab active" data-view="simple">
+        <i data-lucide="minimize-2"></i><span>Simplified</span><em>2 features</em>
+      </button>
+      <button class="view-tab" data-view="full">
+        <i data-lucide="table-2"></i><span>Full dataset</span><em>7 features</em>
+      </button>
+    </div>
+
+    <div class="sheet-wrap">
+      <div class="sheet-tabs">
+        <i data-lucide="file-spreadsheet"></i>
+        <span class="sheet-filename" id="sheetFilename">teen_social_media_raw.csv · 10 rows</span>
+      </div>
+      <div class="sheet-scroll">
+        <table class="sheet-table" id="sheetTable">
+          <thead id="sheetHead"></thead>
+          <tbody id="sheetBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="split-labels" id="splitLabels">
+      <div class="split-card train">
+        <span class="pct">70%</span>
+        <span class="lbl">Training Set</span>
+        <span class="desc">Model learns patterns from these examples.</span>
+      </div>
+      <div class="split-card test">
+        <span class="pct">30%</span>
+        <span class="lbl">Test Set</span>
+        <span class="desc">Held back — used to check if the model truly learned.</span>
+      </div>
+    </div>
+
+    <p class="modal-caption" id="modalCaption">
+      The model studies the <strong>training rows</strong>, then we quiz it on the <strong>test rows</strong> it has never seen.
+    </p>
+  </div>
+</div>
+
+<!-- ── Model Building Modal ── -->
+<div class="modal-overlay" id="modelModal" role="dialog" aria-modal="true" aria-labelledby="modelModalTitle">
+  <div class="modal-panel">
+    <button class="modal-close" id="modelModalClose" aria-label="Close"><i data-lucide="x"></i></button>
+    <span class="modal-eyebrow" id="modelEyebrow">Stage 1 — Architecture</span>
+    <h3 class="modal-title" id="modelModalTitle">Linear Regression</h3>
+    <p class="modal-sub" id="modelSub">Pick a simple model: a straight line that predicts <strong style="color:var(--c3)">stress</strong> from <strong style="color:var(--c1)">daily social media hours</strong>.</p>
+
+    <div class="stage-stepper">
+      <button class="stage-pill" data-mstage="arch"><span class="pill-dot"></span>1 · Architecture</button>
+      <button class="stage-pill" data-mstage="train"><span class="pill-dot"></span>2 · Train</button>
+      <button class="stage-pill" data-mstage="predict"><span class="pill-dot"></span>3 · Predict</button>
+    </div>
+
+    <div class="regression-wrap">
+      <div class="regression-grid">
+        <svg class="chart-svg" id="regChart" viewBox="0 0 500 280" preserveAspectRatio="xMidYMid meet">
+          <!-- gridlines + axes drawn dynamically -->
+          <g id="chartGrid"></g>
+          <g id="chartAxes"></g>
+          <g id="chartPoints"></g>
+          <g id="chartErrorLines"></g>
+          <line class="fit-line" id="fitLine" x1="0" y1="0" x2="0" y2="0" />
+          <line class="predict-guide" id="predictGuideV" x1="0" y1="0" x2="0" y2="0" />
+          <line class="predict-guide" id="predictGuideH" x1="0" y1="0" x2="0" y2="0" />
+          <circle class="predict-point" id="predictPoint" cx="0" cy="0" r="6" />
+          <text class="predict-label" id="predictLabel" x="0" y="0"></text>
+        </svg>
+
+        <div class="model-panel-info">
+          <div class="equation-card">
+            <div class="equation-label">Model Equation</div>
+            <div class="equation-formula">
+              <span class="var">stress</span> = <span class="coef" id="coefM">m</span> · <span class="var">hours</span> + <span class="coef" id="coefB">b</span>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-box epoch">
+              <div class="lbl">Epoch</div>
+              <div class="val" id="epochVal">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="lbl">Error (MSE)</div>
+              <div class="val" id="errorVal">—</div>
+            </div>
+          </div>
+          <div class="predict-result" id="predictResult">
+            <div class="lbl">Prediction</div>
+            <div class="val">A teen with <strong id="predictHours">5.0</strong> hrs/day → stress <strong id="predictY">—</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="modal-caption" id="modelCaption">
+      The line is the <strong>model</strong> — once trained, it can predict stress for <strong>any</strong> teen, even ones we've never seen.
+    </p>
+  </div>
+</div>
+
 <script>
 // Initialize Icons
 lucide.createIcons();
+
+// ── Dataset (raw — bad rows are dropped during cleaning) ──
+// issue codes: 'missing' | 'badcase' | 'outlier' | 'typo'
+const RAW_ROWS = [
+  { cells: [14,    'F',       6.5,    'Instagram',  6.0,    'Low',    'Low',   8],  issues: {} },
+  { cells: [16,    'male',    3.2,    'YouTube',    8.0,    'High',   'High',  3],  issues: { 1: 'badcase' } },
+  { cells: [15,    'F',       7.8,    'tiktok',     null,   'Low',    'Low',   9],  issues: { 3: 'badcase', 4: 'missing' } },
+  { cells: [17,    'M',       2.0,    'Reddit',     7.5,    'High',   'Med',   2],  issues: {} },
+  { cells: [13,    'F',       5.5,    'Snapchat',   6.5,    'Med',    null,    6],  issues: { 6: 'missing' } },
+  { cells: [16,    'M',       24.0,   'TikTok',     4.8,    'Low',    'Low',   9],  issues: { 2: 'outlier' } },
+  { cells: [14,    'female',  1.5,    'YouTube',    8.5,    'High',   'High',  2],  issues: { 1: 'badcase' } },
+  { cells: [15,    'M',       4.0,    'Insta',      7.0,    'Med',    'Med',   5],  issues: { 3: 'typo' } },
+  { cells: [17,    'F',       6.8,    'TikTok',     5.5,    'Low',    'Low',   8],  issues: {} },
+  { cells: [16,    'M',       2.8,    'Reddit',     7.8,    'High',   'High',  3],  issues: {} },
+  { cells: [13,    'F',       4.2,    'Snapchat',   7.2,    'Med',    'High',  4],  issues: {} },
+  { cells: [17,    'M',       7.5,    'TikTok',     5.0,    'Low',    'Low',   9],  issues: {} },
+  { cells: [15,    'F',       3.0,    'YouTube',    7.8,    'High',   'Med',   3],  issues: {} },
+  { cells: [14,    'M',       5.8,    'Instagram',  6.2,    'Med',    'Med',   6],  issues: {} },
+  { cells: [16,    'F',       6.2,    'TikTok',     5.8,    'Low',    'Low',   7],  issues: {} },
+  { cells: [15,    'M',       3.5,    'Reddit',     7.4,    'High',   'High',  4],  issues: {} },
+];
+
+let currentStage = 'import';
+let currentView = 'simple'; // 'full' or 'simple'
+
+const COL_HEADERS = ['age', 'gender', 'daily_hrs', 'platform', 'sleep_hrs', 'real_life', 'activity', 'stress (1–10) →'];
+const SIMPLE_COLS = [2, 7]; // daily_hrs, stress
+
+function getActiveCols() {
+  return currentView === 'simple' ? SIMPLE_COLS : COL_HEADERS.map((_, i) => i);
+}
+
+function buildHead() {
+  const head = document.getElementById('sheetHead');
+  const cols = getActiveCols();
+  head.innerHTML = '<tr>' + cols.map(ci => {
+    const isTarget = ci === COL_HEADERS.length - 1;
+    return `<th${isTarget ? ' class="target-col"' : ''}>${COL_HEADERS[ci]}</th>`;
+  }).join('') + '</tr>';
+}
+
+function buildSheet(rowsData, { showIssues = false } = {}) {
+  buildHead();
+  const body = document.getElementById('sheetBody');
+  body.innerHTML = '';
+  const activeCols = getActiveCols();
+  rowsData.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.dataset.idx = i;
+    activeCols.forEach(ci => {
+      const v = row.cells[ci];
+      const td = document.createElement('td');
+      td.textContent = v === null ? '—' : v;
+      td.dataset.col = ci;
+      if (ci === COL_HEADERS.length - 1) {
+        td.style.color = 'var(--c3)';
+        td.style.fontWeight = '600';
+      }
+      if (showIssues && row.issues[ci]) {
+        td.classList.add('cell-issue');
+        td.dataset.issue = row.issues[ci];
+      }
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+function clearSplitState() {
+  document.querySelectorAll('#sheetBody tr').forEach(r => r.classList.remove('train-row', 'test-row'));
+  document.getElementById('splitLabels').classList.remove('show');
+  document.getElementById('modalCaption').classList.remove('show');
+}
+
+function runImportStage({ animate = true } = {}) {
+  setStage('import');
+  document.getElementById('sheetFilename').textContent = `teen_social_media_raw.csv · ${RAW_ROWS.length} rows`;
+  buildSheet(RAW_ROWS, { showIssues: false });
+  clearSplitState();
+  const body = document.getElementById('sheetBody');
+  const rows = body.querySelectorAll('tr');
+  if (animate) {
+    body.classList.add('animating');
+    rows.forEach((r, i) => {
+      setTimeout(() => r.classList.add('row-loaded'), 80 + i * 60);
+    });
+    setTimeout(() => body.classList.remove('animating'), 80 + rows.length * 60 + 400);
+  }
+}
+
+function runCleanStage() {
+  setStage('clean');
+  document.getElementById('sheetFilename').textContent = `teen_social_media_raw.csv · ${RAW_ROWS.length} rows · scanning`;
+  buildSheet(RAW_ROWS, { showIssues: true });
+  clearSplitState();
+  // Clean stage doesn't need the per-row stagger (it's all about the issue→drop flow)
+  const body = document.getElementById('sheetBody');
+  body.classList.remove('animating');
+  const rows = body.querySelectorAll('tr');
+  rows.forEach(r => r.classList.add('row-loaded'));
+
+  // After a beat, drop the rows with issues on *visible* columns only
+  const activeCols = getActiveCols();
+  const badIdxs = RAW_ROWS.map((r, i) => {
+    const hasIssue = Object.keys(r.issues).some(ci => activeCols.includes(Number(ci)));
+    return hasIssue ? i : -1;
+  }).filter(i => i >= 0);
+  setTimeout(() => {
+    document.getElementById('sheetFilename').textContent = `teen_social_media_raw.csv · dropping ${badIdxs.length} bad rows`;
+    badIdxs.forEach((rowIdx, k) => {
+      const tr = document.querySelector(`#sheetBody tr[data-idx="${rowIdx}"]`);
+      if (!tr) return;
+      setTimeout(() => tr.classList.add('row-dropping'), k * 220);
+      setTimeout(() => tr.classList.add('row-removed'), k * 220 + 450);
+    });
+    setTimeout(() => {
+      const survivors = RAW_ROWS.length - badIdxs.length;
+      document.getElementById('sheetFilename').textContent = `teen_social_media_clean.csv · ${survivors} rows · ready`;
+    }, badIdxs.length * 220 + 900);
+  }, 1100);
+}
+
+function runSplitStage() {
+  setStage('split');
+  // Survivors = rows with no issues on visible columns
+  const activeCols = getActiveCols();
+  const cleanedRows = RAW_ROWS.filter(r =>
+    !Object.keys(r.issues).some(ci => activeCols.includes(Number(ci)))
+  ).map(r => ({ cells: r.cells, issues: {} }));
+  document.getElementById('sheetFilename').textContent = `teen_social_media_clean.csv · ${cleanedRows.length} rows · partitioned`;
+  buildSheet(cleanedRows);
+  document.getElementById('splitLabels').classList.remove('show');
+  document.getElementById('modalCaption').classList.remove('show');
+
+  const body = document.getElementById('sheetBody');
+  body.classList.remove('animating');
+  const rows = body.querySelectorAll('tr');
+  rows.forEach(r => r.classList.add('row-loaded'));
+
+  const splitIdx = Math.ceil(rows.length * 0.7);
+  setTimeout(() => {
+    rows.forEach((r, i) => {
+      r.classList.add(i < splitIdx ? 'train-row' : 'test-row');
+    });
+    // Scroll so the train/test boundary is visible
+    const scroller = document.querySelector('.sheet-scroll');
+    const boundaryRow = rows[splitIdx];
+    if (scroller && boundaryRow) {
+      const offset = boundaryRow.offsetTop - scroller.clientHeight / 2 + boundaryRow.offsetHeight;
+      scroller.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
+    }
+  }, 350);
+  setTimeout(() => document.getElementById('splitLabels').classList.add('show'), 750);
+  setTimeout(() => document.getElementById('modalCaption').classList.add('show'), 1150);
+}
+
+function setStage(stage) {
+  currentStage = stage;
+  const order = ['import', 'clean', 'split'];
+  const idx = order.indexOf(stage);
+  document.querySelectorAll('.stage-pill').forEach(p => {
+    const s = p.dataset.stage;
+    p.classList.toggle('active', s === stage);
+    p.classList.toggle('done', order.indexOf(s) < idx);
+  });
+}
+
+const STAGE_RUNNERS = { import: runImportStage, clean: runCleanStage, split: runSplitStage };
+
+const modal = document.getElementById('importModal');
+const closeBtn = document.getElementById('modalClose');
+
+function openModal(stage = 'import') {
+  modal.classList.add('active');
+  lucide.createIcons();
+  setTimeout(() => STAGE_RUNNERS[stage](), 300);
+}
+function closeModal() { modal.classList.remove('active'); }
+
+document.getElementById('dataSetupTrigger').addEventListener('click', () => openModal('import'));
+document.querySelectorAll('.stage-pill[data-stage]').forEach(p => {
+  p.addEventListener('click', () => STAGE_RUNNERS[p.dataset.stage]({ animate: false }));
+});
+
+// View tab switching (Full ↔ Simplified)
+document.querySelectorAll('.view-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const view = t.dataset.view;
+    if (view === currentView) return;
+    currentView = view;
+    document.querySelectorAll('.view-tab').forEach(x => x.classList.toggle('active', x === t));
+    // Replay the current stage instantly (no animation) with the new view
+    STAGE_RUNNERS[currentStage]({ animate: false });
+  });
+});
+
+closeBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeModelModal(); } });
+
+// ─────────────────────────────────────────────────────────────
+// PHASE 02 — Model Building (Linear Regression demo)
+// ─────────────────────────────────────────────────────────────
+const REG_TRAIN = [
+  { x: 1.5, y: 2 },
+  { x: 2.0, y: 3 },
+  { x: 2.8, y: 3 },
+  { x: 3.0, y: 4 },
+  { x: 3.5, y: 4 },
+  { x: 4.0, y: 5 },
+  { x: 4.2, y: 5 },
+  { x: 5.0, y: 6 },
+  { x: 5.8, y: 7 },
+  { x: 6.2, y: 8 },
+  { x: 6.5, y: 8 },
+  { x: 6.8, y: 9 },
+  { x: 7.5, y: 9 },
+  { x: 8.0, y: 10 },
+];
+const REG_TEST = { x: 5.0, y: null };
+
+// Final fitted parameters (precomputed least-squares for this set)
+const FITTED_M = 1.18;
+const FITTED_B = 0.45;
+
+const CHART = { x0: 60, y0: 230, w: 410, h: 200, xMin: 0, xMax: 9, yMin: 0, yMax: 11 };
+function sx(x) { return CHART.x0 + (x - CHART.xMin) / (CHART.xMax - CHART.xMin) * CHART.w; }
+function sy(y) { return CHART.y0 - (y - CHART.yMin) / (CHART.yMax - CHART.yMin) * CHART.h; }
+
+function drawAxesAndGrid() {
+  const grid = document.getElementById('chartGrid');
+  const axes = document.getElementById('chartAxes');
+  grid.innerHTML = '';
+  axes.innerHTML = '';
+
+  // Horizontal gridlines every 2 stress points
+  [2, 4, 6, 8, 10].forEach(y => {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('class', 'chart-grid');
+    ln.setAttribute('x1', sx(CHART.xMin)); ln.setAttribute('x2', sx(CHART.xMax));
+    ln.setAttribute('y1', sy(y)); ln.setAttribute('y2', sy(y));
+    grid.appendChild(ln);
+  });
+
+  // Axes
+  const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  xAxis.setAttribute('class', 'chart-axis');
+  xAxis.setAttribute('x1', sx(CHART.xMin)); xAxis.setAttribute('x2', sx(CHART.xMax));
+  xAxis.setAttribute('y1', sy(0)); xAxis.setAttribute('y2', sy(0));
+  axes.appendChild(xAxis);
+  const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  yAxis.setAttribute('class', 'chart-axis');
+  yAxis.setAttribute('x1', sx(CHART.xMin)); yAxis.setAttribute('x2', sx(CHART.xMin));
+  yAxis.setAttribute('y1', sy(0)); yAxis.setAttribute('y2', sy(CHART.yMax));
+  axes.appendChild(yAxis);
+
+  // X tick labels (hours)
+  [0, 2, 4, 6, 8].forEach(x => {
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('class', 'chart-tick-label');
+    t.setAttribute('x', sx(x)); t.setAttribute('y', sy(0) + 16);
+    t.setAttribute('text-anchor', 'middle');
+    t.textContent = x;
+    axes.appendChild(t);
+  });
+  // Y tick labels (stress 0-10)
+  [0, 2, 4, 6, 8, 10].forEach(y => {
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('class', 'chart-tick-label');
+    t.setAttribute('x', sx(0) - 8); t.setAttribute('y', sy(y) + 4);
+    t.setAttribute('text-anchor', 'end');
+    t.textContent = y;
+    axes.appendChild(t);
+  });
+
+  // Axis labels
+  const xLab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  xLab.setAttribute('class', 'chart-axis-label');
+  xLab.setAttribute('x', sx((CHART.xMin + CHART.xMax) / 2)); xLab.setAttribute('y', sy(0) + 36);
+  xLab.setAttribute('text-anchor', 'middle');
+  xLab.textContent = 'Daily Hours →';
+  axes.appendChild(xLab);
+  const yLab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  yLab.setAttribute('class', 'chart-axis-label');
+  yLab.setAttribute('x', 16); yLab.setAttribute('y', sy(CHART.yMax / 2));
+  yLab.setAttribute('text-anchor', 'middle');
+  yLab.setAttribute('transform', `rotate(-90 16 ${sy(CHART.yMax / 2)})`);
+  yLab.textContent = 'Stress (1–10) →';
+  axes.appendChild(yLab);
+}
+
+function drawPoints() {
+  const g = document.getElementById('chartPoints');
+  g.innerHTML = '';
+  REG_TRAIN.forEach((pt, i) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('class', 'data-point');
+    c.setAttribute('cx', sx(pt.x)); c.setAttribute('cy', sy(pt.y));
+    c.setAttribute('r', 5);
+    g.appendChild(c);
+    setTimeout(() => c.classList.add('show'), 80 + i * 50);
+  });
+}
+
+function setLine(m, b) {
+  const fit = document.getElementById('fitLine');
+  fit.setAttribute('x1', sx(CHART.xMin));
+  fit.setAttribute('y1', sy(m * CHART.xMin + b));
+  fit.setAttribute('x2', sx(CHART.xMax));
+  fit.setAttribute('y2', sy(m * CHART.xMax + b));
+}
+
+function computeMSE(m, b) {
+  let sum = 0;
+  REG_TRAIN.forEach(p => { const e = p.y - (m * p.x + b); sum += e * e; });
+  return sum / REG_TRAIN.length;
+}
+
+function clearModelExtras() {
+  document.getElementById('fitLine').classList.remove('show');
+  document.getElementById('predictGuideV').classList.remove('show');
+  document.getElementById('predictGuideH').classList.remove('show');
+  document.getElementById('predictPoint').classList.remove('show');
+  document.getElementById('predictLabel').classList.remove('show');
+  document.getElementById('predictResult').classList.remove('show');
+  document.getElementById('modelCaption').classList.remove('show');
+}
+
+function setMStage(stage) {
+  const order = ['arch', 'train', 'predict'];
+  const idx = order.indexOf(stage);
+  document.querySelectorAll('.stage-pill[data-mstage]').forEach(p => {
+    const s = p.dataset.mstage;
+    p.classList.toggle('active', s === stage);
+    p.classList.toggle('done', order.indexOf(s) < idx);
+  });
+}
+
+function runArchStage() {
+  setMStage('arch');
+  document.getElementById('modelEyebrow').textContent = 'Stage 1 — Architecture';
+  document.getElementById('modelSub').innerHTML = 'Pick a simple model: a straight line. <strong style="color:var(--c2)">stress = m · hours + b</strong> — find the right <em>m</em> and <em>b</em>.';
+  drawAxesAndGrid();
+  drawPoints();
+  clearModelExtras();
+  document.getElementById('coefM').textContent = 'm';
+  document.getElementById('coefB').textContent = 'b';
+  document.getElementById('epochVal').textContent = '0';
+  document.getElementById('errorVal').textContent = '—';
+}
+
+function runTrainStage() {
+  setMStage('train');
+  document.getElementById('modelEyebrow').textContent = 'Stage 2 — Train';
+  document.getElementById('modelSub').innerHTML = 'The model adjusts <strong style="color:var(--c2)">m</strong> and <strong style="color:var(--c2)">b</strong> over many epochs to minimize the error between predicted and actual stress.';
+  drawAxesAndGrid();
+  drawPoints();
+  clearModelExtras();
+
+  // Show fit line starting flat then animating to fit
+  const fit = document.getElementById('fitLine');
+  setLine(0, 2);
+  fit.classList.add('show');
+
+  const epochs = 40;
+  const startM = 0, startB = 5;
+  let i = 0;
+  const interval = setInterval(() => {
+    i++;
+    const t = i / epochs;
+    const eased = 1 - Math.pow(1 - t, 3);
+    const m = startM + (FITTED_M - startM) * eased;
+    const b = startB + (FITTED_B - startB) * eased;
+    setLine(m, b);
+    document.getElementById('epochVal').textContent = Math.round(t * 200);
+    document.getElementById('coefM').textContent = m.toFixed(2);
+    document.getElementById('coefB').textContent = b.toFixed(2);
+    document.getElementById('errorVal').textContent = computeMSE(m, b).toFixed(2);
+    if (i >= epochs) clearInterval(interval);
+  }, 50);
+}
+
+function runPredictStage() {
+  setMStage('predict');
+  document.getElementById('modelEyebrow').textContent = 'Stage 3 — Predict';
+  document.getElementById('modelSub').innerHTML = 'A new teen we\'ve never seen before — <strong style="color:var(--c3)">5.0 hrs/day</strong>. The trained line gives us the prediction.';
+  drawAxesAndGrid();
+  drawPoints();
+  clearModelExtras();
+
+  // Show final fitted line
+  setLine(FITTED_M, FITTED_B);
+  document.getElementById('fitLine').classList.add('show');
+  document.getElementById('coefM').textContent = FITTED_M.toFixed(2);
+  document.getElementById('coefB').textContent = FITTED_B.toFixed(2);
+  document.getElementById('epochVal').textContent = '200';
+  document.getElementById('errorVal').textContent = computeMSE(FITTED_M, FITTED_B).toFixed(2);
+
+  const xPred = REG_TEST.x;
+  const yPred = FITTED_M * xPred + FITTED_B;
+
+  // Vertical guide rises from x-axis to line
+  const gv = document.getElementById('predictGuideV');
+  gv.setAttribute('x1', sx(xPred)); gv.setAttribute('x2', sx(xPred));
+  gv.setAttribute('y1', sy(0)); gv.setAttribute('y2', sy(0));
+  setTimeout(() => {
+    gv.classList.add('show');
+    gv.style.transition = 'y2 0.7s ease, opacity 0.3s ease';
+    gv.setAttribute('y2', sy(yPred));
+  }, 350);
+
+  // Horizontal guide from line to y-axis
+  const gh = document.getElementById('predictGuideH');
+  gh.setAttribute('x1', sx(xPred)); gh.setAttribute('x2', sx(xPred));
+  gh.setAttribute('y1', sy(yPred)); gh.setAttribute('y2', sy(yPred));
+  setTimeout(() => {
+    gh.classList.add('show');
+    gh.style.transition = 'x2 0.7s ease, opacity 0.3s ease';
+    gh.setAttribute('x2', sx(CHART.xMin));
+  }, 1200);
+
+  // Predicted point on the line
+  const pp = document.getElementById('predictPoint');
+  pp.setAttribute('cx', sx(xPred));
+  pp.setAttribute('cy', sy(yPred));
+  setTimeout(() => pp.classList.add('show'), 950);
+
+  // Label
+  const pl = document.getElementById('predictLabel');
+  pl.setAttribute('x', sx(xPred) + 10); pl.setAttribute('y', sy(yPred) - 8);
+  pl.textContent = `≈ ${yPred.toFixed(2)}`;
+  setTimeout(() => pl.classList.add('show'), 1100);
+
+  // Side panel result (stress rating 1-10)
+  document.getElementById('predictHours').textContent = xPred.toFixed(1);
+  document.getElementById('predictY').textContent = `${yPred.toFixed(1)} / 10`;
+  setTimeout(() => document.getElementById('predictResult').classList.add('show'), 1400);
+  setTimeout(() => document.getElementById('modelCaption').classList.add('show'), 1800);
+}
+
+const M_RUNNERS = { arch: runArchStage, train: runTrainStage, predict: runPredictStage };
+const modelModal = document.getElementById('modelModal');
+const modelClose = document.getElementById('modelModalClose');
+
+function openModelModal(stage = 'arch') {
+  modelModal.classList.add('active');
+  lucide.createIcons();
+  setTimeout(() => M_RUNNERS[stage](), 300);
+}
+function closeModelModal() { modelModal.classList.remove('active'); }
+
+document.getElementById('modelBuildTrigger').addEventListener('click', () => openModelModal('arch'));
+document.querySelectorAll('.stage-pill[data-mstage]').forEach(p => {
+  p.addEventListener('click', () => M_RUNNERS[p.dataset.mstage]());
+});
+modelClose.addEventListener('click', closeModelModal);
+modelModal.addEventListener('click', (e) => { if (e.target === modelModal) closeModelModal(); });
 
 const PALETTE_MAP = {
   'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
