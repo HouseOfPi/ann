@@ -84,7 +84,7 @@ body {
   display: grid;
   grid-template-columns: 1fr auto 1fr auto 1fr;
   column-gap: 0;
-  align-items: stretch;
+  align-items: center;
   justify-items: stretch;
   justify-content: center;
   position: relative;
@@ -115,7 +115,6 @@ body {
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 .card:hover {
-  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--cc) 55%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--cc) 14%, transparent) inset,
@@ -162,7 +161,7 @@ body {
 
 /* ── Connectors between blocks ── */
 .connector {
-  width: 80px;
+  width: 140px;
 }
 
 .title-group {
@@ -187,6 +186,7 @@ body {
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--fg);
+  white-space: nowrap;
 }
 
 .bullets {
@@ -834,7 +834,6 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
         <div class="card-header card-header-clickable" id="dataSetupTrigger">
           <div class="icon-box"><i data-lucide="table-2"></i></div>
           <div class="title-group">
-            <span class="step-number">PHASE 01</span>
             <h2 class="card-title">Data Gathering</h2>
           </div>
           <span class="header-click-hint">click to preview</span>
@@ -859,7 +858,6 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
         <div class="card-header card-header-clickable" id="modelBuildTrigger">
           <div class="icon-box"><i data-lucide="brain-circuit"></i></div>
           <div class="title-group">
-            <span class="step-number">PHASE 02</span>
             <h2 class="card-title">Model Building</h2>
           </div>
           <span class="header-click-hint">click to preview</span>
@@ -881,10 +879,9 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
     <div class="card" id="card3" style="--cc:var(--c3)">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-header">
+        <div class="card-header card-header-clickable">
           <div class="icon-box"><i data-lucide="chart-no-axes-combined"></i></div>
           <div class="title-group">
-            <span class="step-number">PHASE 03</span>
             <h2 class="card-title">Evaluation</h2>
           </div>
         </div>
