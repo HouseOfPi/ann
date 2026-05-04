@@ -82,14 +82,13 @@ body {
 /* ── Phases Row (block-diagram pipeline) ── */
 .cards-container {
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  column-gap: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 4vw, 60px);
   align-items: center;
-  justify-items: stretch;
-  justify-content: center;
+  justify-items: center;
   position: relative;
   padding-top: 12px;
-  max-width: 1400px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
 }
@@ -98,6 +97,8 @@ body {
 
 .card {
   position: relative;
+  width: 100%;
+  max-width: 360px;
   background: linear-gradient(150deg,
     color-mix(in srgb, var(--cc) 9%, transparent) 0%,
     color-mix(in srgb, var(--cc) 2%, transparent) 100%);
@@ -161,12 +162,7 @@ body {
 }
 .icon-box i { width: 22px; height: 22px; }
 
-/* ── Connectors between blocks ── */
-.connector {
-  width: 140px;
-  opacity: 0;
-  transform-origin: left center;
-}
+/* Removed Connectors */
 
 body { cursor: pointer; }
 body.modal-active { cursor: default; }
@@ -866,8 +862,7 @@ body.light .modal-panel {
     </div>
   </div>
 
-  <!-- Connector 1 → 2 -->
-  <div class="connector" style="--from:var(--c1); --to:var(--c2)"></div>
+
 
   <!-- Step 2 -->
   <div class="card-wrapper">
@@ -890,8 +885,7 @@ body.light .modal-panel {
     </div>
   </div>
 
-  <!-- Connector 2 → 3 -->
-  <div class="connector" style="--from:var(--c2); --to:var(--c3)"></div>
+
 
   <!-- Step 3 -->
   <div class="card-wrapper">
