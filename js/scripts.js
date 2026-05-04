@@ -2335,9 +2335,9 @@
         else setPalette("midnight");
       };
 
-      // Force Midnight palette on load
+      // Force Warm Linen palette on load
       (function () {
-        setPalette("midnight");
+        setPalette("warm-linen");
         updateDropdownDisplays();
       })();
 
