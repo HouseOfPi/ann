@@ -112,7 +112,9 @@ body {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--cc) 8%, transparent) inset,
     0 12px 40px -16px color-mix(in srgb, var(--cc) 35%, transparent);
-  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+  opacity: 0; /* Hidden initially for animation */
+  pointer-events: none; /* Prevent blocking clicks when hidden */
 }
 .card:hover {
   border-color: color-mix(in srgb, var(--cc) 55%, transparent);
@@ -162,7 +164,12 @@ body {
 /* ── Connectors between blocks ── */
 .connector {
   width: 140px;
+  opacity: 0;
+  transform-origin: left center;
 }
+
+body { cursor: pointer; }
+body.modal-active { cursor: default; }
 
 .title-group {
   display: flex;
@@ -349,42 +356,42 @@ body.light .sheet-table td.cell-issue { color: #b45309; }
   flex-wrap: wrap;
 }
 .stage-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 5px 11px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
-  background: transparent;
-  color: color-mix(in srgb, var(--fg) 85%, transparent);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  color: color-mix(in srgb, var(--fg) 40%, transparent);
   cursor: pointer;
   transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
-.stage-pill:hover { border-color: var(--c1); color: var(--fg); }
+.stage-pill:hover { background: color-mix(in srgb, var(--fg) 10%, transparent); color: var(--fg); }
 .stage-pill.active {
-  background: color-mix(in srgb, var(--c1) 18%, transparent);
-  border-color: var(--c1);
+  background: color-mix(in srgb, var(--c1) 12%, transparent);
+  border-color: color-mix(in srgb, var(--c1) 30%, transparent);
   color: var(--c1);
 }
 .stage-pill.done {
-  border-color: color-mix(in srgb, var(--c2) 60%, transparent);
   color: var(--c2);
+  background: color-mix(in srgb, var(--c2) 8%, transparent);
 }
 .stage-pill .pill-dot {
-  width: 6px; height: 6px; border-radius: 50%;
+  width: 5px; height: 5px; border-radius: 50%;
   background: currentColor;
-  opacity: 0.6;
 }
 
 /* ── Modal Overlay ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.78);
+  background: rgba(0,0,0,0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: none;
@@ -395,32 +402,45 @@ body.light .sheet-table td.cell-issue { color: #b45309; }
   transition: opacity 0.35s ease;
 }
 .modal-overlay.active { display: flex; opacity: 1; }
-body.light .modal-overlay { background: rgba(20,18,15,0.55); }
+body.light .modal-overlay { background: rgba(0,0,0,0.4); }
 
 .modal-panel {
   position: relative;
-  width: min(960px, 92vw);
-  max-height: 90vh;
-  background: var(--bg);
-  border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
-  border-radius: 18px;
-  padding: 26px 32px 24px;
+  width: min(1000px, 94vw);
+  max-height: 88vh;
+  /* Premium Dark Glass Background */
+  background: rgba(18, 18, 22, 0.75);
+  /* Glossy Edge Highlight */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-left-color: rgba(255, 255, 255, 0.09);
+  border-radius: 28px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-  transform: translateY(20px) scale(0.96);
+  gap: 24px;
+  /* Deep shadow for elevation + Subtle Cyan ambient glow */
+  box-shadow: 
+    0 40px 100px -10px rgba(0,0,0,0.9), 
+    0 0 80px -20px color-mix(in srgb, var(--c1) 12%, transparent);
+  transform: translateY(30px) scale(0.98);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  /* Heavy Blur for Glassmorphism */
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+}
+body.light .modal-panel { 
+  background: rgba(255,255,255,0.85); 
+  border-color: rgba(0,0,0,0.05);
+  box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15);
 }
 .modal-head {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   flex-wrap: wrap;
-  border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-  padding-bottom: 14px;
 }
 .modal-head-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .modal-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-right: 44px; }
@@ -428,18 +448,22 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
 
 .modal-close {
   position: absolute;
-  top: 14px; right: 14px;
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--fg) 15%, transparent);
+  top: 24px; right: 24px;
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  border: 1px solid transparent;
   color: var(--fg);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.modal-close:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); transform: rotate(90deg); }
-.modal-close i { width: 16px; height: 16px; }
+.modal-close:hover { 
+  background: color-mix(in srgb, var(--fg) 10%, transparent); 
+  transform: rotate(90deg) scale(1.1);
+  border-color: color-mix(in srgb, var(--fg) 15%, transparent);
+}
+.modal-close i { width: 18px; height: 18px; opacity: 0.8; }
 
 .modal-eyebrow {
   font-family: 'JetBrains Mono', monospace;
@@ -470,31 +494,31 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
 
 /* ── Spreadsheet ── */
 .sheet-wrap {
-  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
-  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+  border-radius: 20px;
   overflow: hidden;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
   display: flex;
   flex-direction: column;
-  max-height: 360px;
+  max-height: 420px;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
 }
 .sheet-scroll {
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--fg) 25%, transparent) transparent;
+  padding: 0 8px 8px;
 }
-.sheet-scroll::-webkit-scrollbar { width: 6px; }
-.sheet-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--fg) 25%, transparent); border-radius: 3px; }
+.sheet-scroll::-webkit-scrollbar { width: 4px; }
+.sheet-scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--fg) 15%, transparent); border-radius: 10px; }
 .sheet-table thead { position: sticky; top: 0; z-index: 1; }
 .sheet-tabs {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  background: color-mix(in srgb, var(--fg) 5%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
 }
 .sheet-tabs i { width: 12px; height: 12px; opacity: 0.55; }
 .sheet-filename {
@@ -505,20 +529,20 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
 
 .sheet-table { width: 100%; border-collapse: collapse; }
 .sheet-table th, .sheet-table td {
-  padding: 6px 14px;
+  padding: 12px 24px;
   text-align: left;
-  border-bottom: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 4%, transparent);
   white-space: nowrap;
 }
 .sheet-table th {
   font-weight: 600;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--fg) 92%, transparent);
-  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  color: color-mix(in srgb, var(--fg) 50%, transparent);
+  background: transparent;
 }
-.sheet-table th.target-col { color: var(--c3); }
+.sheet-table th.target-col { color: var(--c3); opacity: 0.9; }
 .sheet-table td {
   color: color-mix(in srgb, var(--fg) 95%, transparent);
   opacity: 1;
@@ -602,50 +626,45 @@ body.light .modal-overlay { background: rgba(20,18,15,0.55); }
 .modal-caption.show { opacity: 1; transform: translateY(0); }
 .modal-caption strong { color: var(--c2); font-style: normal; font-weight: 600; }
 
-/* ── View Tabs (Full vs Simplified dataset) ── */
+/* ── View Tabs (Segmented Control style) ── */
 .view-tabs {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  margin-bottom: -1px;
-  flex-wrap: wrap;
+  display: inline-flex;
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  padding: 4px;
+  border-radius: 14px;
+  gap: 4px;
+  align-self: flex-start;
 }
 .view-tab {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 13px;
-  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
-  border-bottom: 1px solid transparent;
-  border-radius: 8px 8px 0 0;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 10px;
   background: transparent;
-  color: color-mix(in srgb, var(--fg) 65%, transparent);
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
+  border: none;
+  color: color-mix(in srgb, var(--fg) 50%, transparent);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  position: relative;
-  z-index: 2;
+  transition: all 0.3s ease;
 }
-.view-tab i { width: 14px; height: 14px; opacity: 0.85; }
+.view-tab i { width: 15px; height: 15px; opacity: 0.7; }
 .view-tab em {
   font-style: normal;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.55;
-  margin-left: 2px;
+  font-size: 10px;
+  opacity: 0.6;
+  margin-left: 4px;
+  font-weight: 500;
 }
-.view-tab:hover { color: var(--fg); border-color: color-mix(in srgb, var(--fg) 30%, transparent); }
+.view-tab:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 5%, transparent); }
 .view-tab.active {
-  background: color-mix(in srgb, var(--fg) 6%, transparent);
-  border-color: color-mix(in srgb, var(--fg) 18%, transparent);
-  border-bottom-color: color-mix(in srgb, var(--fg) 6%, transparent);
+  background: var(--bg);
   color: var(--fg);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
-.view-tab.active em { color: var(--c1); opacity: 0.95; }
+.view-tab.active em { color: var(--c1); opacity: 1; }
 .view-tab-note {
   margin-left: auto;
   font-size: 11px;
@@ -1190,10 +1209,14 @@ const closeBtn = document.getElementById('modalClose');
 
 function openModal(stage = 'import') {
   modal.classList.add('active');
+  document.body.classList.add('modal-active');
   lucide.createIcons();
-  setTimeout(() => STAGE_RUNNERS[stage](), 300);
+  STAGE_RUNNERS[stage]();
 }
-function closeModal() { modal.classList.remove('active'); }
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.classList.remove('modal-active');
+}
 
 document.getElementById('dataSetupTrigger').addEventListener('click', () => openModal('import'));
 document.querySelectorAll('.stage-pill[data-stage]').forEach(p => {
@@ -1462,10 +1485,14 @@ const modelClose = document.getElementById('modelModalClose');
 
 function openModelModal(stage = 'arch') {
   modelModal.classList.add('active');
+  document.body.classList.add('modal-active');
   lucide.createIcons();
   setTimeout(() => M_RUNNERS[stage](), 300);
 }
-function closeModelModal() { modelModal.classList.remove('active'); }
+function closeModelModal() { 
+  modelModal.classList.remove('active'); 
+  document.body.classList.remove('modal-active');
+}
 
 document.getElementById('modelBuildTrigger').addEventListener('click', () => openModelModal('arch'));
 document.querySelectorAll('.stage-pill[data-mstage]').forEach(p => {
@@ -1498,6 +1525,89 @@ window.addEventListener('message', (e) => {
   applyPalette(p);
 });
 
+// Progressive Animation State
+let currentStep = 0;
+let masterTimeline;
+
+function nextStep() {
+  if (currentStep >= 3) return;
+  currentStep++;
+  
+  const card1 = document.getElementById('card1');
+  const card2 = document.getElementById('card2');
+  const card3 = document.getElementById('card3');
+  const conn1 = document.querySelectorAll('.connector')[0];
+  const conn2 = document.querySelectorAll('.connector')[1];
+
+  if (currentStep === 1) {
+    // State 1: Card 1 at center (start immediately at center)
+    const container = document.querySelector('.cards-container');
+    const cRect = container.getBoundingClientRect();
+    const bRect = card1.getBoundingClientRect();
+    const offset = (cRect.width / 2) - (bRect.width / 2) - card1.offsetLeft;
+    
+    // Set position instantly, then animate opacity
+    gsap.set(card1, { x: offset });
+    gsap.to(card1, { 
+      opacity: 1, 
+      pointerEvents: "auto",
+      duration: 0.8, 
+      ease: "power2.out" 
+    });
+    
+    // Show bullets for card 1
+    gsap.from(card1.querySelectorAll('.bullet'), {
+      y: 10,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.6,
+      delay: 0.3
+    });
+  } 
+  else if (currentStep === 2) {
+    // State 2: Move Card 1 to left, Show Card 2 at center
+    // We'll actually just move Card 1 back to its original position and show Card 2
+    gsap.to(card1, { x: 0, duration: 1, ease: "power3.inOut" });
+    
+    gsap.to(card2, { 
+      opacity: 1, 
+      pointerEvents: "auto",
+      duration: 0.8, 
+      delay: 0.3,
+      ease: "power2.out"
+    });
+    
+    if (conn1) gsap.fromTo(conn1, { scaleX: 0 }, { scaleX: 1, opacity: 0.4, duration: 0.8, delay: 0.5 });
+    
+    gsap.from(card2.querySelectorAll('.bullet'), {
+      x: -10,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.6,
+      delay: 0.8
+    });
+  }
+  else if (currentStep === 3) {
+    // State 3: Show Evaluation card on right
+    gsap.to(card3, { 
+      opacity: 1, 
+      pointerEvents: "auto",
+      duration: 0.8, 
+      ease: "power2.out"
+    });
+    
+    if (conn2) gsap.fromTo(conn2, { scaleX: 0 }, { scaleX: 1, opacity: 0.4, duration: 0.8, delay: 0.2 });
+    
+    gsap.from(card3.querySelectorAll('.bullet'), {
+      x: -10,
+      opacity: 0,
+      stagger: 0.1,
+      duration: 0.6,
+      delay: 0.5
+    });
+  }
+}
+
 // Entrance Animations
 window.addEventListener('load', () => {
   const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
@@ -1509,33 +1619,15 @@ window.addEventListener('load', () => {
     duration: 0.8
   });
 
-  tl.from(".card", {
-    y: 40,
-    opacity: 0,
-    stagger: 0.15,
-    duration: 0.8
-  }, "-=0.4");
+  // Initial trigger for step 1
+  setTimeout(nextStep, 500);
+});
 
-  tl.from(".connector", {
-    scaleX: 0,
-    transformOrigin: "left center",
-    opacity: 0,
-    stagger: 0.15,
-    duration: 0.8
-  }, "-=0.6");
-
-  tl.from(".bullet", {
-    x: -10,
-    opacity: 0,
-    stagger: 0.05,
-    duration: 0.5
-  }, "-=0.4");
-
-  tl.to("#summary", {
-    opacity: 1,
-    y: 0,
-    duration: 0.8
-  }, "-=0.2");
+// Click to progress
+document.body.addEventListener('click', (e) => {
+  // Don't progress if clicking buttons or triggers
+  if (e.target.closest('button') || e.target.closest('.card-header-clickable')) return;
+  nextStep();
 });
 
 // Subtle Hover Interaction via JS if needed (though CSS handles most)
