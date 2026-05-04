@@ -99,46 +99,47 @@ body {
   position: relative;
   width: 100%;
   max-width: 360px;
-  background: linear-gradient(150deg,
-    color-mix(in srgb, var(--cc) 9%, transparent) 0%,
-    color-mix(in srgb, var(--cc) 2%, transparent) 100%);
-  border: 1px solid color-mix(in srgb, var(--cc) 28%, transparent);
-  border-radius: 18px;
-  padding: 22px 22px 20px;
+  border-radius: var(--card-radius, 24px);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+  padding: 30px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--cc) 8%, transparent) inset,
-    0 12px 40px -16px color-mix(in srgb, var(--cc) 35%, transparent);
-  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+    0 12px 40px -16px color-mix(in srgb, var(--cc) 25%, transparent);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  overflow: hidden;
   opacity: 0; /* Hidden initially for animation */
   pointer-events: none; /* Prevent blocking clicks when hidden */
 }
 .card:hover {
-  border-color: color-mix(in srgb, var(--cc) 55%, transparent);
+  transform: translateY(-8px) scale(1.02);
+  border-color: color-mix(in srgb, var(--cc) 45%, transparent);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cc) 14%, transparent) inset,
-    0 18px 50px -18px color-mix(in srgb, var(--cc) 50%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--cc) 12%, transparent) inset,
+    0 24px 60px -20px color-mix(in srgb, var(--cc) 45%, transparent);
 }
 
 .card-glow {
-  display: block;
   position: absolute;
-  inset: 0;
-  border-radius: 18px;
+  top: -60px; right: -60px;
+  width: 140px; height: 140px;
+  background: var(--cc);
+  filter: blur(70px);
+  opacity: 0.15;
+  border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle at 80% 0%, color-mix(in srgb, var(--cc) 18%, transparent) 0%, transparent 60%);
-  opacity: 0.65;
+  transition: opacity 0.4s ease;
 }
+.card:hover .card-glow { opacity: 0.3; }
+
 .card-footer { display: none; }
 
 .card-inner {
   position: relative;
-  z-index: 1;
-  padding: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -151,16 +152,15 @@ body {
 }
 
 .icon-box {
-  width: 42px; height: 42px;
+  width: 48px; height: 48px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--cc) 18%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cc) 35%, transparent);
-  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--cc) 12%, transparent);
   color: var(--cc);
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--cc) 25%, transparent);
   flex-shrink: 0;
-  box-shadow: 0 0 24px -8px color-mix(in srgb, var(--cc) 70%, transparent);
 }
-.icon-box i { width: 22px; height: 22px; }
+.icon-box i { width: 24px; height: 24px; }
 
 /* Removed Connectors */
 
@@ -228,6 +228,13 @@ body.light .header { border-bottom-color: color-mix(in srgb, var(--fg) 18%, tran
 
 body.light .chip { background: rgba(0,0,0,0.05); }
 body.light .bullet { color: rgba(0,0,0,0.7); }
+body.light .card {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 30px -10px rgba(0,0,0,0.08);
+}
+body.light .card:hover {
+  box-shadow: 0 24px 50px -15px rgba(0,0,0,0.12);
+}
 
 /* ── Clickable Card Header ── */
 .card-header-clickable {
