@@ -1714,7 +1714,7 @@
         'slideMesh': 'The Complexity',
         'slideWhyML': 'Why Machine Learning?',
         'slideMLProcess': 'The ML Process',
-        'slideMLTypes': 'Types of ML',
+        'slideMathPillars': 'Mathematical Pillars',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -1731,7 +1731,7 @@
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyML', enabled: true },
         { id: 'slideMLProcess', enabled: true },
-        { id: 'slideMLTypes', enabled: true },
+        { id: 'slideMathPillars', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
         { id: 'slideNine', enabled: true },
@@ -1757,10 +1757,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideMLProcess) on load
+      // Activate default slide (slideMathPillars) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMathPillars');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {

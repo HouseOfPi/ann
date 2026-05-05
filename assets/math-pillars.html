@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematical Pillars | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 50px 40px 50px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    /* ── Header (editorial style) ── */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 100%;
+      padding-bottom: 18px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', 'Outfit', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--c1);
+      opacity: 0.95;
+      margin-bottom: 2px;
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+      font-size: clamp(36px, 4.6vw, 60px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em {
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    /* ── Timeline Container ── */
+    .timeline-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: color-mix(in srgb, var(--c2) 30%, transparent);
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+
+    .timeline-nodes {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .node {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 0;
+      opacity: 0;
+    }
+
+    .node-dot {
+      width: 14px;
+      height: 14px;
+      background: var(--c2);
+      border-radius: 50%;
+      box-shadow: 0 0 20px var(--c2);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .node:hover .node-dot {
+      transform: scale(1.5);
+    }
+
+    .node-content {
+      position: absolute;
+      width: 240px;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .node.up .node-content {
+      bottom: 40px;
+    }
+    .node.down .node-content {
+      top: 40px;
+    }
+
+    .node-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 700;
+      color: var(--c2);
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+
+    /* Vertical on small screens */
+    @media (max-width: 800px) {
+      .timeline-container {
+        flex-direction: column;
+        padding-top: 40px;
+        justify-content: flex-start;
+      }
+      .timeline-line {
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 0%;
+        transform: translateX(-50%);
+      }
+      .timeline-nodes {
+        flex-direction: column;
+        height: 100%;
+        gap: 120px;
+      }
+      .node {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+      }
+      .node-content {
+        position: static;
+        width: auto;
+        text-align: left;
+        margin-left: 20px;
+        top: auto !important;
+        bottom: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header" id="header">
+    <span class="page-eyebrow">The Foundation</span>
+    <h1 class="main-title">Mathematical <em>Pillars</em>.</h1>
+  </div>
+
+  <div class="timeline-container">
+    <div class="timeline-line" id="timelineLine"></div>
+    <div class="timeline-nodes">
+      <!-- Linear Algebra -->
+      <div class="node down">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Linear Algebra</div>
+        </div>
+      </div>
+
+      <!-- Calculus -->
+      <div class="node up">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Calculus</div>
+        </div>
+      </div>
+
+      <!-- Reasoning -->
+      <div class="node down">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Reasoning</div>
+        </div>
+      </div>
+
+      <!-- Optimization -->
+      <div class="node up">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Optimization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') {
+        startEntrance();
+      }
+    });
+
+    function startEntrance() {
+      const isMobile = window.innerWidth <= 800;
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      
+      gsap.set("#header", { opacity: 0, y: 20 });
+      gsap.set(".node", { opacity: 0, scale: 0.5 });
+      if (isMobile) {
+        gsap.set("#timelineLine", { height: "0%", width: "2px" });
+      } else {
+        gsap.set("#timelineLine", { width: "0%", height: "2px" });
+      }
+
+      tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
+      
+      if (isMobile) {
+        tl.to("#timelineLine", { height: "100%", duration: 1.2 }, "-=0.4");
+      } else {
+        tl.to("#timelineLine", { width: "100%", duration: 1.2 }, "-=0.4");
+      }
+
+      tl.to(".node", { 
+        opacity: 1, 
+        scale: 1, 
+        stagger: 0.2, 
+        duration: 0.6, 
+        ease: "back.out(1.7)" 
+      }, "-=0.8");
+    }
+
+    window.addEventListener('load', () => {
+      startEntrance();
+    });
+  </script>
+</body>
+</html>
