@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
       --c1: #5fe8ec;
@@ -33,13 +32,12 @@
       transition: background 0.5s ease, color 0.5s ease;
     }
 
-    /* ── Header (editorial style) ── */
+    /* ── Header ── */
     .header {
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-width: 100%;
       padding-bottom: 18px;
       border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
       opacity: 0;
@@ -47,30 +45,25 @@
     }
 
     .page-eyebrow {
-      font-family: 'JetBrains Mono', 'Outfit', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       font-weight: 500;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--c1);
-      opacity: 0.95;
-      margin-bottom: 2px;
     }
 
     .main-title {
-      font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: clamp(36px, 4.6vw, 60px);
       font-weight: 500;
       letter-spacing: -0.01em;
       line-height: 1.05;
       color: var(--fg);
     }
-    .main-title em {
-      font-style: italic;
-      font-weight: 500;
-    }
+    .main-title em { font-style: italic; }
 
-    /* ── Timeline Container ── */
+    /* ── Timeline ── */
     .timeline-container {
       flex: 1;
       display: flex;
@@ -89,9 +82,10 @@
       left: 0;
       width: 0%;
       height: 2px;
-      background: color-mix(in srgb, var(--c2) 30%, transparent);
+      background: color-mix(in srgb, var(--c2) 35%, transparent);
       transform: translateY(-50%);
       z-index: 1;
+      border-radius: 2px;
     }
 
     .timeline-nodes {
@@ -111,43 +105,77 @@
       opacity: 0;
     }
 
+    /* All nodes share the same accent color */
+    .node { --nc: var(--c2); }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0px color-mix(in srgb, var(--nc) 50%, transparent), 0 0 16px var(--nc); }
+      70%  { box-shadow: 0 0 0 10px color-mix(in srgb, var(--nc) 0%, transparent), 0 0 16px var(--nc); }
+      100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--nc) 0%, transparent), 0 0 16px var(--nc); }
+    }
+
+    @keyframes float-up {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-5px); }
+    }
+
+    @keyframes float-down {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
     .node-dot {
-      width: 14px;
-      height: 14px;
-      background: var(--c2);
+      width: 16px;
+      height: 16px;
+      background: var(--nc);
       border-radius: 50%;
-      box-shadow: 0 0 20px var(--c2);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--nc) 20%, transparent), 0 0 16px var(--nc);
+      animation: pulse-ring 2.4s ease-out infinite;
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
     }
-    .node:hover .node-dot {
-      transform: scale(1.5);
-    }
+    .node:hover .node-dot { transform: scale(1.5); }
+
+    /* stagger the pulse so dots don't all fire together */
+    .node:nth-child(2) .node-dot { animation-delay: 0.6s; }
+    .node:nth-child(3) .node-dot { animation-delay: 1.2s; }
+    .node:nth-child(4) .node-dot { animation-delay: 1.8s; }
+
+    .node.up   .node-content { animation: float-up   3.5s ease-in-out infinite; }
+    .node.down .node-content { animation: float-down 3.5s ease-in-out infinite; }
+
+    /* stagger the float too */
+    .node:nth-child(2) .node-content { animation-delay: 0.8s; }
+    .node:nth-child(3) .node-content { animation-delay: 1.6s; }
+    .node:nth-child(4) .node-content { animation-delay: 2.4s; }
 
     .node-content {
       position: absolute;
-      width: 240px;
+      width: 220px;
       text-align: center;
       pointer-events: none;
     }
 
-    .node.up .node-content {
-      bottom: 40px;
-    }
-    .node.down .node-content {
-      top: 40px;
-    }
+    .node.up .node-content { bottom: 38px; }
+    .node.down .node-content { top: 38px; }
 
     .node-label {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(20px, 2vw, 26px);
+      font-size: clamp(18px, 1.9vw, 24px);
       font-weight: 700;
-      color: var(--c2);
-      margin-bottom: 6px;
+      color: var(--nc);
       letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
 
-    /* Vertical on small screens */
+    .node-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+    }
+
+    /* ── Mobile ── */
     @media (max-width: 800px) {
       .timeline-container {
         flex-direction: column;
@@ -155,16 +183,15 @@
         justify-content: flex-start;
       }
       .timeline-line {
-        top: 0;
-        left: 50%;
-        width: 2px;
-        height: 0%;
+        top: 0; left: 50%;
+        width: 2px; height: 0%;
         transform: translateX(-50%);
+        background: color-mix(in srgb, var(--c2) 35%, transparent);
       }
       .timeline-nodes {
         flex-direction: column;
         height: 100%;
-        gap: 120px;
+        gap: 100px;
       }
       .node {
         width: 100%;
@@ -176,8 +203,6 @@
         width: auto;
         text-align: left;
         margin-left: 20px;
-        top: auto !important;
-        bottom: auto !important;
       }
     }
   </style>
@@ -191,37 +216,39 @@
   <div class="timeline-container">
     <div class="timeline-line" id="timelineLine"></div>
     <div class="timeline-nodes">
-      <!-- Linear Algebra -->
+
       <div class="node down">
         <div class="node-dot"></div>
         <div class="node-content">
           <div class="node-label">Linear Algebra</div>
+          <div class="node-sub">Vectors · Matrices</div>
         </div>
       </div>
 
-      <!-- Calculus -->
       <div class="node up">
         <div class="node-dot"></div>
         <div class="node-content">
           <div class="node-label">Calculus</div>
+          <div class="node-sub">Derivatives · Chain Rule</div>
         </div>
       </div>
 
-      <!-- Reasoning -->
       <div class="node down">
         <div class="node-dot"></div>
         <div class="node-content">
-          <div class="node-label">Reasoning</div>
+          <div class="node-label">Probability</div>
+          <div class="node-sub">Distributions · Bayes</div>
         </div>
       </div>
 
-      <!-- Optimization -->
       <div class="node up">
         <div class="node-dot"></div>
         <div class="node-content">
           <div class="node-label">Optimization</div>
+          <div class="node-sub">Gradients · SGD</div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -250,43 +277,22 @@
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
       }
-      if (e.data.type === 'RESTART_ANIMATION') {
-        startEntrance();
-      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
     });
 
     function startEntrance() {
       const isMobile = window.innerWidth <= 800;
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      
       gsap.set("#header", { opacity: 0, y: 20 });
       gsap.set(".node", { opacity: 0, scale: 0.5 });
-      if (isMobile) {
-        gsap.set("#timelineLine", { height: "0%", width: "2px" });
-      } else {
-        gsap.set("#timelineLine", { width: "0%", height: "2px" });
-      }
+      gsap.set("#timelineLine", isMobile ? { height: "0%", width: "2px" } : { width: "0%", height: "2px" });
 
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
-      
-      if (isMobile) {
-        tl.to("#timelineLine", { height: "100%", duration: 1.2 }, "-=0.4");
-      } else {
-        tl.to("#timelineLine", { width: "100%", duration: 1.2 }, "-=0.4");
-      }
-
-      tl.to(".node", { 
-        opacity: 1, 
-        scale: 1, 
-        stagger: 0.2, 
-        duration: 0.6, 
-        ease: "back.out(1.7)" 
-      }, "-=0.8");
+      tl.to("#timelineLine", isMobile ? { height: "100%", duration: 1.2 } : { width: "100%", duration: 1.2 }, "-=0.4");
+      tl.to(".node", { opacity: 1, scale: 1, stagger: 0.18, duration: 0.6, ease: "back.out(1.7)" }, "-=0.8");
     }
 
-    window.addEventListener('load', () => {
-      startEntrance();
-    });
+    window.addEventListener('load', startEntrance);
   </script>
 </body>
 </html>
