@@ -183,6 +183,39 @@ body.light .card {
 body.light .card:hover {
   box-shadow: 0 24px 50px -15px rgba(0,0,0,0.12);
 }
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 1024px) {
+  body { padding: 32px 30px; height: auto; overflow-y: auto; }
+  .cards-container {
+    flex-direction: column;
+    gap: 24px;
+    justify-content: flex-start;
+    padding-bottom: 40px;
+  }
+  .card { 
+    max-width: 100%; 
+    width: 100%;
+    height: auto; 
+    min-height: 320px;
+    flex: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header { padding-bottom: 24px; }
+  .main-title { font-size: 36px; }
+  .main-subtitle { font-size: 14px; }
+  .card-inner { padding: 32px 24px; }
+  .card-title { font-size: 22px; }
+}
+
+@media (max-width: 480px) {
+  body { padding: 24px 20px; }
+  .main-title { font-size: 30px; }
+  .icon-box { width: 48px; height: 48px; margin-bottom: 20px; }
+  .card-desc { font-size: 13px; }
+}
 </style>
 </head>
 <body>

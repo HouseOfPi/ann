@@ -700,6 +700,35 @@
   .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 
   /* --- Theory Section --- */
+
+  /* ── Mobile Responsiveness ── */
+  @media (max-width: 1024px) {
+    body { padding: 0 20px 20px; height: auto; overflow-y: auto; }
+    header { padding: 30px 0 20px; margin-bottom: 24px; }
+    #main-container { flex-direction: column; height: auto; overflow: visible; }
+    #left-column { width: 100%; flex: none; max-width: 100%; min-width: 0; }
+    #right-content { width: 100%; flex: none; min-width: 0; margin-top: 24px; }
+    #resizer-col { display: none; }
+    #nn-panel { min-height: 400px; }
+    #field-wrap { min-height: 400px; padding: 12px; }
+  }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 22px; }
+    .subtitle { font-size: 13px; }
+    #theme-toggle { padding: 6px 12px; font-size: 10px; }
+    #event-table { grid-template-columns: 1fr 1fr; }
+    #event-table .et-col:last-child { grid-column: span 2; border-right: none; border-top: 1px solid var(--border-ui); }
+    .reward-pts { font-size: 18px; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 20px; }
+    #nn-top-bar h2 { font-size: 12px; }
+    .robot-btn { padding: 4px 12px; font-size: 10px; }
+    #speed-control { flex-wrap: wrap; justify-content: center; }
+    #speed-control input { width: 120px; }
+  }
 </style>
 </head>
 <body>

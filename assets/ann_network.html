@@ -291,6 +291,29 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 /* ── Matrix multiplication panel ── */
 #mat-panel{position:fixed;pointer-events:none;opacity:0;background:var(--tip-bg);border:1px solid rgba(99,102,241,.35);border-radius:14px;padding:14px 16px;z-index:1000;box-shadow:0 12px 40px rgba(0,0,0,0.45);font-family:'JetBrains Mono',monospace;font-size:10px;transition:opacity 0.2s;white-space:nowrap;}
 .app.dark #mat-panel{color:#f1f5f9}.app.light #mat-panel{color:#1e293b}
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 1024px) {
+  .ctrl-panel { left: -240px; width: 275px; }
+  .ctrl-panel.open { left: 0; }
+  .veh-grid { top: auto; bottom: 80px; right: 16px; flex-direction: row; max-height: none; width: auto; max-width: calc(100% - 32px); overflow-x: auto; padding-bottom: 12px; }
+  .veh-card { width: 120px; flex-shrink: 0; }
+}
+
+@media (max-width: 768px) {
+  .lp-ribbon { width: 38px; }
+  .lp-ribbon:hover { width: 38px; margin-right: 0; }
+  .lp-ribbon-text { font-size: 9px; }
+  #stats-panel { left: 16px; right: 16px; bottom: 16px; width: auto; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+  .stat-row { flex: 1; min-width: 100px; border-bottom: none !important; }
+}
+
+@media (max-width: 480px) {
+  .ctrl-panel { width: 100%; left: -100%; border-radius: 0; max-height: 100vh; top: 0; transform: none; }
+  .ctrl-panel.open { left: 0; }
+  .lp-ribbon { height: 100vh; border-radius: 0; }
+  .lp-body { padding: 40px 20px; }
+}
 </style>
 </head>
 <body>

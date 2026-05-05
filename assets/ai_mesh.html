@@ -697,12 +697,31 @@
     height: 10px;
     border-radius: 50%;
   }
-  @media (max-width: 600px) {
-    .nn-node { r: 5; }
+  /* ── Mobile Responsiveness ── */
+  @media (max-width: 1024px) {
+    .bp-modal { width: 95%; max-height: 95vh; overflow-y: auto; padding: 24px; }
+    .bp-cards { grid-template-columns: 1fr 1fr; }
+    .bp-timeline-line { display: none; }
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-  @keyframes fadeInModal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 768px) {
+    .header-title { font-size: 32px; }
+    .bp-cards { grid-template-columns: 1fr; }
+    .detail-modal { min-width: 90%; width: 95%; padding: 24px; }
+    .ml-flow-container { flex-direction: column; gap: 20px; }
+    .ml-flow-arrow { transform: rotate(90deg); margin: 10px 0; }
+    .ml-title-area { flex-direction: column; gap: 4px; }
+    .ml-main-title { font-size: 26px; }
+    .ml-footer { flex-direction: column; }
+    .training-preview { width: 300px; padding: 16px; left: 50%; top: 50%; }
+  }
+
+  @media (max-width: 480px) {
+    .header-eyebrow { font-size: 9px; letter-spacing: 2px; }
+    .header-title { font-size: 26px; }
+    .bp-label { font-size: 22px; }
+    .bp-icon { font-size: 24px; }
+  }
 </style>
 </head>
 <body>

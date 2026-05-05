@@ -4410,6 +4410,54 @@
         color: #1a1a2e;
       }
 
+      /* ── Mobile Layout ── */
+      @media (max-width: 768px) {
+        .side-nav-panel {
+          width: 100%;
+          right: -100%;
+          border-radius: 0;
+          height: 100vh;
+          top: 0;
+        }
+        .side-nav-panel.open { right: 0; }
+        
+        .settings-side {
+          width: 100%;
+          left: -100%;
+          padding-top: 90px;
+        }
+        .settings-side.open { left: 0; }
+        
+        .menu-toggle {
+          top: 20px;
+          left: 20px;
+          width: 42px;
+          height: 42px;
+        }
+        
+        .nav-arrows {
+          bottom: 20px;
+          right: 20px;
+          gap: 10px;
+        }
+        .nav-arrow {
+          width: 44px;
+          height: 44px;
+        }
+        
+        .hero-h1 { font-size: 14vw !important; }
+        .hero-h2 { font-size: 5vw !important; }
+        .hero-tagline { font-size: 16px !important; width: 90% !important; bottom: 100px !important; }
+        .hero-quote-float { display: none; } /* Hide heavy quote on mobile */
+      }
+      
+      @media (max-width: 480px) {
+        .settings-side { padding: 80px 24px 24px; }
+        .course-nav-header { padding: 20px 24px; }
+        .accordion-header { padding: 16px 24px; }
+      }
+
+
       .settings-group { display: flex; flex-direction: column; gap: 14px; }
       .settings-label {
         font-family: var(--font-heading);
