@@ -1047,7 +1047,7 @@
       const pioneersData = {
         mccarthy: {
           name: "John McCarthy",
-          img: "assets/mccarthy.png",
+          img: "assets/chapter-1-origins/mccarthy.png",
           years: "1927 – 2011",
           role: "Computer Scientist · Stanford University",
           intro:
@@ -1062,7 +1062,7 @@
         },
         minsky: {
           name: "Marvin Minsky",
-          img: "assets/minsky.png",
+          img: "assets/chapter-1-origins/minsky.png",
           years: "1927 – 2016",
           role: "Cognitive Scientist · MIT",
           intro:
@@ -1077,7 +1077,7 @@
         },
         shannon: {
           name: "Claude Shannon",
-          img: "assets/shannon.png",
+          img: "assets/chapter-1-origins/shannon.png",
           years: "1916 – 2001",
           role: "Mathematician · Bell Labs",
           intro:
@@ -1092,7 +1092,7 @@
         },
         solomonoff: {
           name: "Ray Solomonoff",
-          img: "assets/solomonoff.png",
+          img: "assets/chapter-1-origins/solomonoff.png",
           years: "1926 – 2009",
           role: "Mathematician · AI Researcher",
           intro:
@@ -1107,7 +1107,7 @@
         },
         hinton: {
           name: "Geoffrey Hinton",
-          img: "assets/hinton.jpg",
+          img: "assets/chapter-1-origins/hinton.jpg",
           years: "1947 – present",
           role: "Computer Scientist · University of Toronto / Google Brain",
           intro:
