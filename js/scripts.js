@@ -1765,10 +1765,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideMathPillars) on load
+      // Activate default slide (slideLinearSingleVar) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideMathPillars');
+        const idx = activeSlides.findIndex(el => el.id === 'slideLinearSingleVar');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
