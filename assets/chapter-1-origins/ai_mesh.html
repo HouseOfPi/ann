@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI · ML · DL · GenAI — The Tangled Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
   :root {
@@ -570,13 +573,12 @@
   }
   .header-eyebrow {
     display: inline-block;
-    font-size: 11px;
-    letter-spacing: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--subtitle-color);
-    padding: 6px 14px;
-    border: 1px solid color-mix(in srgb, var(--subtitle-color) 30%, transparent);
-    border-radius: 20px;
+    color: var(--c1, var(--subtitle-color));
     margin-bottom: 14px;
   }
   .header-title {
@@ -717,7 +719,7 @@
   }
 
   @media (max-width: 480px) {
-    .header-eyebrow { font-size: 9px; letter-spacing: 2px; }
+    .header-eyebrow { font-size: 13px; letter-spacing: 0.2em; }
     .header-title { font-size: 26px; }
     .bp-label { font-size: 22px; }
     .bp-icon { font-size: 24px; }

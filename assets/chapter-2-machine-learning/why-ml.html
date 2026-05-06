@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: #000000; }
   body { font-family: "Inter", system-ui, sans-serif; }
@@ -788,7 +788,7 @@ window.addEventListener('message', (e) => {
 const FONTS = {
   sans: '"Inter", system-ui, -apple-system, sans-serif',
   mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, monospace',
-  serif: '"Instrument Serif", Georgia, serif',
+  serif: '"Cormorant Garamond", Georgia, serif',
 };
 
 // A simple envelope card. Can be tagged spam/ham/unknown.
@@ -920,8 +920,8 @@ function SceneProblemCard({ start = 0, end = 3, sub, main, detail }) {
             <div style={{ textAlign: 'center', maxWidth: 1000 }}>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 16, letterSpacing: '0.32em',
-                color: COLORS.inkMuted,
+                fontSize: 16, fontWeight: 700, letterSpacing: '0.32em',
+                color: COLORS.accent,
                 textTransform: 'uppercase',
                 marginBottom: 28,
                 opacity: clamp(localTime / 0.6, 0, 1),
@@ -930,12 +930,17 @@ function SceneProblemCard({ start = 0, end = 3, sub, main, detail }) {
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 80, fontWeight: 400,
+                fontSize: 80, fontWeight: 500,
                 color: COLORS.ink,
-                letterSpacing: '-0.025em', lineHeight: 1.1,
+                letterSpacing: '-0.01em', lineHeight: 1.05,
                 marginBottom: detail ? 24 : 0,
               }}>
-                {main}
+                {(() => {
+                  const words = String(main).split(' ');
+                  if (words.length < 2) return main;
+                  const last = words.pop();
+                  return <>{words.join(' ') + ' '}<em style={{ fontStyle: 'italic' }}>{last}</em></>;
+                })()}
               </div>
               {detail && (
                 <div style={{
@@ -1394,9 +1399,9 @@ function SceneTransition({ start = 15, end = 18 }) {
               <div style={{
                 fontFamily: FONTS.serif,
                 fontSize: 88,
-                fontWeight: 400,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.0,
+                fontWeight: 500,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.05,
               }}>
                 Don't write rules.
                 <br/>
@@ -1873,9 +1878,9 @@ function SceneBridge({ start = 30, end = 33 }) {
               <div style={{
                 fontFamily: FONTS.serif,
                 fontSize: 96,
-                fontWeight: 400,
+                fontWeight: 500,
                 color: COLORS.ink,
-                letterSpacing: '-0.025em',
+                letterSpacing: '-0.01em',
                 lineHeight: 1.05,
                 transform: `scale(${1 + localTime * 0.006})`,
               }}>
@@ -2728,10 +2733,10 @@ function PredictionPanel({ localT }) {
         }}>
           <div style={{
             fontFamily: FONTS.serif,
-            fontSize: 72, fontWeight: 400,
+            fontSize: 72, fontWeight: 500,
             color: COLORS.spam,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.0,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.05,
           }}>
             Will fail soon.
           </div>
@@ -2830,9 +2835,9 @@ Object.assign(window, { SceneMachine });
               <div style={{
                 fontFamily: FONTS.serif,
                 fontSize: 110,
-                fontWeight: 400,
+                fontWeight: 500,
                 color: COLORS.ink,
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.01em',
                 lineHeight: 1.05,
               }}>
                 Learn from <em style={{ fontStyle: 'italic', color: COLORS.accent }}>data</em>,
@@ -2917,9 +2922,9 @@ function MachineOutro({ start, end }) {
             <div style={{ textAlign: 'center' }}>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 88, fontWeight: 400,
+                fontSize: 88, fontWeight: 500,
                 color: COLORS.ink,
-                letterSpacing: '-0.025em', lineHeight: 1.05,
+                letterSpacing: '-0.01em', lineHeight: 1.05,
               }}>
                 Patterns over <em style={{ fontStyle: 'italic', color: COLORS.accent }}>thresholds</em>.
               </div>
@@ -2960,16 +2965,16 @@ function App({ restartKey = 0 }) {
   // Determine dynamic title based on tab and stageTime
   const getDynamicTitle = () => {
     if (tab === 'spam') {
-      if (stageTime < 3)  return { sub: 'WHY MACHINE LEARNING?', main: 'The Spam Problem.' };
-      if (stageTime < 15) return { sub: 'THE TRADITIONAL WAY', main: 'Write a rule for every case.' };
-      if (stageTime < 18) return { sub: 'THE PROBLEM', main: 'Rules are brittle.' };
-      if (stageTime < 34) return { sub: 'THE ML WAY', main: 'Feed it labeled examples. It learns the pattern.' };
-      return { sub: 'SUMMARY', main: 'Patterns over rules.' };
+      if (stageTime < 3)  return { sub: 'WHY MACHINE LEARNING?', main: 'The Spam Problem' };
+      if (stageTime < 15) return { sub: 'THE TRADITIONAL WAY', main: 'Write a rule for every case' };
+      if (stageTime < 18) return { sub: 'THE PROBLEM', main: 'Rules are brittle' };
+      if (stageTime < 34) return { sub: 'THE ML WAY', main: 'Feed it labeled examples. It learns the pattern' };
+      return { sub: 'SUMMARY', main: 'Patterns over rules' };
     } else {
-      if (stageTime < 3)   return { sub: 'WHY MACHINE LEARNING?', main: 'The Maintenance Problem.' };
-      if (stageTime < 10.5) return { sub: 'PREDICTIVE MAINTENANCE', main: "Sensors say everything's fine... until it isn't." };
-      if (stageTime < 22)  return { sub: 'PREDICTIVE MAINTENANCE', main: 'Let the model learn from thousands of past runs.' };
-      return { sub: 'SUMMARY', main: 'Patterns over thresholds.' };
+      if (stageTime < 3)   return { sub: 'WHY MACHINE LEARNING?', main: 'The Maintenance Problem' };
+      if (stageTime < 10.5) return { sub: 'PREDICTIVE MAINTENANCE', main: "Sensors say everything's fine... until it isn't" };
+      if (stageTime < 22)  return { sub: 'PREDICTIVE MAINTENANCE', main: 'Let the model learn from thousands of past runs' };
+      return { sub: 'SUMMARY', main: 'Patterns over thresholds' };
     }
   };
 
@@ -2992,21 +2997,26 @@ function App({ restartKey = 0 }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{
             fontFamily: FONTS.mono,
-            fontSize: 16, letterSpacing: '0.24em',
+            fontSize: 16, letterSpacing: '0.32em',
             color: COLORS.accent,
             textTransform: 'uppercase',
-            fontWeight: 600,
+            fontWeight: 700,
           }}>
             {sub}
           </div>
           <div style={{
             fontFamily: FONTS.serif,
-            fontSize: 48, fontWeight: 400,
+            fontSize: 48, fontWeight: 500,
             color: COLORS.ink,
-            letterSpacing: '-0.015em',
-            lineHeight: 1.0,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.05,
           }}>
-            {main}
+            {(() => {
+              const words = String(main).split(' ');
+              if (words.length < 2) return main;
+              const last = words.pop();
+              return <>{words.join(' ') + ' '}<em style={{ fontStyle: 'italic' }}>{last}</em></>;
+            })()}
           </div>
         </div>
         <div role="tablist" style={{

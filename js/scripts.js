@@ -1715,6 +1715,9 @@
         'slideWhyML': 'Why Machine Learning?',
         'slideMLProcess': 'The ML Process',
         'slideMathPillars': 'Mathematical Pillars',
+        'slideLinearEquationIntro': 'Linear Equation: Intro',
+        'slideLinearSingleVar': 'Linear: Single Variable',
+        'slideLinearMultiVar': 'Linear: Multiple Variables',
         'slideLinearAlgebra': 'Linear Algebra',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
@@ -1733,6 +1736,9 @@
         { id: 'slideWhyML', enabled: true },
         { id: 'slideMLProcess', enabled: true },
         { id: 'slideMathPillars', enabled: true },
+        { id: 'slideLinearEquationIntro', enabled: true },
+        { id: 'slideLinearSingleVar', enabled: true },
+        { id: 'slideLinearMultiVar', enabled: true },
         { id: 'slideLinearAlgebra', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -2497,11 +2503,165 @@
       const navRibbon = document.getElementById("navRibbon");
       if (navRibbon) navRibbon.addEventListener("click", toggleSideNav);
 
-      // ─── COURSE CONTENT ACCORDION LOGIC ───
+      // ─── COURSE CONTENT ACCORDION LOGIC (GSAP) ───
+      // Single synchronized motion: height + fade together, one ease, no stagger.
+      const ACCORDION_DURATION = 0.36;
+      const ACCORDION_EASE = 'sine.inOut';
+
+      function _openAccordion(item, animate = true) {
+        if (!item || item.classList.contains('open')) return;
+        const content = item.querySelector('.accordion-content');
+        const chevron = item.querySelector('.chevron');
+        item.classList.add('open');
+
+        if (!content) return;
+        if (!animate || typeof gsap === 'undefined') {
+          if (typeof gsap !== 'undefined') {
+            gsap.set(content, { height: 'auto', opacity: 1 });
+            if (chevron) gsap.set(chevron, { rotate: 180 });
+          } else {
+            content.style.height = 'auto';
+            content.style.opacity = '1';
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
+          }
+          return;
+        }
+
+        gsap.killTweensOf([content, chevron]);
+        gsap.to(content, {
+          height: 'auto',
+          opacity: 1,
+          duration: ACCORDION_DURATION,
+          ease: ACCORDION_EASE,
+          overwrite: 'auto'
+        });
+        if (chevron) {
+          gsap.to(chevron, { rotate: 180, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+        }
+      }
+
+      function _closeAccordion(item, animate = true) {
+        if (!item || !item.classList.contains('open')) return;
+        const content = item.querySelector('.accordion-content');
+        const chevron = item.querySelector('.chevron');
+        item.classList.remove('open');
+
+        if (!content) return;
+        if (!animate || typeof gsap === 'undefined') {
+          if (typeof gsap !== 'undefined') {
+            gsap.set(content, { height: 0, opacity: 0 });
+            if (chevron) gsap.set(chevron, { rotate: 0 });
+          } else {
+            content.style.height = '0px';
+            content.style.opacity = '0';
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+          }
+          return;
+        }
+
+        gsap.killTweensOf([content, chevron]);
+        gsap.to(content, {
+          height: 0,
+          opacity: 0,
+          duration: ACCORDION_DURATION,
+          ease: ACCORDION_EASE,
+          overwrite: 'auto'
+        });
+        if (chevron) {
+          gsap.to(chevron, { rotate: 0, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+        }
+      }
+
       function toggleAccordion(header, event) {
         if (event) event.stopPropagation();
         const item = header.parentElement;
-        item.classList.toggle('open');
+        if (item.classList.contains('open')) {
+          _closeAccordion(item, true);
+        } else {
+          _openAccordion(item, true);
+        }
+      }
+
+      // Initial state: open items get height:auto + chevron rotated; closed get height:0.
+      (function initAccordionState() {
+        if (typeof gsap === 'undefined') return;
+        document.querySelectorAll('.accordion-item').forEach(item => {
+          const content = item.querySelector('.accordion-content');
+          const chevron = item.querySelector('.chevron');
+          if (!content) return;
+          if (item.classList.contains('open')) {
+            gsap.set(content, { height: 'auto', opacity: 1 });
+            if (chevron) gsap.set(chevron, { rotate: 180 });
+          } else {
+            gsap.set(content, { height: 0, opacity: 0 });
+            if (chevron) gsap.set(chevron, { rotate: 0 });
+          }
+        });
+        // Sub-groups: closed by default
+        document.querySelectorAll('.lesson-subgroup').forEach(group => {
+          const content = group.querySelector('.subgroup-content');
+          const chevron = group.querySelector('.sub-chevron');
+          if (!content) return;
+          if (group.classList.contains('open')) {
+            gsap.set(content, { height: 'auto', opacity: 1 });
+            if (chevron) gsap.set(chevron, { rotate: 180 });
+          } else {
+            gsap.set(content, { height: 0, opacity: 0 });
+            if (chevron) gsap.set(chevron, { rotate: 0 });
+          }
+        });
+      })();
+
+      // ─── SUB-GROUP (nested) toggle ───
+      function _openSubGroup(group, animate = true) {
+        if (!group || group.classList.contains('open')) return;
+        const content = group.querySelector('.subgroup-content');
+        const chevron = group.querySelector('.sub-chevron');
+        group.classList.add('open');
+        if (!content) return;
+        if (typeof gsap === 'undefined') {
+          content.style.height = 'auto';
+          content.style.opacity = '1';
+          if (chevron) chevron.style.transform = 'rotate(180deg)';
+          return;
+        }
+        if (!animate) {
+          gsap.set(content, { height: 'auto', opacity: 1 });
+          if (chevron) gsap.set(chevron, { rotate: 180 });
+          return;
+        }
+        gsap.killTweensOf([content, chevron]);
+        gsap.to(content, { height: 'auto', opacity: 1, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+        if (chevron) gsap.to(chevron, { rotate: 180, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+      }
+
+      function _closeSubGroup(group, animate = true) {
+        if (!group || !group.classList.contains('open')) return;
+        const content = group.querySelector('.subgroup-content');
+        const chevron = group.querySelector('.sub-chevron');
+        group.classList.remove('open');
+        if (!content) return;
+        if (typeof gsap === 'undefined') {
+          content.style.height = '0px';
+          content.style.opacity = '0';
+          if (chevron) chevron.style.transform = 'rotate(0deg)';
+          return;
+        }
+        if (!animate) {
+          gsap.set(content, { height: 0, opacity: 0 });
+          if (chevron) gsap.set(chevron, { rotate: 0 });
+          return;
+        }
+        gsap.killTweensOf([content, chevron]);
+        gsap.to(content, { height: 0, opacity: 0, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+        if (chevron) gsap.to(chevron, { rotate: 0, duration: ACCORDION_DURATION, ease: ACCORDION_EASE, overwrite: 'auto' });
+      }
+
+      function toggleSubGroup(header, event) {
+        if (event) event.stopPropagation();
+        const group = header.parentElement;
+        if (group.classList.contains('open')) _closeSubGroup(group, true);
+        else _openSubGroup(group, true);
       }
 
       function openGenAIModalDirectly() {
@@ -2530,10 +2690,15 @@
           const onclickStr = lesson.getAttribute('onclick');
           if (onclickStr && onclickStr.includes(`goToSlide(${index})`)) {
             lesson.classList.add("active");
+            // Auto-expand parent sub-group (if any)
+            const parentSubgroup = lesson.closest('.lesson-subgroup');
+            if (parentSubgroup && !parentSubgroup.classList.contains('open')) {
+              _openSubGroup(parentSubgroup, true);
+            }
             // Auto-expand parent section
             const parentSection = lesson.closest('.accordion-item');
             if (parentSection && !parentSection.classList.contains('open')) {
-              parentSection.classList.add('open');
+              _openAccordion(parentSection, true);
             }
           }
         });
@@ -2668,5 +2833,5 @@
       // Init dynamic nav components
       updateNavigationButtons();
       
-      // Mark first lesson active on load
-      syncSlider(0);
+      // Mark active lesson on load (and auto-open its parent section)
+      syncSlider(currentSlideIdx);

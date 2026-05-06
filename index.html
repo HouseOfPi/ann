@@ -157,7 +157,7 @@
 
       <div class="course-accordion" id="courseAccordion">
         <!-- Section 1: Origins of AI -->
-        <div class="accordion-item open">
+        <div class="accordion-item">
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <span class="section-num">01</span>
             <div class="accordion-header-main">
@@ -177,11 +177,11 @@
               <span class="lesson-dot"></span>
               <span class="lesson-name">The Complexity Mesh</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(6)">
+            <div class="course-lesson" onclick="goToSlide(9)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">The Dartmouth Dream</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(7)">
+            <div class="course-lesson" onclick="goToSlide(10)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Historical Pioneers</span>
             </div>
@@ -229,9 +229,34 @@
               <span class="lesson-dot"></span>
               <span class="lesson-name">Math Foundations</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(5)">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Linear Algebra</span>
+
+            <!-- Sub-group: Linear Algebra -->
+            <div class="lesson-subgroup">
+              <div class="subgroup-header" onclick="toggleSubGroup(this, event)">
+                <span class="lesson-dot"></span>
+                <span class="lesson-name">Linear Algebra</span>
+                <span class="sub-chevron">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <div class="subgroup-content">
+                <div class="course-lesson sub-lesson" onclick="goToSlide(5)">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Intro to Linear Equation</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide(6)">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Single Variable</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide(7)">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Multiple Variables</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide(8)">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Linear Algebra Overview</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -249,15 +274,15 @@
             </span>
           </div>
           <div class="accordion-content">
-            <div class="course-lesson" onclick="goToSlide(9)">
+            <div class="course-lesson" onclick="goToSlide(12)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Biological Inspiration</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(10)">
+            <div class="course-lesson" onclick="goToSlide(13)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Single Neuron Interaction</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(11)">
+            <div class="course-lesson" onclick="goToSlide(14)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">ANN Architecture</span>
             </div>
@@ -277,11 +302,11 @@
             </span>
           </div>
           <div class="accordion-content">
-            <div class="course-lesson" onclick="goToSlide(12)">
+            <div class="course-lesson" onclick="goToSlide(15)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Learning Without Rules</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide(13)">
+            <div class="course-lesson" onclick="goToSlide(16)">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Robot Football Simulation</span>
             </div>
@@ -390,7 +415,37 @@
         ></iframe>
       </section>
 
-      <!-- SLIDE: LINEAR ALGEBRA -->
+      <!-- SLIDE: LINEAR EQUATION INTRO -->
+      <section class="slide-why-ml" id="slideLinearEquationIntro">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-equation-intro.html"
+          title="What is a Linear Equation?"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR EQUATION — SINGLE VARIABLE -->
+      <section class="slide-why-ml" id="slideLinearSingleVar">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-single-var.html"
+          title="Single Variable Linear Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR EQUATION — MULTIPLE VARIABLES -->
+      <section class="slide-why-ml" id="slideLinearMultiVar">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-multi-var.html"
+          title="Multiple Variables Linear Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR ALGEBRA (matrix overview) -->
       <section class="slide-why-ml" id="slideLinearAlgebra">
         <iframe
           class="premium-iframe"
