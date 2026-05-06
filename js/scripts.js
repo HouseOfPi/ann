@@ -2294,10 +2294,9 @@
       // ─── Color Palette System ────────────────────────────────────────────
       const PALETTES = {
         "warm-linen":  { light: true,  cls: "palette-warm-linen",  iframeName: "Warm Linen"  },
+        "green-linen": { light: true,  cls: "palette-green-linen", iframeName: "Green Linen" },
         "paper-white": { light: true,  cls: "palette-paper-white", iframeName: "Paper White" },
         "midnight":    { light: false, cls: "palette-midnight",    iframeName: "Midnight"    },
-        "mint":        { light: true,  cls: "palette-mint",        iframeName: "Mint"        },
-        "plum":        { light: true,  cls: "palette-plum",        iframeName: "Plum"        },
         "dark":        { light: false, cls: null,                  iframeName: "Midnight"    },
       };
 
@@ -2345,9 +2344,9 @@
         else setPalette("midnight");
       };
 
-      // Force Warm Linen palette on load
+      // Force Green Linen palette on load
       (function () {
-        setPalette("warm-linen");
+        setPalette("green-linen");
         updateDropdownDisplays();
       })();
 

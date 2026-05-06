@@ -76,8 +76,8 @@
       transform: translateX(-20px);
       padding: 18px 20px;
       border-radius: 12px;
-      border: 1px solid color-mix(in srgb, var(--c2) 30%, transparent);
-      background: color-mix(in srgb, var(--c2) 6%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
     }
 
     .equation {
@@ -87,9 +87,9 @@
       color: var(--fg);
       margin-bottom: 8px;
     }
-    .equation .var { color: var(--c2); font-weight: 700; }
-    .equation .op { color: color-mix(in srgb, var(--fg) 50%, transparent); }
-    .equation .const { color: var(--c1); font-weight: 700; }
+    .equation .var { color: var(--fg); font-weight: 700; }
+    .equation .op { color: color-mix(in srgb, var(--fg) 45%, transparent); }
+    .equation .const { color: var(--c2); font-weight: 700; }
 
     .equation-sub {
       font-family: 'JetBrains Mono', monospace;
@@ -366,6 +366,7 @@
   <script>
     const PALETTE_MAP = {
       'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
       'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
       'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
       'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },

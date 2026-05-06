@@ -2237,7 +2237,7 @@ window.addEventListener('message', (e) => {
      // Handle both old 'mode' format and new 'palette' format
     const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
     const paletteToMode = {
-      'Warm Linen': 'light', 'Paper White': 'light', 'Mint': 'light', 'Plum': 'light',
+      'Warm Linen': 'light', 'Green Linen': 'light', 'Paper White': 'light', 'Mint': 'light', 'Plum': 'light',
       'Midnight': 'dark', 'Deep Navy': 'dark',
     };
     const mode = paletteToMode[palette] || (e.data.mode || 'dark');
