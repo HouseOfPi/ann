@@ -2047,7 +2047,7 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             if (incoming.id === 'slideMesh' && frame.contentWindow) {

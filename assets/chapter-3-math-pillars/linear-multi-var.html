@@ -285,6 +285,18 @@
       tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
       tl.to(".pt", { opacity: 1, x: 0, stagger: 0.13, duration: 0.5, ease: "back.out(1.4)" }, "-=0.2");
       tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
+
+      const iframe = document.querySelector('.graph-wrap iframe');
+      if (iframe) {
+        const restartIframe = () => {
+          try { iframe.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*'); } catch (e) {}
+        };
+        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+          restartIframe();
+        } else {
+          iframe.addEventListener('load', restartIframe);
+        }
+      }
     }
 
     window.addEventListener('load', startEntrance);
