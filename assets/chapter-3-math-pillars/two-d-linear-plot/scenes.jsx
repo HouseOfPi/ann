@@ -191,28 +191,12 @@ function Caption() {
 function Scene3D() {
   const t = useTime();
 
-  // Camera: continuous slow yaw orbit + slight pitch settle
-  // Start with a gentle 3/4 view, rotate ~+0.7 rad over the duration.
-  const yawStart = -0.55;
-  const yawEnd   =  0.25;
-  const yaw = interpolate(
-    [T.AXES_IN, T.ORBIT_END],
-    [yawStart,  yawEnd],
-    Easing.easeInOutSine
-  )(t);
+  // Camera: fixed position (no orbit)
+  const yaw = -0.55;
+  const pitch = 0.55;
 
-  const pitch = interpolate(
-    [0,    T.AXES_IN, T.DATA_IN, T.ORBIT_END],
-    [0.0,  0.55,      0.62,      0.55],
-    Easing.easeInOutCubic
-  )(t);
-
-  // Axis grow progress (0..1)
-  const axisP = animate({
-    from: 0, to: 1,
-    start: T.AXES_IN, end: T.AXES_BUILT,
-    ease: Easing.easeOutCubic,
-  })(t);
+  // Axes are now fixed (always fully visible)
+  const axisP = 1;
 
   // Plane weights animate over time
   // Phase 1: bias only — flat plane at y=b

@@ -52,12 +52,20 @@
       };
     }
     const TimelineContext = React.createContext({ time: 0 });
+    const CameraContext = React.createContext({ yaw: -0.24, pitch: 0.10 });
     const useTime = () => React.useContext(TimelineContext).time;
+    const useCamera = () => React.useContext(CameraContext);
     function Stage({ children, duration = 21 }) {
       const [time, setTime] = React.useState(0);
+      const [cameraYaw, setCameraYaw] = React.useState(-0.24);
+      const [cameraPitch, setCameraPitch] = React.useState(0.10);
+      const [isDragging, setIsDragging] = React.useState(false);
+      const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
+      const [isPaused, setIsPaused] = React.useState(false);
       const lastTsRef = React.useRef(null);
       React.useEffect(() => {
         const step = (ts) => {
+          if (isPaused) { lastTsRef.current = null; return; }
           if (lastTsRef.current == null) lastTsRef.current = ts;
           const dt = (ts - lastTsRef.current) / 1000;
           lastTsRef.current = ts;
@@ -66,15 +74,52 @@
         };
         const raf = requestAnimationFrame(step);
         return () => cancelAnimationFrame(raf);
-      }, [duration]);
+      }, [duration, isPaused]);
+
+      const handleMouseDown = (e) => {
+        if (e.button === 0) {
+          const dragDist = Math.sqrt((e.clientX - dragStart.x) ** 2 + (e.clientY - dragStart.y) ** 2);
+          if (dragDist < 5) { setIsPaused(!isPaused); return; }
+          setIsDragging(true);
+          setDragStart({ x: e.clientX, y: e.clientY });
+        }
+      };
+
+      const handleMouseMove = (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - dragStart.x;
+        const deltaY = e.clientY - dragStart.y;
+        setCameraYaw(prev => prev + deltaX * 0.01);
+        setCameraPitch(prev => clamp(prev + deltaY * 0.01, 0.1, Math.PI - 0.1));
+        setDragStart({ x: e.clientX, y: e.clientY });
+      };
+
+      const handleMouseUp = () => setIsDragging(false);
+
+      React.useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('mouseup', handleMouseUp);
+        };
+      }, [isDragging, dragStart]);
+
       return (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: 'transparent' }}>
-          <TimelineContext.Provider value={{ time }}>{children}</TimelineContext.Provider>
+        <div
+          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: 'transparent', cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
+          onMouseDown={handleMouseDown}
+        >
+          <TimelineContext.Provider value={{ time }}>
+            <CameraContext.Provider value={{ yaw: cameraYaw, pitch: cameraPitch }}>
+              {children}
+            </CameraContext.Provider>
+          </TimelineContext.Provider>
         </div>
       );
     }
 
-    const PROJ = { scale: 180, cx: 540, cy: 500, ox1: 1.5, ox2: 1.5, oy: 1.2 };
+    const PROJ = { scale: 180, cx: 500, cy: 550, ox1: 1.5, ox2: 1.5, oy: 1.2 };
     function project3D(p, yaw, pitch) {
       const px1 = p.x1 - PROJ.ox1, px2 = p.x2 - PROJ.ox2, py = p.y - PROJ.oy;
       const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
@@ -121,10 +166,10 @@
     function EquationOverlay() {
       const t = useTime();
       const sY=t>T.EQ_IN, sW1=t>T.EQ_IN+0.4, sW2=t>T.EQ_IN+0.9, sB=t>T.EQ_IN+1.4;
-      const hB=t>=T.BIAS_IN-0.3&&t<T.W1_IN, hW1=t>=T.W1_IN-0.3&&t<T.W2_IN, hW2=t>=T.W2_IN-0.3&&t<T.DATA_IN;
+      const hB=t>=T.BIAS_IN-0.3&&t<T.W1_IN, hW1=t>=T.W1_IN-0.3&&t<T.W2_IN, hW2=t>=T.W2_IN-0.3&&t<T.W2_BUILT;
       const any=hB||hW1||hW2, bc=any?'rgba(26,26,26,0.12)':INK;
       return (
-        <div style={{position:'absolute',top:10,left:0,right:0,display:'flex',justifyContent:'center',fontFamily:MONO,fontSize:14,color:INK,gap:4,pointerEvents:'none'}}>
+        <div style={{position:'absolute',top:10,left:0,right:0,display:'flex',justifyContent:'center',fontFamily:MONO,fontSize:'18.5px',color:INK,gap:4,pointerEvents:'none'}}>
           <span style={{opacity:sY?1:0,color:any?'rgba(26,26,26,0.12)':INK}}>y =</span>
           <span style={{opacity:sW1?1:0,color:hW1?RED:bc,fontWeight:hW1?700:500}}>w&#8321;x&#8321;</span>
           <span style={{opacity:sW2?1:0,color:bc}}>+</span>
@@ -147,16 +192,44 @@
       ];
       const active = caps.find(c => t>=c.s && t<c.e);
       return active && (
-        <div style={{position:'absolute',bottom:8,left:0,right:0,textAlign:'center',fontFamily:'Inter, sans-serif',fontSize:11,color:INK_DIM,padding:'0 16px',fontWeight:500,pointerEvents:'none',lineHeight:1.35}}>
+        <div style={{position:'absolute',top:70,left:0,right:0,textAlign:'center',fontFamily:'Cormorant Garamond, serif',fontSize:20,color:INK,padding:'0 16px',fontWeight:500,fontStyle:'italic',letterSpacing:'0.01em',opacity:0.85,pointerEvents:'none',lineHeight:1.35}}>
           {active.t}
+        </div>
+      );
+    }
+
+
+    function WeightsDisplay() {
+      const t = useTime();
+      const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
+      const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
+      const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
+      const hB = t >= T.BIAS_IN - 0.3 && t < T.W1_IN;
+      const hW1 = t >= T.W1_IN - 0.3 && t < T.W2_IN;
+      const hW2 = t >= T.W2_IN - 0.3 && t < T.W2_BUILT;
+      return (
+        <div style={{position:'absolute',top:50,right:16,fontFamily:'JetBrains Mono, monospace',fontSize:13,color:INK,pointerEvents:'none',lineHeight:1.8,background:'color-mix(in srgb, #f4f1ea 80%, transparent)',padding:'12px 16px',borderRadius:'8px'}}>
+          <div style={{color:hB?'#e27b5e':INK,fontWeight:hB?700:500}}>b = {bA.toFixed(2)}</div>
+          <div style={{color:hW1?'#e27b5e':INK,fontWeight:hW1?700:500}}>w₁ = {w1A.toFixed(2)}</div>
+          <div style={{color:hW2?GREEN:INK,fontWeight:hW2?700:500}}>w₂ = {w2A.toFixed(2)}</div>
+        </div>
+      );
+    }
+
+
+    function CameraDisplay() {
+      const { yaw, pitch } = useCamera();
+      return (
+        <div style={{position:'absolute',bottom:8,right:16,fontFamily:'JetBrains Mono, monospace',fontSize:12,color:'#1a1a1a',pointerEvents:'none'}}>
+          <div>Yaw: {yaw.toFixed(2)} rad</div>
+          <div>Pitch: {pitch.toFixed(2)} rad</div>
         </div>
       );
     }
 
     function Scene3D() {
       const t = useTime();
-      const yaw = interpolate([T.AXES_IN,T.ORBIT_END],[-0.55,0.25],Easing.easeInOutSine)(t);
-      const pitch = interpolate([0,T.AXES_IN,T.DATA_IN,T.ORBIT_END],[0.55,0.55,0.62,0.55],Easing.easeInOutCubic)(t);
+      const { yaw, pitch } = useCamera();
       const axP = animate({start:T.AXES_IN,end:T.AXES_BUILT})(t);
       const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
       const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
@@ -179,9 +252,11 @@
 
     ReactDOM.createRoot(document.getElementById('root')).render(
       <Stage duration={DURATION}>
+        <Caption />
         <EquationOverlay />
         <Scene3D />
-        <Caption />
+        <WeightsDisplay />
+        <CameraDisplay />
       </Stage>
     );
   </script>
