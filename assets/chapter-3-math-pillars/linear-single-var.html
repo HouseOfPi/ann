@@ -87,9 +87,9 @@
       color: var(--fg);
       margin-bottom: 8px;
     }
-    .equation .var { color: var(--fg); font-weight: 700; }
-    .equation .op { color: color-mix(in srgb, var(--fg) 45%, transparent); }
-    .equation .const { color: var(--c2); font-weight: 700; }
+    .equation .var, .equation .b { color: var(--fg); font-weight: 700; }
+    .equation .op { color: var(--fg); }
+    .equation .m { color: var(--c2); font-weight: 700; }
 
     .equation-sub {
       font-family: 'JetBrains Mono', monospace;
@@ -130,7 +130,7 @@
     }
     .term-symbol:active { transform: scale(0.96); }
     .term-symbol.m { color: var(--c1); }
-    .term-symbol.b { color: var(--c1); }
+    .term-symbol.b { color: var(--fg); }
     .term-symbol.x { color: var(--c2); }
     .term-symbol.x:hover { background: color-mix(in srgb, var(--c2) 14%, transparent); }
 
@@ -265,8 +265,8 @@
       <div class="equation-block" id="eqBlock">
         <div class="equation">
           <span class="var">y</span> <span class="op">=</span>
-          <span class="const">m</span><span class="var">x</span>
-          <span class="op">+</span> <span class="const">b</span>
+          <span class="m">m</span><span class="var">x</span>
+          <span class="op">+</span> <span class="b">b</span>
         </div>
         <div class="equation-sub">One input · one output · a single straight line</div>
       </div>
@@ -365,7 +365,7 @@
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
       'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
       'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
       'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
@@ -472,12 +472,12 @@
     // ─── Click-driven highlight animations ───
     function pulseSlope() {
       // Show Δx first (runLine), then Δy (riseLine) sequentially
-      gsap.killTweensOf(["#runLine", "#riseLine", "#runCorner", "#riseCorner", "#runLabel", "#riseLabel", "#mainLine", "#t1 .term-symbol"]);
+      gsap.killTweensOf(["#runLine", "#riseLine", "#runCorner", "#riseCorner", "#runLabel", "#riseLabel", "#mainLine", "#t1 .term-symbol", "#points"]);
 
       const tl = gsap.timeline();
 
-      // Dim main line immediately to focus on slope triangle
-      tl.to("#mainLine", { opacity: 0.45, duration: 0.2 }, 0);
+      // Dim points to focus on the lines
+      tl.to("#points", { opacity: 0.12, duration: 0.2 }, 0);
 
       // Bounce the m symbol
       tl.to("#t1 .term-symbol", { scale: 1.25, duration: 0.18, ease: "power2.out" }, 0);
@@ -545,13 +545,13 @@
       tl.to("#runLine", { strokeWidth: 1.8, duration: 0.4, ease: "power2.inOut" });
       tl.to("#riseLine", { strokeWidth: 1.8, duration: 0.4, ease: "power2.inOut" }, "<");
       tl.to(["#runCorner", "#riseCorner"], { attr: { r: 4 }, duration: 0.4, ease: "power2.inOut" }, "<");
-      tl.to(["#runLabel", "#riseLabel"], { scale: 1, duration: 0.4, ease: "power2.inOut" }, "<");
-      tl.to("#mainLine", { opacity: 1, duration: 0.4 }, "<");
+      tl.to(["#runLabel", "#riseLabel"], { scale: 1, duration: 0.4 }, "<");
+      // dots stay dimmed
     }
 
     function pulseBias() {
       // Highlight the y-intercept (b)
-      gsap.killTweensOf(["#interceptLine", "#interceptLabel", "#mainLine", "#t2 .term-symbol"]);
+      gsap.killTweensOf(["#interceptLine", "#interceptLabel", "#mainLine", "#t2 .term-symbol", "#points"]);
 
       const tl = gsap.timeline();
       tl.set("#interceptLine", { opacity: 1 });
@@ -575,20 +575,20 @@
         duration: 0.3, ease: "back.out(2.2)"
       }, 0);
 
-      // main line subtle dim
-      tl.to("#mainLine", { opacity: 0.45, duration: 0.3 }, 0);
+      // points subtle dim
+      tl.to("#points", { opacity: 0.12, duration: 0.3 }, 0);
 
       tl.to({}, { duration: 0.25 });
 
       // settle back
       tl.to("#interceptLine", { strokeWidth: 1.5, duration: 0.4, ease: "power2.inOut" });
-      tl.to("#interceptLabel", { scale: 1, duration: 0.4, ease: "power2.inOut" }, "<");
-      tl.to("#mainLine", { opacity: 1, duration: 0.4 }, "<");
+      tl.to("#interceptLabel", { scale: 1, duration: 0.4 }, "<");
+      // dots stay dimmed
     }
 
     function pulseInput() {
       // Highlight the sample points (x = inputs)
-      gsap.killTweensOf(["#points circle", "#mainLine", "#t0 .term-symbol"]);
+      gsap.killTweensOf(["#points circle", "#mainLine", "#t0 .term-symbol", "#points"]);
 
       const tl = gsap.timeline();
       // term symbol pulse
@@ -602,14 +602,15 @@
         duration: 0.3, ease: "back.out(2)"
       }, 0);
 
-      // main line dims to push focus to dots
-      tl.to("#mainLine", { opacity: 0.45, duration: 0.3 }, 0);
+      // dim main line only, keep points bright as they are the focus
+      tl.to("#mainLine", { opacity: 0.45, duration: 0.2 }, 0);
 
       tl.to({}, { duration: 0.25 });
 
       // settle back
       tl.to("#points circle", { attr: { r: 6 }, duration: 0.4, ease: "power2.inOut" });
       tl.to("#mainLine", { opacity: 1, duration: 0.4 }, "<");
+      tl.to("#points", { opacity: 1, duration: 0.4 }, "<");
     }
 
     // wire up clicks

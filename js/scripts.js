@@ -2344,9 +2344,9 @@
         else setPalette("midnight");
       };
 
-      // Force Green Linen palette on load
+      // Force Warm Linen palette on load
       (function () {
-        setPalette("green-linen");
+        setPalette("warm-linen");
         updateDropdownDisplays();
       })();
 

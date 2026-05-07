@@ -110,9 +110,10 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: clamp(15px, 1.4vw, 18px);
       font-weight: 700;
-      color: var(--c2);
+      color: var(--fg);
       letter-spacing: 0.04em;
     }
+    .equation-chip .m { color: var(--c2); }
 
     /* Key components list (right card) */
     .components { display: flex; flex-direction: column; gap: 14px; }
@@ -152,7 +153,7 @@
       <div class="card-text">
         A linear equation describes a <em>simple, predictable relationship</em> — when the input changes, the output changes in direct proportion.
       </div>
-      <div class="equation-chip">y = mx + b</div>
+      <div class="equation-chip">y = <span class="m">m</span>x + b</div>
     </div>
 
     <div class="card" id="card2">
@@ -167,7 +168,7 @@
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
       'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
       'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
       'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },

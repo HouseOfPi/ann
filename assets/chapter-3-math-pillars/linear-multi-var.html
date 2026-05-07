@@ -74,32 +74,46 @@
     .equation-block {
       opacity: 0;
       transform: translateX(-20px);
-      padding: 16px 20px;
-      border-radius: 12px;
-      border: 1px solid color-mix(in srgb, var(--c2) 30%, transparent);
-      background: color-mix(in srgb, var(--c2) 6%, transparent);
-    }
-
-    .equation {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(18px, 2.1vw, 24px);
-      letter-spacing: 0.03em;
-      color: var(--fg);
+      padding: 36px 40px;
+      border-radius: 24px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      box-shadow: 0 10px 30px -5px color-mix(in srgb, var(--bg) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       margin-bottom: 8px;
-      line-height: 1.5;
     }
-    .equation .var { color: var(--c2); font-weight: 700; }
-    .equation .op { color: color-mix(in srgb, var(--fg) 50%, transparent); }
-    .equation .const { color: var(--c1); font-weight: 700; }
 
-    .equation-sub {
+    .equation-block .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: -0.02em;
+    }
+
+    .equation-block .card-desc {
+      font-size: 16px;
+      line-height: 1.6;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+    }
+
+    .equation-block .eq-pill {
+      background: color-mix(in srgb, var(--c1) 8%, transparent);
+      padding: 16px 28px;
+      border-radius: 12px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      letter-spacing: 0.05em;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--fg);
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: 8px;
+      border: 1px solid color-mix(in srgb, var(--c1) 12%, transparent);
     }
 
-    .points { display: flex; flex-direction: column; gap: 12px; }
+    .points { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
 
     .pt {
       display: flex;
@@ -113,7 +127,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 500;
-      color: var(--c2);
+      color: var(--fg);
       letter-spacing: 0.1em;
       padding-top: 3px;
       flex-shrink: 0;
@@ -149,53 +163,19 @@
 
     .graph-wrap {
       width: 100%;
-      max-width: 480px;
-      aspect-ratio: 1.05 / 1;
+      max-width: 620px;
+      aspect-ratio: 1 / 1;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      background: var(--bg);
+      transition: background 0.5s;
     }
 
-    svg.graph {
+    .graph-wrap iframe {
       width: 100%;
       height: 100%;
-      overflow: visible;
-    }
-
-    .axis-3d {
-      stroke: color-mix(in srgb, var(--fg) 40%, transparent);
-      stroke-width: 1.6;
-    }
-    .axis-3d-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 700;
-      fill: color-mix(in srgb, var(--fg) 75%, transparent);
-    }
-
-    .grid-3d {
-      stroke: color-mix(in srgb, var(--fg) 14%, transparent);
-      stroke-width: 1;
-      fill: none;
-      opacity: 0;
-    }
-
-    .plane-tile {
-      stroke: color-mix(in srgb, var(--c2) 55%, transparent);
-      stroke-width: 1;
-      transition: fill 0.3s;
-    }
-
-    .plane-edge {
-      fill: none;
-      stroke: var(--c2);
-      stroke-width: 2;
-      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--c2) 40%, transparent));
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .point-3d {
-      fill: var(--c1);
-      stroke: var(--bg);
-      stroke-width: 2;
+      border: none;
     }
 
     .point-3d-label {
@@ -229,18 +209,13 @@
   <div class="body-layout">
     <div class="left-col">
       <div class="equation-block" id="eqBlock">
-        <div class="equation">
-          <span class="var">y</span> <span class="op">=</span>
-          <span class="const">w₁</span><span class="var">x₁</span> <span class="op">+</span>
-          <span class="const">w₂</span><span class="var">x₂</span> <span class="op">+</span>
-          <span class="const">b</span>
+        <div class="card-title">Bivariate Equation</div>
+        <div class="card-desc">
+          When we add a second independent variable (<em>x₂</em>), our equation expands to include a second weight.
         </div>
-        <div class="equation">
-          <span class="op">…</span> or in general:
-          <span class="var">y</span> <span class="op">=</span>
-          <span class="const">w</span> · <span class="var">x</span> <span class="op">+</span> <span class="const">b</span>
+        <div class="eq-pill">
+          y = w₁x₁ + w₂x₂ + b
         </div>
-        <div class="equation-sub">Many inputs · one output · still linear, just bigger</div>
       </div>
 
       <div class="points">
@@ -260,96 +235,20 @@
           </div>
         </div>
 
-        <div class="pt" id="pt2">
-          <span class="pt-num">03</span>
-          <div class="pt-body">
-            <div class="pt-title">This is one neuron</div>
-            <div class="pt-desc">A single neuron in any network is exactly this: a weighted sum of all incoming inputs, plus a bias.</div>
-          </div>
-        </div>
       </div>
     </div>
 
     <div class="visual-col" id="visual">
       <div class="graph-wrap">
-        <!-- Axonometric projection: x1 → right, x2 → back-left, y → up. -->
-        <svg class="graph" viewBox="0 0 460 420" preserveAspectRatio="xMidYMid meet">
-          <!-- Axis origin at (140, 320). Projection: -->
-          <!-- x1 axis: +x direction (right) → +120 -->
-          <!-- x2 axis: back-left → (-90, -55) -->
-          <!-- y  axis: up → (0, -260) -->
-
-          <!-- Floor grid (x1 × x2 plane) — drawn first -->
-          <g id="floorGrid" class="grid-3d">
-            <!-- Lines parallel to x1 (horizontal floor lines, varying x2) -->
-            <line x1="140" y1="320" x2="380" y2="320"/>
-            <line x1="118" y1="306" x2="358" y2="306"/>
-            <line x1="95"  y1="293" x2="335" y2="293"/>
-            <line x1="73"  y1="279" x2="313" y2="279"/>
-            <line x1="50"  y1="265" x2="290" y2="265"/>
-            <!-- Lines parallel to x2 (depth lines, varying x1) -->
-            <line x1="140" y1="320" x2="50"  y2="265"/>
-            <line x1="180" y1="320" x2="90"  y2="265"/>
-            <line x1="220" y1="320" x2="130" y2="265"/>
-            <line x1="260" y1="320" x2="170" y2="265"/>
-            <line x1="300" y1="320" x2="210" y2="265"/>
-            <line x1="340" y1="320" x2="250" y2="265"/>
-            <line x1="380" y1="320" x2="290" y2="265"/>
-          </g>
-
-          <!-- The plane y = 0.4*x1 + 0.6*x2 + 0.6  (in normalized units 0..4 → output 0.6..3.6).
-               We render it as a polygon spanning the floor grid corners projected upward. -->
-          <!-- Corner projections (px):
-               (x1=0, x2=0):  base (140,320), y=0.6  → height 60   → (140, 260)
-               (x1=4, x2=0):  base (380,320), y=2.2  → height 130  → (380, 190)
-               (x1=4, x2=4):  base (290,265), y=4.0  → height 220  → (290, 45)
-               (x1=0, x2=4):  base (50,265),  y=2.4  → height 145  → (50, 120)
-          -->
-          <polygon id="plane" class="plane-tile"
-                   points="140,260 380,190 290,45 50,120"
-                   fill="color-mix(in srgb, var(--c2) 18%, transparent)"
-                   opacity="0"/>
-          <polyline id="planeEdge" class="plane-edge"
-                    points="140,260 380,190 290,45 50,120 140,260"
-                    stroke-dasharray="1100" stroke-dashoffset="1100"/>
-
-          <!-- Vertical "stems" connecting floor sample points to the plane (shows height = output) -->
-          <g id="stems" stroke="var(--c1)" stroke-width="1.4" stroke-dasharray="3 3" opacity="0">
-            <line x1="220" y1="320" x2="220" y2="218"/>     <!-- (x1=2, x2=0)  y=1.4 -->
-            <line x1="170" y1="293" x2="170" y2="170"/>     <!-- (x1=2, x2=2)  y=2.6 -->
-            <line x1="130" y1="293" x2="130" y2="195"/>     <!-- (x1=1, x2=2)  y=2.2 -->
-          </g>
-
-          <!-- Sample points on the plane -->
-          <g id="pts3d">
-            <circle class="point-3d" cx="220" cy="218" r="0"/>
-            <circle class="point-3d" cx="170" cy="170" r="0"/>
-            <circle class="point-3d" cx="130" cy="195" r="0"/>
-          </g>
-
-          <!-- Axes drawn over the plane base -->
-          <line class="axis-3d" id="ax1" x1="140" y1="320" x2="400" y2="320"/>
-          <line class="axis-3d" id="ax2" x1="140" y1="320" x2="40"  y2="259"/>
-          <line class="axis-3d" id="axY" x1="140" y1="320" x2="140" y2="40"/>
-
-          <!-- Arrow heads -->
-          <polygon points="400,320 392,316 392,324" fill="color-mix(in srgb, var(--fg) 50%, transparent)"/>
-          <polygon points="40,259 47,255 49,263"  fill="color-mix(in srgb, var(--fg) 50%, transparent)"/>
-          <polygon points="140,40 136,48 144,48"   fill="color-mix(in srgb, var(--fg) 50%, transparent)"/>
-
-          <!-- Axis labels -->
-          <text class="axis-3d-label" x="408" y="324">x₁</text>
-          <text class="axis-3d-label" x="22"  y="262">x₂</text>
-          <text class="axis-3d-label" x="124" y="36">y</text>
-        </svg>
+        <iframe src="two-d-linear-plot/Linear Equation 3D Plot.html"></iframe>
       </div>
-      <div class="caption">y = w₁x₁ + w₂x₂ + b · two inputs draw a plane</div>
+      <div class="caption">y = w₁x₁ + w₂x₂ + b · 3D Interactive Plot</div>
     </div>
   </div>
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
       'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
       'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
       'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
@@ -380,26 +279,13 @@
       gsap.set("#header", { opacity: 0, y: 20 });
       gsap.set("#eqBlock", { opacity: 0, x: -20 });
       gsap.set(".pt", { opacity: 0, x: -20 });
-      gsap.set("#visual", { opacity: 0 });
-      gsap.set("#floorGrid", { opacity: 0 });
-      gsap.set("#plane", { opacity: 0 });
-      gsap.set("#planeEdge", { strokeDashoffset: 1100 });
-      gsap.set("#stems", { opacity: 0 });
-      gsap.set("#pts3d circle", { attr: { r: 0 } });
+      gsap.set("#visual", { opacity: 0, x: 20 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
       tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
       tl.to(".pt", { opacity: 1, x: 0, stagger: 0.13, duration: 0.5, ease: "back.out(1.4)" }, "-=0.2");
-      tl.to("#visual", { opacity: 1, duration: 0.5 }, "-=0.4");
-      // axes already drawn — fade in floor grid
-      tl.to("#floorGrid", { opacity: 1, duration: 0.55 }, "-=0.2");
-      // draw plane edges, then fill
-      tl.to("#planeEdge", { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut" }, "-=0.2");
-      tl.to("#plane", { opacity: 1, duration: 0.6 }, "-=0.5");
-      // stems + points
-      tl.to("#stems", { opacity: 1, duration: 0.4 }, "+=0.1");
-      tl.to("#pts3d circle", { attr: { r: 5.5 }, stagger: 0.18, duration: 0.4, ease: "back.out(2)" }, "-=0.2");
+      tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
     }
 
     window.addEventListener('load', startEntrance);

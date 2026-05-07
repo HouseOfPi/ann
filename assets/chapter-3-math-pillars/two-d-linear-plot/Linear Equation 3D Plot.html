@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Linear Equation 3D Plot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: transparent; overflow: hidden; }
+  #root { position: absolute; inset: 0; }
+  * { box-sizing: border-box; }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.2/babel.min.js"></script>
+  <script type="text/babel">
+    const Easing = {
+      linear: (t) => t,
+      easeOutCubic: (t) => (--t) * t * t + 1,
+      easeInOutCubic: (t) => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1),
+      easeInOutSine: (t) => -(Math.cos(Math.PI * t) - 1) / 2,
+      easeOutBack: (t) => {
+        const c1 = 1.70158, c3 = c1 + 1;
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+      },
+    };
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    function interpolate(input, output, ease = Easing.linear) {
+      return (t) => {
+        if (t <= input[0]) return output[0];
+        if (t >= input[input.length - 1]) return output[output.length - 1];
+        for (let i = 0; i < input.length - 1; i++) {
+          if (t >= input[i] && t <= input[i + 1]) {
+            const span = input[i + 1] - input[i];
+            const local = span === 0 ? 0 : (t - input[i]) / span;
+            const easeFn = Array.isArray(ease) ? (ease[i] || Easing.linear) : ease;
+            return output[i] + (output[i + 1] - output[i]) * easeFn(local);
+          }
+        }
+        return output[output.length - 1];
+      };
+    }
+    function animate({ from = 0, to = 1, start = 0, end = 1, ease = Easing.easeInOutCubic }) {
+      return (t) => {
+        if (t <= start) return from;
+        if (t >= end) return to;
+        return from + (to - from) * ease((t - start) / (end - start));
+      };
+    }
+    const TimelineContext = React.createContext({ time: 0 });
+    const useTime = () => React.useContext(TimelineContext).time;
+    function Stage({ children, duration = 21 }) {
+      const [time, setTime] = React.useState(0);
+      const lastTsRef = React.useRef(null);
+      React.useEffect(() => {
+        const step = (ts) => {
+          if (lastTsRef.current == null) lastTsRef.current = ts;
+          const dt = (ts - lastTsRef.current) / 1000;
+          lastTsRef.current = ts;
+          setTime(t => (t + dt) % duration);
+          requestAnimationFrame(step);
+        };
+        const raf = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(raf);
+      }, [duration]);
+      return (
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: 'transparent' }}>
+          <TimelineContext.Provider value={{ time }}>{children}</TimelineContext.Provider>
+        </div>
+      );
+    }
+
+    const PROJ = { scale: 180, cx: 540, cy: 500, ox1: 1.5, ox2: 1.5, oy: 1.2 };
+    function project3D(p, yaw, pitch) {
+      const px1 = p.x1 - PROJ.ox1, px2 = p.x2 - PROJ.ox2, py = p.y - PROJ.oy;
+      const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+      const x = px1 * cy - px2 * sy, z = px1 * sy + px2 * cy, yRot = py * cp - z * sp;
+      return { sx: PROJ.cx + x * PROJ.scale, sy: PROJ.cy - yRot * PROJ.scale };
+    }
+    function Axis({ from, to, yaw, pitch, color, label, progress = 1 }) {
+      const t = clamp(progress, 0, 1);
+      const tip = { x1: from.x1+(to.x1-from.x1)*t, x2: from.x2+(to.x2-from.x2)*t, y: from.y+(to.y-from.y)*t };
+      const a = project3D(from, yaw, pitch), b = project3D(tip, yaw, pitch);
+      const ang = Math.atan2(b.sy-a.sy, b.sx-a.sx);
+      return (
+        <g opacity={t>0.01?1:0}>
+          <line x1={a.sx} y1={a.sy} x2={b.sx} y2={b.sy} stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+          {t>0.95 && (<>
+            <polygon points={`${b.sx},${b.sy} ${b.sx-12*Math.cos(ang)+5*Math.sin(ang)},${b.sy-12*Math.sin(ang)-5*Math.cos(ang)} ${b.sx-12*Math.cos(ang)-5*Math.sin(ang)},${b.sy-12*Math.sin(ang)+5*Math.cos(ang)}`} fill={color} />
+            <text x={b.sx+24*Math.cos(ang)} y={b.sy+24*Math.sin(ang)} textAnchor="middle" dominantBaseline="middle" fontFamily="JetBrains Mono, monospace" fontSize={22} fontStyle="italic" fontWeight={600} fill={color}>{label}</text>
+          </>)}
+        </g>
+      );
+    }
+    function Plane({ w1, w2, b, yaw, pitch, opacity=1, color, range=2.2 }) {
+      const corners = [{x1:0,x2:0},{x1:range,x2:0},{x1:range,x2:range},{x1:0,x2:range}].map(c => project3D({...c, y: w1*c.x1+w2*c.x2+b}, yaw, pitch));
+      return <polygon points={corners.map(c=>`${c.sx},${c.sy}`).join(' ')} fill={color} fillOpacity={0.2} stroke={color} strokeWidth={2.5} strokeLinejoin="round" opacity={opacity} />;
+    }
+    function DataPoints({ w1, w2, b, yaw, pitch, appear=1, snap=0 }) {
+      const TEAL = 'oklch(50% 0.10 220)';
+      return <g>{DATA_POINTS.map((p,i) => {
+        const la = clamp(appear*DATA_POINTS.length-i, 0, 1);
+        const yT = w1*p.x1+w2*p.x2+b, yS = yT+p.noise*(1-snap);
+        const pr = project3D({x1:p.x1,x2:p.x2,y:yS}, yaw, pitch), gr = project3D({x1:p.x1,x2:p.x2,y:0}, yaw, pitch);
+        return la>0 && <g key={i} opacity={la}>
+          <line x1={pr.sx} y1={pr.sy} x2={gr.sx} y2={gr.sy} stroke={TEAL} strokeWidth={1.6} strokeDasharray="5 4" opacity={0.7} />
+          <circle cx={pr.sx} cy={pr.sy} r={9*Easing.easeOutBack(la)} fill={TEAL} stroke="var(--bg, #f6f4ef)" strokeWidth={2} />
+        </g>
+      })}</g>;
+    }
+
+    const ACCENT='oklch(64% 0.15 30)', RED='oklch(64% 0.15 30)', GREEN='oklch(50% 0.10 220)', AXIS_GRAY='#3a3a3a', INK='#1a1a1a', INK_DIM='#6b6458', MONO='JetBrains Mono, monospace';
+    const T = {EQ_IN:0.4, AXES_IN:1, AXES_BUILT:3, BIAS_IN:3.5, BIAS_BUILT:5.5, W1_IN:6.5, W1_BUILT:8.5, W2_IN:9.5, W2_BUILT:11.5, DATA_IN:12.5, DATA_SNAP:15, ORBIT_END:20};
+    const DURATION=21, FINAL_W1=0.45, FINAL_W2=0.35, FINAL_B=0.4;
+    const DATA_POINTS = [{x1:0.3,x2:1.9,noise:0.45},{x1:1.4,x2:0.6,noise:-0.32},{x1:0.5,x2:0.7,noise:0.3},{x1:1.7,x2:1.1,noise:-0.4},{x1:0.85,x2:1.2,noise:0.25},{x1:1.3,x2:1.85,noise:0.36},{x1:2.0,x2:0.55,noise:-0.28},{x1:0.45,x2:2.05,noise:-0.22},{x1:0.2,x2:0.25,noise:0.32},{x1:2.05,x2:0.2,noise:-0.24},{x1:1.55,x2:1.95,noise:0.26},{x1:0.7,x2:1.5,noise:-0.36}];
+
+    function EquationOverlay() {
+      const t = useTime();
+      const sY=t>T.EQ_IN, sW1=t>T.EQ_IN+0.4, sW2=t>T.EQ_IN+0.9, sB=t>T.EQ_IN+1.4;
+      const hB=t>=T.BIAS_IN-0.3&&t<T.W1_IN, hW1=t>=T.W1_IN-0.3&&t<T.W2_IN, hW2=t>=T.W2_IN-0.3&&t<T.DATA_IN;
+      const any=hB||hW1||hW2, bc=any?'rgba(26,26,26,0.12)':INK;
+      return (
+        <div style={{position:'absolute',top:10,left:0,right:0,display:'flex',justifyContent:'center',fontFamily:MONO,fontSize:14,color:INK,gap:4,pointerEvents:'none'}}>
+          <span style={{opacity:sY?1:0,color:any?'rgba(26,26,26,0.12)':INK}}>y =</span>
+          <span style={{opacity:sW1?1:0,color:hW1?RED:bc,fontWeight:hW1?700:500}}>w&#8321;x&#8321;</span>
+          <span style={{opacity:sW2?1:0,color:bc}}>+</span>
+          <span style={{opacity:sW2?1:0,color:hW2?GREEN:bc,fontWeight:hW2?700:500}}>w&#8322;x&#8322;</span>
+          <span style={{opacity:sB?1:0,color:bc}}>+</span>
+          <span style={{opacity:sB?1:0,color:hB?RED:bc,fontWeight:hB?700:500}}>b</span>
+        </div>
+      );
+    }
+
+    function Caption() {
+      const t = useTime();
+      const caps = [
+        {s:T.AXES_IN,e:T.BIAS_IN,t:'A 3D space: two inputs and one output.'},
+        {s:T.BIAS_IN,e:T.W1_IN,t:'Bias b lifts the plane \u2014 a constant offset.'},
+        {s:T.W1_IN,e:T.W2_IN,t:'w\u2081 tilts along x\u2081 \u2014 dependence on first input.'},
+        {s:T.W2_IN,e:T.DATA_IN,t:'w\u2082 tilts along x\u2082 \u2014 dependence on second input.'},
+        {s:T.DATA_IN,e:T.DATA_SNAP,t:'Each point is an observation: (x\u2081, x\u2082, y).'},
+        {s:T.DATA_SNAP,e:T.ORBIT_END,t:'The plane is the model \u2014 distance = prediction error.'},
+      ];
+      const active = caps.find(c => t>=c.s && t<c.e);
+      return active && (
+        <div style={{position:'absolute',bottom:8,left:0,right:0,textAlign:'center',fontFamily:'Inter, sans-serif',fontSize:11,color:INK_DIM,padding:'0 16px',fontWeight:500,pointerEvents:'none',lineHeight:1.35}}>
+          {active.t}
+        </div>
+      );
+    }
+
+    function Scene3D() {
+      const t = useTime();
+      const yaw = interpolate([T.AXES_IN,T.ORBIT_END],[-0.55,0.25],Easing.easeInOutSine)(t);
+      const pitch = interpolate([0,T.AXES_IN,T.DATA_IN,T.ORBIT_END],[0.55,0.55,0.62,0.55],Easing.easeInOutCubic)(t);
+      const axP = animate({start:T.AXES_IN,end:T.AXES_BUILT})(t);
+      const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
+      const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
+      const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
+      const pO = animate({from:0,to:1,start:T.BIAS_IN-0.2,end:T.BIAS_IN+0.5})(t);
+      const dA = animate({start:T.DATA_IN,end:T.DATA_IN+1.6,ease:Easing.linear})(t);
+      const dS = animate({start:T.DATA_SNAP,end:T.DATA_SNAP+1.4})(t);
+      return (
+        <div style={{position:'absolute',top:28,left:0,right:0,bottom:24}}>
+          <svg width="100%" height="100%" viewBox="0 0 1080 1000" preserveAspectRatio="xMidYMid meet">
+            <Axis from={{x1:0,x2:0,y:0}} to={{x1:2.7,x2:0,y:0}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="x&#8321;" progress={axP} />
+            <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:2.7,y:0}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="x&#8322;" progress={axP} />
+            <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:0,y:2.7}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="y" progress={axP} />
+            {pO>0.01 && <Plane w1={w1A} w2={w2A} b={bA} yaw={yaw} pitch={pitch} opacity={pO} color={ACCENT} />}
+            {dA>0 && <DataPoints w1={w1A} w2={w2A} b={bA} yaw={yaw} pitch={pitch} appear={dA} snap={dS} />}
+          </svg>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <Stage duration={DURATION}>
+        <EquationOverlay />
+        <Scene3D />
+        <Caption />
+      </Stage>
+    );
+  </script>
+</body>
+</html>
