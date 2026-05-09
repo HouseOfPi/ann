@@ -5,7 +5,7 @@
 <title>Linear Equation 3D Plot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   html, body { margin: 0; padding: 0; height: 100%; background: transparent; overflow: hidden; }
   #root { position: absolute; inset: 0; }
@@ -83,7 +83,15 @@
           if (lastTsRef.current == null) lastTsRef.current = ts;
           const dt = (ts - lastTsRef.current) / 1000;
           lastTsRef.current = ts;
-          setTime(t => (t + dt) % duration);
+          setTime(t => {
+            const next = t + dt;
+            if (next >= duration) {
+              isPausedRef.current = true;
+              setIsPaused(true);
+              return duration;
+            }
+            return next;
+          });
           rafId = requestAnimationFrame(step);
         };
         rafId = requestAnimationFrame(step);
@@ -130,7 +138,13 @@
           </TimelineContext.Provider>
           <button
             onMouseDown={(e) => { e.stopPropagation(); }}
-            onClick={(e) => { e.stopPropagation(); setIsPaused(p => !p); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsPaused(p => {
+                if (p && time >= duration - 0.01) { setTime(0); lastTsRef.current = null; }
+                return !p;
+              });
+            }}
             style={{
               position: 'absolute', bottom: 16, left: 16, width: 40, height: 40,
               borderRadius: '50%', border: '1px solid rgba(0,0,0,0.15)',
@@ -152,7 +166,7 @@
       );
     }
 
-    const PROJ = { scale: 180, cx: 500, cy: 550, ox1: 1.5, ox2: 1.5, oy: 1.2 };
+    const PROJ = { scale: 160, cx: 460, cy: 440, ox1: 1.5, ox2: 1.5, oy: 1.2 };
     function project3D(p, yaw, pitch) {
       const px1 = p.x1 - PROJ.ox1, px2 = p.x2 - PROJ.ox2, py = p.y - PROJ.oy;
       const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
@@ -200,41 +214,61 @@
       const t = useTime();
       const sY=t>T.EQ_IN, sW1=t>T.EQ_IN+0.4, sW2=t>T.EQ_IN+0.9, sB=t>T.EQ_IN+1.4;
       const hB=t>=T.BIAS_IN-0.3&&t<T.W1_IN, hW1=t>=T.W1_IN-0.3&&t<T.W2_IN, hW2=t>=T.W2_IN-0.3&&t<T.W2_BUILT;
-      const any=hB||hW1||hW2, bc=any?'rgba(26,26,26,0.12)':INK;
+      const any=hB||hW1||hW2, bc=any?'rgba(26,26,26,0.15)':INK;
       const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
       const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
       const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
       const w1Label = t>=T.W1_IN ? `${w1A.toFixed(2)}x₁` : 'w₁x₁';
       const w2Label = t>=T.W2_IN ? `${w2A.toFixed(2)}x₂` : 'w₂x₂';
       const bLabel  = t>=T.BIAS_IN ? bA.toFixed(2) : 'b';
+
+      const caps = [
+        {s:T.AXES_IN,  e:T.BIAS_IN,   t:'A 3D space: two inputs and one output.'},
+        {s:T.BIAS_IN,  e:T.W1_IN,     t:'Bias b lifts the plane — a constant offset.'},
+        {s:T.W1_IN,    e:T.W2_IN,     t:'w₁ tilts along x₁ — dependence on first input.'},
+        {s:T.W2_IN,    e:T.W2_BUILT,  t:'w₂ tilts along x₂ — dependence on second input.'},
+        {s:T.DATA_IN,  e:T.DATA_SNAP, t:'Each point is an observation: (x₁, x₂, y).'},
+      ];
+      const caption = caps.find(c => t>=c.s && t<c.e);
+
       return (
-        <div style={{position:'absolute',top:10,left:0,right:0,display:'flex',justifyContent:'center',fontFamily:MONO,fontSize:'18.5px',color:INK,gap:4,pointerEvents:'none'}}>
-          <span style={{opacity:sY?1:0,color:any?'rgba(26,26,26,0.12)':INK}}>y =</span>
-          <span style={{opacity:sW1?1:0,color:hW1?RED:bc,fontWeight:hW1?700:500}}>{w1Label}</span>
-          <span style={{opacity:sW2?1:0,color:bc}}>+</span>
-          <span style={{opacity:sW2?1:0,color:hW2?GREEN:bc,fontWeight:hW2?700:500}}>{w2Label}</span>
-          <span style={{opacity:sB?1:0,color:bc}}>+</span>
-          <span style={{opacity:sB?1:0,color:hB?RED:bc,fontWeight:hB?700:500}}>{bLabel}</span>
+        <div style={{
+          position:'absolute', top:0, left:0, right:0,
+          display:'flex', flexDirection:'column', alignItems:'center',
+          padding:'6px 24px 0',
+          pointerEvents:'none',
+          gap:5,
+        }}>
+          <div style={{
+            display:'flex', alignItems:'baseline', gap:5,
+            fontFamily:MONO, fontSize:16, color:INK, letterSpacing:'0.03em',
+          }}>
+            <span style={{opacity:sY?1:0, transition:'opacity 0.3s', color:any?'rgba(26,26,26,0.15)':INK}}>y =</span>
+            <span style={{opacity:sW1?1:0, transition:'opacity 0.3s', color:hW1?RED:bc, fontWeight:hW1?700:500}}>{w1Label}</span>
+            <span style={{opacity:sW2?1:0, transition:'opacity 0.3s', color:bc}}>+</span>
+            <span style={{opacity:sW2?1:0, transition:'opacity 0.3s', color:hW2?GREEN:bc, fontWeight:hW2?700:500}}>{w2Label}</span>
+            <span style={{opacity:sB?1:0,  transition:'opacity 0.3s', color:bc}}>+</span>
+            <span style={{opacity:sB?1:0,  transition:'opacity 0.3s', color:hB?RED:bc, fontWeight:hB?700:500}}>{bLabel}</span>
+          </div>
+          <div style={{
+            minHeight:18,
+            fontFamily:'Cormorant Garamond, serif',
+            fontSize:14,
+            color:INK,
+            fontStyle:'italic',
+            fontWeight:500,
+            letterSpacing:'0.01em',
+            opacity: caption ? 0.55 : 0,
+            transition:'opacity 0.4s',
+            textAlign:'center',
+          }}>
+            {caption ? caption.t : ' '}
+          </div>
         </div>
       );
     }
 
-    function Caption() {
-      const t = useTime();
-      const caps = [
-        {s:T.AXES_IN,e:T.BIAS_IN,t:'A 3D space: two inputs and one output.'},
-        {s:T.BIAS_IN,e:T.W1_IN,t:'Bias b lifts the plane \u2014 a constant offset.'},
-        {s:T.W1_IN,e:T.W2_IN,t:'w\u2081 tilts along x\u2081 \u2014 dependence on first input.'},
-        {s:T.W2_IN,e:T.W2_BUILT,t:'w\u2082 tilts along x\u2082 \u2014 dependence on second input.'},
-        {s:T.DATA_IN,e:T.DATA_SNAP,t:'Each point is an observation: (x\u2081, x\u2082, y).'},
-      ];
-      const active = caps.find(c => t>=c.s && t<c.e);
-      return active && (
-        <div style={{position:'absolute',top:70,left:0,right:0,textAlign:'center',fontFamily:'Cormorant Garamond, serif',fontSize:20,color:INK,padding:'0 16px',fontWeight:500,fontStyle:'italic',letterSpacing:'0.01em',opacity:0.85,pointerEvents:'none',lineHeight:1.35}}>
-          {active.t}
-        </div>
-      );
-    }
+    function Caption() { return null; }
 
 
 
@@ -252,8 +286,8 @@
       const dA = animate({start:T.DATA_IN,end:T.DATA_IN+1.6,ease:Easing.linear})(t);
       const dS = animate({start:T.DATA_SNAP,end:T.DATA_SNAP+1.4})(t);
       return (
-        <div style={{position:'absolute',top:28,left:0,right:0,bottom:24}}>
-          <svg width="100%" height="100%" viewBox="0 0 1080 1000" preserveAspectRatio="xMidYMid meet">
+        <div style={{position:'absolute',top:0,left:0,right:0,bottom:0}}>
+          <svg width="100%" height="100%" viewBox="100 100 780 680" preserveAspectRatio="xMidYMid meet">
             <Axis from={{x1:0,x2:0,y:0}} to={{x1:2.7,x2:0,y:0}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="x&#8321;" progress={axP} />
             <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:2.7,y:0}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="x&#8322;" progress={axP} />
             <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:0,y:2.7}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="y" progress={axP} />

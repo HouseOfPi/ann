@@ -74,28 +74,28 @@
     .equation-block {
       opacity: 0;
       transform: translateX(-20px);
-      padding: 20px 24px;
-      border-radius: 24px;
+      padding: 14px 18px;
+      border-radius: 18px;
       background: color-mix(in srgb, var(--fg) 3%, transparent);
       border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
       box-shadow: 0 10px 30px -5px color-mix(in srgb, var(--bg) 40%, transparent);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 8px;
       margin-bottom: 8px;
     }
 
     .equation-block .card-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 28px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--c1);
       letter-spacing: -0.02em;
     }
 
     .equation-block .card-desc {
-      font-size: 16px;
-      line-height: 1.6;
+      font-size: 13px;
+      line-height: 1.5;
       color: color-mix(in srgb, var(--fg) 75%, transparent);
     }
 
@@ -124,41 +124,61 @@
       transform: translateY(10px);
     }
 
-    .points { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 4px;
+    }
 
     .pt {
-      display: flex;
+      display: grid;
+      grid-template-columns: 32px 1fr;
       gap: 14px;
-      align-items: flex-start;
+      align-items: start;
       opacity: 0;
       transform: translateX(-20px);
+      position: relative;
     }
 
     .pt-num {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      font-weight: 500;
-      color: var(--fg);
-      letter-spacing: 0.1em;
-      padding-top: 3px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: 0.05em;
       flex-shrink: 0;
-      width: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c1) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c1) 22%, transparent);
     }
 
-    .pt-body { flex: 1; }
+    .pt-body {
+      padding-top: 4px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 7%, transparent);
+      padding-bottom: 10px;
+    }
+
+    .pt:last-child .pt-body { border-bottom: none; padding-bottom: 0; }
 
     .pt-title {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(13px, 1.3vw, 15px);
       font-weight: 700;
       color: var(--fg);
-      margin-bottom: 2px;
+      margin-bottom: 3px;
+      letter-spacing: -0.005em;
     }
 
     .pt-desc {
       font-size: clamp(11.5px, 1.05vw, 13px);
-      color: color-mix(in srgb, var(--fg) 60%, transparent);
-      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 62%, transparent);
+      line-height: 1.55;
     }
 
     .pt-desc strong { color: var(--c1); font-weight: 600; }
@@ -176,7 +196,7 @@
     .graph-wrap {
       width: 100%;
       max-width: 620px;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 4 / 3;
       border-radius: 20px;
       overflow: hidden;
       border: none;
@@ -247,6 +267,14 @@
           <div class="pt-body">
             <div class="pt-title">A line becomes a plane</div>
             <div class="pt-desc">With two inputs, the graph is a flat <strong>plane</strong> in 3D. With many inputs, a flat <strong>hyperplane</strong> in higher dimensions.</div>
+          </div>
+        </div>
+
+        <div class="pt" id="pt2">
+          <span class="pt-num">03</span>
+          <div class="pt-body">
+            <div class="pt-title">Weight magnitude = influence</div>
+            <div class="pt-desc">A <strong>bigger wᵢ</strong> means xᵢ has a bigger effect on y. A weight of <strong>zero</strong> means that input has no effect on the outcome.</div>
           </div>
         </div>
 

@@ -444,7 +444,9 @@
       }
     }
 
+    let lineDrawn = false;
     function startEntrance() {
+      lineDrawn = false;
       generatePoints();
       gsap.set("#header", { opacity: 0, y: 20 });
       gsap.set("#eqBlock", { opacity: 0, x: -20 });
@@ -464,10 +466,22 @@
       tl.to("#visual", { opacity: 1, duration: 0.5 }, "-=0.4");
       // points appear first, one at a time
       tl.to("#points circle", { attr: { r: 6 }, stagger: 0.05, duration: 0.25, ease: "back.out(2.2)" }, "-=0.1");
-      // brief pause, then line draws through them
-      tl.to("#mainLine", { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" }, "+=0.25");
-      // (slope and bias callouts are now triggered by clicking the m and b symbols)
+      // line is now drawn only on click (see drawLineOnClick below)
     }
+
+    // ─── Click-driven line draw ───
+    function drawLineOnClick() {
+      if (lineDrawn) return;
+      lineDrawn = true;
+      gsap.to("#mainLine", { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" });
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const wrap = document.querySelector('.graph-wrap');
+      if (wrap) {
+        wrap.style.cursor = 'pointer';
+        wrap.addEventListener('click', drawLineOnClick);
+      }
+    });
 
     // ─── Click-driven highlight animations ───
     function pulseSlope() {
