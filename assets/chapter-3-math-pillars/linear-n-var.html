@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>n Variables Linear Equation | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 50px 32px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--c1);
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em { font-style: italic; }
+
+    .body-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 36px;
+      align-items: center;
+      padding-top: 22px;
+    }
+
+    .left-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .equation-block {
+      opacity: 0;
+      transform: translateX(-20px);
+      padding: 18px 22px;
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      box-shadow: 0 10px 30px -5px color-mix(in srgb, var(--bg) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .equation-block .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: -0.02em;
+    }
+
+    .equation-block .card-desc {
+      font-size: 13px;
+      line-height: 1.55;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+    }
+    .equation-block .card-desc em { font-style: italic; color: var(--fg); }
+
+    .card-eq {
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(15px, 1.4vw, 18px);
+      letter-spacing: 0.02em;
+      color: var(--fg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 6px;
+      line-height: 1.5;
+    }
+    .card-eq sub { font-size: 0.72em; padding: 0 1px; }
+    .card-eq .ce-y, .card-eq .ce-eq, .card-eq .ce-op { color: color-mix(in srgb, var(--fg) 75%, transparent); }
+    .card-eq .ce-term { display: inline-flex; align-items: baseline; }
+    .card-eq .ce-w { color: var(--c1); font-weight: 700; }
+    .card-eq .ce-x { color: var(--fg); font-weight: 700; padding-left: 1px; }
+    .card-eq .ce-b { color: var(--c3); font-weight: 700; }
+    .card-eq .ce-dots { color: color-mix(in srgb, var(--fg) 55%, transparent); padding: 0 2px; }
+
+    .lede {
+      opacity: 0;
+      transform: translateX(-20px);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 26px);
+      font-style: italic;
+      line-height: 1.45;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      padding-top: 6px;
+      max-width: 38ch;
+    }
+    .lede em { font-style: italic; color: var(--c1); font-weight: 600; }
+
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .pt {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 14px;
+      align-items: start;
+      opacity: 0;
+      transform: translateX(-20px);
+      position: relative;
+    }
+
+    .pt-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c1) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c1) 22%, transparent);
+    }
+
+    .pt-body {
+      padding-top: 4px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 7%, transparent);
+      padding-bottom: 10px;
+    }
+    .pt:last-child .pt-body { border-bottom: none; padding-bottom: 0; }
+
+    .pt-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(13px, 1.3vw, 15px);
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 3px;
+      letter-spacing: -0.005em;
+    }
+
+    .pt-desc {
+      font-size: clamp(11.5px, 1.05vw, 13px);
+      color: color-mix(in srgb, var(--fg) 62%, transparent);
+      line-height: 1.55;
+    }
+    .pt-desc strong { color: var(--c1); font-weight: 600; }
+
+    /* ── Right column: animated sum → dot-product visual ── */
+    .visual-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      opacity: 0;
+      transform: translateX(20%);
+    }
+
+    .stage {
+      width: 100%;
+      max-width: 620px;
+      aspect-ratio: 4 / 3;
+      border-radius: 20px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      box-shadow: 0 10px 30px -5px color-mix(in srgb, var(--bg) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      padding: 28px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.5s, border-color 0.5s;
+    }
+
+    .stage-label {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+    }
+
+    .stage-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      opacity: 0;
+    }
+
+    @media (max-width: 800px) {
+      body { padding: 20px 20px 24px; }
+      .body-layout { grid-template-columns: 1fr; gap: 22px; }
+      .stage { max-width: 460px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header" id="header">
+    <span class="page-eyebrow">Linear Algebra</span>
+    <h1 class="main-title"><em>n</em> Variables</h1>
+  </div>
+
+  <div class="body-layout">
+    <div class="left-col">
+      <div class="equation-block" id="eqBlock">
+        <div class="card-title">Generalising to <em>n</em> Inputs</div>
+        <div class="card-desc">
+          Each input gets its own weight. We sum them all.
+        </div>
+        <div class="card-eq" aria-label="Expanded n-variable linear equation">
+          <span class="ce-y">y</span><span class="ce-eq">=</span><!--
+       --><span class="ce-term"><span class="ce-w">w</span><sub>1</sub><span class="ce-x">x</span><sub>1</sub></span><!--
+       --><span class="ce-op">+</span><!--
+       --><span class="ce-term"><span class="ce-w">w</span><sub>2</sub><span class="ce-x">x</span><sub>2</sub></span><!--
+       --><span class="ce-op">+</span><!--
+       --><span class="ce-dots">⋯</span><!--
+       --><span class="ce-op">+</span><!--
+       --><span class="ce-term"><span class="ce-w">w</span><sub>n</sub><span class="ce-x">x</span><sub>n</sub></span><!--
+       --><span class="ce-op">+</span><!--
+       --><span class="ce-b">b</span>
+        </div>
+      </div>
+
+      <p class="lede" id="lede"><em>n</em> inputs, each with its own weight, summed into a single output.</p>
+    </div>
+
+    <div class="visual-col" id="visual">
+      <div class="stage" id="stage">
+        <span class="stage-label">Expanded · Σ → Compact · w · x</span>
+
+        <video id="eqVideo" autoplay muted playsinline preload="auto"
+               style="display:block; width:100%; height:auto; max-height:78%; object-fit:contain;">
+          <source id="eqVideoSrc" src="equation-animation/n-var-eq-dark.mp4" type="video/mp4">
+        </video>
+
+        <div class="stage-caption" id="caption">Same equation. Cleaner notation.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', video:'light' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', video:'light' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', video:'light' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark'  },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', video:'light' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', video:'light' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark'  },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    function swapVideo(variant) {
+      const src = document.getElementById('eqVideoSrc');
+      const vid = document.getElementById('eqVideo');
+      if (!src || !vid || !variant) return;
+      const want = `equation-animation/n-var-eq-${variant}.mp4`;
+      if (src.getAttribute('src') === want) return;
+      src.src = want;
+      vid.load();
+      vid.play().catch(() => {});
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+        swapVideo(p.video);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+    });
+
+    function startEntrance() {
+      gsap.set("#header", { opacity: 0, y: 20 });
+      gsap.set("#eqBlock", { opacity: 0, x: -20 });
+      gsap.set("#lede", { opacity: 0, x: -20 });
+      gsap.set("#visual", { opacity: 0, x: '20%' });
+      gsap.set("#caption", { opacity: 0, y: 4 });
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
+      tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
+      tl.to("#lede", { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" }, "-=0.25");
+      tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
+      tl.to("#caption", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
+
+      // Restart the Manim clip from the top so it stays in sync with the entrance.
+      const vid = document.getElementById('eqVideo');
+      if (vid) { try { vid.currentTime = 0; vid.play().catch(() => {}); } catch (_) {} }
+    }
+
+    window.addEventListener('load', startEntrance);
+  </script>
+</body>
+</html>

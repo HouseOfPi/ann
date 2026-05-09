@@ -1718,6 +1718,7 @@
         'slideLinearEquationIntro': 'Linear Equation: Intro',
         'slideLinearSingleVar': 'Linear: Single Variable',
         'slideLinearMultiVar': 'Linear: Multiple Variables',
+        'slideLinearNVar': 'Linear: n Variables',
         'slideLinearAlgebra': 'Linear Algebra',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
@@ -1739,6 +1740,7 @@
         { id: 'slideLinearEquationIntro', enabled: true },
         { id: 'slideLinearSingleVar', enabled: true },
         { id: 'slideLinearMultiVar', enabled: true },
+        { id: 'slideLinearNVar', enabled: true },
         { id: 'slideLinearAlgebra', enabled: true },
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -1765,10 +1767,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideLinearMultiVar) on load
+      // Activate default slide (slideLinearSingleVar) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideLinearMultiVar');
+        const idx = activeSlides.findIndex(el => el.id === 'slideLinearSingleVar');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2047,12 +2049,14 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             if (incoming.id === 'slideMesh' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else if (incoming.id === 'slideWhyML' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else if (incoming.id === 'slideLinearNVar' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else {
                const currentSrc = frame.src;
