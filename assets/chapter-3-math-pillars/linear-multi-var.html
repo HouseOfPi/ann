@@ -113,6 +113,20 @@
       border: 1px solid color-mix(in srgb, var(--c1) 12%, transparent);
     }
 
+    .eq-video-wrap {
+      margin-top: 12px;
+      padding: 0;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .eq-video {
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      padding: 0;
+    }
+
     .points { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
 
     .pt {
@@ -213,8 +227,19 @@
         <div class="card-desc">
           When we add a second independent variable (<em>x₂</em>), our equation expands to include a second weight.
         </div>
-        <div class="eq-pill">
-          y = w₁x₁ + w₂x₂ + b
+        <div class="eq-video-wrap">
+          <video
+            id="eqVideo"
+            class="eq-video"
+            autoplay
+            muted
+            playsinline
+            style="display: block; width: 100%; max-width: 400px;">
+            <source src="bivariate-equation.mp4" type="video/mp4">
+            <div class="eq-pill" style="margin-top: 0;">
+              y = w₁x₁ + w₂x₂ + b
+            </div>
+          </video>
         </div>
       </div>
 
@@ -270,6 +295,11 @@
       if (e.data.type === 'SET_THEME') {
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
+        // Update video background to match theme
+        const video = document.querySelector('.eq-video');
+        if (video) {
+          video.style.backgroundColor = p.bg;
+        }
       }
       if (e.data.type === 'RESTART_ANIMATION') startEntrance();
     });
@@ -277,12 +307,14 @@
     function startEntrance() {
       gsap.set("#header", { opacity: 0, y: 20 });
       gsap.set("#eqBlock", { opacity: 0, x: -20 });
+      gsap.set(".eq-video-wrap", { opacity: 0, y: 10 });
       gsap.set(".pt", { opacity: 0, x: -20 });
       gsap.set("#visual", { opacity: 0, x: 20 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
       tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
+      tl.to(".eq-video-wrap", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
       tl.to(".pt", { opacity: 1, x: 0, stagger: 0.13, duration: 0.5, ease: "back.out(1.4)" }, "-=0.2");
       tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
 
@@ -296,6 +328,13 @@
         } else {
           iframe.addEventListener('load', restartIframe);
         }
+      }
+
+      // Reset video to beginning
+      const video = document.getElementById('eqVideo');
+      if (video) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
       }
     }
 
