@@ -74,7 +74,7 @@
     .equation-block {
       opacity: 0;
       transform: translateX(-20px);
-      padding: 36px 40px;
+      padding: 20px 24px;
       border-radius: 24px;
       background: color-mix(in srgb, var(--fg) 3%, transparent);
       border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
@@ -99,32 +99,29 @@
       color: color-mix(in srgb, var(--fg) 75%, transparent);
     }
 
-    .equation-block .eq-pill {
-      background: color-mix(in srgb, var(--c1) 8%, transparent);
-      padding: 16px 28px;
-      border-radius: 12px;
+    .equation {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: clamp(22px, 2.6vw, 30px);
+      letter-spacing: 0.04em;
       color: var(--fg);
-      display: inline-block;
-      align-self: flex-start;
-      margin-top: 8px;
-      border: 1px solid color-mix(in srgb, var(--c1) 12%, transparent);
+      margin-bottom: 8px;
+    }
+    .equation .var { color: var(--fg); font-weight: 700; }
+    .equation .op  { color: var(--fg); }
+    .equation .w1  { color: var(--c1); font-weight: 700; }
+    .equation .w2  { color: var(--c2); font-weight: 700; }
+    .equation .b   { color: var(--c3); font-weight: 700; }
+
+    .equation-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      letter-spacing: 0.05em;
     }
 
     .eq-video-wrap {
-      margin-top: 12px;
-      padding: 0;
       opacity: 0;
       transform: translateY(10px);
-    }
-
-    .eq-video {
-      border-radius: 12px;
-      background: color-mix(in srgb, var(--fg) 3%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-      padding: 0;
     }
 
     .points { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
@@ -173,6 +170,7 @@
       align-items: center;
       gap: 14px;
       opacity: 0;
+      transform: translateX(20%);
     }
 
     .graph-wrap {
@@ -181,7 +179,7 @@
       aspect-ratio: 1 / 1;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      border: none;
       background: var(--bg);
       transition: background 0.5s;
     }
@@ -189,7 +187,7 @@
     .graph-wrap iframe {
       width: 100%;
       height: 100%;
-      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      border: none;
     }
 
     .point-3d-label {
@@ -227,18 +225,10 @@
         <div class="card-desc">
           When we add a second independent variable (<em>x₂</em>), our equation expands to include a second weight.
         </div>
-        <div class="eq-video-wrap">
-          <video
-            id="eqVideo"
-            class="eq-video"
-            autoplay
-            muted
-            playsinline
-            style="display: block; width: 100%; max-width: 400px;">
-            <source src="bivariate-equation.mp4" type="video/mp4">
-            <div class="eq-pill" style="margin-top: 0;">
-              y = w₁x₁ + w₂x₂ + b
-            </div>
+        <div class="eq-video-wrap" id="eqVideoWrap">
+          <video id="eqVideo" autoplay muted playsinline style="display:block;width:100%;">
+            <source id="eqVideoSrc" src="equation-animation/bivariate-equation-dark.mp4" type="video/mp4">
+
           </video>
         </div>
       </div>
@@ -272,13 +262,13 @@
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
-      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
-      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
-      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
-      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
-      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
-      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', video:'light' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', video:'light' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', video:'light' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', video:'light' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', video:'light' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark' },
     };
 
     function applyPalette(p) {
@@ -295,10 +285,12 @@
       if (e.data.type === 'SET_THEME') {
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
-        // Update video background to match theme
-        const video = document.querySelector('.eq-video');
-        if (video) {
-          video.style.backgroundColor = p.bg;
+        const src = document.getElementById('eqVideoSrc');
+        const vid = document.getElementById('eqVideo');
+        if (src && vid && p.video) {
+          src.src = `equation-animation/bivariate-equation-${p.video}.mp4`;
+          vid.load();
+          vid.play().catch(() => {});
         }
       }
       if (e.data.type === 'RESTART_ANIMATION') startEntrance();
@@ -309,14 +301,17 @@
       gsap.set("#eqBlock", { opacity: 0, x: -20 });
       gsap.set(".eq-video-wrap", { opacity: 0, y: 10 });
       gsap.set(".pt", { opacity: 0, x: -20 });
-      gsap.set("#visual", { opacity: 0, x: 20 });
+      gsap.set("#visual", { opacity: 0 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
       tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
       tl.to(".eq-video-wrap", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
       tl.to(".pt", { opacity: 1, x: 0, stagger: 0.13, duration: 0.5, ease: "back.out(1.4)" }, "-=0.2");
-      tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
+      tl.to("#visual", { opacity: 1, duration: 0.7 }, "-=0.4");
+
+      const video = document.getElementById('eqVideo');
+      if (video) { video.currentTime = 0; video.load(); video.play().catch(() => {}); }
 
       const iframe = document.querySelector('.graph-wrap iframe');
       if (iframe) {
@@ -330,12 +325,6 @@
         }
       }
 
-      // Reset video to beginning
-      const video = document.getElementById('eqVideo');
-      if (video) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      }
     }
 
     window.addEventListener('load', startEntrance);
