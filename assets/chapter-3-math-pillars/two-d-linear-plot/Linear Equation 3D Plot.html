@@ -192,23 +192,10 @@
       const corners = [{x1:0,x2:0},{x1:range,x2:0},{x1:range,x2:range},{x1:0,x2:range}].map(c => project3D({...c, y: w1*c.x1+w2*c.x2+b}, yaw, pitch));
       return <polygon points={corners.map(c=>`${c.sx},${c.sy}`).join(' ')} fill={color} fillOpacity={0.2} stroke={color} strokeWidth={2.5} strokeLinejoin="round" opacity={opacity} />;
     }
-    function DataPoints({ w1, w2, b, yaw, pitch, appear=1, snap=0 }) {
-      const TEAL = 'oklch(50% 0.10 220)';
-      return <g>{DATA_POINTS.map((p,i) => {
-        const la = clamp(appear*DATA_POINTS.length-i, 0, 1);
-        const yT = w1*p.x1+w2*p.x2+b, yS = yT+p.noise*(1-snap);
-        const pr = project3D({x1:p.x1,x2:p.x2,y:yS}, yaw, pitch), gr = project3D({x1:p.x1,x2:p.x2,y:0}, yaw, pitch);
-        return la>0 && <g key={i} opacity={la}>
-          <line x1={pr.sx} y1={pr.sy} x2={gr.sx} y2={gr.sy} stroke={TEAL} strokeWidth={1.6} strokeDasharray="5 4" opacity={0.7} />
-          <circle cx={pr.sx} cy={pr.sy} r={9*Easing.easeOutBack(la)} fill={TEAL} stroke="var(--bg, #f6f4ef)" strokeWidth={2} />
-        </g>
-      })}</g>;
-    }
-
     const ACCENT='oklch(64% 0.15 30)', RED='oklch(64% 0.15 30)', GREEN='oklch(50% 0.10 220)', AXIS_GRAY='#3a3a3a', INK='#1a1a1a', INK_DIM='#6b6458', MONO='JetBrains Mono, monospace';
-    const T = {EQ_IN:0.4, AXES_IN:1, AXES_BUILT:3, DATA_IN:3.5, DATA_SNAP:6, BIAS_IN:7, BIAS_BUILT:9, W1_IN:10, W1_BUILT:12, W2_IN:13, W2_BUILT:15, ORBIT_END:20};
-    const DURATION=21, FINAL_W1=0.45, FINAL_W2=0.35, FINAL_B=0.4;
-    const DATA_POINTS = [{x1:0.3,x2:1.9,noise:0.45},{x1:1.4,x2:0.6,noise:-0.32},{x1:0.5,x2:0.7,noise:0.3},{x1:1.7,x2:1.1,noise:-0.4},{x1:0.85,x2:1.2,noise:0.25},{x1:1.3,x2:1.85,noise:0.36},{x1:2.0,x2:0.55,noise:-0.28},{x1:0.45,x2:2.05,noise:-0.22},{x1:0.2,x2:0.25,noise:0.32},{x1:2.05,x2:0.2,noise:-0.24},{x1:1.55,x2:1.95,noise:0.26},{x1:0.7,x2:1.5,noise:-0.36}];
+    // Timeline (data-points phase removed; downstream beats shifted earlier).
+    const T = {EQ_IN:0.4, AXES_IN:1, AXES_BUILT:3, BIAS_IN:3.5, BIAS_BUILT:5.5, W1_IN:6.5, W1_BUILT:8.5, W2_IN:9.5, W2_BUILT:11.5, ORBIT_END:16.5};
+    const DURATION=17.5, FINAL_W1=0.45, FINAL_W2=0.35, FINAL_B=0.4;
 
     function EquationOverlay() {
       const t = useTime();
@@ -227,7 +214,6 @@
         {s:T.BIAS_IN,  e:T.W1_IN,     t:'Bias b lifts the plane — a constant offset.'},
         {s:T.W1_IN,    e:T.W2_IN,     t:'w₁ tilts along x₁ — dependence on first input.'},
         {s:T.W2_IN,    e:T.W2_BUILT,  t:'w₂ tilts along x₂ — dependence on second input.'},
-        {s:T.DATA_IN,  e:T.DATA_SNAP, t:'Each point is an observation: (x₁, x₂, y).'},
       ];
       const caption = caps.find(c => t>=c.s && t<c.e);
 
@@ -282,9 +268,7 @@
       const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
       const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
       const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
-      const pO = animate({from:0,to:1,start:T.DATA_SNAP,end:T.BIAS_IN+0.5})(t);
-      const dA = animate({start:T.DATA_IN,end:T.DATA_IN+1.6,ease:Easing.linear})(t);
-      const dS = animate({start:T.DATA_SNAP,end:T.DATA_SNAP+1.4})(t);
+      const pO = animate({from:0,to:1,start:T.AXES_BUILT,end:T.BIAS_IN+0.5})(t);
       return (
         <div style={{position:'absolute',top:0,left:0,right:0,bottom:0}}>
           <svg width="100%" height="100%" viewBox="100 100 780 680" preserveAspectRatio="xMidYMid meet">
@@ -292,7 +276,6 @@
             <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:2.7,y:0}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="x&#8322;" progress={axP} />
             <Axis from={{x1:0,x2:0,y:0}} to={{x1:0,x2:0,y:2.7}} yaw={yaw} pitch={pitch} color={AXIS_GRAY} label="y" progress={axP} />
             {pO>0.01 && <Plane w1={w1A} w2={w2A} b={bA} yaw={yaw} pitch={pitch} opacity={pO} color={ACCENT} />}
-            {dA>0 && <DataPoints w1={w1A} w2={w2A} b={bA} yaw={yaw} pitch={pitch} appear={dA} snap={dS} />}
           </svg>
         </div>
       );
