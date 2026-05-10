@@ -53,8 +53,16 @@
     }
     const TimelineContext = React.createContext({ time: 0 });
     const CameraContext = React.createContext({ yaw: -0.24, pitch: 0.10 });
+    // Once the timeline finishes, this context flips to active and the
+    // EquationOverlay / Scene3D read live values from here instead of the
+    // time-driven curves. Sliders in Stage write into it.
+    const OverrideContext = React.createContext({
+      active: false, w1: 0, w2: 0, b: 0,
+      setW1: () => {}, setW2: () => {},
+    });
     const useTime = () => React.useContext(TimelineContext).time;
     const useCamera = () => React.useContext(CameraContext);
+    const useOverride = () => React.useContext(OverrideContext);
     function Stage({ children, duration = 21 }) {
       const [time, setTime] = React.useState(3);
       const [cameraYaw, setCameraYaw] = React.useState(-0.24);
@@ -62,20 +70,62 @@
       const [isDragging, setIsDragging] = React.useState(false);
       const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 });
       const [isPaused, setIsPaused] = React.useState(true);
+      // Interactive override: enabled when the timeline finishes.
+      const [override, setOverride] = React.useState({
+        active: false, w1: FINAL_W1, w2: FINAL_W2, b: FINAL_B,
+      });
       const lastTsRef = React.useRef(null);
       const isPausedRef = React.useRef(true);
       React.useEffect(() => { isPausedRef.current = isPaused; lastTsRef.current = null; }, [isPaused]);
       React.useEffect(() => {
         const handler = (e) => {
-          if (e.data && e.data.type === 'RESTART_ANIMATION') {
+          if (!e.data) return;
+          if (e.data.type === 'RESTART_ANIMATION') {
             setTime(3);
             lastTsRef.current = null;
             setIsPaused(true);
+            setOverride({ active: false, w1: FINAL_W1, w2: FINAL_W2, b: FINAL_B });
+          }
+          // Parent (slide) drives the weights once it owns the sliders.
+          if (e.data.type === 'SET_WEIGHTS') {
+            const { w1, w2 } = e.data;
+            setOverride(o => ({
+              ...o,
+              active: true,
+              w1: typeof w1 === 'number' ? w1 : o.w1,
+              w2: typeof w2 === 'number' ? w2 : o.w2,
+            }));
           }
         };
         window.addEventListener('message', handler);
         return () => window.removeEventListener('message', handler);
       }, []);
+      // Reveal the slide-side slider panel as soon as the buildup reaches
+      // the w₂ beat. We post once and don't activate override here — the
+      // timeline keeps animating; the user's first SET_WEIGHTS message
+      // takes over (handled in the message listener above).
+      const controlsAnnouncedRef = React.useRef(false);
+      React.useEffect(() => {
+        if (!controlsAnnouncedRef.current && time >= T.W2_IN) {
+          controlsAnnouncedRef.current = true;
+          try {
+            window.parent.postMessage({
+              type: 'TIMELINE_DONE',
+              w1: FINAL_W1, w2: FINAL_W2, b: FINAL_B,
+            }, '*');
+          } catch (_) {}
+        }
+      }, [time]);
+      // Reset the announcement guard when the timeline restarts.
+      React.useEffect(() => {
+        if (time < T.W2_IN) controlsAnnouncedRef.current = false;
+      }, [time]);
+      const overrideValue = React.useMemo(() => ({
+        active: override.active,
+        w1: override.w1, w2: override.w2, b: override.b,
+        setW1: (v) => setOverride(o => ({ ...o, w1: v })),
+        setW2: (v) => setOverride(o => ({ ...o, w2: v })),
+      }), [override]);
       React.useEffect(() => {
         let rafId;
         const step = (ts) => {
@@ -99,7 +149,7 @@
       }, [duration]);
 
       const handleMouseDown = (e) => {
-        if (e.target.closest('button')) return;
+        if (e.target.closest('button, input, [data-stop-camera]')) return;
         if (e.button === 0) {
           setIsDragging(true);
           setDragStart({ x: e.clientX, y: e.clientY });
@@ -128,12 +178,15 @@
 
       return (
         <div
-          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', background: 'transparent', cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
+          style={{ position: 'absolute', inset: 0, background: 'transparent',
+                   userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
           onMouseDown={handleMouseDown}
         >
           <TimelineContext.Provider value={{ time }}>
             <CameraContext.Provider value={{ yaw: cameraYaw, pitch: cameraPitch }}>
-              {children}
+              <OverrideContext.Provider value={overrideValue}>
+                {children}
+              </OverrideContext.Provider>
             </CameraContext.Provider>
           </TimelineContext.Provider>
           <button
@@ -141,7 +194,11 @@
             onClick={(e) => {
               e.stopPropagation();
               setIsPaused(p => {
-                if (p && time >= duration - 0.01) { setTime(0); lastTsRef.current = null; }
+                if (p && time >= duration - 0.01) {
+                  setTime(0);
+                  lastTsRef.current = null;
+                  setOverride({ active: false, w1: FINAL_W1, w2: FINAL_W2, b: FINAL_B });
+                }
                 return !p;
               });
             }}
@@ -199,15 +256,19 @@
 
     function EquationOverlay() {
       const t = useTime();
+      const ov = useOverride();
       const sY=t>T.EQ_IN, sW1=t>T.EQ_IN+0.4, sW2=t>T.EQ_IN+0.9, sB=t>T.EQ_IN+1.4;
       const hB=t>=T.BIAS_IN-0.3&&t<T.W1_IN, hW1=t>=T.W1_IN-0.3&&t<T.W2_IN, hW2=t>=T.W2_IN-0.3&&t<T.W2_BUILT;
       const any=hB||hW1||hW2, bc=any?'rgba(26,26,26,0.15)':INK;
-      const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
-      const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
-      const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
-      const w1Label = t>=T.W1_IN ? `${w1A.toFixed(2)}x₁` : 'w₁x₁';
-      const w2Label = t>=T.W2_IN ? `${w2A.toFixed(2)}x₂` : 'w₂x₂';
-      const bLabel  = t>=T.BIAS_IN ? bA.toFixed(2) : 'b';
+      const bT  = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
+      const w1T = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
+      const w2T = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
+      const bA  = ov.active ? ov.b  : bT;
+      const w1A = ov.active ? ov.w1 : w1T;
+      const w2A = ov.active ? ov.w2 : w2T;
+      const w1Label = (ov.active || t>=T.W1_IN) ? `${w1A.toFixed(2)}x₁` : 'w₁x₁';
+      const w2Label = (ov.active || t>=T.W2_IN) ? `${w2A.toFixed(2)}x₂` : 'w₂x₂';
+      const bLabel  = (ov.active || t>=T.BIAS_IN) ? bA.toFixed(2) : 'b';
 
       const caps = [
         {s:T.AXES_IN,  e:T.BIAS_IN,   t:'A 3D space: two inputs and one output.'},
@@ -264,10 +325,14 @@
     function Scene3D() {
       const t = useTime();
       const { yaw, pitch } = useCamera();
+      const ov = useOverride();
       const axP = animate({start:T.AXES_IN,end:T.AXES_BUILT})(t);
-      const bA = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
-      const w1A = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
-      const w2A = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
+      const bT  = animate({from:0,to:FINAL_B,start:T.BIAS_IN,end:T.BIAS_BUILT})(t);
+      const w1T = animate({from:0,to:FINAL_W1,start:T.W1_IN,end:T.W1_BUILT})(t);
+      const w2T = animate({from:0,to:FINAL_W2,start:T.W2_IN,end:T.W2_BUILT})(t);
+      const bA  = ov.active ? ov.b  : bT;
+      const w1A = ov.active ? ov.w1 : w1T;
+      const w2A = ov.active ? ov.w2 : w2T;
       const pO = animate({from:0,to:1,start:T.AXES_BUILT,end:T.BIAS_IN+0.5})(t);
       return (
         <div style={{position:'absolute',top:0,left:0,right:0,bottom:0}}>

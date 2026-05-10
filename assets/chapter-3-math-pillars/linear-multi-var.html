@@ -225,6 +225,100 @@
       text-align: center;
     }
 
+    /* ── Weight dialer panel (live w₁ / w₂ control) ────────────────── */
+    .weights-panel {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--fg) 4%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 4px 16px -6px color-mix(in srgb, var(--bg) 40%, transparent);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .weights-panel.shown { opacity: 1; transform: translateY(0); }
+    .weights-panel[hidden] { display: none; }
+
+    .wd-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wd-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--c1);
+      flex-shrink: 0;
+      min-width: 96px;
+    }
+    .wd-val {
+      color: var(--fg);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .wd-track {
+      position: relative;
+      flex: 1;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      touch-action: none;
+    }
+    .wd-rail {
+      position: absolute;
+      left: 0; right: 0;
+      height: 4px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--fg) 14%, transparent);
+    }
+    /* Range is 0..+1, so there's no signed midpoint tick to draw. */
+    .wd-zero { display: none; }
+    .wd-fill {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      border-radius: 2px;
+      background: var(--c1);
+      transition: background 0.4s;
+      pointer-events: none;
+    }
+    .wd-knob {
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--c1);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--c1) 25%, transparent),
+                  0 4px 14px -2px color-mix(in srgb, var(--c1) 60%, transparent);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.4s;
+      will-change: left;
+    }
+    .wd-knob:hover { transform: translate(-50%, -50%) scale(1.12); }
+    .wd-knob.dragging {
+      transform: translate(-50%, -50%) scale(1.18);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--c1) 30%, transparent),
+                  0 6px 20px -2px color-mix(in srgb, var(--c1) 75%, transparent);
+    }
+    .wd-bounds {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: color-mix(in srgb, var(--fg) 40%, transparent);
+      flex-shrink: 0;
+      min-width: 56px;
+      text-align: right;
+    }
+
     @media (max-width: 800px) {
       body { padding: 20px 20px 24px; }
       .body-layout { grid-template-columns: 1fr; gap: 22px; }
@@ -285,6 +379,33 @@
       <div class="graph-wrap">
         <iframe src="two-d-linear-plot/Linear Equation 3D Plot.html"></iframe>
       </div>
+
+      <!-- Slider panel for w₁ / w₂. Hidden until the iframe finishes its
+           buildup animation and posts TIMELINE_DONE. -->
+      <div class="weights-panel" id="weightsPanel" hidden>
+        <div class="wd-row" data-w="1">
+          <span class="wd-label">w₁ =<span class="wd-val" id="w1Val">0.45</span></span>
+          <div class="wd-track" id="w1Track" tabindex="0" role="slider"
+               aria-label="weight 1" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.45">
+            <div class="wd-rail"></div>
+            <div class="wd-zero"></div>
+            <div class="wd-fill" id="w1Fill"></div>
+            <div class="wd-knob" id="w1Knob"></div>
+          </div>
+          <span class="wd-bounds">0 … +1</span>
+        </div>
+        <div class="wd-row" data-w="2">
+          <span class="wd-label">w₂ =<span class="wd-val" id="w2Val">0.35</span></span>
+          <div class="wd-track" id="w2Track" tabindex="0" role="slider"
+               aria-label="weight 2" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.35">
+            <div class="wd-rail"></div>
+            <div class="wd-zero"></div>
+            <div class="wd-fill" id="w2Fill"></div>
+            <div class="wd-knob" id="w2Knob"></div>
+          </div>
+          <span class="wd-bounds">0 … +1</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -322,9 +443,22 @@
         }
       }
       if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+      // Iframe finished its buildup — reveal the slider panel seeded with
+      // whatever final values the timeline produced.
+      if (e.data.type === 'TIMELINE_DONE') {
+        const { w1, w2 } = e.data;
+        if (typeof w1 === 'number') WSTATE.w1 = w1;
+        if (typeof w2 === 'number') WSTATE.w2 = w2;
+        syncWeightUi();
+        showWeightsPanel();
+      }
     });
 
     function startEntrance() {
+      // Iframe is about to restart its buildup — hide the slider panel until
+      // it posts TIMELINE_DONE again. Safe to call before the panel exists.
+      if (typeof hideWeightsPanel === 'function') hideWeightsPanel();
+
       gsap.set("#header", { opacity: 0, y: 20 });
       gsap.set("#eqBlock", { opacity: 0, x: -20 });
       gsap.set(".eq-video-wrap", { opacity: 0, y: 10 });
@@ -354,6 +488,129 @@
       }
 
     }
+
+    // ── Weight dialer (slide-side) ────────────────────────────────
+    const W_MIN = 0, W_MAX = 1, W_STEP = 0.05;
+    const WSTATE = { w1: 0.45, w2: 0.35 };
+
+    function clampW(v) {
+      const stepped = Math.round(v / W_STEP) * W_STEP;
+      return Math.max(W_MIN, Math.min(W_MAX, stepped));
+    }
+
+    function postWeights() {
+      const iframe = document.querySelector('.graph-wrap iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({
+          type: 'SET_WEIGHTS', w1: WSTATE.w1, w2: WSTATE.w2,
+        }, '*');
+      }
+    }
+
+    function syncWeightUi() {
+      const fmt = (v) => (Math.round(v * 100) / 100).toFixed(2);
+      ['1', '2'].forEach((n) => {
+        const v = WSTATE[`w${n}`];
+        const t  = (v - W_MIN) / (W_MAX - W_MIN);
+        const t0 = (0 - W_MIN) / (W_MAX - W_MIN);
+        const lo = Math.min(t, t0), hi = Math.max(t, t0);
+        const knob  = document.getElementById(`w${n}Knob`);
+        const fill  = document.getElementById(`w${n}Fill`);
+        const val   = document.getElementById(`w${n}Val`);
+        const track = document.getElementById(`w${n}Track`);
+        if (knob)  knob.style.left = `${t * 100}%`;
+        if (fill) {
+          fill.style.left  = `${lo * 100}%`;
+          fill.style.width = `${(hi - lo) * 100}%`;
+        }
+        if (val)   val.textContent = fmt(v);
+        if (track) track.setAttribute('aria-valuenow', v.toFixed(2));
+      });
+    }
+
+    function setWeight(n, v) {
+      const next = clampW(v);
+      if (Math.abs(next - WSTATE[`w${n}`]) < 1e-9) {
+        syncWeightUi();
+        return;
+      }
+      WSTATE[`w${n}`] = next;
+      syncWeightUi();
+      postWeights();
+    }
+
+    function showWeightsPanel() {
+      const panel = document.getElementById('weightsPanel');
+      if (!panel) return;
+      panel.hidden = false;
+      // wait one frame so the transition can run from the hidden state
+      requestAnimationFrame(() => panel.classList.add('shown'));
+    }
+
+    function hideWeightsPanel() {
+      const panel = document.getElementById('weightsPanel');
+      if (!panel) return;
+      panel.classList.remove('shown');
+      panel.hidden = true;
+      // Reset to defaults so the next reveal starts clean.
+      WSTATE.w1 = 0.45; WSTATE.w2 = 0.35;
+      syncWeightUi();
+    }
+
+    function initWeightDialers() {
+      ['1', '2'].forEach((n) => {
+        const track = document.getElementById(`w${n}Track`);
+        const knob  = document.getElementById(`w${n}Knob`);
+        if (!track || !knob) return;
+
+        const xToVal = (clientX) => {
+          const r = track.getBoundingClientRect();
+          const t = (clientX - r.left) / r.width;
+          const tc = Math.max(0, Math.min(1, t));
+          return W_MIN + tc * (W_MAX - W_MIN);
+        };
+
+        let dragging = false;
+        const onMove = (ev) => {
+          if (!dragging) return;
+          ev.preventDefault();
+          setWeight(n, xToVal(ev.clientX));
+        };
+        const onUp = (ev) => {
+          if (!dragging) return;
+          dragging = false;
+          knob.classList.remove('dragging');
+          try { track.releasePointerCapture(ev.pointerId); } catch (_) {}
+          document.removeEventListener('pointermove', onMove);
+          document.removeEventListener('pointerup', onUp);
+        };
+        track.addEventListener('pointerdown', (ev) => {
+          ev.preventDefault();
+          dragging = true;
+          knob.classList.add('dragging');
+          try { track.setPointerCapture(ev.pointerId); } catch (_) {}
+          setWeight(n, xToVal(ev.clientX));
+          document.addEventListener('pointermove', onMove);
+          document.addEventListener('pointerup', onUp);
+        });
+
+        track.addEventListener('keydown', (ev) => {
+          let d = 0;
+          if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') d = -W_STEP;
+          if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp')  d =  W_STEP;
+          if (ev.key === 'PageDown') d = -10 * W_STEP;
+          if (ev.key === 'PageUp')   d =  10 * W_STEP;
+          if (ev.key === 'Home') { ev.preventDefault(); return setWeight(n, W_MIN); }
+          if (ev.key === 'End')  { ev.preventDefault(); return setWeight(n, W_MAX); }
+          if (d !== 0) { ev.preventDefault(); setWeight(n, WSTATE[`w${n}`] + d); }
+        });
+      });
+
+      window.addEventListener('resize', syncWeightUi);
+      syncWeightUi();
+    }
+
+    document.addEventListener('DOMContentLoaded', initWeightDialers);
 
     window.addEventListener('load', startEntrance);
   </script>
