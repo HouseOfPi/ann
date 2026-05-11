@@ -1711,6 +1711,7 @@
 
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
+        'slideFuture': 'The Future',
         'slideMesh': 'The Complexity',
         'slideWhyML': 'Why Machine Learning?',
         'slideMLProcess': 'The ML Process',
@@ -1732,6 +1733,7 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
+        { id: 'slideFuture', enabled: true },
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyML', enabled: true },
         { id: 'slideMLProcess', enabled: true },
@@ -1765,10 +1767,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideLinearSingleVar) on load
+      // Activate default slide (slideFuture) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideLinearSingleVar');
+        const idx = activeSlides.findIndex(el => el.id === 'slideFuture');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2047,7 +2049,7 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar' || incoming.id === 'slideFuture') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             if (incoming.id === 'slideMesh' && frame.contentWindow) {
@@ -2055,6 +2057,8 @@
             } else if (incoming.id === 'slideWhyML' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else if (incoming.id === 'slideLinearNVar' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else if (incoming.id === 'slideFuture' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else {
                const currentSrc = frame.src;

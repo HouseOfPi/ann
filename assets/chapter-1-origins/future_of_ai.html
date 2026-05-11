@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Future, Already Arriving | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 50px 32px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    /* ── Header ── */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--c1);
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em { font-style: italic; }
+
+    /* ── Carousel layout ── */
+    .stage {
+      flex: 1;
+      display: grid;
+      /* Four tracks: the two middle ones hold caption + phone and are sized
+         to their content; the outer 1fr tracks act as flexible margins so
+         the pair stays centred. */
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, auto)
+        minmax(0, auto)
+        minmax(0, 1fr);
+      column-gap: 0;
+      align-items: center;
+      padding-top: 22px;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .caption-col { grid-column: 2; padding-right: 160px; }
+    .phone-col   { grid-column: 3; padding-left:  0; }
+
+    /* Left: phone frame + arrows + dots */
+    .phone-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      height: 100%;
+      min-height: 0;
+      min-width: 0;
+      max-width: 100%;
+      opacity: 0;
+      transform: translateX(20px);
+    }
+
+    .phone-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: 100%;
+      width: 100%;
+    }
+
+    .nav-arrow {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+      background: color-mix(in srgb, var(--fg) 4%, transparent);
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+    .nav-arrow:hover {
+      background: color-mix(in srgb, var(--c1) 16%, transparent);
+      border-color: color-mix(in srgb, var(--c1) 40%, transparent);
+      transform: scale(1.06);
+    }
+    .nav-arrow:active { transform: scale(0.96); }
+    .nav-arrow svg { display: block; }
+
+    .phone {
+      position: relative;
+      /* Cap width by both viewport width AND viewport height so the
+         9:16 frame can never overflow vertically. 65vh of height equals
+         (65vh × 9/16) ≈ 36.6vh of width, which becomes the height-side
+         cap when the slide is short. */
+      width: min(clamp(220px, 26vw, 360px), 36vh);
+      aspect-ratio: 9 / 16;
+      flex: 0 0 auto;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+      box-shadow: 0 24px 60px -16px color-mix(in srgb, var(--bg) 60%, transparent);
+    }
+    .phone video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.45s ease;
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .phone video.is-active {
+      opacity: 1;
+      z-index: 1;
+      pointer-events: auto;
+    }
+    .phone::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+      z-index: 2;
+    }
+
+    /* Sound toggle (top-right of phone frame) */
+    .sound-toggle {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+    .sound-toggle:hover {
+      background: rgba(0,0,0,0.65);
+      border-color: rgba(255,255,255,0.4);
+      transform: scale(1.06);
+    }
+    .sound-toggle:active { transform: scale(0.95); }
+    .sound-toggle svg { display: block; }
+
+    /* Dots */
+    .dots {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--fg) 25%, transparent);
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.25s ease, width 0.3s ease;
+    }
+    .dot:hover { background: color-mix(in srgb, var(--fg) 50%, transparent); }
+    .dot.is-active {
+      background: var(--c1);
+      width: 22px;
+      border-radius: 4px;
+    }
+
+    /* Right: caption */
+    .caption-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 64ch;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    .caption-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--c1);
+    }
+
+    .caption-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 600;
+      color: var(--fg);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .caption-title em { font-style: italic; }
+
+    .caption-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(14px, 1.15vw, 16px);
+      line-height: 1.6;
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
+    }
+
+    .caption-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 20px 20px 24px; }
+      .stage { grid-template-columns: 1fr; grid-template-rows: 1fr auto; gap: 24px; }
+      .caption-col { transform: none; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header" id="header">
+    <span class="page-eyebrow">The Road Ahead</span>
+    <h1 class="main-title">The Future, <em>Already Arriving</em></h1>
+  </div>
+
+  <div class="stage">
+    <!-- Left column: caption that swaps in sync with the active video -->
+    <div class="caption-col" id="caption">
+      <span class="caption-eyebrow" id="capEyebrow">Exploration</span>
+      <h2 class="caption-title" id="capTitle">Scouting <em>another world</em></h2>
+      <p class="caption-desc" id="capDesc">
+        Autonomous robots will reach Mars long before we do — mapping terrain, building shelter, and laying the groundwork for human settlement.
+      </p>
+      <div class="caption-counter" id="capCounter">01 / 04</div>
+    </div>
+
+    <!-- Right column: arrows · phone · arrows, with dots beneath -->
+    <div class="phone-col" id="phoneCol">
+      <div class="phone-row">
+        <div class="phone" id="phone">
+          <video data-tile="0" src="videos/mars.mp4"            playsinline preload="auto" class="is-active"></video>
+          <video data-tile="1" src="videos/fire.mp4"            playsinline preload="auto" muted></video>
+          <video data-tile="2" src="videos/Nuclear Facility.mp4" playsinline preload="auto" muted></video>
+          <video data-tile="3" src="videos/kids.mp4"            playsinline preload="auto" muted></video>
+
+          <button class="sound-toggle" id="soundBtn" type="button" aria-label="Toggle sound">
+            <!-- icon swapped at runtime -->
+            <svg id="soundIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="dots" id="dots">
+        <button class="dot is-active" data-tile="0" aria-label="Exploration"></button>
+        <button class="dot" data-tile="1" aria-label="First Responders"></button>
+        <button class="dot" data-tile="2" aria-label="Hazardous Work"></button>
+        <button class="dot" data-tile="3" aria-label="Companions"></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    // Index aligned with data-tile order: mars · fire · nuclear · kids
+    const CAPTIONS = [
+      { eyebrow: 'Exploration', title: 'Scouting <em>another world</em>',
+        desc: 'Autonomous robots will reach Mars long before we do — mapping terrain, building shelter, and laying the groundwork for human settlement.' },
+      { eyebrow: 'First Responders', title: 'Into the <em>fire</em>',
+        desc: 'AI-driven robots can run into burning buildings, search collapsed rubble, and pull people out of disasters too dangerous for humans.' },
+      { eyebrow: 'Hazardous Work',   title: 'Where <em>we cannot</em> go',
+        desc: 'From nuclear reactor maintenance to chemical spills, autonomous machines can take on the jobs that risk human lives.' },
+      { eyebrow: 'Companions',       title: 'Caring for <em>the smallest</em>',
+        desc: 'Soft, attentive robots that watch over infants, soothe, and monitor — a caring presence at any hour.' },
+    ];
+
+    const TOTAL = 4;
+    let currentIdx = 0;
+    // Audio is on by default; if the browser blocks unmuted autoplay we
+    // catch the rejection and flip this to false until the user clicks.
+    let soundOn = true;
+
+    function videoEls() {
+      return document.querySelectorAll('.phone video');
+    }
+
+    function applyAudioState() {
+      videoEls().forEach((v) => {
+        const isActive = Number(v.dataset.tile) === currentIdx;
+        // Only the active clip carries audio; the others stay muted so we
+        // never get overlapping playback even if a stale buffer plays.
+        v.muted = !(isActive && soundOn);
+      });
+    }
+
+    function tryPlay(v) {
+      // Attempt unmuted autoplay; if the browser refuses, fall back to muted
+      // and surface the unmute control to the user.
+      try { v.currentTime = 0; } catch (_) {}
+      const p = v.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          if (!v.muted) {
+            // Browser blocked unmuted autoplay — retry muted and remember
+            // that audio is currently off until the user clicks.
+            v.muted = true;
+            soundOn = false;
+            updateSoundButton();
+            v.play().catch(() => {});
+          }
+        });
+      }
+    }
+
+    function setActive(idx) {
+      idx = ((idx % TOTAL) + TOTAL) % TOTAL;  // wrap on both sides
+      currentIdx = idx;
+
+      // Pause all, fade in the chosen one and play it from t=0.
+      videoEls().forEach((v) => {
+        const isActive = Number(v.dataset.tile) === idx;
+        v.classList.toggle('is-active', isActive);
+        if (isActive) {
+          v.muted = !soundOn;
+          tryPlay(v);
+        } else {
+          try { v.pause(); v.muted = true; } catch (_) {}
+        }
+      });
+      applyAudioState();
+
+      // Update dots
+      document.querySelectorAll('.dot').forEach((d) => {
+        d.classList.toggle('is-active', Number(d.dataset.tile) === idx);
+      });
+
+      // Soft-swap caption text
+      const cap = CAPTIONS[idx];
+      const eb  = document.getElementById('capEyebrow');
+      const ttl = document.getElementById('capTitle');
+      const dsc = document.getElementById('capDesc');
+      const ctr = document.getElementById('capCounter');
+      gsap.timeline()
+        .to('#caption', { opacity: 0.0, y: 6, duration: 0.18, ease: 'power2.in' })
+        .add(() => {
+          if (eb)  eb.textContent  = cap.eyebrow;
+          if (ttl) ttl.innerHTML   = cap.title;
+          if (dsc) dsc.textContent = cap.desc;
+          if (ctr) ctr.textContent = `${String(idx + 1).padStart(2, '0')} / ${String(TOTAL).padStart(2, '0')}`;
+        })
+        .to('#caption', { opacity: 1, y: 0, duration: 0.32, ease: 'power3.out' });
+    }
+
+    function next() { setActive(currentIdx + 1); }
+    function prev() { setActive(currentIdx - 1); }
+
+    function updateSoundButton() {
+      const icon = document.getElementById('soundIcon');
+      const btn  = document.getElementById('soundBtn');
+      if (!icon || !btn) return;
+      btn.setAttribute('aria-label', soundOn ? 'Mute' : 'Unmute');
+      // Speaker-on vs speaker-off SVG paths
+      icon.innerHTML = soundOn
+        ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>' +
+          '<path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>' +
+          '<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>'
+        : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>' +
+          '<line x1="22" y1="9" x2="16" y2="15"/>' +
+          '<line x1="16" y1="9" x2="22" y2="15"/>';
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      applyAudioState();
+      // If we just turned audio on, kick the active clip so the new audio
+      // track actually starts playing (some browsers ignore .muted flips
+      // mid-buffer without a fresh play() call).
+      if (soundOn) {
+        videoEls().forEach((v) => {
+          if (Number(v.dataset.tile) === currentIdx) tryPlay(v);
+        });
+      }
+      updateSoundButton();
+    }
+
+    function initCarousel() {
+      // Auto-advance: when the active clip ends, move to the next one.
+      videoEls().forEach((v) => {
+        v.addEventListener('ended', () => {
+          if (Number(v.dataset.tile) === currentIdx) next();
+        });
+      });
+
+      // Buttons
+      document.querySelectorAll('.dot').forEach((d) => {
+        d.addEventListener('click', () => setActive(Number(d.dataset.tile)));
+      });
+      const soundBtn = document.getElementById('soundBtn');
+      if (soundBtn) soundBtn.addEventListener('click', toggleSound);
+      updateSoundButton();
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        // Only intercept when the iframe owns focus, so we don't steal arrows
+        // from the parent slide deck. document.hasFocus() is true when the
+        // user clicked inside the iframe; arrow keys then control the carousel.
+        if (!document.hasFocus()) return;
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+        if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleSound(); }
+      });
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+    });
+
+    function startEntrance() {
+      gsap.set('#header',     { opacity: 0, y: 20 });
+      gsap.set('#caption',    { opacity: 0, x: -20 });
+      gsap.set('#phoneCol',   { opacity: 0, x: 20 });
+
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.to('#header',   { opacity: 1, y: 0, duration: 0.7 });
+      tl.to('#phoneCol', { opacity: 1, x: 0, duration: 0.7 }, '-=0.3');
+      tl.to('#caption',  { opacity: 1, x: 0, duration: 0.6 }, '-=0.4');
+
+      // Reset audio intent on (re)entry — try unmuted first, fall back via
+      // tryPlay's catch. setActive will route through tryPlay for us.
+      soundOn = true;
+      updateSoundButton();
+      setActive(0);
+    }
+
+    document.addEventListener('DOMContentLoaded', initCarousel);
+    window.addEventListener('load', startEntrance);
+  </script>
+</body>
+</html>
