@@ -1976,6 +1976,12 @@
         if (settings) settings.classList.remove("open");
         if (toggle) toggle.classList.remove("open");
 
+        // Accept either an integer (legacy callers) or a slide-id string
+        // (preferred — survives slide reordering without breaking).
+        if (typeof index === 'string') {
+          index = activeSlides.findIndex(el => el.id === index);
+        }
+
         if (index < 0 || index >= activeSlides.length) return;
         
         if (isSlideAnimating && activeSlideTimeline) {
@@ -1991,6 +1997,14 @@
         const outgoing = document.querySelector('.active-slide');
         const incoming = activeSlides[index];
         const direction = index > currentSlideIdx ? 1 : -1;
+
+        // Stop any media playing in the slide we are leaving.
+        if (outgoing) {
+          const outFrame = outgoing.querySelector('iframe');
+          if (outFrame && outFrame.contentWindow) {
+            try { outFrame.contentWindow.postMessage({ type: 'PAUSE_MEDIA' }, '*'); } catch (_) {}
+          }
+        }
 
         currentSlideIdx = index;
 
