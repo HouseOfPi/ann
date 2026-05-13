@@ -567,7 +567,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', initCarousel);
-    window.addEventListener('load', startEntrance);
+    // Do NOT auto-start playback on iframe load — wait for the parent
+    // deck to send RESTART_ANIMATION when this slide actually becomes active.
+    // Otherwise the videos would play (and emit audio) while a different
+    // slide is on screen.
   </script>
 </body>
 </html>
