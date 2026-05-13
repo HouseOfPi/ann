@@ -68,6 +68,16 @@
               <span class="palette-name">Midnight</span>
               <span class="palette-check">✓</span>
             </button>
+            <button class="palette-row" data-palette="navy-lime" onclick="setPalette('navy-lime'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#0a1428"></span>
+                <span style="background:#f1f5fb"></span>
+                <span style="background:#a3e635"></span>
+                <span style="background:#5fb8e6"></span>
+              </div>
+              <span class="palette-name">Navy Lime</span>
+              <span class="palette-check">✓</span>
+            </button>
             <button class="palette-row" data-palette="dark" onclick="setPalette('dark'); closeAllDropdowns()">
               <div class="palette-swatches">
                 <span style="background:#07101f"></span>
@@ -162,6 +172,10 @@
             <div class="course-lesson" onclick="goToSlide('slideOne')">
               <span class="lesson-dot"></span>
               <span class="lesson-name">AI Explained: Hero Intro</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideAITransforming')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">AI Is Transforming the World</span>
             </div>
             <div class="course-lesson" onclick="goToSlide('slideFuture')">
               <span class="lesson-dot"></span>
@@ -371,6 +385,16 @@
         </div>
 
         <!-- Slide counter — top right -->
+      </section>
+
+      <!-- SLIDE: AI IS TRANSFORMING THE WORLD — 3-column infographic -->
+      <section class="slide-why-ml" id="slideAITransforming">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-1-origins/ai_transforming_world.html"
+          title="AI Is Transforming the World"
+          allowtransparency="true"
+        ></iframe>
       </section>
 
       <!-- SLIDE: THE FUTURE, ALREADY ARRIVING — 2×2 video reel -->

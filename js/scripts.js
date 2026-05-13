@@ -1711,6 +1711,7 @@
 
       const SLIDE_METADATA = {
         'slideOne': 'Neural Intro',
+        'slideAITransforming': 'AI Transforming World',
         'slideFuture': 'The Future',
         'slideMesh': 'The Complexity',
         'slideWhyML': 'Why Machine Learning?',
@@ -1733,6 +1734,7 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
+        { id: 'slideAITransforming', enabled: true },
         { id: 'slideFuture', enabled: true },
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyML', enabled: true },
@@ -1767,10 +1769,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideFuture) on load
+      // Activate default slide (slideAITransforming) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideFuture');
+        const idx = activeSlides.findIndex(el => el.id === 'slideAITransforming');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2063,7 +2065,7 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar' || incoming.id === 'slideFuture') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar' || incoming.id === 'slideFuture' || incoming.id === 'slideAITransforming') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             if (incoming.id === 'slideMesh' && frame.contentWindow) {
@@ -2073,6 +2075,8 @@
             } else if (incoming.id === 'slideLinearNVar' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else if (incoming.id === 'slideFuture' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else if (incoming.id === 'slideAITransforming' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else {
                const currentSrc = frame.src;
@@ -2317,6 +2321,7 @@
         "green-linen": { light: true,  cls: "palette-green-linen", iframeName: "Green Linen" },
         "paper-white": { light: true,  cls: "palette-paper-white", iframeName: "Paper White" },
         "midnight":    { light: false, cls: "palette-midnight",    iframeName: "Midnight"    },
+        "navy-lime":   { light: false, cls: "palette-navy-lime",   iframeName: "Navy Lime"   },
         "dark":        { light: false, cls: null,                  iframeName: "Midnight"    },
       };
 

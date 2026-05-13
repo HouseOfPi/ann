@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Is Transforming the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  :root {
+    --bg: #0a1428;
+    --bg-soft: #0f1c36;
+    --text: #f1f5fb;
+    --text-dim: #94a3b8;
+    --lime: #a3e635;
+    --lime-soft: rgba(163, 230, 53, 0.14);
+    --blue: #5fb8e6;
+    --blue-soft: rgba(95, 184, 230, 0.14);
+    --card: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow: hidden;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(95,184,230,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 90%, rgba(163,230,53,0.06) 0%, transparent 55%),
+      var(--bg);
+  }
+  .stage {
+    height: 100%;
+    width: 100%;
+    padding: clamp(20px, 2.5vh, 40px) clamp(28px, 3.5vw, 64px);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: clamp(14px, 1.8vh, 24px);
+  }
+
+  /* ---- Header ---- */
+  .header { text-align: center; }
+  .eyebrow {
+    display: inline-block;
+    font-size: clamp(11px, 0.85vw, 13px);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 600;
+    padding: 6px 14px;
+    border: 1px solid var(--blue-soft);
+    border-radius: 999px;
+    background: rgba(95,184,230,0.06);
+  }
+  .h-title {
+    margin-top: 14px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(28px, 3.6vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .h-title .accent { color: var(--lime); }
+  .h-sub {
+    margin-top: 10px;
+    font-size: clamp(13px, 1.05vw, 16px);
+    color: var(--text-dim);
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* ---- Columns ---- */
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 1.6vw, 28px);
+    min-height: 0;
+  }
+  .col {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: clamp(16px, 1.8vh, 24px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 1.4vh, 18px);
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .col::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, var(--col-tint, transparent) 0%, transparent 30%);
+    opacity: 0.55;
+  }
+  .col.sw { --col-tint: rgba(95,184,230,0.10); }
+  .col.hc { --col-tint: rgba(163,230,53,0.10); }
+  .col.tr { --col-tint: rgba(139,92,246,0.10); }
+
+  .col-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .col-num {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .col.sw .col-num { background: rgba(95,184,230,0.18); color: var(--blue); }
+  .col.hc .col-num { background: rgba(163,230,53,0.18); color: var(--lime); }
+  .col.tr .col-num { background: rgba(139,92,246,0.20); color: #b794f6; }
+  .col-titles { line-height: 1.15; }
+  .col-title {
+    font-weight: 800;
+    font-size: clamp(15px, 1.25vw, 19px);
+    letter-spacing: 0.01em;
+  }
+  .col.sw .col-title { color: var(--blue); }
+  .col.hc .col-title { color: var(--lime); }
+  .col.tr .col-title { color: #b794f6; }
+  .col-sub {
+    font-size: clamp(11px, 0.85vw, 13px);
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .col-lede {
+    font-size: clamp(12px, 0.95vw, 14px);
+    color: var(--text);
+    opacity: 0.85;
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  .img-slot {
+    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 12px;
+    height: clamp(90px, 13vh, 140px);
+    display: grid;
+    place-items: center;
+    color: rgba(255,255,255,0.25);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .img-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+
+  .points { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; min-height: 0; flex: 1; }
+  .point {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .point .dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .col.sw .point .dot { background: rgba(95,184,230,0.18); color: var(--blue); }
+  .col.hc .point .dot { background: rgba(163,230,53,0.18); color: var(--lime); }
+  .col.tr .point .dot { background: rgba(139,92,246,0.20); color: #b794f6; }
+  .point .p-title {
+    font-weight: 700;
+    font-size: clamp(12px, 0.95vw, 14px);
+    color: var(--text);
+  }
+  .point .p-body {
+    font-size: clamp(11px, 0.85vw, 13px);
+    color: var(--text-dim);
+    line-height: 1.45;
+    margin-top: 2px;
+  }
+
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .stat-val {
+    font-weight: 800;
+    font-size: clamp(20px, 1.7vw, 26px);
+    letter-spacing: -0.01em;
+  }
+  .col.sw .stat-val { color: var(--blue); }
+  .col.hc .stat-val { color: var(--lime); }
+  .col.tr .stat-val { color: #b794f6; }
+  .stat-lbl {
+    font-size: clamp(10px, 0.78vw, 12px);
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ---- Footer ---- */
+  .footer {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    text-align: center;
+    flex-wrap: wrap;
+  }
+  .footer-key {
+    font-weight: 800;
+    color: var(--lime);
+    font-size: clamp(13px, 1vw, 16px);
+  }
+  .footer-sep { color: var(--text-dim); opacity: 0.4; }
+  .footer-msg {
+    color: var(--text);
+    opacity: 0.85;
+    font-size: clamp(12px, 0.95vw, 15px);
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <!-- ============ HEADER ============ -->
+    <div class="header">
+      <span class="eyebrow" id="eyebrow">AI · Today</span>
+      <h1 class="h-title" id="hTitle">AI is <span class="accent">Transforming</span> the World</h1>
+      <p class="h-sub" id="hSub">Intelligent technology is solving complex problems, improving outcomes, and shaping a smarter future across every industry.</p>
+    </div>
+
+    <!-- ============ COLUMNS ============ -->
+    <div class="cols">
+
+      <!-- 1. SOFTWARE -->
+      <div class="col sw" data-col>
+        <div class="col-head">
+          <div class="col-num">1</div>
+          <div class="col-titles">
+            <div class="col-title">Software Engineering</div>
+            <div class="col-sub">AI-powered development</div>
+          </div>
+        </div>
+        <p class="col-lede">AI coding assistants help developers write, test, and review code faster — boosting productivity and quality.</p>
+        <div class="img-slot">Coding · Image</div>
+        <div class="points">
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Faster Development</div>
+              <div class="p-body">AI suggests entire lines or blocks of code, reducing time on repetitive tasks.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Fewer Bugs</div>
+              <div class="p-body">Identifies potential issues and suggests fixes early in the cycle.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Better Code Quality</div>
+              <div class="p-body">Enforces best practices, improves consistency and maintainability.</div>
+            </div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">30–45%</div>
+          <div class="stat-lbl">of code is currently<br/>written by AI<br/><span style="opacity:.65">— Goldman Sachs (2024)</span></div>
+        </div>
+      </div>
+
+      <!-- 2. HEALTHCARE -->
+      <div class="col hc" data-col>
+        <div class="col-head">
+          <div class="col-num">2</div>
+          <div class="col-titles">
+            <div class="col-title">Healthcare</div>
+            <div class="col-sub">AI enhancing patient care</div>
+          </div>
+        </div>
+        <p class="col-lede">AI is unlocking insights in genetics and radiology, enabling earlier diagnosis and personalized treatment.</p>
+        <div class="img-slot">DNA · X-Ray</div>
+        <div class="points">
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Genetics</div>
+              <div class="p-body">Analyzes vast genetic data to identify disease risks and accelerate drug discovery.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Radiology</div>
+              <div class="p-body">Detects abnormalities faster and with higher accuracy alongside radiologists.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Personalized Medicine</div>
+              <div class="p-body">Tailors treatment plans based on each patient's unique profile.</div>
+            </div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">20–40%</div>
+          <div class="stat-lbl">improvement in diagnostic<br/>accuracy in radiology with AI<br/><span style="opacity:.65">— Stanford Medicine (2023)</span></div>
+        </div>
+      </div>
+
+      <!-- 3. TRANSPORTATION -->
+      <div class="col tr" data-col>
+        <div class="col-head">
+          <div class="col-num">3</div>
+          <div class="col-titles">
+            <div class="col-title">Transportation</div>
+            <div class="col-sub">AI driving the future</div>
+          </div>
+        </div>
+        <p class="col-lede">AI powers autonomous vehicles that perceive the environment, predict actions, and drive safely.</p>
+        <div class="img-slot">Autonomous Vehicle · Image</div>
+        <div class="points">
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Perception</div>
+              <div class="p-body">Sees and understands the world — lanes, vehicles, pedestrians, signs.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Prediction</div>
+              <div class="p-body">Anticipates what's next from other road users in real time.</div>
+            </div>
+          </div>
+          <div class="point">
+            <span class="dot">✓</span>
+            <div>
+              <div class="p-title">Planning &amp; Control</div>
+              <div class="p-body">Chooses the safest path and drives smoothly through it.</div>
+            </div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-val">$1.3T</div>
+          <div class="stat-lbl">projected economic value by 2035<br/>from AI in autonomous driving<br/><span style="opacity:.65">— BCG (2023)</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <div class="footer" id="footer">
+      <span class="footer-key">AI is not just an innovation — it's a transformation.</span>
+      <span class="footer-sep">|</span>
+      <span class="footer-msg">Building a smarter, healthier, and more connected future for all.</span>
+    </div>
+
+  </div>
+
+<script>
+  function runEntrance() {
+    gsap.killTweensOf(['.header > *', '[data-col]', '#footer']);
+    gsap.set('.header > *', { opacity: 0, y: 14 });
+    gsap.set('[data-col]', { opacity: 0, y: 22 });
+    gsap.set('#footer', { opacity: 0, y: 12 });
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.to('.header > *', { opacity: 1, y: 0, duration: 0.7, stagger: 0.08 }, 0.1)
+      .to('[data-col]', { opacity: 1, y: 0, duration: 0.8, stagger: 0.13 }, 0.35)
+      .to('#footer', { opacity: 1, y: 0, duration: 0.6 }, 0.95);
+  }
+
+  window.addEventListener('load', runEntrance);
+
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === 'RESTART_ANIMATION') runEntrance();
+  });
+</script>
+</body>
+</html>
