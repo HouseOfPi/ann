@@ -6,414 +6,630 @@
 <title>AI Is Transforming the World</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root {
-    --bg: #0a1428;
-    --bg-soft: #0f1c36;
-    --text: #f1f5fb;
-    --text-dim: #94a3b8;
-    --lime: #a3e635;
-    --lime-soft: rgba(163, 230, 53, 0.14);
-    --blue: #5fb8e6;
-    --blue-soft: rgba(95, 184, 230, 0.14);
-    --card: rgba(255, 255, 255, 0.04);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --bg: #000000;
+    --fg: #f0ece4;
+    --c1: #5fe8ec; /* Blue - Software */
+    --c2: #4ee0a0; /* Green - Healthcare */
+    --c3: #a78bfa; /* Purple - Transportation */
+    --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+    --card-bg: color-mix(in srgb, var(--fg) 3%, transparent);
+    --card-border: color-mix(in srgb, var(--fg) 10%, transparent);
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  
   html, body {
     height: 100%;
     background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
     overflow: hidden;
+    transition: background 0.5s, color 0.5s;
   }
-  body {
-    background:
-      radial-gradient(ellipse at 15% 10%, rgba(95,184,230,0.08) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 90%, rgba(163,230,53,0.06) 0%, transparent 55%),
-      var(--bg);
-  }
+
   .stage {
     height: 100%;
     width: 100%;
-    padding: clamp(20px, 2.5vh, 40px) clamp(28px, 3.5vw, 64px);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: clamp(14px, 1.8vh, 24px);
-  }
-
-  /* ---- Header ---- */
-  .header { text-align: center; }
-  .eyebrow {
-    display: inline-block;
-    font-size: clamp(11px, 0.85vw, 13px);
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--blue);
-    font-weight: 600;
-    padding: 6px 14px;
-    border: 1px solid var(--blue-soft);
-    border-radius: 999px;
-    background: rgba(95,184,230,0.06);
-  }
-  .h-title {
-    margin-top: 14px;
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: clamp(28px, 3.6vw, 52px);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-  }
-  .h-title .accent { color: var(--lime); }
-  .h-sub {
-    margin-top: 10px;
-    font-size: clamp(13px, 1.05vw, 16px);
-    color: var(--text-dim);
-    max-width: 780px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.5;
-  }
-
-  /* ---- Columns ---- */
-  .cols {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(16px, 1.6vw, 28px);
-    min-height: 0;
-  }
-  .col {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 18px;
-    padding: clamp(16px, 1.8vh, 24px);
+    padding: 32px 50px 40px 50px;
     display: flex;
     flex-direction: column;
-    gap: clamp(12px, 1.4vh, 18px);
+    gap: 16px;
+  }
+
+  /* ---- Editorial Header ---- */
+  .header {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .page-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c1);
+  }
+
+  .main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4.6vw, 60px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .main-title em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* ---- Columns Layout ---- */
+  .cols {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5vw;
     min-height: 0;
+    opacity: 0;
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
     overflow: hidden;
     position: relative;
   }
-  .col::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(180deg, var(--col-tint, transparent) 0%, transparent 30%);
-    opacity: 0.55;
-  }
-  .col.sw { --col-tint: rgba(95,184,230,0.10); }
-  .col.hc { --col-tint: rgba(163,230,53,0.10); }
-  .col.tr { --col-tint: rgba(139,92,246,0.10); }
 
-  .col-head {
+  .col-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    position: relative;
-    z-index: 1;
-  }
-  .col-num {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display: grid; place-items: center;
-    font-weight: 800;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .col.sw .col-num { background: rgba(95,184,230,0.18); color: var(--blue); }
-  .col.hc .col-num { background: rgba(163,230,53,0.18); color: var(--lime); }
-  .col.tr .col-num { background: rgba(139,92,246,0.20); color: #b794f6; }
-  .col-titles { line-height: 1.15; }
-  .col-title {
-    font-weight: 800;
-    font-size: clamp(15px, 1.25vw, 19px);
-    letter-spacing: 0.01em;
-  }
-  .col.sw .col-title { color: var(--blue); }
-  .col.hc .col-title { color: var(--lime); }
-  .col.tr .col-title { color: #b794f6; }
-  .col-sub {
-    font-size: clamp(11px, 0.85vw, 13px);
-    color: var(--text-dim);
-    margin-top: 2px;
+    gap: 12px;
   }
 
-  .col-lede {
-    font-size: clamp(12px, 0.95vw, 14px);
-    color: var(--text);
-    opacity: 0.85;
-    line-height: 1.5;
-    position: relative;
-    z-index: 1;
-  }
-
-  .img-slot {
-    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-    border: 1px dashed rgba(255,255,255,0.12);
-    border-radius: 12px;
-    height: clamp(90px, 13vh, 140px);
-    display: grid;
-    place-items: center;
-    color: rgba(255,255,255,0.25);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    position: relative;
-    z-index: 1;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-  .img-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
-
-  .points { display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; min-height: 0; flex: 1; }
-  .point {
-    display: grid;
-    grid-template-columns: 22px 1fr;
-    gap: 10px;
-    align-items: start;
-  }
-  .point .dot {
-    width: 18px; height: 18px;
+  .col-icon {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    display: grid; place-items: center;
-    margin-top: 2px;
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 700;
-  }
-  .col.sw .point .dot { background: rgba(95,184,230,0.18); color: var(--blue); }
-  .col.hc .point .dot { background: rgba(163,230,53,0.18); color: var(--lime); }
-  .col.tr .point .dot { background: rgba(139,92,246,0.20); color: #b794f6; }
-  .point .p-title {
-    font-weight: 700;
-    font-size: clamp(12px, 0.95vw, 14px);
-    color: var(--text);
-  }
-  .point .p-body {
-    font-size: clamp(11px, 0.85vw, 13px);
-    color: var(--text-dim);
-    line-height: 1.45;
-    margin-top: 2px;
-  }
-
-  .stat {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    position: relative;
-    z-index: 1;
-  }
-  .stat-val {
-    font-weight: 800;
-    font-size: clamp(20px, 1.7vw, 26px);
-    letter-spacing: -0.01em;
-  }
-  .col.sw .stat-val { color: var(--blue); }
-  .col.hc .stat-val { color: var(--lime); }
-  .col.tr .stat-val { color: #b794f6; }
-  .stat-lbl {
-    font-size: clamp(10px, 0.78vw, 12px);
-    color: var(--text-dim);
-    line-height: 1.4;
-  }
-
-  /* ---- Footer ---- */
-  .footer {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    text-align: center;
-    flex-wrap: wrap;
+    font-size: 20px;
+    flex-shrink: 0;
   }
-  .footer-key {
+
+  .col-title-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+  }
+
+  .col-name {
+    font-family: 'Inter', sans-serif;
     font-weight: 800;
-    color: var(--lime);
-    font-size: clamp(13px, 1vw, 16px);
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
   }
-  .footer-sep { color: var(--text-dim); opacity: 0.4; }
-  .footer-msg {
-    color: var(--text);
-    opacity: 0.85;
-    font-size: clamp(12px, 0.95vw, 15px);
+
+  .col-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+
+  .split-content {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .features-side {
+    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
+    padding-top: 8px;
+  }
+  
+  .feature-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .feature-item-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent), transparent 85%);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .feature-item-icon i {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .feature-item-text strong {
+    display: block;
+    font-size: 15px;
+    color: var(--fg);
+    margin-bottom: 2px;
+  }
+  
+  .feature-item-text p {
+    font-size: 11px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--fg), transparent 30%);
+  }
+  
+  .card-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .card-image {
+    width: 100%;
+    aspect-ratio: 1.2 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    background: transparent;
+  }
+  
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .col-fact {
+    margin-top: auto;
+    padding: 12px 16px;
+    background: color-mix(in srgb, var(--accent), transparent 90%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid color-mix(in srgb, var(--accent), transparent 80%);
+    flex-shrink: 0;
+  }
+  
+  .col-fact .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  
+  .col-fact .stat-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  
+  .col-fact .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fg);
+    line-height: 1.3;
+  }
+  
+  .col-fact .stat-cite {
+    font-size: 9px;
+    opacity: 0.5;
+  }
+
+  .hc-lead {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg);
+    margin-bottom: 16px;
+  }
+  
+  .hc-section {
+    padding: 16px 0;
+    border-top: 1px solid var(--card-border);
+  }
+  
+  .hc-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .hc-text {
+    flex: 1;
+  }
+  
+  .hc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .hc-icon-large {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .hc-icon-large i { width: 26px; height: 26px; }
+  
+  .hc-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  
+  .hc-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--fg), transparent 20%);
+  }
+  
+  .hc-visual-wrap {
+    flex: 1;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    aspect-ratio: 1.2 / 1;
+  }
+  .hc-visual-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  
+  /* Overlays */
+  .ai-impact-box {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 140px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 9px;
+    color: white;
+  }
+  .ai-impact-title {
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-size: 10px;
+  }
+  .ai-impact-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .ai-impact-list li { display: flex; gap: 4px; align-items: flex-start; }
+  .ai-impact-list li::before { content: '✓'; color: var(--accent); font-weight: bold; }
+  
+  .visual-label-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    padding: 6px 0;
+    font-size: 9px;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .visual-label-bar span { flex: 1; }
+
+  /* ---- Theme Colors ---- */
+  .col.sw { --accent: #1e40af; } /* Darker blue for Software */
+  .col.hc { --accent: #166534; } /* Darker green for Healthcare */
+  .col.tr { --accent: #6d28d9; } /* Purple for Transportation */
+
+  .col.sw .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
+  .col.hc .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
+  .col.tr .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
+
+  .col.sw .col-name, .col.sw .stat-val, .col.sw .feature-bullet { color: var(--c1); }
+  .col.hc .col-name, .col.hc .stat-val, .col.hc .feature-bullet { color: var(--c2); }
+  .col.tr .col-name, .col.tr .stat-val, .col.tr .feature-bullet { color: var(--c3); }
+
+  .feature-bullet { background: var(--accent); }
+
+  /* ---- Footer ---- */
+  .footer {
+    flex-shrink: 0;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 1024px) {
+    .cols { grid-template-columns: 1fr; overflow-y: auto; }
+    .stage { padding: 40px 40px; }
   }
 </style>
 </head>
-<body>
+<body class="palette-midnight">
   <div class="stage">
+    <header class="header" id="header">
+      <h1 class="main-title">AI is Transforming the <em>World</em></h1>
+    </header>
 
-    <!-- ============ HEADER ============ -->
-    <div class="header">
-      <span class="eyebrow" id="eyebrow">AI · Today</span>
-      <h1 class="h-title" id="hTitle">AI is <span class="accent">Transforming</span> the World</h1>
-      <p class="h-sub" id="hSub">Intelligent technology is solving complex problems, improving outcomes, and shaping a smarter future across every industry.</p>
+    <div class="cols" id="cols">
+      <!-- Software Engineering -->
+      <section class="col sw">
+        <div class="col-header">
+          <div class="col-icon"><i data-lucide="code"></i></div>
+          <div class="col-title-group">
+            <span class="col-num">01. ENGINEERING</span>
+            <h2 class="col-name">Software Dev</h2>
+          </div>
+        </div>
+
+        <div class="split-content">
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="gauge"></i></div>
+              <div class="feature-item-text">
+                <strong>Faster Development</strong>
+                <p>AI suggests entire lines or blocks of code, reducing time spent on repetitive tasks.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="bug"></i></div>
+              <div class="feature-item-text">
+                <strong>Fewer Bugs</strong>
+                <p>AI helps identify potential issues and suggests fixes early in the development cycle.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="shield-check"></i></div>
+              <div class="feature-item-text">
+                <strong>Better Code Quality</strong>
+                <p>AI enforces best practices, improves consistency, and enhances maintainability.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="users"></i></div>
+              <div class="feature-item-text">
+                <strong>Developer Productivity</strong>
+                <p>Developers focus on solving complex problems and building innovative features.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-side">
+            <div class="card-image">
+              <img src="coding_full.png" alt="Engineering AI">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-fact">
+          <div class="stat-val">30-45%</div>
+          <div class="stat-text-group">
+            <div class="stat-label">of code is currently written by AI</div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Healthcare -->
+      <section class="col hc">
+        <div class="col-header">
+          <div class="col-icon"><i data-lucide="stethoscope"></i></div>
+          <div class="col-title-group">
+            <span class="col-num">02. HEALTHCARE</span>
+            <h2 class="col-name">Medical Care</h2>
+          </div>
+        </div>
+        
+        <div class="split-content">
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="dna"></i></div>
+              <div class="feature-item-text">
+                <strong>Genetics</strong>
+                <p>AI analyzes vast genetic data to identify disease risks and discover drug targets.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="scan-eye"></i></div>
+              <div class="feature-item-text">
+                <strong>Radiology</strong>
+                <p>AI detects abnormalities faster and with higher accuracy than manual review.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="microscope"></i></div>
+              <div class="feature-item-text">
+                <strong>Drug Discovery</strong>
+                <p>AI accelerates molecule testing, reducing clinical trial times by years.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-side">
+            <div class="card-image">
+              <img src="dna_full.png" alt="DNA AI Analysis">
+            </div>
+            <div class="card-image">
+              <img src="radiology_full.png" alt="Radiology AI Detection">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-fact">
+          <div class="stat-val">20-40%</div>
+          <div class="stat-text-group">
+            <div class="stat-label">improvement in diagnostic accuracy with AI</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transportation -->
+      <section class="col tr">
+        <div class="col-header">
+          <div class="col-icon"><i data-lucide="car"></i></div>
+          <div class="col-title-group">
+            <span class="col-num">03. MOBILITY</span>
+            <h2 class="col-name">Transportation</h2>
+          </div>
+        </div>
+
+        <div class="split-content">
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="eye"></i></div>
+              <div class="feature-item-text">
+                <strong>Perception</strong>
+                <p>AI perceives the environment through Radar, Camera, and Lidar sensors.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="trending-up"></i></div>
+              <div class="feature-item-text">
+                <strong>Prediction</strong>
+                <p>Anticipates trajectories and speeds of surrounding objects in real-time.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="map-pin"></i></div>
+              <div class="feature-item-text">
+                <strong>Planning</strong>
+                <p>Chooses the optimal route and navigation path for maximum efficiency.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="cpu"></i></div>
+              <div class="feature-item-text">
+                <strong>Control</strong>
+                <p>Executes steering, braking, and acceleration to ensure passenger safety.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-side">
+            <div class="card-image">
+              <img src="autonomous_full.png" alt="Autonomous AI Process">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-fact">
+          <div class="stat-val">1.2M</div>
+          <div class="stat-text-group">
+            <div class="stat-label">lives projected to be saved annually by autonomous AI</div>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- ============ COLUMNS ============ -->
-    <div class="cols">
-
-      <!-- 1. SOFTWARE -->
-      <div class="col sw" data-col>
-        <div class="col-head">
-          <div class="col-num">1</div>
-          <div class="col-titles">
-            <div class="col-title">Software Engineering</div>
-            <div class="col-sub">AI-powered development</div>
-          </div>
-        </div>
-        <p class="col-lede">AI coding assistants help developers write, test, and review code faster — boosting productivity and quality.</p>
-        <div class="img-slot">Coding · Image</div>
-        <div class="points">
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Faster Development</div>
-              <div class="p-body">AI suggests entire lines or blocks of code, reducing time on repetitive tasks.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Fewer Bugs</div>
-              <div class="p-body">Identifies potential issues and suggests fixes early in the cycle.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Better Code Quality</div>
-              <div class="p-body">Enforces best practices, improves consistency and maintainability.</div>
-            </div>
-          </div>
-        </div>
-        <div class="stat">
-          <div class="stat-val">30–45%</div>
-          <div class="stat-lbl">of code is currently<br/>written by AI<br/><span style="opacity:.65">— Goldman Sachs (2024)</span></div>
-        </div>
-      </div>
-
-      <!-- 2. HEALTHCARE -->
-      <div class="col hc" data-col>
-        <div class="col-head">
-          <div class="col-num">2</div>
-          <div class="col-titles">
-            <div class="col-title">Healthcare</div>
-            <div class="col-sub">AI enhancing patient care</div>
-          </div>
-        </div>
-        <p class="col-lede">AI is unlocking insights in genetics and radiology, enabling earlier diagnosis and personalized treatment.</p>
-        <div class="img-slot">DNA · X-Ray</div>
-        <div class="points">
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Genetics</div>
-              <div class="p-body">Analyzes vast genetic data to identify disease risks and accelerate drug discovery.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Radiology</div>
-              <div class="p-body">Detects abnormalities faster and with higher accuracy alongside radiologists.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Personalized Medicine</div>
-              <div class="p-body">Tailors treatment plans based on each patient's unique profile.</div>
-            </div>
-          </div>
-        </div>
-        <div class="stat">
-          <div class="stat-val">20–40%</div>
-          <div class="stat-lbl">improvement in diagnostic<br/>accuracy in radiology with AI<br/><span style="opacity:.65">— Stanford Medicine (2023)</span></div>
-        </div>
-      </div>
-
-      <!-- 3. TRANSPORTATION -->
-      <div class="col tr" data-col>
-        <div class="col-head">
-          <div class="col-num">3</div>
-          <div class="col-titles">
-            <div class="col-title">Transportation</div>
-            <div class="col-sub">AI driving the future</div>
-          </div>
-        </div>
-        <p class="col-lede">AI powers autonomous vehicles that perceive the environment, predict actions, and drive safely.</p>
-        <div class="img-slot">Autonomous Vehicle · Image</div>
-        <div class="points">
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Perception</div>
-              <div class="p-body">Sees and understands the world — lanes, vehicles, pedestrians, signs.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Prediction</div>
-              <div class="p-body">Anticipates what's next from other road users in real time.</div>
-            </div>
-          </div>
-          <div class="point">
-            <span class="dot">✓</span>
-            <div>
-              <div class="p-title">Planning &amp; Control</div>
-              <div class="p-body">Chooses the safest path and drives smoothly through it.</div>
-            </div>
-          </div>
-        </div>
-        <div class="stat">
-          <div class="stat-val">$1.3T</div>
-          <div class="stat-lbl">projected economic value by 2035<br/>from AI in autonomous driving<br/><span style="opacity:.65">— BCG (2023)</span></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ============ FOOTER ============ -->
-    <div class="footer" id="footer">
-      <span class="footer-key">AI is not just an innovation — it's a transformation.</span>
-      <span class="footer-sep">|</span>
-      <span class="footer-msg">Building a smarter, healthier, and more connected future for all.</span>
-    </div>
 
   </div>
 
-<script>
-  function runEntrance() {
-    gsap.killTweensOf(['.header > *', '[data-col]', '#footer']);
-    gsap.set('.header > *', { opacity: 0, y: 14 });
-    gsap.set('[data-col]', { opacity: 0, y: 22 });
-    gsap.set('#footer', { opacity: 0, y: 12 });
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+    };
 
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.to('.header > *', { opacity: 1, y: 0, duration: 0.7, stagger: 0.08 }, 0.1)
-      .to('[data-col]', { opacity: 1, y: 0, duration: 0.8, stagger: 0.13 }, 0.35)
-      .to('#footer', { opacity: 1, y: 0, duration: 0.6 }, 0.95);
-  }
+    function applyPalette(p) {
+      document.documentElement.style.setProperty('--bg', p.bg);
+      document.documentElement.style.setProperty('--fg', p.fg);
+      document.documentElement.style.setProperty('--c1', p.c1);
+      document.documentElement.style.setProperty('--c2', p.c2);
+      document.documentElement.style.setProperty('--c3', p.c3);
+      document.body.classList.toggle('light-mode', p.light);
+    }
 
-  window.addEventListener('load', runEntrance);
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+    });
 
-  window.addEventListener('message', (e) => {
-    const d = e.data || {};
-    if (d.type === 'RESTART_ANIMATION') runEntrance();
-  });
-</script>
+    function startEntrance() {
+      try {
+        gsap.set("#header", { opacity: 0, y: 20 });
+        gsap.set("#cols", { opacity: 0 });
+        gsap.set(".col", { opacity: 0, y: 20 });
+
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
+        tl.to("#cols", { opacity: 1, duration: 0.4 }, "-=0.4");
+        tl.to(".col", { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, "-=0.3");
+      } catch (err) {
+        console.error("GSAP Error:", err);
+        // Fallback: show everything
+        gsap.set(["#header", "#cols", ".col"], { opacity: 1, y: 0 });
+      }
+    }
+
+    window.addEventListener('load', () => {
+      // Initial theme - start with Warm Linen for a premium editorial feel
+      const initialPalette = PALETTE_MAP['Warm Linen'];
+      applyPalette(initialPalette);
+      
+      startEntrance();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
 </body>
 </html>
