@@ -605,18 +605,59 @@
 
     function startEntrance() {
       try {
-        gsap.set("#header", { opacity: 0, y: 20 });
-        gsap.set("#cols", { opacity: 0 });
-        gsap.set(".col", { opacity: 0, y: 20 });
+        const EASE = "power2.out";
 
-        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-        tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
-        tl.to("#cols", { opacity: 1, duration: 0.4 }, "-=0.4");
-        tl.to(".col", { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, "-=0.3");
+        // Initial state — small, restrained offsets only
+        gsap.set("#header", { opacity: 0, y: 12 });
+        gsap.set(".page-eyebrow", { opacity: 0, y: 6 });
+        gsap.set(".main-title", { opacity: 0, y: 10 });
+        gsap.set("#cols", { opacity: 1 });
+        gsap.set(".col", { opacity: 0, y: 18 });
+        gsap.set(".col-header", { opacity: 0, y: 8 });
+        gsap.set(".col .col-icon", { opacity: 0, y: 6 });
+        gsap.set(".card-image, .hc-visual-wrap", { opacity: 0 });
+        gsap.set(".card-image img, .hc-visual-wrap img", { scale: 1.06 });
+        gsap.set(".feature-item", { opacity: 0, y: 8 });
+        gsap.set(".col-fact", { opacity: 0, y: 8 });
+        gsap.set(".ai-impact-box, .det-badge, .detection-tag, .overlay-chip", { opacity: 0, y: 4 });
+
+        const tl = gsap.timeline({ defaults: { ease: EASE, duration: 0.7 } });
+
+        // Header
+        tl.to("#header",       { opacity: 1, y: 0 }, 0)
+          .to(".page-eyebrow", { opacity: 1, y: 0, duration: 0.55 }, 0.05)
+          .to(".main-title",   { opacity: 1, y: 0, duration: 0.75 }, 0.12);
+
+        // Cards: subtle lift, generous stagger, single ease — no scale, no tilt
+        tl.to(".col", { opacity: 1, y: 0, duration: 0.9, stagger: 0.18 }, 0.35);
+
+        // Internal contents per card, anchored to that card's arrival
+        const cards = gsap.utils.toArray(".col");
+        cards.forEach((card, i) => {
+          const t = 0.35 + i * 0.18 + 0.18;
+          tl.to(card.querySelector(".col-header"),
+                { opacity: 1, y: 0, duration: 0.55 }, t)
+            .to(card.querySelector(".col-icon"),
+                { opacity: 1, y: 0, duration: 0.55 }, t + 0.03)
+            .to(card.querySelectorAll(".card-image, .hc-visual-wrap"),
+                { opacity: 1, duration: 0.9 }, t + 0.04)
+            .to(card.querySelectorAll(".card-image img, .hc-visual-wrap img"),
+                { scale: 1, duration: 1.4, ease: "power2.out" }, t + 0.04)
+            .to(card.querySelectorAll(".feature-item"),
+                { opacity: 1, y: 0, duration: 0.55, stagger: 0.08 }, t + 0.18)
+            .to(card.querySelectorAll(".col-fact"),
+                { opacity: 1, y: 0, duration: 0.6 }, t + 0.5)
+            .to(card.querySelectorAll(".ai-impact-box, .det-badge, .detection-tag, .overlay-chip"),
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 }, t + 0.55);
+        });
       } catch (err) {
         console.error("GSAP Error:", err);
-        // Fallback: show everything
-        gsap.set(["#header", "#cols", ".col"], { opacity: 1, y: 0 });
+        gsap.set(["#header", ".page-eyebrow", ".main-title", "#cols", ".col",
+                  ".col-header", ".col-icon", ".card-image", ".hc-visual-wrap",
+                  ".card-image img", ".hc-visual-wrap img",
+                  ".feature-item", ".col-fact",
+                  ".ai-impact-box", ".det-badge", ".detection-tag", ".overlay-chip"],
+                 { opacity: 1, y: 0, scale: 1 });
       }
     }
 
