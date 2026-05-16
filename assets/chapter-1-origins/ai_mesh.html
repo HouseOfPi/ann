@@ -144,28 +144,86 @@
     margin-bottom: 20px;
   }
 
-  /* timeline bar */
+  /* ─── Timeline (redesigned) ───────────────────────────── */
   .bp-timeline-line {
     position: relative;
-    height: 6px;
-    background: linear-gradient(to right, var(--ai-color), var(--ml-color), var(--dl-color), var(--gen-color));
-    border-radius: 3px;
-    margin: 0 24px 28px;
+    height: 64px;
+    margin: 4px 32px 32px;
+    padding: 0 8px;
+  }
+  /* The horizontal track sits centred vertically through the dots */
+  .bp-timeline-line::before {
+    content: "";
+    position: absolute;
+    left: 8px; right: 28px;
+    top: 50%;
+    height: 4px;
+    transform: translateY(-50%);
+    background: linear-gradient(to right,
+      var(--ai-color)  0%,
+      var(--ai-color)  18%,
+      var(--ml-color)  38%,
+      var(--dl-color)  62%,
+      var(--gen-color) 82%,
+      var(--gen-color) 100%);
+    border-radius: 4px;
+    opacity: 0.95;
   }
   .bp-tl-dot {
     position: absolute;
     top: 50%; transform: translate(-50%,-50%);
-    width: 14px; height: 14px;
+    width: 18px; height: 18px;
     border-radius: 50%;
     background: var(--ai-color);
     border: 3px solid var(--bubble-bg);
+    box-shadow: 0 0 0 2px currentColor, 0 2px 6px rgba(0,0,0,0.18);
+    color: var(--ai-color);
+    z-index: 2;
+  }
+  .bp-tl-dot::after {
+    /* Era + label stacked above each dot */
+    content: attr(data-era) "\A" attr(data-label);
+    white-space: pre;
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--subtitle-color);
+    line-height: 1.25;
+    padding: 2px 8px;
+    background: var(--bubble-bg);
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  }
+  .bp-tl-dot[data-label]::after { color: currentColor; }
+  .bp-tl-dot[data-label]::after { color: color-mix(in srgb, currentColor 90%, var(--text-color)); }
+  /* Vertical tick connecting dot down to its card */
+  .bp-tl-dot::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 4px);
+    transform: translateX(-50%);
+    width: 2px;
+    height: 14px;
+    background: currentColor;
+    opacity: 0.55;
+    border-radius: 2px;
   }
   .bp-arrow {
     position: absolute;
-    right: -18px; top: 50%;
+    right: 0; top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
+    font-size: 22px;
+    line-height: 1;
     color: var(--gen-color);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    z-index: 1;
   }
 
   /* cards */
@@ -185,9 +243,8 @@
   .bp-dl  { background: color-mix(in srgb, var(--dl-color)  12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--dl-color)  35%, transparent); }
   .bp-gen { background: color-mix(in srgb, var(--gen-color) 12%, var(--bubble-bg)); border-color: color-mix(in srgb, var(--gen-color) 35%, transparent); }
   .bp-era {
-    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
-    text-transform: uppercase; margin-bottom: 10px;
-    color: var(--subtitle-color);
+    /* Era is shown on the timeline above — hide the duplicate inside cards */
+    display: none;
   }
   .bp-card-header {
     display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
@@ -746,10 +803,10 @@
       <div class="bp-title">From Rules to Creation</div>
 
       <div class="bp-timeline-line">
-        <div class="bp-tl-dot" style="left:12.5%"></div>
-        <div class="bp-tl-dot" style="left:37.5%"></div>
-        <div class="bp-tl-dot" style="left:62.5%; background:var(--dl-color)"></div>
-        <div class="bp-tl-dot" style="left:87.5%; background:var(--gen-color)"></div>
+        <div class="bp-tl-dot" style="left:12.5%; color:var(--ai-color);  background:var(--ai-color);"  data-era="1950s–1980s" data-label="AI"></div>
+        <div class="bp-tl-dot" style="left:37.5%; color:var(--ml-color);  background:var(--ml-color);"  data-era="2010s"        data-label="ML"></div>
+        <div class="bp-tl-dot" style="left:62.5%; color:var(--dl-color);  background:var(--dl-color);"  data-era="2010s"        data-label="NN"></div>
+        <div class="bp-tl-dot" style="left:87.5%; color:var(--gen-color); background:var(--gen-color);" data-era="Present"      data-label="GenAI"></div>
         <div class="bp-arrow">&rarr;</div>
       </div>
 
@@ -809,8 +866,8 @@
           <div class="bp-card-header dl">
             <span class="bp-icon">🔗</span>
             <div>
-              <div class="bp-label dl">DL</div>
-              <div class="bp-sublabel">Deep Learning</div>
+              <div class="bp-label dl">NN</div>
+              <div class="bp-sublabel">Neural Network</div>
             </div>
           </div>
           <ul class="bp-list">
@@ -866,7 +923,7 @@
           <strong>THE BIG PICTURE:</strong>
           <span class="ai-c">AI</span> is the broad field.
           <span class="ml-c">ML</span> learns from data.
-          <span class="dl-c">DL</span> learns deeper patterns.
+          <span class="dl-c">NN</span> learns deeper patterns.
           <span class="gen-c">GenAI</span> creates new content.
         </span>
       </div>
@@ -985,7 +1042,7 @@
   const bubbles = [
     { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 195, y: 105, w: 230, h: 120, tailX: 380, tailY: 225, side: 'bottom' },
     { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 700, y: 155, w: 260, h: 120, tailX: 720, tailY: 275, side: 'bottom' },
-    { cls: 'dl',  label: 'DL',    sub: 'Deep Learning',            x: 150, y: 420, w: 240, h: 120, tailX: 360, tailY: 420, side: 'top' },
+    { cls: 'dl',  label: 'NN',    sub: 'Neural Network',           x: 150, y: 420, w: 240, h: 120, tailX: 360, tailY: 420, side: 'top' },
     { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 650, y: 460, w: 320, h: 130, tailX: 700, tailY: 460, side: 'top' },
   ];
 
@@ -1175,7 +1232,7 @@
     const config = {
       ai: { title: 'Artificial Intelligence', label: 'AI' },
       ml: { title: 'Machine Learning', label: 'ML' },
-      dl: { title: 'Deep Learning', label: 'DL' },
+      dl: { title: 'Neural Network', label: 'NN' },
       gen: { title: 'Generative AI', label: 'GenAI' }
     };
     const data = config[type];
@@ -1451,7 +1508,7 @@
       content.innerHTML = `
         <div class="ml-layout dl-layout" style="gap: 5px;">
           <div class="ml-header" style="margin-bottom: 5px;">
-            <h1 style="margin: 0; color: var(--dl-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--dl-color), color-mix(in srgb, var(--dl-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">DEEP LEARNING</h1>
+            <h1 style="margin: 0; color: var(--dl-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--dl-color), color-mix(in srgb, var(--dl-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NEURAL NETWORK</h1>
           </div>
           
           <div class="ml-flow-container" style="display: flex; align-items: stretch; justify-content: center; gap: 25px; margin: 25px 0 45px 0; padding: 0; min-height: 220px;">
