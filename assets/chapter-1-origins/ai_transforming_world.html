@@ -224,36 +224,31 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 22px 22px;
+    padding: 24px 24px 28px;
     min-height: 0;
   }
 
   .col-title-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
+    gap: 10px;
+    margin-bottom: 22px;
   }
 
   .col-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
     color: var(--accent);
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   }
-  .col-icon i { width: 18px; height: 18px; }
+  .col-icon i { width: 22px; height: 22px; stroke-width: 2.5px; }
 
   .col-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: clamp(20px, 1.8vw, 26px);
-    letter-spacing: -0.01em;
+    font-size: 19px;
+    letter-spacing: -0.02em;
     color: var(--fg);
     text-transform: none;
     line-height: 1.1;
@@ -263,48 +258,42 @@
   .features-side {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
     flex: 1;
   }
 
   .feature-item {
     display: grid;
-    grid-template-columns: 28px 1fr;
+    grid-template-columns: 20px 1fr;
     gap: 12px;
     align-items: start;
-    padding-bottom: 12px;
-    border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+    border-bottom: none;
   }
   .feature-item:last-child { border-bottom: none; padding-bottom: 0; }
 
   .feature-item-icon {
-    width: 28px;
-    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
     color: var(--accent);
-    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-    margin-top: 2px;
+    margin-top: 1px;
   }
-  .feature-item-icon i { width: 14px; height: 14px; }
+  .feature-item-icon i { width: 16px; height: 16px; stroke-width: 2.5px; }
 
   .feature-item-text strong {
     display: block;
     font-family: 'Inter', sans-serif;
     font-size: 13.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--fg);
     letter-spacing: -0.005em;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
 
   .feature-item-text p {
     font-size: 11.5px;
-    line-height: 1.55;
-    color: color-mix(in srgb, var(--fg) 65%, transparent);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--fg) 55%, transparent);
   }
 
   /* ── Theme accents ───────────────────────────────────────────── */
@@ -367,37 +356,37 @@
 
         <div class="col-body">
           <div class="col-title-row">
-            <div class="col-icon"><i data-lucide="code"></i></div>
-            <h2 class="col-name">Software Development</h2>
+            <div class="col-icon"><i data-lucide="server"></i></div>
+            <h2 class="col-name">Systems Engineering</h2>
           </div>
 
           <div class="features-side">
             <div class="feature-item">
-              <div class="feature-item-icon"><i data-lucide="gauge"></i></div>
+              <div class="feature-item-icon"><i data-lucide="code"></i></div>
               <div class="feature-item-text">
-                <strong>Faster development</strong>
-                <p>AI suggests entire lines or blocks of code, reducing time on repetitive tasks.</p>
+                <strong>Code Generation</strong>
+                <p>Accelerates software development by suggesting logic blocks and reducing repetitive coding tasks.</p>
               </div>
             </div>
             <div class="feature-item">
-              <div class="feature-item-icon"><i data-lucide="bug"></i></div>
+              <div class="feature-item-icon"><i data-lucide="circuit-board"></i></div>
               <div class="feature-item-text">
-                <strong>Fewer bugs</strong>
-                <p>Identifies potential issues and suggests fixes early in the development cycle.</p>
+                <strong>Chip Design</strong>
+                <p>Optimizes semiconductor layouts and logic synthesis, drastically cutting hardware prototyping time.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="shield-check"></i></div>
               <div class="feature-item-text">
-                <strong>Better code quality</strong>
-                <p>Enforces best practices, improves consistency, and enhances maintainability.</p>
+                <strong>Quality Assurance</strong>
+                <p>Identifies potential flaws and suggests fixes early across both codebases and hardware circuitry.</p>
               </div>
             </div>
             <div class="feature-item">
-              <div class="feature-item-icon"><i data-lucide="users"></i></div>
+              <div class="feature-item-icon"><i data-lucide="bot"></i></div>
               <div class="feature-item-text">
-                <strong>Developer productivity</strong>
-                <p>Engineers focus on solving complex problems and building innovative features.</p>
+                <strong>Robotics</strong>
+                <p>Powers intelligent automation, enabling machines to adapt and solve complex physical problems.</p>
               </div>
             </div>
           </div>
