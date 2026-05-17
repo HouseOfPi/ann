@@ -2115,8 +2115,10 @@
       }
 
 
+      let slideOneMetaShown = false;
       // SlideOne title entrance animation — callable on demand
       function animateSlideOneTitle() {
+        slideOneMetaShown = false;
         // Reset all elements to invisible first
         gsap.set(".hero-tagline", { opacity: 0, y: 18, filter: "blur(6px)" });
         gsap.set(".hero-meta", { opacity: 0, y: 12 });
@@ -2124,8 +2126,7 @@
         // Tagline fade-in
         gsap.to(".hero-tagline", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out", delay: 1.0 });
 
-        // Meta row + python badge
-        gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out", delay: 1.3 });
+        // Meta row + python badge animation is triggered by click
       }
 
       // Fire title animation if slideOne is the starting slide
@@ -2135,6 +2136,20 @@
            animateSlideOneTitle();
         }
       }, 600);
+
+      // Trigger bullet animation on click
+      const slideOneEl = document.getElementById('slideOne');
+      if (slideOneEl) {
+        slideOneEl.addEventListener('click', (e) => {
+          // Prevent if clicking on interactive elements like the side menu button or arrows
+          if (e.target.closest('button, .menu-toggle')) return;
+          
+          if (!slideOneMetaShown && slideOneEl.classList.contains('active-slide')) {
+            slideOneMetaShown = true;
+            gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
+          }
+        });
+      }
 
       // Divider fade in (dual mode only)
       if (document.querySelector('.hero-divider.visible')) {

@@ -172,34 +172,94 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.45);
     }
 
-    /* Sound toggle (top-right of player) */
-    .sound-toggle {
+    .sound-control-group {
       position: absolute;
       top: 16px;
       right: 16px;
       z-index: 4;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.22);
+      display: flex;
+      align-items: center;
       background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.22);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      width: 170px;
+      height: 34px;
+    }
+    .sound-control-group:hover, .sound-control-group:focus-within {
+      background: rgba(0,0,0,0.65);
+      border-color: rgba(255,255,255,0.4);
+    }
+    .sound-toggle {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
       color: #fff;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-    }
-    .sound-toggle:hover {
-      background: rgba(0,0,0,0.65);
-      border-color: rgba(255,255,255,0.4);
-      transform: scale(1.06);
+      transition: transform 0.2s ease;
     }
     .sound-toggle:active { transform: scale(0.95); }
     .sound-toggle svg { display: block; }
+
+    .volume-wrapper {
+      width: 80px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding-right: 12px;
+      pointer-events: auto;
+    }
+    .volume-percent {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #fff;
+      margin-left: 8px;
+      width: 28px;
+      text-align: right;
+    }
+    .volume-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .volume-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .volume-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s;
+    }
+    .volume-slider::-moz-range-thumb:hover {
+      transform: scale(1.2);
+    }
 
     /* Progress bar (4 segments along the very bottom of the player) */
     .progress {
@@ -263,13 +323,19 @@
       <video data-tile="2" src="videos/AI%20future/fire.mp4"  playsinline preload="auto" muted></video>
       <video data-tile="3" src="videos/AI%20future/Kids.mp4"  playsinline preload="auto" muted></video>
 
-      <button class="sound-toggle" id="soundBtn" type="button" aria-label="Toggle sound">
-        <svg id="soundIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
-        </svg>
-      </button>
+      <div class="sound-control-group">
+        <button class="sound-toggle" id="soundBtn" type="button" aria-label="Toggle sound">
+          <svg id="soundIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <div class="volume-wrapper">
+          <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.5" aria-label="Volume">
+          <span id="volumePercent" class="volume-percent">50%</span>
+        </div>
+      </div>
 
       <!-- In-frame caption: eyebrow + serif headline + short description -->
       <div class="player-caption" id="playerCaption">
@@ -325,6 +391,7 @@
     const TOTAL = 4;
     let currentIdx = -1;
     let soundOn = true;
+    let globalVolume = 0.5;
     let progressRaf = null;
     let segmentDoneMask = [false, false, false, false];
 
@@ -478,12 +545,20 @@
 
     function toggleSound() {
       soundOn = !soundOn;
+      if (soundOn && globalVolume == 0) {
+        globalVolume = 0.5;
+        const volSlider = document.getElementById('volumeSlider');
+        if (volSlider) volSlider.value = globalVolume;
+        videoEls().forEach(v => v.volume = globalVolume);
+      }
       applyAudioState();
       if (soundOn) {
         videoEls().forEach((v) => {
           if (Number(v.dataset.tile) === currentIdx) tryPlay(v);
         });
       }
+      const volPercent = document.getElementById('volumePercent');
+      if (volPercent) volPercent.textContent = Math.round((soundOn ? globalVolume : 0) * 100) + '%';
       updateSoundButton();
     }
 
@@ -506,6 +581,7 @@
 
     function initCarousel() {
       videoEls().forEach((v) => {
+        v.volume = globalVolume;
         v.addEventListener('ended', () => {
           if (Number(v.dataset.tile) === currentIdx) next();
         });
@@ -516,9 +592,30 @@
       const player = document.getElementById('player');
       if (player) {
         player.addEventListener('click', (e) => {
-          if (e.target.closest('button, .progress-segment')) return;
+          if (e.target.closest('button, .progress-segment, .sound-control-group')) return;
           togglePlayback();
         });
+        player.addEventListener('dblclick', (e) => {
+          if (e.target.closest('button, .progress-segment, .sound-control-group')) return;
+          e.preventDefault();
+          next();
+        });
+        player.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = -Math.sign(e.deltaY) * 0.05;
+          globalVolume = Math.max(0, Math.min(1, globalVolume + delta));
+          soundOn = globalVolume > 0;
+          
+          const volSlider = document.getElementById('volumeSlider');
+          if (volSlider) volSlider.value = globalVolume;
+          
+          const volPercent = document.getElementById('volumePercent');
+          if (volPercent) volPercent.textContent = Math.round(globalVolume * 100) + '%';
+          
+          applyAudioState();
+          videoEls().forEach(v => v.volume = globalVolume);
+          updateSoundButton();
+        }, { passive: false });
         player.style.cursor = 'pointer';
       }
 
@@ -528,6 +625,20 @@
 
       const soundBtn = document.getElementById('soundBtn');
       if (soundBtn) soundBtn.addEventListener('click', toggleSound);
+
+      const volSlider = document.getElementById('volumeSlider');
+      const volPercent = document.getElementById('volumePercent');
+      if (volSlider) {
+        volSlider.addEventListener('input', (e) => {
+          globalVolume = parseFloat(e.target.value);
+          soundOn = globalVolume > 0;
+          applyAudioState();
+          videoEls().forEach(v => v.volume = globalVolume);
+          if (volPercent) volPercent.textContent = Math.round(globalVolume * 100) + '%';
+          updateSoundButton();
+        });
+      }
+
       updateSoundButton();
 
       window.addEventListener('keydown', (e) => {

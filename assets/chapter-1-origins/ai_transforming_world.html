@@ -368,13 +368,7 @@
                 <p>Accelerates software development by suggesting logic blocks and reducing repetitive coding tasks.</p>
               </div>
             </div>
-            <div class="feature-item">
-              <div class="feature-item-icon"><i data-lucide="circuit-board"></i></div>
-              <div class="feature-item-text">
-                <strong>Chip Design</strong>
-                <p>Optimizes semiconductor layouts and logic synthesis, drastically cutting hardware prototyping time.</p>
-              </div>
-            </div>
+
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="shield-check"></i></div>
               <div class="feature-item-text">
@@ -544,15 +538,28 @@
       }
     });
 
-    // Play hero videos on card hover, pause + reset on leave.
+    // Play hero videos on card hover, pause smoothly on leave.
     document.querySelectorAll('.col').forEach(card => {
       const vid = card.querySelector('.hero-video');
       if (!vid) return;
       card.addEventListener('mouseenter', () => {
+        gsap.killTweensOf(vid);
+        vid.playbackRate = 1;
         vid.play().catch(() => {});
       });
       card.addEventListener('mouseleave', () => {
-        try { vid.pause(); vid.currentTime = 0; } catch (_) {}
+        // Smoothly decelerate to a stop instead of an abrupt freeze/jump
+        gsap.to(vid, {
+          playbackRate: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          onComplete: () => {
+            try { 
+              vid.pause(); 
+              vid.playbackRate = 1; // reset for next play
+            } catch (_) {}
+          }
+        });
       });
     });
 
