@@ -74,304 +74,253 @@
     font-weight: 500;
   }
 
-  /* ---- Columns Layout ---- */
+  /* ──────────────────────────────────────────────────────────────
+     Modern editorial card grid
+     ────────────────────────────────────────────────────────────── */
   .cols {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2.5vw;
+    gap: 24px;
     min-height: 0;
     opacity: 0;
   }
 
   .col {
+    --accent: var(--c1);
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 24px;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 20px;
+    border-radius: 18px;
     overflow: hidden;
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+  }
+  .col:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--card-border));
+    box-shadow:
+      0 24px 60px -28px color-mix(in srgb, var(--accent) 40%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent) inset;
+  }
+
+  /* Accent strip across the top edge */
+  .col::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 0%, transparent),
+      var(--accent) 50%,
+      color-mix(in srgb, var(--accent) 0%, transparent));
+    opacity: 0.85;
+    z-index: 2;
+  }
+
+  /* ── Hero image area ─────────────────────────────────────────── */
+  .col-hero {
     position: relative;
-  }
-
-  .col-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .col-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .col-title-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .col-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    opacity: 0.6;
-  }
-
-  .col-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-  }
-
-  .col-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-    flex-shrink: 0;
-  }
-
-  .split-content {
-    display: flex;
-    gap: 24px;
-    margin-top: 16px;
-    flex: 1;
-    min-height: 0;
-  }
-  
-  .features-side {
-    flex: 1.4;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: flex-start;
-    padding-top: 8px;
-  }
-  
-  .feature-item {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  
-  .feature-item-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--accent), transparent 85%);
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  
-  .feature-item-icon i {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .feature-item-text strong {
-    display: block;
-    font-size: 15px;
-    color: var(--fg);
-    margin-bottom: 2px;
-  }
-  
-  .feature-item-text p {
-    font-size: 11px;
-    line-height: 1.5;
-    color: color-mix(in srgb, var(--fg), transparent 30%);
-  }
-  
-  .card-side {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .card-image {
     width: 100%;
-    aspect-ratio: 1.2 / 1;
-    border-radius: 16px;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    border: 1px solid var(--card-border);
-    background: transparent;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
   }
-  
-  .card-image img {
+  .col-hero img,
+  .col-hero video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
   }
-  
-  .col-fact {
-    margin-top: auto;
-    padding: 12px 16px;
-    background: color-mix(in srgb, var(--accent), transparent 90%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid color-mix(in srgb, var(--accent), transparent 80%);
-    flex-shrink: 0;
-  }
-  
-  .col-fact .stat-val {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  
-  .col-fact .stat-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  
-  .col-fact .stat-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--fg);
-    line-height: 1.3;
-  }
-  
-  .col-fact .stat-cite {
-    font-size: 9px;
-    opacity: 0.5;
+  .col:hover .col-hero img,
+  .col:hover .col-hero video { transform: scale(1.04); }
+
+  /* Dark gradient at bottom of hero for legibility */
+  .col-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      transparent 45%,
+      color-mix(in srgb, #000 30%, transparent) 90%,
+      color-mix(in srgb, #000 55%, transparent) 100%);
+    pointer-events: none;
   }
 
-  .hc-lead {
-    font-size: 14px;
-    line-height: 1.5;
-    color: var(--fg);
-    margin-bottom: 16px;
-  }
-  
-  .hc-section {
-    padding: 16px 0;
-    border-top: 1px solid var(--card-border);
-  }
-  
-  .hc-row {
-    display: flex;
-    gap: 20px;
+  /* Number chip — top-left of hero */
+  .col-num {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    display: inline-flex;
     align-items: center;
+    gap: 8px;
+    padding: 6px 10px 6px 8px;
+    background: color-mix(in srgb, #000 55%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #fff;
+    text-transform: uppercase;
   }
-  
-  .hc-text {
+  .col-num::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px 1px var(--accent);
+  }
+
+  /* Stat chip — bottom-right floating over hero */
+  .stat-chip {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 12px;
+    background: color-mix(in srgb, #000 70%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  .stat-chip .stat-val {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-chip .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    max-width: 130px;
+    line-height: 1.3;
+  }
+
+  /* ── Card body ───────────────────────────────────────────────── */
+  .col-body {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px 22px;
+    min-height: 0;
   }
-  
-  .hc-header {
+
+  .col-title-row {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
   }
-  
-  .hc-icon-large {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: white;
+
+  .col-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-  }
-  .hc-icon-large i { width: 26px; height: 26px; }
-  
-  .hc-title {
-    font-size: 18px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
     color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   }
-  
-  .hc-desc {
-    font-size: 13px;
-    line-height: 1.5;
-    color: color-mix(in srgb, var(--fg), transparent 20%);
+  .col-icon i { width: 18px; height: 18px; }
+
+  .col-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(20px, 1.8vw, 26px);
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    text-transform: none;
+    line-height: 1.1;
   }
-  
-  .hc-visual-wrap {
-    flex: 1;
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--card-border);
-    aspect-ratio: 1.2 / 1;
-  }
-  .hc-visual-wrap img { width: 100%; height: 100%; object-fit: cover; }
-  
-  /* Overlays */
-  .ai-impact-box {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 140px;
-    background: rgba(0, 0, 0, 0.85);
-    border: 1px solid var(--accent);
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 9px;
-    color: white;
-  }
-  .ai-impact-title {
-    font-weight: 800;
-    color: var(--accent);
-    margin-bottom: 6px;
-    font-size: 10px;
-  }
-  .ai-impact-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
-  .ai-impact-list li { display: flex; gap: 4px; align-items: flex-start; }
-  .ai-impact-list li::before { content: '✓'; color: var(--accent); font-weight: bold; }
-  
-  .visual-label-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.8);
+
+  /* ── Feature list ─────────────────────────────────────────────── */
+  .features-side {
     display: flex;
-    padding: 6px 0;
-    font-size: 9px;
-    font-weight: 800;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
   }
-  .visual-label-bar span { flex: 1; }
 
-  /* ---- Theme Colors ---- */
-  .col.sw { --accent: #1e40af; } /* Darker blue for Software */
-  .col.hc { --accent: #166534; } /* Darker green for Healthcare */
-  .col.tr { --accent: #6d28d9; } /* Purple for Transportation */
+  .feature-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding-bottom: 12px;
+    border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+  }
+  .feature-item:last-child { border-bottom: none; padding-bottom: 0; }
 
-  .col.sw .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
-  .col.hc .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
-  .col.tr .col-icon { background: color-mix(in srgb, var(--accent), transparent 85%); color: var(--accent); }
+  .feature-item-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    margin-top: 2px;
+  }
+  .feature-item-icon i { width: 14px; height: 14px; }
 
-  .col.sw .col-name, .col.sw .stat-val, .col.sw .feature-bullet { color: var(--c1); }
-  .col.hc .col-name, .col.hc .stat-val, .col.hc .feature-bullet { color: var(--c2); }
-  .col.tr .col-name, .col.tr .stat-val, .col.tr .feature-bullet { color: var(--c3); }
+  .feature-item-text strong {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.005em;
+    margin-bottom: 3px;
+  }
+
+  .feature-item-text p {
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--fg) 65%, transparent);
+  }
+
+  /* ── Theme accents ───────────────────────────────────────────── */
+  .col.sw { --accent: #2563eb; }
+  .col.hc { --accent: #10b981; }
+  .col.tr { --accent: #8b5cf6; }
+
+  /* In light palettes, deepen accents slightly for legibility */
+  .light-mode .col.sw { --accent: #1d4ed8; }
+  .light-mode .col.hc { --accent: #047857; }
+  .light-mode .col.tr { --accent: #6d28d9; }
+
+  @media (max-width: 1100px) {
+    .cols { grid-template-columns: 1fr; gap: 18px; overflow-y: auto; }
+    .col-hero { aspect-ratio: 21 / 9; }
+  }
 
   .feature-bullet { background: var(--accent); }
 
@@ -398,174 +347,163 @@
 <body class="palette-midnight">
   <div class="stage">
     <header class="header" id="header">
+      <span class="page-eyebrow">Today</span>
       <h1 class="main-title">AI is Transforming the <em>World</em></h1>
     </header>
 
     <div class="cols" id="cols">
       <!-- Software Engineering -->
       <section class="col sw">
-        <div class="col-header">
-          <div class="col-icon"><i data-lucide="code"></i></div>
-          <div class="col-title-group">
-            <span class="col-num">01. ENGINEERING</span>
-            <h2 class="col-name">Software Dev</h2>
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="coding_full.png">
+            <source src="videos/AI Present/Software.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">01 · Engineering</span>
+          <div class="stat-chip">
+            <span class="stat-val">30–45%</span>
+            <span class="stat-label">of new code written by AI</span>
           </div>
         </div>
 
-        <div class="split-content">
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="code"></i></div>
+            <h2 class="col-name">Software Development</h2>
+          </div>
+
           <div class="features-side">
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="gauge"></i></div>
               <div class="feature-item-text">
-                <strong>Faster Development</strong>
-                <p>AI suggests entire lines or blocks of code, reducing time spent on repetitive tasks.</p>
+                <strong>Faster development</strong>
+                <p>AI suggests entire lines or blocks of code, reducing time on repetitive tasks.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="bug"></i></div>
               <div class="feature-item-text">
-                <strong>Fewer Bugs</strong>
-                <p>AI helps identify potential issues and suggests fixes early in the development cycle.</p>
+                <strong>Fewer bugs</strong>
+                <p>Identifies potential issues and suggests fixes early in the development cycle.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="shield-check"></i></div>
               <div class="feature-item-text">
-                <strong>Better Code Quality</strong>
-                <p>AI enforces best practices, improves consistency, and enhances maintainability.</p>
+                <strong>Better code quality</strong>
+                <p>Enforces best practices, improves consistency, and enhances maintainability.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="users"></i></div>
               <div class="feature-item-text">
-                <strong>Developer Productivity</strong>
-                <p>Developers focus on solving complex problems and building innovative features.</p>
+                <strong>Developer productivity</strong>
+                <p>Engineers focus on solving complex problems and building innovative features.</p>
               </div>
             </div>
-          </div>
-          
-          <div class="card-side">
-            <div class="card-image">
-              <img src="coding_full.png" alt="Engineering AI">
-            </div>
-          </div>
-        </div>
-
-        <div class="col-fact">
-          <div class="stat-val">30-45%</div>
-          <div class="stat-text-group">
-            <div class="stat-label">of code is currently written by AI</div>
-
           </div>
         </div>
       </section>
 
       <!-- Healthcare -->
       <section class="col hc">
-        <div class="col-header">
-          <div class="col-icon"><i data-lucide="stethoscope"></i></div>
-          <div class="col-title-group">
-            <span class="col-num">02. HEALTHCARE</span>
-            <h2 class="col-name">Medical Care</h2>
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="dna_full.png">
+            <source src="videos/AI Present/DNA.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">02 · Healthcare</span>
+          <div class="stat-chip">
+            <span class="stat-val">20–40%</span>
+            <span class="stat-label">gain in diagnostic accuracy</span>
           </div>
         </div>
-        
-        <div class="split-content">
+
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="stethoscope"></i></div>
+            <h2 class="col-name">Medical Care</h2>
+          </div>
+
           <div class="features-side">
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="dna"></i></div>
               <div class="feature-item-text">
                 <strong>Genetics</strong>
-                <p>AI analyzes vast genetic data to identify disease risks and discover drug targets.</p>
+                <p>Analyzes vast genetic data to identify disease risks and discover drug targets.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="scan-eye"></i></div>
               <div class="feature-item-text">
                 <strong>Radiology</strong>
-                <p>AI detects abnormalities faster and with higher accuracy than manual review.</p>
+                <p>Detects abnormalities faster and with higher accuracy than manual review.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="microscope"></i></div>
               <div class="feature-item-text">
-                <strong>Drug Discovery</strong>
-                <p>AI accelerates molecule testing, reducing clinical trial times by years.</p>
+                <strong>Drug discovery</strong>
+                <p>Accelerates molecule testing, cutting clinical trial timelines by years.</p>
               </div>
             </div>
-          </div>
-          
-          <div class="card-side">
-            <div class="card-image">
-              <img src="dna_full.png" alt="DNA AI Analysis">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="image"></i></div>
+              <div class="feature-item-text">
+                <strong>Imaging</strong>
+                <p>Reads X-rays, MRIs, and scans at scale to surface findings clinicians can act on.</p>
+              </div>
             </div>
-            <div class="card-image">
-              <img src="radiology_full.png" alt="Radiology AI Detection">
-            </div>
-          </div>
-        </div>
-
-        <div class="col-fact">
-          <div class="stat-val">20-40%</div>
-          <div class="stat-text-group">
-            <div class="stat-label">improvement in diagnostic accuracy with AI</div>
           </div>
         </div>
       </section>
 
       <!-- Transportation -->
       <section class="col tr">
-        <div class="col-header">
-          <div class="col-icon"><i data-lucide="car"></i></div>
-          <div class="col-title-group">
-            <span class="col-num">03. MOBILITY</span>
-            <h2 class="col-name">Transportation</h2>
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="autonomous_full.png">
+            <source src="videos/AI Present/autonomous_car.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">03 · Mobility</span>
+          <div class="stat-chip">
+            <span class="stat-val">1.2M</span>
+            <span class="stat-label">lives saved per year, projected</span>
           </div>
         </div>
 
-        <div class="split-content">
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="car"></i></div>
+            <h2 class="col-name">Transportation</h2>
+          </div>
+
           <div class="features-side">
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="eye"></i></div>
               <div class="feature-item-text">
                 <strong>Perception</strong>
-                <p>AI perceives the environment through Radar, Camera, and Lidar sensors.</p>
+                <p>Senses the environment through radar, camera, and lidar input.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="trending-up"></i></div>
               <div class="feature-item-text">
                 <strong>Prediction</strong>
-                <p>Anticipates trajectories and speeds of surrounding objects in real-time.</p>
+                <p>Anticipates trajectories and speeds of surrounding objects in real time.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="map-pin"></i></div>
               <div class="feature-item-text">
                 <strong>Planning</strong>
-                <p>Chooses the optimal route and navigation path for maximum efficiency.</p>
+                <p>Chooses an optimal route and navigation path for maximum efficiency.</p>
               </div>
             </div>
             <div class="feature-item">
               <div class="feature-item-icon"><i data-lucide="cpu"></i></div>
               <div class="feature-item-text">
                 <strong>Control</strong>
-                <p>Executes steering, braking, and acceleration to ensure passenger safety.</p>
+                <p>Executes steering, braking, and acceleration to keep passengers safe.</p>
               </div>
             </div>
-          </div>
-          
-          <div class="card-side">
-            <div class="card-image">
-              <img src="autonomous_full.png" alt="Autonomous AI Process">
-            </div>
-          </div>
-        </div>
-
-        <div class="col-fact">
-          <div class="stat-val">1.2M</div>
-          <div class="stat-text-group">
-            <div class="stat-label">lives projected to be saved annually by autonomous AI</div>
           </div>
         </div>
       </section>
@@ -603,63 +541,71 @@
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
       }
-      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+      if (e.data.type === 'RESTART_ANIMATION') {
+        startEntrance();
+        // Reset all hero videos to their first frame; they only play on hover.
+        document.querySelectorAll('.hero-video').forEach(v => {
+          try { v.pause(); v.currentTime = 0; } catch (_) {}
+        });
+      }
+      if (e.data.type === 'PAUSE_MEDIA') {
+        document.querySelectorAll('.hero-video').forEach(v => {
+          try { v.pause(); } catch (_) {}
+        });
+      }
+    });
+
+    // Play hero videos on card hover, pause + reset on leave.
+    document.querySelectorAll('.col').forEach(card => {
+      const vid = card.querySelector('.hero-video');
+      if (!vid) return;
+      card.addEventListener('mouseenter', () => {
+        vid.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        try { vid.pause(); vid.currentTime = 0; } catch (_) {}
+      });
     });
 
     function startEntrance() {
       try {
-        const EASE = "power2.out";
+        const EASE = "power3.out";
 
-        // Initial state — small, restrained offsets only
-        gsap.set("#header", { opacity: 0, y: 12 });
+        gsap.set("#header", { opacity: 0, y: 14 });
         gsap.set(".page-eyebrow", { opacity: 0, y: 6 });
         gsap.set(".main-title", { opacity: 0, y: 10 });
         gsap.set("#cols", { opacity: 1 });
-        gsap.set(".col", { opacity: 0, y: 18 });
-        gsap.set(".col-header", { opacity: 0, y: 8 });
-        gsap.set(".col .col-icon", { opacity: 0, y: 6 });
-        gsap.set(".card-image, .hc-visual-wrap", { opacity: 0 });
-        gsap.set(".card-image img, .hc-visual-wrap img", { scale: 1.06 });
-        gsap.set(".feature-item", { opacity: 0, y: 8 });
-        gsap.set(".col-fact", { opacity: 0, y: 8 });
-        gsap.set(".ai-impact-box, .det-badge, .detection-tag, .overlay-chip", { opacity: 0, y: 4 });
+        gsap.set(".col", { opacity: 0, y: 22 });
+        gsap.set(".col-hero img, .col-hero video", { scale: 1.08 });
+        gsap.set(".col-num, .stat-chip", { opacity: 0, y: 6 });
+        gsap.set(".col-title-row", { opacity: 0, y: 8 });
+        gsap.set(".feature-item", { opacity: 0, y: 10 });
 
         const tl = gsap.timeline({ defaults: { ease: EASE, duration: 0.7 } });
 
-        // Header
         tl.to("#header",       { opacity: 1, y: 0 }, 0)
           .to(".page-eyebrow", { opacity: 1, y: 0, duration: 0.55 }, 0.05)
           .to(".main-title",   { opacity: 1, y: 0, duration: 0.75 }, 0.12);
 
-        // Cards: subtle lift, generous stagger, single ease — no scale, no tilt
-        tl.to(".col", { opacity: 1, y: 0, duration: 0.9, stagger: 0.18 }, 0.35);
+        tl.to(".col", { opacity: 1, y: 0, duration: 0.85, stagger: 0.16 }, 0.35);
 
-        // Internal contents per card, anchored to that card's arrival
         const cards = gsap.utils.toArray(".col");
         cards.forEach((card, i) => {
-          const t = 0.35 + i * 0.18 + 0.18;
-          tl.to(card.querySelector(".col-header"),
-                { opacity: 1, y: 0, duration: 0.55 }, t)
-            .to(card.querySelector(".col-icon"),
-                { opacity: 1, y: 0, duration: 0.55 }, t + 0.03)
-            .to(card.querySelectorAll(".card-image, .hc-visual-wrap"),
-                { opacity: 1, duration: 0.9 }, t + 0.04)
-            .to(card.querySelectorAll(".card-image img, .hc-visual-wrap img"),
-                { scale: 1, duration: 1.4, ease: "power2.out" }, t + 0.04)
+          const t = 0.35 + i * 0.16 + 0.12;
+          tl.to(card.querySelector(".col-hero img, .col-hero video"),
+                { scale: 1, duration: 1.6, ease: "power2.out" }, t)
+            .to(card.querySelectorAll(".col-num, .stat-chip"),
+                { opacity: 1, y: 0, duration: 0.55, stagger: 0.06 }, t + 0.15)
+            .to(card.querySelector(".col-title-row"),
+                { opacity: 1, y: 0, duration: 0.55 }, t + 0.22)
             .to(card.querySelectorAll(".feature-item"),
-                { opacity: 1, y: 0, duration: 0.55, stagger: 0.08 }, t + 0.18)
-            .to(card.querySelectorAll(".col-fact"),
-                { opacity: 1, y: 0, duration: 0.6 }, t + 0.5)
-            .to(card.querySelectorAll(".ai-impact-box, .det-badge, .detection-tag, .overlay-chip"),
-                { opacity: 1, y: 0, duration: 0.5, stagger: 0.06 }, t + 0.55);
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.07 }, t + 0.3);
         });
       } catch (err) {
         console.error("GSAP Error:", err);
         gsap.set(["#header", ".page-eyebrow", ".main-title", "#cols", ".col",
-                  ".col-header", ".col-icon", ".card-image", ".hc-visual-wrap",
-                  ".card-image img", ".hc-visual-wrap img",
-                  ".feature-item", ".col-fact",
-                  ".ai-impact-box", ".det-badge", ".detection-tag", ".overlay-chip"],
+                  ".col-hero img, .col-hero video", ".col-num", ".stat-chip", ".col-title-row",
+                  ".feature-item"],
                  { opacity: 1, y: 0, scale: 1 });
       }
     }

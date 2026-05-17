@@ -239,6 +239,86 @@
       opacity: 0;
     }
 
+    /* ── Matrix visualization ─────────────────────────────────── */
+    .mx-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      margin-bottom: 4px;
+    }
+    .mx-header .mx-op { margin: 0 10px; color: color-mix(in srgb, var(--fg) 35%, transparent); }
+
+    .mx-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .mx-block {
+      position: relative;
+      display: grid;
+      gap: 8px;
+      padding: 4px 14px;
+    }
+
+    /* Square brackets via inline borders */
+    .mx-block::before,
+    .mx-block::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 8px;
+      border: 1.5px solid color-mix(in srgb, var(--c2) 65%, transparent);
+    }
+    .mx-block::before { left: 0; border-right: none; border-radius: 3px 0 0 3px; }
+    .mx-block::after  { right: 0; border-left: none;  border-radius: 0 3px 3px 0; }
+
+    .mx-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--fg);
+      background: color-mix(in srgb, var(--c2) 5%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c2) 28%, transparent);
+      border-radius: 8px;
+      width: 56px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.5s, border-color 0.5s;
+    }
+    .mx-cell.tint {
+      background: color-mix(in srgb, var(--c2) 16%, transparent);
+      border-color: color-mix(in srgb, var(--c2) 55%, transparent);
+      color: color-mix(in srgb, var(--c2) 90%, var(--fg));
+    }
+    .mx-cell.muted {
+      opacity: 0.55;
+    }
+
+    .mx-cell sub {
+      font-size: 0.65em;
+      font-weight: 600;
+      margin-left: 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+    }
+
+    .mx-w { grid-template-columns: repeat(3, 1fr); }
+    .mx-v { grid-template-columns: 1fr; }
+
+    .mx-op-big {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      padding: 0 4px;
+    }
+
     @media (max-width: 800px) {
       body { padding: 20px 20px 24px; }
       .body-layout { grid-template-columns: 1fr; gap: 22px; }
@@ -280,26 +360,56 @@
       <div class="stage" id="stage">
         <span class="stage-label">Expanded · Σ → Compact · w · x</span>
 
-        <video id="eqVideo" autoplay muted playsinline preload="auto"
-               style="display:block; width:100%; height:auto; max-height:78%; object-fit:contain;">
-          <source id="eqVideoSrc" src="equation-animation/n-var-eq-dark.mp4" type="video/mp4">
-        </video>
+        <div class="mx-header">W <span class="mx-op">·</span> X <span class="mx-op">=</span> Y</div>
 
-        <div class="stage-caption" id="caption">Same equation. Cleaner notation.</div>
+        <div class="mx-row" id="matrixRow">
+          <!-- Weight matrix W (3×3) -->
+          <div class="mx-block mx-w">
+            <div class="mx-cell">0.2</div>
+            <div class="mx-cell tint">0.8</div>
+            <div class="mx-cell">−0.1</div>
+            <div class="mx-cell tint">0.5</div>
+            <div class="mx-cell">0.3</div>
+            <div class="mx-cell tint">0.7</div>
+            <div class="mx-cell">−0.3</div>
+            <div class="mx-cell tint">0.6</div>
+            <div class="mx-cell">0.1</div>
+          </div>
+
+          <span class="mx-op-big">·</span>
+
+          <!-- Input vector X -->
+          <div class="mx-block mx-v">
+            <div class="mx-cell tint">x<sub>1</sub></div>
+            <div class="mx-cell tint">x<sub>2</sub></div>
+            <div class="mx-cell tint">x<sub>3</sub></div>
+          </div>
+
+          <span class="mx-op-big">=</span>
+
+          <!-- Output vector Y -->
+          <div class="mx-block mx-v">
+            <div class="mx-cell tint">y<sub>1</sub></div>
+            <div class="mx-cell tint">y<sub>2</sub></div>
+            <div class="mx-cell tint muted">y<sub>3</sub></div>
+          </div>
+        </div>
+
+        <div class="stage-caption" id="caption">Weight matrix × input vector → layer output</div>
       </div>
     </div>
   </div>
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', video:'light', eyebrow:'#c25d42' },
-      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', video:'light', eyebrow:'#2e8b57' },
-      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', video:'light', eyebrow:'#d0465a' },
-      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark', eyebrow:'#f59e0b' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', eyebrow:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
       'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
-      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', video:'light', eyebrow:'#0e9488' },
-      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', video:'light', eyebrow:'#7c3aed' },
-      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark', eyebrow:'#5fe8ec' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
     };
 
     function applyPalette(p) {
@@ -312,23 +422,11 @@
       document.body.style.setProperty('--c3', p.c3);
     }
 
-    function swapVideo(variant) {
-      const src = document.getElementById('eqVideoSrc');
-      const vid = document.getElementById('eqVideo');
-      if (!src || !vid || !variant) return;
-      const want = `equation-animation/n-var-eq-${variant}.mp4`;
-      if (src.getAttribute('src') === want) return;
-      src.src = want;
-      vid.load();
-      vid.play().catch(() => {});
-    }
-
     window.addEventListener('message', (e) => {
       if (!e.data) return;
       if (e.data.type === 'SET_THEME') {
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
-        swapVideo(p.video);
       }
       if (e.data.type === 'RESTART_ANIMATION') startEntrance();
     });
@@ -339,17 +437,18 @@
       gsap.set("#lede", { opacity: 0, x: -20 });
       gsap.set("#visual", { opacity: 0, x: '20%' });
       gsap.set("#caption", { opacity: 0, y: 4 });
+      gsap.set("#matrixRow .mx-cell", { opacity: 0, y: 8, scale: 0.92 });
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
       tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
       tl.to("#lede", { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" }, "-=0.25");
       tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
-      tl.to("#caption", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
-
-      // Restart the Manim clip from the top so it stays in sync with the entrance.
-      const vid = document.getElementById('eqVideo');
-      if (vid) { try { vid.currentTime = 0; vid.play().catch(() => {}); } catch (_) {} }
+      tl.to("#matrixRow .mx-cell",
+        { opacity: 1, y: 0, scale: 1, duration: 0.35, stagger: 0.035 },
+        "-=0.45"
+      );
+      tl.to("#caption", { opacity: 1, y: 0, duration: 0.5 }, "-=0.1");
     }
 
     window.addEventListener('load', startEntrance);
