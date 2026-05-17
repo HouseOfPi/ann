@@ -59,7 +59,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--c1);
+  color: var(--eyebrow-accent, var(--c1));
 }
 
 .main-title {
@@ -1537,14 +1537,18 @@ document.querySelectorAll('.stage-pill[data-mstage]').forEach(p => {
 modelClose.addEventListener('click', closeModelModal);
 modelModal.addEventListener('click', (e) => { if (e.target === modelModal) closeModelModal(); });
 
+// NOTE: --eyebrow-accent unifies the page-eyebrow color across chapter 1-3
+// slides. c1/c2/c3 stay as the slide's own UI accents (stage pills, badges,
+// charts) and are intentionally NOT recolored to match the eyebrow.
 const PALETTE_MAP = {
-  'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9' },
-  'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9' },
-  'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9' },
-  'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
-  'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9' },
-  'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed' },
-  'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa' },
+  'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', eyebrow:'#c25d42' },
+  'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
+  'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
+  'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
+  'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
+  'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
+  'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
+  'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
 };
 
 function applyPalette(p) {
@@ -1554,6 +1558,7 @@ function applyPalette(p) {
   document.body.style.setProperty('--c1', p.c1);
   document.body.style.setProperty('--c2', p.c2);
   document.body.style.setProperty('--c3', p.c3);
+  document.body.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
 }
 
 window.addEventListener('message', (e) => {

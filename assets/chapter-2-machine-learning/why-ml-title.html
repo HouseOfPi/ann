@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why Machine Learning?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Defaults — overridden at runtime by SET_THEME from the parent deck. */
+    --bg: #0a1428;
+    --fg: #f1f5fb;
+    --accent: #a3e635;
+    --accent-2: #5fb8e6;
+    --rule: rgba(241, 245, 251, 0.14);
+    --muted: rgba(241, 245, 251, 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .stage {
+    height: 100%;
+    width: 100%;
+    padding: 6vh 7vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeDown 1s ease-out 0.1s forwards;
+  }
+
+  .chapter-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .chapter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 1s ease-out 0.5s forwards;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(72px, 11vw, 184px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: rise 1.2s cubic-bezier(.2,.7,.2,1) 0.75s forwards;
+  }
+
+  .title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .title .q {
+    color: var(--accent-2);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(20px, 2.2vw, 30px);
+    color: var(--muted);
+    max-width: 720px;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 1s ease-out 1.15s forwards;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeUp 1s ease-out 1.4s forwards;
+  }
+
+  .from-to {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .from-to .arrow { color: var(--accent); }
+
+  .pulse {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent);
+    animation: pulse 2.2s ease-out infinite;
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 var(--accent-pulse, rgba(163, 230, 53, 0.55)); }
+    70%  { box-shadow: 0 0 0 18px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="header">
+      <span class="chapter-num">Chapter 02</span>
+      <span class="chapter-label">Machine Learning</span>
+    </div>
+
+    <div class="center">
+      <div class="eyebrow">The Question</div>
+      <h1 class="title">Why <em>Machine&nbsp;Learning</em><span class="q">?</span></h1>
+      <p class="subtitle">From a mesh of complexity to a method that learns.</p>
+    </div>
+
+    <div class="footer">
+      <div class="from-to">
+        <span>Mesh</span>
+        <span class="arrow">&rarr;</span>
+        <span>Machine Learning</span>
+      </div>
+      <div class="pulse"></div>
+    </div>
+  </div>
+
+<script>
+  // Palette sets keyed by the iframeName the parent deck sends via SET_THEME.
+  // Each set: { bg, fg, accent (primary), accent2 (secondary), rule, muted, pulse }
+  const PALETTE_SETS = {
+    'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#e27b5e', accent2: '#4a8bdd', rule: 'rgba(28,28,28,0.14)', muted: 'rgba(28,28,28,0.55)', pulse: 'rgba(226,123,94,0.45)' },
+    'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#2e8b57', accent2: '#4a8bdd', rule: 'rgba(28,28,28,0.14)', muted: 'rgba(28,28,28,0.55)', pulse: 'rgba(46,139,87,0.45)' },
+    'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#d0465a', accent2: '#0369a1', rule: 'rgba(17,17,17,0.12)', muted: 'rgba(17,17,17,0.55)', pulse: 'rgba(208,70,90,0.40)' },
+    'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b', accent2: '#5fb8e6', rule: 'rgba(240,236,228,0.14)', muted: 'rgba(240,236,228,0.55)', pulse: 'rgba(245,158,11,0.55)' },
+    'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635', accent2: '#5fb8e6', rule: 'rgba(241,245,251,0.14)', muted: 'rgba(241,245,251,0.55)', pulse: 'rgba(163,230,53,0.55)' },
+  };
+
+  function applyPalette(name) {
+    const set = PALETTE_SETS[name] || PALETTE_SETS['Navy Lime'];
+    const root = document.documentElement;
+    root.style.setProperty('--bg', set.bg);
+    root.style.setProperty('--fg', set.fg);
+    root.style.setProperty('--accent', set.accent);
+    root.style.setProperty('--accent-2', set.accent2);
+    root.style.setProperty('--rule', set.rule);
+    root.style.setProperty('--muted', set.muted);
+    root.style.setProperty('--accent-pulse', set.pulse);
+  }
+
+  window.addEventListener('message', (e) => {
+    const data = e.data || {};
+    if (data.type !== 'SET_THEME') return;
+    const name = data.palette
+      || (data.mode === 'dark' ? 'Navy Lime' : 'Warm Linen');
+    applyPalette(name);
+  });
+</script>
+</body>
+</html>

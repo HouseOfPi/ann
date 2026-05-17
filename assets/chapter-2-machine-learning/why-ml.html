@@ -363,8 +363,10 @@ function Stage({
   const [scale, setScale] = React.useState(1);
   const [controlsEnabled, setControlsEnabled] = React.useState(() => {
     try {
-      return localStorage.getItem('ann_anim_controls') === 'true';
-    } catch(e) { return false; }
+      const stored = localStorage.getItem('ann_anim_controls');
+      // Default to ON unless the user has explicitly disabled it
+      return stored === null ? true : stored === 'true';
+    } catch(e) { return true; }
   });
 
 

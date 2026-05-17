@@ -1703,6 +1703,7 @@
       // --- Dynamic Slide Management ---
       // Map: slide id → group label shown above it (only the FIRST slide of a group gets a label)
       const NAV_GROUPS = {
+        'slideWhyMLTitle':   'Machine Learning',
         'slideTwo':          'History',
         'slideFive':         'Biology',
         'slideSeven':        'Neural Networks',
@@ -1714,6 +1715,7 @@
         'slideAITransforming': 'AI Transforming World',
         'slideFuture': 'The Future',
         'slideMesh': 'The Complexity',
+        'slideWhyMLTitle': 'Ch. 2 — Title',
         'slideWhyML': 'Why Machine Learning?',
         'slideMLProcess': 'The ML Process',
         'slideMathPillars': 'Mathematical Pillars',
@@ -1737,6 +1739,7 @@
         { id: 'slideAITransforming', enabled: true },
         { id: 'slideFuture', enabled: true },
         { id: 'slideMesh', enabled: true },
+        { id: 'slideWhyMLTitle', enabled: true },
         { id: 'slideWhyML', enabled: true },
         { id: 'slideMLProcess', enabled: true },
         { id: 'slideMathPillars', enabled: true },
@@ -1769,10 +1772,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideOne) on load
+      // Activate default slide (slideMesh) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMesh');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
