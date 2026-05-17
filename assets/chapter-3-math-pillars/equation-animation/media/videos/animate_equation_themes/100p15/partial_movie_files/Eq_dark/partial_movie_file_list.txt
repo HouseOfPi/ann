@@ -1,7 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1001625010_4155120038_223132457.mp4'
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1303536690_3736678387_179155247.mp4'
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1303536690_2438497446_2873729818.mp4'
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1303536690_1960794457_1277318433.mp4'
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1303536690_464342059_158459868.mp4'
-file 'file:/Users/mosesmathew/Desktop/Personal/ANN_presentation/code_yt/assets/chapter-3-math-pillars/media/videos/animate_equation_themes/100p15/partial_movie_files/Eq_dark/1303536690_4249682336_388716152.mp4'
