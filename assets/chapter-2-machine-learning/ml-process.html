@@ -1393,6 +1393,46 @@ function computeMSE(m, b) {
   return sum / REG_TRAIN.length;
 }
 
+// Global trackers for training timers to prevent overlapping runs when user toggles tabs
+let activeTrainingInterval = null;
+let activeTrainingRAF = null;
+let activeTrainingTimeouts = [];
+
+function clearTrainingTimers() {
+  if (activeTrainingInterval) {
+    clearInterval(activeTrainingInterval);
+    activeTrainingInterval = null;
+  }
+  if (activeTrainingRAF) {
+    cancelAnimationFrame(activeTrainingRAF);
+    activeTrainingRAF = null;
+  }
+  activeTrainingTimeouts.forEach(t => clearTimeout(t));
+  activeTrainingTimeouts = [];
+}
+
+function drawErrorLines(m, b) {
+  const g = document.getElementById('chartErrorLines');
+  g.innerHTML = '';
+  REG_TRAIN.forEach(pt => {
+    const predY = m * pt.x + b;
+    const err = Math.abs(pt.y - predY);
+    
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('x1', sx(pt.x));
+    ln.setAttribute('y1', sy(pt.y));
+    ln.setAttribute('x2', sx(pt.x));
+    ln.setAttribute('y2', sy(predY));
+    
+    // Dynamic color/weight representing error magnitude (HSL: Red -> Orange -> Green)
+    ln.setAttribute('class', 'error-line show');
+    const hue = Math.max(0, 120 - (err * 40)); // 120 is green, 0 is red
+    ln.style.stroke = `hsl(${hue}, 85%, 55%)`;
+    ln.style.strokeWidth = Math.max(1, 2.5 - (hue / 60)); // Thicker for larger errors
+    g.appendChild(ln);
+  });
+}
+
 function clearModelExtras() {
   document.getElementById('fitLine').classList.remove('show');
   document.getElementById('predictGuideV').classList.remove('show');
@@ -1401,6 +1441,7 @@ function clearModelExtras() {
   document.getElementById('predictLabel').classList.remove('show');
   document.getElementById('predictResult').classList.remove('show');
   document.getElementById('modelCaption').classList.remove('show');
+  document.getElementById('chartErrorLines').innerHTML = '';
 }
 
 function setMStage(stage) {
@@ -1414,6 +1455,7 @@ function setMStage(stage) {
 }
 
 function runArchStage() {
+  clearTrainingTimers();
   setMStage('arch');
   document.getElementById('modelEyebrow').textContent = 'Stage 1 — Architecture';
   document.getElementById('modelSub').innerHTML = 'Pick a simple model: a straight line. <strong style="color:var(--c2)">stress = m · hours + b</strong> — find the right <em>m</em> and <em>b</em>.';
@@ -1427,6 +1469,7 @@ function runArchStage() {
 }
 
 function runTrainStage() {
+  clearTrainingTimers();
   setMStage('train');
   document.getElementById('modelEyebrow').textContent = 'Stage 2 — Train';
   document.getElementById('modelSub').innerHTML = 'The model adjusts <strong style="color:var(--c2)">m</strong> and <strong style="color:var(--c2)">b</strong> over many epochs to minimize the error between predicted and actual stress.';
@@ -1434,30 +1477,84 @@ function runTrainStage() {
   drawPoints();
   clearModelExtras();
 
-  // Show fit line starting flat then animating to fit
   const fit = document.getElementById('fitLine');
-  setLine(0, 2);
   fit.classList.add('show');
 
-  const epochs = 40;
-  const startM = 0, startB = 5;
-  let i = 0;
-  const interval = setInterval(() => {
-    i++;
-    const t = i / epochs;
-    const eased = 1 - Math.pow(1 - t, 3);
-    const m = startM + (FITTED_M - startM) * eased;
-    const b = startB + (FITTED_B - startB) * eased;
-    setLine(m, b);
-    document.getElementById('epochVal').textContent = Math.round(t * 200);
-    document.getElementById('coefM').textContent = m.toFixed(2);
-    document.getElementById('coefB').textContent = b.toFixed(2);
-    document.getElementById('errorVal').textContent = computeMSE(m, b).toFixed(2);
-    if (i >= epochs) clearInterval(interval);
-  }, 50);
+  // Phase 1: Random guessing sequence representing the untrained model state
+  const guesses = [
+    { m: -0.65, b: 8.5 },
+    { m: 1.85, b: 0.5 },
+    { m: 0.15, b: 8.0 }
+  ];
+  
+  let guessIdx = 0;
+  
+  function playGuesses() {
+    if (guessIdx < guesses.length) {
+      const g = guesses[guessIdx];
+      setLine(g.m, g.b);
+      drawErrorLines(g.m, g.b);
+      
+      document.getElementById('epochVal').textContent = '0 (Random Guess)';
+      document.getElementById('coefM').textContent = g.m.toFixed(2);
+      document.getElementById('coefB').textContent = g.b.toFixed(2);
+      document.getElementById('errorVal').textContent = computeMSE(g.m, g.b).toFixed(2);
+      
+      guessIdx++;
+      activeTrainingTimeouts.push(setTimeout(playGuesses, 280));
+    } else {
+      activeTrainingTimeouts.push(setTimeout(startTraining, 350));
+    }
+  }
+
+  function startTraining() {
+    const durationMs = 2800; // ~2.8s of smooth training
+    const startM = 0.0, startB = 5.0; // Drop to neutral starting parameters
+    let startTime = null;
+    
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const t = Math.min(elapsed / durationMs, 1.0);
+      
+      const eased = 1 - Math.pow(1 - t, 3); // Cubic ease-out
+      const m = startM + (FITTED_M - startM) * eased;
+      const b = startB + (FITTED_B - startB) * eased;
+      
+      setLine(m, b);
+      drawErrorLines(m, b);
+      
+      const currentEpoch = Math.round(t * 200);
+      document.getElementById('epochVal').textContent = currentEpoch;
+      document.getElementById('coefM').textContent = m.toFixed(2);
+      document.getElementById('coefB').textContent = b.toFixed(2);
+      document.getElementById('errorVal').textContent = computeMSE(m, b).toFixed(2);
+      
+      if (t < 1.0) {
+        activeTrainingRAF = requestAnimationFrame(step);
+      } else {
+        activeTrainingRAF = null;
+        
+        // Fade residual indicators when fitting is fully completed
+        activeTrainingTimeouts.push(setTimeout(() => {
+          const g = document.getElementById('chartErrorLines');
+          gsap.to(g.querySelectorAll('.error-line'), {
+            opacity: 0.18,
+            duration: 1.0,
+            ease: 'power2.out'
+          });
+        }, 500));
+      }
+    }
+    
+    activeTrainingRAF = requestAnimationFrame(step);
+  }
+
+  playGuesses();
 }
 
 function runPredictStage() {
+  clearTrainingTimers();
   setMStage('predict');
   document.getElementById('modelEyebrow').textContent = 'Stage 3 — Predict';
   document.getElementById('modelSub').innerHTML = 'A new teen we\'ve never seen before — <strong style="color:var(--c3)">5.0 hrs/day</strong>. The trained line gives us the prediction.';
@@ -1526,6 +1623,7 @@ function openModelModal(stage = 'arch') {
   setTimeout(() => M_RUNNERS[stage](), 300);
 }
 function closeModelModal() { 
+  clearTrainingTimers();
   modelModal.classList.remove('active'); 
   document.body.classList.remove('modal-active');
 }

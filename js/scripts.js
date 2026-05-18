@@ -1696,7 +1696,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 0;
+      let currentSlideIdx = 6;
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
@@ -1772,10 +1772,10 @@
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (slideOne — first page) on load
+      // Activate default slide (workflow page) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2115,10 +2115,8 @@
       }
 
 
-      let slideOneMetaShown = false;
       // SlideOne title entrance animation — callable on demand
       function animateSlideOneTitle() {
-        slideOneMetaShown = false;
         // Reset all elements to invisible first
         gsap.set(".hero-tagline", { opacity: 0, y: 18, filter: "blur(6px)" });
         gsap.set(".hero-meta", { opacity: 0, y: 12 });
@@ -2126,7 +2124,8 @@
         // Tagline fade-in
         gsap.to(".hero-tagline", { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out", delay: 1.0 });
 
-        // Meta row + python badge animation is triggered by click
+        // Meta row + python badge fade-in automatically
+        gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 1.0, ease: "power2.out", delay: 1.3 });
       }
 
       // Fire title animation if slideOne is the starting slide
@@ -2137,19 +2136,7 @@
         }
       }, 600);
 
-      // Trigger bullet animation on click
-      const slideOneEl = document.getElementById('slideOne');
-      if (slideOneEl) {
-        slideOneEl.addEventListener('click', (e) => {
-          // Prevent if clicking on interactive elements like the side menu button or arrows
-          if (e.target.closest('button, .menu-toggle')) return;
-          
-          if (!slideOneMetaShown && slideOneEl.classList.contains('active-slide')) {
-            slideOneMetaShown = true;
-            gsap.to(".hero-meta", { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
-          }
-        });
-      }
+      // (Click trigger for bullet animation removed as it now plays automatically)
 
       // Divider fade in (dual mode only)
       if (document.querySelector('.hero-divider.visible')) {
@@ -2877,3 +2864,36 @@
       
       // Mark active lesson on load (and auto-open its parent section)
       syncSlider(currentSlideIdx);
+
+      // Edge detection for Hamburger menu and Quick Nav ribbon (Desktop only)
+      if (!window.matchMedia("(pointer: coarse)").matches) {
+        document.addEventListener('click', (e) => {
+          const menuToggle = document.getElementById("menuToggle");
+          const settingsSide = document.getElementById("settingsSide");
+          const navRibbon = document.querySelector(".nav-ribbon");
+          const sideNav = document.getElementById("sideNav");
+
+          // Edge threshold in pixels
+          const threshold = 80;
+
+          if (menuToggle && settingsSide) {
+            // Show menu if click is near left edge
+            if (e.clientX < threshold) {
+              menuToggle.classList.add("visible-edge");
+            } else if (!settingsSide.classList.contains("open") && !menuToggle.contains(e.target)) {
+              // Hide menu if clicked elsewhere, unless settings panel is currently open
+              menuToggle.classList.remove("visible-edge");
+            }
+          }
+
+          if (navRibbon && sideNav) {
+            // Show ribbon if click is near right edge
+            if (e.clientX > window.innerWidth - threshold) {
+              navRibbon.classList.add("visible-edge");
+            } else if (!sideNav.classList.contains("open") && !navRibbon.contains(e.target)) {
+              // Hide ribbon if clicked elsewhere, unless side nav panel is currently open
+              navRibbon.classList.remove("visible-edge");
+            }
+          }
+        });
+      }

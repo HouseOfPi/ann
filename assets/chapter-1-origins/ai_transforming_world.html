@@ -241,8 +241,10 @@
     justify-content: center;
     flex-shrink: 0;
     color: var(--accent);
+    width: 22px;
+    height: 22px;
   }
-  .col-icon i { width: 22px; height: 22px; stroke-width: 2.5px; }
+  .col-icon i, .col-icon svg { width: 100%; height: 100%; stroke-width: 2.5px; display: block; }
 
   .col-name {
     font-family: 'Inter', sans-serif;
@@ -277,8 +279,10 @@
     justify-content: center;
     color: var(--accent);
     margin-top: 1px;
+    width: 16px;
+    height: 16px;
   }
-  .feature-item-icon i { width: 16px; height: 16px; stroke-width: 2.5px; }
+  .feature-item-icon i, .feature-item-icon svg { width: 100%; height: 100%; stroke-width: 2.5px; display: block; }
 
   .feature-item-text strong {
     display: block;
@@ -607,14 +611,14 @@
     }
 
     window.addEventListener('load', () => {
-      // Initial theme - start with Warm Linen for a premium editorial feel
-      const initialPalette = PALETTE_MAP['Warm Linen'];
+      // Initial theme - start with Midnight to match global app state and prevent flashing
+      const initialPalette = PALETTE_MAP['Midnight'];
       applyPalette(initialPalette);
       
-      startEntrance();
       if (window.lucide) {
         lucide.createIcons();
       }
+      startEntrance();
     });
   </script>
 </body>
