@@ -1051,7 +1051,7 @@
         let glyphs = [];
         let raf = null;
         let lastT = 0;
-        const PLAYLIST = ['calculus', 'probability', 'regression', 'sigmoid', 'matrix'];
+        const PLAYLIST = ['calculus', 'probability', 'sigmoid', 'matrix'];
         let playlistIndex = 0;
 
         function size() {
@@ -1083,7 +1083,7 @@
             obj.graphType = PLAYLIST[playlistIndex];
             playlistIndex = (playlistIndex + 1) % PLAYLIST.length;
             obj.scale = 1.3 + Math.random() * 0.52;
-            obj.target = 0.08 + Math.random() * 0.06; // beautifully dim, extremely subtle background ambient
+            obj.target = 0.18 + Math.random() * 0.12; // lighter and more visible
             obj.ttl = 8 + Math.random() * 4;          // 8 to 12 seconds to fully trace curves
             
             // Gentle parabolic/bended offset parameters
