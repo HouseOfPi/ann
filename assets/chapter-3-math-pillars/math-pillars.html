@@ -153,7 +153,8 @@
       position: absolute;
       width: 220px;
       text-align: center;
-      pointer-events: none;
+      pointer-events: auto;
+      cursor: pointer;
     }
 
     .node.up .node-content { bottom: 38px; }
@@ -174,6 +175,120 @@
       letter-spacing: 0.06em;
       color: color-mix(in srgb, var(--fg) 50%, transparent);
     }
+
+    /* ── Hover micro-animations per pillar ─────────────────── */
+    /* Position absolutely so the label/sub layout never shifts.
+       For 'down' nodes the viz sits BELOW the sub text;
+       for 'up' nodes the viz sits ABOVE the label. */
+    .pillar-viz {
+      position: absolute;
+      left: 50%;
+      width: 280px;
+      height: 168px;
+      transform: translate(-50%, 8px);
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.45s cubic-bezier(.2,.7,.2,1);
+      pointer-events: none;
+    }
+    .node.down .pillar-viz { top: 100%; margin-top: 14px; }
+    .node.up   .pillar-viz { bottom: 100%; margin-bottom: 14px; }
+
+    .node:hover .pillar-viz {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* Linear Algebra — matrix cells */
+    .la-cell {
+      fill: color-mix(in srgb, var(--nc) 18%, transparent);
+      stroke: color-mix(in srgb, var(--nc) 55%, transparent);
+      stroke-width: 1;
+      transition: fill 0.4s ease, stroke 0.4s ease;
+    }
+    .la-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      fill: color-mix(in srgb, var(--fg) 75%, transparent);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .la-bracket {
+      stroke: color-mix(in srgb, var(--nc) 80%, transparent);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .node:hover .la-cell {
+      animation: la-flash 1.4s ease-in-out infinite;
+    }
+    .node:hover .la-cell:nth-child(2) { animation-delay: 0.10s; }
+    .node:hover .la-cell:nth-child(3) { animation-delay: 0.20s; }
+    .node:hover .la-cell:nth-child(4) { animation-delay: 0.30s; }
+    .node:hover .la-cell:nth-child(5) { animation-delay: 0.40s; }
+    .node:hover .la-cell:nth-child(6) { animation-delay: 0.50s; }
+    @keyframes la-flash {
+      0%, 70%, 100% { fill: color-mix(in srgb, var(--nc) 18%, transparent); }
+      35%           { fill: color-mix(in srgb, var(--nc) 55%, transparent); }
+    }
+
+    /* Calculus — y=x² curve with a tangent that rides the curve */
+    .ca-curve   { stroke: color-mix(in srgb, var(--nc) 80%, transparent); stroke-width: 2; fill: none; }
+    .ca-axis    { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .ca-tangent {
+      stroke: var(--nc);
+      stroke-width: 2;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--nc) 60%, transparent));
+    }
+    .ca-dot {
+      fill: var(--nc);
+      filter: drop-shadow(0 0 4px var(--nc));
+    }
+
+    /* Probability — bell curve + falling sample dots */
+    .pr-curve { stroke: color-mix(in srgb, var(--nc) 75%, transparent); stroke-width: 2; fill: color-mix(in srgb, var(--nc) 8%, transparent); }
+    .pr-axis  { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .pr-dot {
+      fill: var(--nc);
+      opacity: 0;
+    }
+    .node:hover .pr-dot {
+      animation: pr-drop 1.8s ease-in infinite;
+    }
+    .node:hover .pr-dot:nth-child(2) { animation-delay: 0.20s; }
+    .node:hover .pr-dot:nth-child(3) { animation-delay: 0.50s; }
+    .node:hover .pr-dot:nth-child(4) { animation-delay: 0.80s; }
+    .node:hover .pr-dot:nth-child(5) { animation-delay: 1.10s; }
+    .node:hover .pr-dot:nth-child(6) { animation-delay: 1.40s; }
+    @keyframes pr-drop {
+      0%   { opacity: 0; transform: translateY(-22px); }
+      60%  { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0.6; transform: translateY(0); }
+    }
+    .pr-dot { transform-box: fill-box; transform-origin: center; }
+
+    /* Optimization — gradient-descent ball stepping down a bowl */
+    .op-curve  { stroke: color-mix(in srgb, var(--nc) 75%, transparent); stroke-width: 2; fill: none; }
+    .op-axis   { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .op-ball   { fill: var(--nc); filter: drop-shadow(0 0 6px var(--nc)); }
+    .op-target { stroke: color-mix(in srgb, var(--nc) 60%, transparent); stroke-width: 1; stroke-dasharray: 2 2; fill: none; }
+    .op-trail  { fill: var(--nc); opacity: 0; }
+    .op-arrow  {
+      stroke: var(--nc);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      fill: none;
+      opacity: 0;
+    }
+    .op-flag {
+      fill: color-mix(in srgb, var(--nc) 70%, transparent);
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(.34,1.5,.64,1);
+    }
+    .op-flag.show { opacity: 1; transform: scaleY(1); }
 
     /* ── Mobile ── */
     @media (max-width: 800px) {
@@ -222,6 +337,34 @@
         <div class="node-content">
           <div class="node-label">Linear Algebra</div>
           <div class="node-sub">Vectors · Matrices</div>
+          <!-- 2×3 matrix · vector, cells flash in a wave -->
+          <svg class="pillar-viz" viewBox="0 0 160 96">
+            <!-- left bracket -->
+            <path class="la-bracket" d="M14 22 L8 22 L8 74 L14 74" />
+            <!-- 2x3 cells -->
+            <rect class="la-cell" x="16" y="24" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="40" y="24" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="64" y="24" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="16" y="50" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="40" y="50" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="64" y="50" width="22" height="22" rx="3"/>
+            <text class="la-num" x="27" y="36">1</text>
+            <text class="la-num" x="51" y="36">2</text>
+            <text class="la-num" x="75" y="36">3</text>
+            <text class="la-num" x="27" y="62">4</text>
+            <text class="la-num" x="51" y="62">5</text>
+            <text class="la-num" x="75" y="62">6</text>
+            <path class="la-bracket" d="M88 22 L94 22 L94 74 L88 74" />
+            <!-- dot operator -->
+            <circle cx="102" cy="48" r="1.6" fill="currentColor" opacity="0.6"/>
+            <!-- vector -->
+            <path class="la-bracket" d="M114 22 L108 22 L108 74 L114 74" />
+            <rect class="la-cell" x="116" y="24" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="116" y="50" width="22" height="22" rx="3"/>
+            <text class="la-num" x="127" y="36">x</text>
+            <text class="la-num" x="127" y="62">y</text>
+            <path class="la-bracket" d="M140 22 L146 22 L146 74 L140 74" />
+          </svg>
         </div>
       </div>
 
@@ -230,6 +373,20 @@
         <div class="node-content">
           <div class="node-label">Calculus</div>
           <div class="node-sub">Derivatives · Chain Rule</div>
+          <!-- y = x² (convex-up smile). A dot rides the curve and the
+               tangent rotates to match the local slope. -->
+          <svg class="pillar-viz pillar-viz-calc" viewBox="0 0 160 96">
+            <line class="ca-axis" x1="10" y1="86" x2="150" y2="86"/>
+            <line class="ca-axis" x1="80" y1="6"  x2="80"  y2="86"/>
+            <!-- Parabola y(x) = (x-80)^2 / 60 + 14
+                 → at x=20: y=14+60=74; x=80: y=14; x=140: y=74.
+                 Convex up so the smile sits in the lower half. -->
+            <path class="ca-curve" d="M20 74 Q80 -46 140 74"/>
+            <g class="ca-tangent-group">
+              <line class="ca-tangent" x1="60" y1="0" x2="100" y2="0"/>
+              <circle class="ca-dot" cx="80" cy="0" r="3.5"/>
+            </g>
+          </svg>
         </div>
       </div>
 
@@ -238,6 +395,17 @@
         <div class="node-content">
           <div class="node-label">Probability</div>
           <div class="node-sub">Distributions · Bayes</div>
+          <!-- Bell curve with sample dots falling under it -->
+          <svg class="pillar-viz" viewBox="0 0 160 96">
+            <line class="pr-axis" x1="10" y1="80" x2="150" y2="80"/>
+            <path class="pr-curve" d="M16 80 C 50 80, 60 18, 80 18 C 100 18, 110 80, 144 80 Z"/>
+            <circle class="pr-dot" cx="56"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="72"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="80"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="88"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="100" cy="74" r="3"/>
+            <circle class="pr-dot" cx="64"  cy="74" r="3"/>
+          </svg>
         </div>
       </div>
 
@@ -246,6 +414,38 @@
         <div class="node-content">
           <div class="node-label">Optimization</div>
           <div class="node-sub">Gradients · SGD</div>
+          <!-- Gradient descent: ball steps down a bowl, leaving a trail,
+               overshoots, and settles at the minimum where a flag plants. -->
+          <svg class="pillar-viz pillar-viz-opt" viewBox="0 0 160 96">
+            <line class="op-axis"   x1="10" y1="86" x2="150" y2="86"/>
+            <!-- Bowl: convex-down parabola through (16,18) vertex (80,78) (144,18) -->
+            <path class="op-curve"  d="M16 18 Q80 138 144 18"/>
+            <line class="op-target" x1="80" y1="20" x2="80" y2="86"/>
+
+            <!-- Trail of past iterations (filled after each step) -->
+            <g class="op-trail-group">
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+            </g>
+
+            <!-- Mini gradient arrow that points downhill at each step -->
+            <path class="op-arrow" d="M0 0 L0 0 M0 0 l-3 -3 M0 0 l-3 3"/>
+
+            <!-- The ball -->
+            <circle class="op-ball" cx="22" cy="22" r="5"/>
+
+            <!-- Flag planted at the minimum once it settles -->
+            <g class="op-flag">
+              <line x1="80" y1="78" x2="80" y2="58" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M80 58 L92 62 L80 66 Z" />
+            </g>
+          </svg>
         </div>
       </div>
 
@@ -296,6 +496,207 @@
     }
 
     window.addEventListener('load', startEntrance);
+
+    // ── Calculus pillar: drive the tangent along y = (x-80)²/60 + 14 ──
+    // Pure rAF (no CSS keyframes) so the dot stays on the curve and the
+    // tangent rotates to match the true local slope dy/dx = (x-80)/30.
+    (function setupCalcAnim() {
+      const svg = document.querySelector('.pillar-viz-calc');
+      if (!svg) return;
+      const dot     = svg.querySelector('.ca-dot');
+      const tangent = svg.querySelector('.ca-tangent');
+      const node    = svg.closest('.node');
+      if (!dot || !tangent || !node) return;
+
+      const cx = 80;          // vertex x
+      const cy = 14;          // vertex y
+      const a  = 1 / 60;      // curvature
+      const yOf  = (x) => a * (x - cx) * (x - cx) + cy;
+      const dyOf = (x) => 2 * a * (x - cx);   // slope at x
+      const TANGENT_HALF = 22;
+      const X_MIN = 28, X_MAX = 132;          // sweep range (stay on curve)
+
+      let raf = null;
+      let t0  = null;
+      const period = 3200;    // ms per full sweep (left → right → left)
+
+      function frame(now) {
+        if (t0 == null) t0 = now;
+        const phase = ((now - t0) % period) / period;       // 0..1
+        // ping-pong: 0 → 1 → 0
+        const pp = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+        const x = X_MIN + (X_MAX - X_MIN) * pp;
+        const y = yOf(x);
+        const m = dyOf(x);
+
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+
+        // Place tangent line through (x, y) with slope m, length 2*HALF.
+        // Use a unit direction vector to keep length consistent regardless of slope.
+        const len = Math.hypot(1, m);
+        const dx  = TANGENT_HALF / len;
+        const dy  = TANGENT_HALF * m / len;
+        tangent.setAttribute('x1', x - dx);
+        tangent.setAttribute('y1', y - dy);
+        tangent.setAttribute('x2', x + dx);
+        tangent.setAttribute('y2', y + dy);
+
+        raf = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        if (raf) return;
+        t0 = null;
+        raf = requestAnimationFrame(frame);
+      }
+      function stop() {
+        if (!raf) return;
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+
+      node.addEventListener('mouseenter', start);
+      node.addEventListener('mouseleave', stop);
+    })();
+
+    // ── Optimization pillar: discrete gradient-descent steps ─────────
+    // The ball doesn't slide; it HOPS down the bowl one update at a time,
+    // leaves a fading trail of past positions, overshoots near the bottom,
+    // and finally settles at the minimum with a flag planted.
+    (function setupOptAnim() {
+      const svg = document.querySelector('.pillar-viz-opt');
+      if (!svg) return;
+      const ball   = svg.querySelector('.op-ball');
+      const arrow  = svg.querySelector('.op-arrow');
+      const flag   = svg.querySelector('.op-flag');
+      const trails = Array.from(svg.querySelectorAll('.op-trail'));
+      const node   = svg.closest('.node');
+      if (!ball || !node) return;
+
+      // Bowl: convex-down y = -(x-80)²/60 + 78. Domain x∈[16,144].
+      const cx = 80, baseY = 78, a = -1 / 60;
+      const yOf  = (x) => a * (x - cx) * (x - cx) + baseY;
+      const dyOf = (x) => 2 * a * (x - cx);    // slope; negative on left, positive on right
+
+      // Waypoints: x positions of each "gradient step" along the bowl.
+      // The ball glides smoothly between them so motion is continuous,
+      // but each waypoint drops a trail dot so you still see discrete
+      // iterations. Big strides on the steep side, smaller near the
+      // minimum, then a deliberate overshoot + correction.
+      const seq = [
+        { x:  22, d: 0    },   // starting pose (no travel)
+        { x:  36, d: 520  },
+        { x:  52, d: 520  },
+        { x:  66, d: 500  },
+        { x:  76, d: 460  },
+        { x:  92, d: 520  },   // overshoot past minimum
+        { x:  84, d: 460  },   // correct back
+        { x:  78, d: 380  },
+        { x:  80, d: 320  },   // settle
+      ];
+      const SETTLE_PAUSE = 1200;
+
+      // Easing per leg — out-then-in so the ball decelerates into each
+      // waypoint and accelerates out of it, giving the "stepping" feel
+      // without ever stopping cold.
+      const easeInOutCubic = (t) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      let raf = null;
+      let restartTimer = null;
+
+      function placeBall(x) {
+        const y = yOf(x);
+        ball.setAttribute('cx', x);
+        ball.setAttribute('cy', y - 5);
+        const m = dyOf(x);
+        const len = Math.hypot(1, m);
+        const dx = 10 / len;
+        const dy = 10 * m / len;
+        const tx = x + dx;
+        const ty = (y - 5) + dy;
+        arrow.setAttribute('d',
+          `M ${x} ${y - 5} L ${tx} ${ty} ` +
+          `M ${tx} ${ty} l ${-dx * 0.4 + dy * 0.3} ${-dy * 0.4 - dx * 0.3} ` +
+          `M ${tx} ${ty} l ${-dx * 0.4 - dy * 0.3} ${-dy * 0.4 + dx * 0.3}`
+        );
+      }
+
+      function dropTrail(x, slotIdx) {
+        const slot = trails[slotIdx % trails.length];
+        slot.setAttribute('cx', x);
+        slot.setAttribute('cy', yOf(x) - 5);
+        // Fade older trail dots a touch each time a new one drops.
+        trails.forEach(t => {
+          if (t === slot) {
+            t.style.opacity = '0.6';
+          } else {
+            const cur = parseFloat(t.style.opacity || '0');
+            t.style.opacity = String(Math.max(0, cur - 0.12));
+          }
+        });
+      }
+
+      function reset() {
+        trails.forEach(t => { t.style.opacity = '0'; });
+        flag.classList.remove('show');
+        arrow.style.opacity = '0';
+        placeBall(seq[0].x);
+      }
+
+      function run() {
+        let leg = 0;             // we tween from seq[leg] → seq[leg+1]
+        let legStart = null;
+        // Drop the first dot at the starting pose.
+        dropTrail(seq[0].x, 0);
+        arrow.style.opacity = '0.85';
+
+        function frame(now) {
+          if (legStart == null) legStart = now;
+          const seg = seq[leg + 1];
+          if (!seg) return;
+          const raw = Math.min((now - legStart) / seg.d, 1);
+          const t   = easeInOutCubic(raw);
+          const x   = seq[leg].x + (seg.x - seq[leg].x) * t;
+          placeBall(x);
+
+          if (raw < 1) {
+            raf = requestAnimationFrame(frame);
+          } else {
+            // Arrived at waypoint — drop a trail dot, advance.
+            leg++;
+            dropTrail(seq[leg].x, leg);
+            legStart = null;
+            if (leg >= seq.length - 1) {
+              // Settled at the minimum.
+              arrow.style.opacity = '0';
+              flag.classList.add('show');
+              raf = null;
+              restartTimer = setTimeout(() => { reset(); run(); }, SETTLE_PAUSE);
+            } else {
+              raf = requestAnimationFrame(frame);
+            }
+          }
+        }
+        raf = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        if (raf || restartTimer) return;
+        reset();
+        // Tiny pre-roll so the starting pose is visible before motion.
+        restartTimer = setTimeout(() => { restartTimer = null; run(); }, 220);
+      }
+      function stop() {
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+        if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
+        reset();
+      }
+
+      node.addEventListener('mouseenter', start);
+      node.addEventListener('mouseleave', stop);
+    })();
   </script>
 </body>
 </html>

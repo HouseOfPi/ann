@@ -685,16 +685,169 @@ body.light .modal-panel {
 }
 @media (max-width: 720px) { .regression-grid { grid-template-columns: 1fr; } }
 
+/* ── Evaluation modal layout ────────────────────────────────── */
+.eval-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 24px;
+  align-items: stretch;
+}
+@media (max-width: 900px) { .eval-grid { grid-template-columns: 1fr; } }
+
+.eval-left, .eval-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.eval-list-header,
+.eval-row {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr 0.9fr 1.1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.eval-list-header {
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+.eval-list {
+  border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 340px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.eval-row {
+  background: color-mix(in srgb, var(--fg) 2%, transparent);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(.2,.7,.2,1), background 0.4s ease;
+}
+.eval-row.show { opacity: 1; transform: translateX(0); }
+.eval-row .col-hours    { color: var(--c1); font-weight: 700; }
+.eval-row .col-pred     { color: color-mix(in srgb, var(--fg) 85%, transparent); font-weight: 600; }
+.eval-row .col-actual   { color: color-mix(in srgb, var(--fg) 60%, transparent); font-weight: 500; }
+.eval-row .col-actual.revealed { color: var(--fg); font-weight: 700; }
+.eval-row .col-delta    { font-weight: 700; display: inline-flex; align-items: center; gap: 4px; opacity: 0; transition: opacity 0.35s ease; }
+.eval-row .col-delta.show { opacity: 1; }
+.eval-row .col-delta .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+}
+.eval-row.good    .col-delta { color: #16a34a; }
+.eval-row.ok      .col-delta { color: #ca8a04; }
+.eval-row.bad     .col-delta { color: #dc2626; }
+.eval-row.active  { background: color-mix(in srgb, var(--c3) 10%, transparent); }
+
+/* Avg-error chip overlay inside the eval chart */
+#evalAvgChip {
+  transition: opacity 0.5s ease;
+}
+#evalAvgChip.pulse {
+  animation: evalChipPulse 0.9s ease-out;
+}
+@keyframes evalChipPulse {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+#evalAvgChip { transform-box: fill-box; transform-origin: center; }
+
+/* Pause badge + interactive cursor on eval panel */
+#evalModal .modal-panel { cursor: pointer; }
+#evalModal .modal-panel button,
+#evalModal .modal-panel .eval-list,
+#evalModal .modal-panel a { cursor: auto; }
+#evalModal .modal-panel.is-paused { cursor: pointer; }
+
+.eval-paused-badge {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c3) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c3) 50%, transparent);
+  color: var(--c3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.eval-paused-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c3);
+  animation: evalPulse 1.4s ease-in-out infinite;
+}
+@keyframes evalPulse {
+  0%,100% { opacity: 0.45; }
+  50%     { opacity: 1; }
+}
+#evalModal .modal-panel.is-paused .eval-paused-badge {
+  display: inline-flex;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Test-point markers on chart */
+.test-point {
+  fill: var(--c3);
+  stroke: var(--bg);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.test-point.show { opacity: 1; }
+.actual-point {
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.actual-point.show { opacity: 0.7; }
+.eval-resid {
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.eval-resid.show { opacity: 0.85; }
+
+
 .chart-svg {
   width: 100%;
   height: 280px;
   display: block;
   background: transparent;
 }
-.chart-axis { stroke: color-mix(in srgb, var(--fg) 35%, transparent); stroke-width: 1; }
-.chart-tick-label { fill: color-mix(in srgb, var(--fg) 70%, transparent); font: 500 10px 'JetBrains Mono', monospace; }
-.chart-axis-label { fill: color-mix(in srgb, var(--fg) 90%, transparent); font: 600 11px 'Outfit', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
-.chart-grid { stroke: color-mix(in srgb, var(--fg) 12%, transparent); stroke-width: 1; stroke-dasharray: 3 4; }
+.chart-axis { stroke: color-mix(in srgb, var(--fg) 55%, transparent); stroke-width: 1; }
+.chart-tick-label { fill: color-mix(in srgb, var(--fg) 92%, transparent); font: 600 10px 'JetBrains Mono', monospace; }
+.chart-axis-label { fill: var(--fg); font: 700 11px 'Outfit', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; }
+.chart-grid { stroke: color-mix(in srgb, var(--fg) 18%, transparent); stroke-width: 1; stroke-dasharray: 3 4; }
 
 .data-point {
   fill: var(--c2);
@@ -713,6 +866,13 @@ body.light .modal-panel {
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c2) 50%, transparent));
 }
 .fit-line.show { opacity: 1; }
+.fit-line {
+  transition: stroke-width 0.4s ease, filter 0.5s ease;
+}
+.fit-line.settled {
+  stroke-width: 3.2;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c2) 80%, transparent));
+}
 
 .error-line {
   stroke: #f59e0b;
@@ -832,6 +992,71 @@ body.light .modal-panel {
 }
 .predict-result .val strong { color: var(--c3); }
 
+/* ── Predict-mode tweaks ──────────────────────────────────────
+   During the Predict stage, training-only readouts (epoch + MSE)
+   add noise and the bottom modal caption duplicates what the
+   prediction card already says. Suppress them and let the
+   prediction card breathe instead. */
+body.predict-mode .stats-row { display: none; }
+body.predict-mode .modal-caption { display: none; }
+body.predict-mode .equation-card { display: none; }
+body.predict-mode .predict-result {
+  padding: 18px 18px 20px;
+  border-width: 1.5px;
+  background: color-mix(in srgb, var(--c3) 14%, transparent);
+}
+body.predict-mode .predict-result .pred-headline {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--c3) 85%, var(--fg));
+  margin-bottom: 10px;
+}
+body.predict-mode .predict-result .pred-figure {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 6px;
+}
+body.predict-mode .predict-result .pred-figure .num {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--c3);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+body.predict-mode .predict-result .pred-figure .scale {
+  font-size: 16px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+}
+body.predict-mode .predict-result .pred-context {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  line-height: 1.4;
+}
+body.predict-mode .predict-result .pred-context strong {
+  color: var(--c1);
+  font-weight: 600;
+}
+
+/* Hide the chart-overlay label in Predict — the side panel makes it redundant. */
+body.predict-mode .predict-label { display: none; }
+
+/* In Predict mode use the structured layout (pred-headline + pred-figure +
+   pred-context); hide the training-style .lbl/.val block.
+   Outside predict-mode (Train), do the opposite. */
+.predict-result .pred-headline,
+.predict-result .pred-figure,
+.predict-result .pred-context { display: none; }
+
+body.predict-mode .predict-result > .lbl,
+body.predict-mode .predict-result > .val { display: none; }
+
 /* ── Mobile Responsiveness ── */
 @media (max-width: 1024px) {
   .cards-container {
@@ -934,7 +1159,7 @@ body.light .modal-panel {
     <div class="card" id="card3" style="--cc:var(--c3)">
       <div class="card-glow"></div>
       <div class="card-inner">
-        <div class="card-header card-header-clickable">
+        <div class="card-header card-header-clickable" id="evalTrigger">
           <div class="icon-box"><i data-lucide="chart-no-axes-combined"></i></div>
           <div class="title-group">
             <h2 class="card-title">Evaluation</h2>
@@ -1055,8 +1280,19 @@ body.light .modal-panel {
             </div>
           </div>
           <div class="predict-result" id="predictResult">
+            <!-- Default (training) layout — used by Train stage -->
             <div class="lbl">Prediction</div>
             <div class="val">A teen with <strong id="predictHours">5.0</strong> hrs/day → stress <strong id="predictY">—</strong></div>
+
+            <!-- Predict-mode layout — shown only in Predict stage via CSS -->
+            <span class="pred-headline">Predicted Stress</span>
+            <div class="pred-figure">
+              <span class="num" id="predictNum">—</span>
+              <span class="scale">/ 10</span>
+            </div>
+            <div class="pred-context">
+              for a teen with <strong id="predictCtxHours">5.0</strong> hrs/day on social media
+            </div>
           </div>
         </div>
       </div>
@@ -1068,9 +1304,92 @@ body.light .modal-panel {
   </div>
 </div>
 
+<!-- ── Evaluation Modal ── -->
+<div class="modal-overlay" id="evalModal" role="dialog" aria-modal="true" aria-labelledby="evalModalTitle">
+  <div class="modal-panel">
+    <button class="modal-close" id="evalModalClose" aria-label="Close"><i data-lucide="x"></i></button>
+    <span class="modal-eyebrow" style="color: var(--c3);">Phase 03 — Evaluation</span>
+    <span class="eval-paused-badge" id="evalPausedBadge"><span class="dot"></span>Paused — click to resume</span>
+    <h3 class="modal-title" id="evalModalTitle">Did the model actually learn?</h3>
+    <p class="modal-sub">
+      Bring out the <strong style="color:var(--c3)">test set</strong> the model has never seen.
+      Show it the input, hide the answer, and compare its guess to the truth.
+    </p>
+
+    <div class="eval-grid">
+      <!-- Left: scrolling list of held-out rows + verdict beside each -->
+      <div class="eval-left">
+        <div class="eval-list-header">
+          <span>Hours</span>
+          <span>Predicted</span>
+          <span>Actual</span>
+          <span>Δ Error</span>
+        </div>
+        <div class="eval-list" id="evalList"></div>
+      </div>
+
+      <!-- Right: chart with trained line + test points landing on it -->
+      <div class="eval-right">
+        <svg class="chart-svg" id="evalChart" viewBox="0 0 500 280" preserveAspectRatio="xMidYMid meet">
+          <g id="evalGrid"></g>
+          <g id="evalAxes"></g>
+          <line class="fit-line show" id="evalFitLine" x1="0" y1="0" x2="0" y2="0" />
+          <g id="evalResiduals"></g>
+          <g id="evalTestPoints"></g>
+          <g id="evalActualPoints"></g>
+
+          <!-- Avg-error chip — top-LEFT of plot (no data points there) -->
+          <g id="evalAvgChip" opacity="0">
+            <!-- Soft drop shadow for separation from the chart -->
+            <defs>
+              <filter id="avgChipShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.18)" />
+              </filter>
+            </defs>
+            <rect x="68" y="10" width="160" height="46" rx="11"
+                  fill="#ffffff"
+                  stroke="#a78bfa"
+                  stroke-width="1.5"
+                  filter="url(#avgChipShadow)" />
+            <text x="80" y="28"
+                  fill="#5b21b6"
+                  font-family="JetBrains Mono, monospace"
+                  font-size="9" font-weight="700" letter-spacing="2.2">AVG ERROR</text>
+            <text id="evalAvgChipVal" x="80" y="49"
+                  font-family="Outfit, Inter, sans-serif"
+                  font-size="20" font-weight="800"
+                  fill="#5b21b6">—</text>
+            <text id="evalAvgChipUnit" x="138" y="49"
+                  font-family="JetBrains Mono, monospace"
+                  font-size="10" font-weight="600"
+                  fill="rgba(91,33,182,0.55)"
+                  letter-spacing="1">stress pts</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// Initialize Icons
-lucide.createIcons();
+// Initialize Icons — guard so a failed/blocked CDN load can't take down
+// the rest of the script (which previously left the slide permanently blank).
+if (window.lucide) lucide.createIcons();
+
+// Forward arrow-key nav up to the parent deck so prev/next still works
+// when this iframe has focus. The parent listens for { type: 'NAV' }.
+window.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  // Don't hijack arrows when a modal is open — those panels may want them.
+  if (document.body.classList.contains('modal-active')) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+    e.preventDefault();
+    try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
+  } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+    e.preventDefault();
+    try { window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*'); } catch (_) {}
+  }
+});
 
 // ── Dataset (raw — bad rows are dropped during cleaning) ──
 // issue codes: 'missing' | 'badcase' | 'outlier' | 'typo'
@@ -1246,7 +1565,7 @@ const closeBtn = document.getElementById('modalClose');
 function openModal(stage = 'import') {
   modal.classList.add('active');
   document.body.classList.add('modal-active');
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
   STAGE_RUNNERS[stage]();
 }
 function closeModal() {
@@ -1375,7 +1694,8 @@ function drawPoints() {
     c.setAttribute('cx', sx(pt.x)); c.setAttribute('cy', sy(pt.y));
     c.setAttribute('r', 5);
     g.appendChild(c);
-    setTimeout(() => c.classList.add('show'), 80 + i * 50);
+    // Slower ripple so each dot lands as the VO calls out "screen time… stress".
+    setTimeout(() => c.classList.add('show'), 150 + i * 110);
   });
 }
 
@@ -1411,26 +1731,46 @@ function clearTrainingTimers() {
   activeTrainingTimeouts = [];
 }
 
-function drawErrorLines(m, b) {
+// Create the error-line set ONCE; subsequent calls just update y2/color.
+// Rebuilding the SVG nodes every frame was the source of the flicker
+// and the "jittery" feel during training.
+let _errorLineNodes = null;
+function ensureErrorLines() {
+  const g = document.getElementById('chartErrorLines');
+  if (_errorLineNodes && _errorLineNodes.length === REG_TRAIN.length && g.firstChild) {
+    return _errorLineNodes;
+  }
+  g.innerHTML = '';
+  _errorLineNodes = REG_TRAIN.map(pt => {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('class', 'error-line show');
+    ln.setAttribute('x1', sx(pt.x));
+    ln.setAttribute('x2', sx(pt.x));
+    ln.setAttribute('y1', sy(pt.y));
+    ln.setAttribute('y2', sy(pt.y));
+    g.appendChild(ln);
+    return ln;
+  });
+  return _errorLineNodes;
+}
+
+function updateErrorLines(m, b) {
+  const nodes = ensureErrorLines();
+  REG_TRAIN.forEach((pt, i) => {
+    const predY = m * pt.x + b;
+    const err   = Math.abs(pt.y - predY);
+    const ln    = nodes[i];
+    ln.setAttribute('y2', sy(predY));
+    const hue = Math.max(0, 120 - (err * 40));     // 120 green → 0 red
+    ln.style.stroke      = `hsl(${hue}, 85%, 55%)`;
+    ln.style.strokeWidth = Math.max(1, 2.5 - (hue / 60));
+  });
+}
+
+function clearErrorLines() {
   const g = document.getElementById('chartErrorLines');
   g.innerHTML = '';
-  REG_TRAIN.forEach(pt => {
-    const predY = m * pt.x + b;
-    const err = Math.abs(pt.y - predY);
-    
-    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    ln.setAttribute('x1', sx(pt.x));
-    ln.setAttribute('y1', sy(pt.y));
-    ln.setAttribute('x2', sx(pt.x));
-    ln.setAttribute('y2', sy(predY));
-    
-    // Dynamic color/weight representing error magnitude (HSL: Red -> Orange -> Green)
-    ln.setAttribute('class', 'error-line show');
-    const hue = Math.max(0, 120 - (err * 40)); // 120 is green, 0 is red
-    ln.style.stroke = `hsl(${hue}, 85%, 55%)`;
-    ln.style.strokeWidth = Math.max(1, 2.5 - (hue / 60)); // Thicker for larger errors
-    g.appendChild(ln);
-  });
+  _errorLineNodes = null;
 }
 
 function clearModelExtras() {
@@ -1441,7 +1781,7 @@ function clearModelExtras() {
   document.getElementById('predictLabel').classList.remove('show');
   document.getElementById('predictResult').classList.remove('show');
   document.getElementById('modelCaption').classList.remove('show');
-  document.getElementById('chartErrorLines').innerHTML = '';
+  clearErrorLines();
 }
 
 function setMStage(stage) {
@@ -1456,6 +1796,7 @@ function setMStage(stage) {
 
 function runArchStage() {
   clearTrainingTimers();
+  document.body.classList.remove('predict-mode');
   setMStage('arch');
   document.getElementById('modelEyebrow').textContent = 'Stage 1 — Architecture';
   document.getElementById('modelSub').innerHTML = 'Pick a simple model: a straight line. <strong style="color:var(--c2)">stress = m · hours + b</strong> — find the right <em>m</em> and <em>b</em>.';
@@ -1470,6 +1811,7 @@ function runArchStage() {
 
 function runTrainStage() {
   clearTrainingTimers();
+  document.body.classList.remove('predict-mode');
   setMStage('train');
   document.getElementById('modelEyebrow').textContent = 'Stage 2 — Train';
   document.getElementById('modelSub').innerHTML = 'The model adjusts <strong style="color:var(--c2)">m</strong> and <strong style="color:var(--c2)">b</strong> over many epochs to minimize the error between predicted and actual stress.';
@@ -1478,83 +1820,115 @@ function runTrainStage() {
   clearModelExtras();
 
   const fit = document.getElementById('fitLine');
-  fit.classList.add('show');
 
-  // Phase 1: Random guessing sequence representing the untrained model state
-  const guesses = [
-    { m: -0.65, b: 8.5 },
-    { m: 1.85, b: 0.5 },
-    { m: 0.15, b: 8.0 }
-  ];
-  
-  let guessIdx = 0;
-  
-  function playGuesses() {
-    if (guessIdx < guesses.length) {
-      const g = guesses[guessIdx];
-      setLine(g.m, g.b);
-      drawErrorLines(g.m, g.b);
-      
-      document.getElementById('epochVal').textContent = '0 (Random Guess)';
-      document.getElementById('coefM').textContent = g.m.toFixed(2);
-      document.getElementById('coefB').textContent = g.b.toFixed(2);
-      document.getElementById('errorVal').textContent = computeMSE(g.m, g.b).toFixed(2);
-      
-      guessIdx++;
-      activeTrainingTimeouts.push(setTimeout(playGuesses, 280));
-    } else {
-      activeTrainingTimeouts.push(setTimeout(startTraining, 350));
-    }
-  }
+  // Easing helpers
+  const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const easeOutCubic   = (t) => 1 - Math.pow(1 - t, 3);
 
-  function startTraining() {
-    const durationMs = 2800; // ~2.8s of smooth training
-    const startM = 0.0, startB = 5.0; // Drop to neutral starting parameters
-    let startTime = null;
-    
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const t = Math.min(elapsed / durationMs, 1.0);
-      
-      const eased = 1 - Math.pow(1 - t, 3); // Cubic ease-out
-      const m = startM + (FITTED_M - startM) * eased;
-      const b = startB + (FITTED_B - startB) * eased;
-      
+  const elM   = document.getElementById('coefM');
+  const elB   = document.getElementById('coefB');
+  const elEp  = document.getElementById('epochVal');
+  const elErr = document.getElementById('errorVal');
+
+  // ── Reusable rAF tween between (m, b) pairs ──────────────────
+  // Each tween smoothly slides the fit line + residuals from one
+  // (m, b) pose to the next instead of jump-cutting.
+  function tween({ fromM, fromB, toM, toB, durationMs, ease, epochFrom, epochTo, epochLabel }, onDone) {
+    let start = null;
+    function step(now) {
+      if (!start) start = now;
+      const raw = Math.min((now - start) / durationMs, 1);
+      const t   = ease(raw);
+      const m = fromM + (toM - fromM) * t;
+      const b = fromB + (toB - fromB) * t;
       setLine(m, b);
-      drawErrorLines(m, b);
-      
-      const currentEpoch = Math.round(t * 200);
-      document.getElementById('epochVal').textContent = currentEpoch;
-      document.getElementById('coefM').textContent = m.toFixed(2);
-      document.getElementById('coefB').textContent = b.toFixed(2);
-      document.getElementById('errorVal').textContent = computeMSE(m, b).toFixed(2);
-      
-      if (t < 1.0) {
+      updateErrorLines(m, b);
+      elM.textContent   = m.toFixed(2);
+      elB.textContent   = b.toFixed(2);
+      elErr.textContent = computeMSE(m, b).toFixed(2);
+      if (epochLabel != null) {
+        elEp.textContent = epochLabel;
+      } else if (epochFrom != null && epochTo != null) {
+        elEp.textContent = Math.round(epochFrom + (epochTo - epochFrom) * t);
+      }
+      if (raw < 1) {
         activeTrainingRAF = requestAnimationFrame(step);
       } else {
         activeTrainingRAF = null;
-        
-        // Fade residual indicators when fitting is fully completed
-        activeTrainingTimeouts.push(setTimeout(() => {
-          const g = document.getElementById('chartErrorLines');
-          gsap.to(g.querySelectorAll('.error-line'), {
-            opacity: 0.18,
-            duration: 1.0,
-            ease: 'power2.out'
-          });
-        }, 500));
+        if (onDone) onDone();
       }
     }
-    
     activeTrainingRAF = requestAnimationFrame(step);
   }
 
-  playGuesses();
+  // ── Continuous, pause-free training animation (~22s total) ──
+  // One waypoint chain. Each tween starts the instant the previous
+  // ends, with no setTimeout holds, so the fit line is always moving.
+  //
+  // Waypoint order:
+  //   flat → bad guess 1 → bad guess 2 → bad guess 3 → neutral start
+  //   → final fit. Durations get progressively longer toward the end
+  //   so it FEELS like the model is slowing as it converges — but the
+  //   motion itself never stops.
+  const waypoints = [
+    { m: 0,     b: 0,   d: 1100, ease: easeOutCubic,   epoch: '0' },
+    { m: -0.65, b: 8.5, d: 1600, ease: easeInOutCubic, epoch: '0 (Random Guess)' },
+    { m:  1.85, b: 0.5, d: 1600, ease: easeInOutCubic, epoch: '0 (Random Guess)' },
+    { m:  0.15, b: 8.0, d: 1600, ease: easeInOutCubic, epoch: '0 (Random Guess)' },
+    { m:  0.0,  b: 5.0, d: 1400, ease: easeInOutCubic, epoch: '0' },
+    { m: FITTED_M, b: FITTED_B, d: 11000, ease: easeInOutCubic, epochFrom: 0, epochTo: 200 },
+  ];
+
+  // Stat panel placeholders while the dot ripple plays.
+  elM.textContent   = 'm';
+  elB.textContent   = 'b';
+  elEp.textContent  = '0';
+  elErr.textContent = '—';
+
+  function runWaypoints() {
+    setLine(waypoints[0].m, waypoints[0].b);
+    fit.classList.add('show');
+
+    let i = 0;
+    function next() {
+      if (i >= waypoints.length - 1) {
+        // Settle pulse — no pause; the line keeps glowing while the
+        // residuals fade so the visual stays alive into the next scene.
+        fit.classList.add('settled');
+        activeTrainingTimeouts.push(setTimeout(() => fit.classList.remove('settled'), 900));
+        const g = document.getElementById('chartErrorLines');
+        if (window.gsap) {
+          gsap.to(g.querySelectorAll('.error-line'), {
+            opacity: 0.18, duration: 1.2, ease: 'power2.out',
+          });
+        } else {
+          g.querySelectorAll('.error-line').forEach(el => el.style.opacity = 0.18);
+        }
+        return;
+      }
+      const from = waypoints[i];
+      const to   = waypoints[i + 1];
+      tween({
+        fromM: from.m, fromB: from.b,
+        toM:   to.m,   toB:   to.b,
+        durationMs: to.d,
+        ease: to.ease,
+        epochLabel: to.epochFrom != null ? null : to.epoch,
+        epochFrom:  to.epochFrom,
+        epochTo:    to.epochTo,
+      }, () => { i++; next(); });
+    }
+    next();
+  }
+
+  // Start once the dot ripple has finished — but from then on the
+  // line motion is unbroken.
+  activeTrainingTimeouts.push(setTimeout(runWaypoints, 1700));
 }
 
 function runPredictStage() {
   clearTrainingTimers();
+  document.body.classList.add('predict-mode');
   setMStage('predict');
   document.getElementById('modelEyebrow').textContent = 'Stage 3 — Predict';
   document.getElementById('modelSub').innerHTML = 'A new teen we\'ve never seen before — <strong style="color:var(--c3)">5.0 hrs/day</strong>. The trained line gives us the prediction.';
@@ -1562,13 +1936,11 @@ function runPredictStage() {
   drawPoints();
   clearModelExtras();
 
-  // Show final fitted line
+  // Show final fitted line + the trained equation (still useful for context).
   setLine(FITTED_M, FITTED_B);
   document.getElementById('fitLine').classList.add('show');
   document.getElementById('coefM').textContent = FITTED_M.toFixed(2);
   document.getElementById('coefB').textContent = FITTED_B.toFixed(2);
-  document.getElementById('epochVal').textContent = '200';
-  document.getElementById('errorVal').textContent = computeMSE(FITTED_M, FITTED_B).toFixed(2);
 
   const xPred = REG_TEST.x;
   const yPred = FITTED_M * xPred + FITTED_B;
@@ -1599,17 +1971,10 @@ function runPredictStage() {
   pp.setAttribute('cy', sy(yPred));
   setTimeout(() => pp.classList.add('show'), 950);
 
-  // Label
-  const pl = document.getElementById('predictLabel');
-  pl.setAttribute('x', sx(xPred) + 10); pl.setAttribute('y', sy(yPred) - 8);
-  pl.textContent = `≈ ${yPred.toFixed(2)}`;
-  setTimeout(() => pl.classList.add('show'), 1100);
-
-  // Side panel result (stress rating 1-10)
-  document.getElementById('predictHours').textContent = xPred.toFixed(1);
-  document.getElementById('predictY').textContent = `${yPred.toFixed(1)} / 10`;
+  // Side panel prediction card (structured layout via predict-mode CSS)
+  document.getElementById('predictNum').textContent = yPred.toFixed(1);
+  document.getElementById('predictCtxHours').textContent = xPred.toFixed(1);
   setTimeout(() => document.getElementById('predictResult').classList.add('show'), 1400);
-  setTimeout(() => document.getElementById('modelCaption').classList.add('show'), 1800);
 }
 
 const M_RUNNERS = { arch: runArchStage, train: runTrainStage, predict: runPredictStage };
@@ -1619,7 +1984,7 @@ const modelClose = document.getElementById('modelModalClose');
 function openModelModal(stage = 'arch') {
   modelModal.classList.add('active');
   document.body.classList.add('modal-active');
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
   setTimeout(() => M_RUNNERS[stage](), 300);
 }
 function closeModelModal() { 
@@ -1634,6 +1999,329 @@ document.querySelectorAll('.stage-pill[data-mstage]').forEach(p => {
 });
 modelClose.addEventListener('click', closeModelModal);
 modelModal.addEventListener('click', (e) => { if (e.target === modelModal) closeModelModal(); });
+
+// ─────────────────────────────────────────────────────────────
+// PHASE 03 — Evaluation modal
+// ─────────────────────────────────────────────────────────────
+// Held-out test set. These rows were NEVER shown during training.
+// Each row has the input (hours) and the true label (stress).
+// The animation reveals predicted vs actual one by one so the
+// VO can land "we show only the input… then reveal the answer".
+const EVAL_TEST = [
+  { x: 4.0, y: 5 },
+  { x: 1.8, y: 3 },
+  { x: 7.2, y: 9 },
+  { x: 5.5, y: 6 },
+  { x: 3.2, y: 4 },
+  { x: 6.0, y: 8 },
+  { x: 2.5, y: 3 },
+  { x: 4.8, y: 5 },
+];
+
+// Reuse the regression chart helpers but render into the eval SVG.
+const EVAL_CHART = { x0: 60, y0: 230, w: 410, h: 200, xMin: 0, xMax: 9, yMin: 0, yMax: 11 };
+const esx = (x) => EVAL_CHART.x0 + (x - EVAL_CHART.xMin) / (EVAL_CHART.xMax - EVAL_CHART.xMin) * EVAL_CHART.w;
+const esy = (y) => EVAL_CHART.y0 - (y - EVAL_CHART.yMin) / (EVAL_CHART.yMax - EVAL_CHART.yMin) * EVAL_CHART.h;
+
+function drawEvalAxes() {
+  const grid = document.getElementById('evalGrid');
+  const axes = document.getElementById('evalAxes');
+  grid.innerHTML = ''; axes.innerHTML = '';
+  [2,4,6,8,10].forEach(y => {
+    const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    ln.setAttribute('class', 'chart-grid');
+    ln.setAttribute('x1', esx(EVAL_CHART.xMin)); ln.setAttribute('x2', esx(EVAL_CHART.xMax));
+    ln.setAttribute('y1', esy(y)); ln.setAttribute('y2', esy(y));
+    grid.appendChild(ln);
+  });
+  const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  xAxis.setAttribute('class', 'chart-axis');
+  xAxis.setAttribute('x1', esx(EVAL_CHART.xMin)); xAxis.setAttribute('x2', esx(EVAL_CHART.xMax));
+  xAxis.setAttribute('y1', esy(0)); xAxis.setAttribute('y2', esy(0));
+  axes.appendChild(xAxis);
+  const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  yAxis.setAttribute('class', 'chart-axis');
+  yAxis.setAttribute('x1', esx(EVAL_CHART.xMin)); yAxis.setAttribute('x2', esx(EVAL_CHART.xMin));
+  yAxis.setAttribute('y1', esy(0)); yAxis.setAttribute('y2', esy(EVAL_CHART.yMax));
+  axes.appendChild(yAxis);
+  [0,2,4,6,8].forEach(x => {
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('class', 'chart-tick-label');
+    t.setAttribute('x', esx(x)); t.setAttribute('y', esy(0) + 16);
+    t.setAttribute('text-anchor', 'middle'); t.textContent = x;
+    axes.appendChild(t);
+  });
+  [0,2,4,6,8,10].forEach(y => {
+    const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('class', 'chart-tick-label');
+    t.setAttribute('x', esx(0) - 8); t.setAttribute('y', esy(y) + 4);
+    t.setAttribute('text-anchor', 'end'); t.textContent = y;
+    axes.appendChild(t);
+  });
+  const xLab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  xLab.setAttribute('class', 'chart-axis-label');
+  xLab.setAttribute('x', esx((EVAL_CHART.xMin + EVAL_CHART.xMax) / 2));
+  xLab.setAttribute('y', esy(0) + 36);
+  xLab.setAttribute('text-anchor', 'middle');
+  xLab.textContent = 'Daily Hours →';
+  axes.appendChild(xLab);
+  const yLab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  yLab.setAttribute('class', 'chart-axis-label');
+  yLab.setAttribute('x', 16); yLab.setAttribute('y', esy(EVAL_CHART.yMax / 2));
+  yLab.setAttribute('text-anchor', 'middle');
+  yLab.setAttribute('transform', `rotate(-90 16 ${esy(EVAL_CHART.yMax / 2)})`);
+  yLab.textContent = 'Stress →';
+  axes.appendChild(yLab);
+}
+
+function setEvalFitLine() {
+  const fit = document.getElementById('evalFitLine');
+  fit.setAttribute('x1', esx(EVAL_CHART.xMin));
+  fit.setAttribute('y1', esy(FITTED_M * EVAL_CHART.xMin + FITTED_B));
+  fit.setAttribute('x2', esx(EVAL_CHART.xMax));
+  fit.setAttribute('y2', esy(FITTED_M * EVAL_CHART.xMax + FITTED_B));
+}
+
+// ── Pausable scheduler ───────────────────────────────────────
+// Each step is { at: ms_from_start, fn: () => void }. Calling start()
+// kicks them off relative to "now". pause() records elapsed and cancels
+// pending timeouts; resume() reschedules unfired steps relative to the
+// new "now". stop() clears everything.
+const evalScheduler = (() => {
+  let queue = [];      // [{at, fn, fired}]
+  let timers = [];
+  let startedAt = 0;
+  let elapsedBeforePause = 0;
+  let running = false;
+  let paused = false;
+
+  function clearTimers() {
+    timers.forEach(t => clearTimeout(t));
+    timers = [];
+  }
+
+  function arm() {
+    const baseElapsed = elapsedBeforePause;
+    startedAt = performance.now();
+    queue.forEach(step => {
+      if (step.fired) return;
+      const delay = Math.max(0, step.at - baseElapsed);
+      const id = setTimeout(() => { step.fired = true; step.fn(); }, delay);
+      timers.push(id);
+    });
+  }
+
+  return {
+    load(steps) {
+      this.stop();
+      queue = steps.map(s => ({ at: s.at, fn: s.fn, fired: false }));
+    },
+    start() {
+      if (running) return;
+      running = true; paused = false;
+      elapsedBeforePause = 0;
+      arm();
+    },
+    pause() {
+      if (!running || paused) return;
+      paused = true;
+      elapsedBeforePause += performance.now() - startedAt;
+      clearTimers();
+    },
+    resume() {
+      if (!running || !paused) return;
+      paused = false;
+      arm();
+    },
+    toggle() {
+      if (!running) return;
+      if (paused) this.resume(); else this.pause();
+    },
+    stop() {
+      clearTimers();
+      queue = [];
+      running = false; paused = false;
+      elapsedBeforePause = 0;
+    },
+    isRunning() { return running; },
+    isPaused()  { return paused; },
+  };
+})();
+
+function clearEvalTimers() { evalScheduler.stop(); }
+
+function buildEvalRows() {
+  const list = document.getElementById('evalList');
+  list.innerHTML = '';
+  return EVAL_TEST.map((row, i) => {
+    const el = document.createElement('div');
+    el.className = 'eval-row';
+    el.innerHTML = `
+      <span class="col-hours">${row.x.toFixed(1)}</span>
+      <span class="col-pred" data-pred>—</span>
+      <span class="col-actual" data-actual>?</span>
+      <span class="col-delta" data-delta><span class="dot"></span><span data-delta-text></span></span>
+    `;
+    list.appendChild(el);
+    return el;
+  });
+}
+
+function runEvalAnimation() {
+  evalScheduler.stop();
+  drawEvalAxes();
+  setEvalFitLine();
+
+  // Reset chart layers
+  document.getElementById('evalResiduals').innerHTML = '';
+  document.getElementById('evalTestPoints').innerHTML = '';
+  document.getElementById('evalActualPoints').innerHTML = '';
+
+  // Reset the avg-error chip overlay
+  const avgChip    = document.getElementById('evalAvgChip');
+  const avgChipVal = document.getElementById('evalAvgChipVal');
+  if (avgChip)    avgChip.setAttribute('opacity', '0');
+  if (avgChipVal) avgChipVal.textContent = '—';
+
+  const rows = buildEvalRows();
+
+  // ── Slower pacing for VO ────────────────────────────────────
+  // Total runtime ≈ 8 rows × 2.4s + tail = ~21s, then verdict.
+  const ROW_INTERVAL = 2400;   // gap between rows starting   (was 1400)
+  const ACTUAL_DELAY = 1100;   // predicted → revealed actual (was 700)
+  const ROW_APPEAR   = 500;    // delay before prediction shows (was 350)
+
+  let totalErr = 0;
+  let hits = 0;
+  const steps = [];
+
+  EVAL_TEST.forEach((row, i) => {
+    const rowEl = rows[i];
+    const start = i * ROW_INTERVAL;
+    const predY = FITTED_M * row.x + FITTED_B;
+    const err   = Math.abs(predY - row.y);
+
+    // Beat A — row appears with predicted value only.
+    steps.push({ at: start + ROW_APPEAR, fn: () => {
+      rowEl.classList.add('show', 'active');
+      const pp = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      pp.setAttribute('class', 'test-point');
+      pp.setAttribute('cx', esx(row.x)); pp.setAttribute('cy', esy(predY));
+      pp.setAttribute('r', 5);
+      document.getElementById('evalTestPoints').appendChild(pp);
+      requestAnimationFrame(() => pp.classList.add('show'));
+      rowEl.querySelector('[data-pred]').textContent = predY.toFixed(2);
+    }});
+
+    // Beat B — reveal the actual answer + residual + color-code.
+    steps.push({ at: start + ROW_APPEAR + ACTUAL_DELAY, fn: () => {
+      rowEl.querySelector('[data-actual]').textContent = row.y.toFixed(2);
+      rowEl.querySelector('[data-actual]').classList.add('revealed');
+
+      let bucket;
+      if (err <= 0.7)      bucket = 'good';
+      else if (err <= 1.4) bucket = 'ok';
+      else                 bucket = 'bad';
+      rowEl.classList.add(bucket);
+
+      const sign = predY >= row.y ? '+' : '−';
+      rowEl.querySelector('[data-delta-text]').textContent = `${sign}${err.toFixed(2)}`;
+      rowEl.querySelector('.col-delta').classList.add('show');
+
+      const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      ln.setAttribute('class', 'eval-resid');
+      ln.setAttribute('x1', esx(row.x)); ln.setAttribute('x2', esx(row.x));
+      ln.setAttribute('y1', esy(predY));  ln.setAttribute('y2', esy(predY));
+      ln.style.stroke = bucket === 'good' ? '#16a34a' : bucket === 'ok' ? '#ca8a04' : '#dc2626';
+      document.getElementById('evalResiduals').appendChild(ln);
+      requestAnimationFrame(() => {
+        ln.classList.add('show');
+        ln.style.transition = 'y2 0.6s ease, opacity 0.6s ease';
+        ln.setAttribute('y2', esy(row.y));
+      });
+
+      const ap = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      ap.setAttribute('class', 'actual-point');
+      ap.setAttribute('cx', esx(row.x)); ap.setAttribute('cy', esy(row.y));
+      ap.setAttribute('r', 6);
+      document.getElementById('evalActualPoints').appendChild(ap);
+      requestAnimationFrame(() => ap.classList.add('show'));
+
+      totalErr += err;
+      if (err <= 1.0) hits++;
+      const tested  = i + 1;
+      const meanErr = (totalErr / tested).toFixed(2);
+      const chipVal = document.getElementById('evalAvgChipVal');
+      const chip    = document.getElementById('evalAvgChip');
+      if (chipVal) chipVal.textContent = meanErr;
+      // Fade the chip in on the first reveal; keep visible after.
+      if (chip && chip.getAttribute('opacity') === '0') {
+        chip.setAttribute('opacity', '1');
+      }
+    }});
+
+    // Drop the row's "active" highlight a beat after the reveal.
+    steps.push({ at: start + ROW_APPEAR + ACTUAL_DELAY + 500, fn: () => {
+      rowEl.classList.remove('active');
+    }});
+  });
+
+  // Final beat — give the avg-error chip a brief pulse so the eye lands on it.
+  const tailStart = (EVAL_TEST.length - 1) * ROW_INTERVAL + ROW_APPEAR + ACTUAL_DELAY + 800;
+  steps.push({ at: tailStart, fn: () => {
+    const chip = document.getElementById('evalAvgChip');
+    if (!chip) return;
+    chip.classList.add('pulse');
+    setTimeout(() => chip.classList.remove('pulse'), 900);
+  }});
+
+  evalScheduler.load(steps);
+  evalScheduler.start();
+}
+
+// Defensive wiring — every lookup null-checked so a missing id can't
+// take down the rest of the page initialization.
+(function wireEvalModal() {
+  const evalModal      = document.getElementById('evalModal');
+  const evalModalClose = document.getElementById('evalModalClose');
+  const evalTrigger    = document.getElementById('evalTrigger');
+  if (!evalModal || !evalModalClose || !evalTrigger) {
+    console.warn('Eval modal: missing required elements; skipping wiring');
+    return;
+  }
+
+  const evalPanel = evalModal.querySelector('.modal-panel');
+
+  function openEvalModal() {
+    evalModal.classList.add('active');
+    evalPanel.classList.remove('is-paused');
+    document.body.classList.add('modal-active');
+    if (window.lucide) lucide.createIcons();
+    setTimeout(runEvalAnimation, 400);
+  }
+  function closeEvalModal() {
+    clearEvalTimers();
+    evalPanel.classList.remove('is-paused');
+    evalModal.classList.remove('active');
+    document.body.classList.remove('modal-active');
+  }
+
+  // Click anywhere on the modal panel toggles pause/resume — except on
+  // interactive children (close button, scrollable list).
+  function isInteractive(target) {
+    return !!target.closest('button, a, .eval-list, .modal-close');
+  }
+  evalPanel.addEventListener('click', (e) => {
+    if (isInteractive(e.target)) return;
+    if (!evalScheduler.isRunning()) return;
+    evalScheduler.toggle();
+    evalPanel.classList.toggle('is-paused', evalScheduler.isPaused());
+  });
+
+  evalTrigger.addEventListener('click', openEvalModal);
+  evalModalClose.addEventListener('click', closeEvalModal);
+  evalModal.addEventListener('click', (e) => { if (e.target === evalModal) closeEvalModal(); });
+})();
 
 // NOTE: --eyebrow-accent unifies the page-eyebrow color across chapter 1-3
 // slides. c1/c2/c3 stay as the slide's own UI accents (stage pills, badges,
@@ -1749,19 +2437,45 @@ function nextStep() {
 }
 
 // Entrance Animations
-window.addEventListener('load', () => {
+// Run as soon as the DOM is ready (don't wait for every CDN font + iframe).
+// Falls back to a static reveal if GSAP isn't available so the page never
+// stays blank waiting for a third-party script.
+function startMlpEntrance() {
+  if (window.__mlpEntranceStarted) return;
+  window.__mlpEntranceStarted = true;
+
+  if (!window.gsap) {
+    // GSAP missing — show everything immediately.
+    document.querySelectorAll('.card').forEach(c => {
+      c.style.opacity = '1';
+      c.style.pointerEvents = 'auto';
+    });
+    return;
+  }
+
   const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
-
-  tl.from("#header > *", {
-    y: 20,
-    opacity: 0,
-    stagger: 0.1,
-    duration: 0.8
-  });
-
-  // Initial trigger for step 1
+  tl.from("#header > *", { y: 20, opacity: 0, stagger: 0.1, duration: 0.8 });
   setTimeout(nextStep, 500);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startMlpEntrance, { once: true });
+} else {
+  startMlpEntrance();
+}
+
+// Safety net: if for any reason cards are still invisible after 2.5s
+// (slow CDN, blocked script, etc.) force-reveal the first card so the
+// page is never stuck on a blank canvas.
+setTimeout(() => {
+  const c1 = document.getElementById('card1');
+  if (c1 && getComputedStyle(c1).opacity === '0') {
+    document.querySelectorAll('.card').forEach(c => {
+      c.style.opacity = '1';
+      c.style.pointerEvents = 'auto';
+    });
+  }
+}, 2500);
 
 // Click to progress
 document.body.addEventListener('click', (e) => {
