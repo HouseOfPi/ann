@@ -1260,6 +1260,28 @@ body.predict-mode .predict-result > .val { display: none; }
           <line class="predict-guide" id="predictGuideH" x1="0" y1="0" x2="0" y2="0" />
           <circle class="predict-point" id="predictPoint" cx="0" cy="0" r="6" />
           <text class="predict-label" id="predictLabel" x="0" y="0"></text>
+
+          <!-- SVG Inline Error Chip positioned in the empty top-left of the chart -->
+          <g id="regErrorChip">
+            <defs>
+              <filter id="errorChipShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.35)" />
+              </filter>
+            </defs>
+            <rect x="75" y="15" width="125" height="46" rx="9"
+                  fill="rgba(15, 23, 42, 0.85)"
+                  stroke="rgba(255, 255, 255, 0.15)"
+                  stroke-width="1.2"
+                  filter="url(#errorChipShadow)" />
+            <text x="87" y="31"
+                  fill="rgba(255, 255, 255, 0.5)"
+                  font-family="JetBrains Mono, monospace"
+                  font-size="8" font-weight="700" letter-spacing="1.5">ERROR (MSE)</text>
+            <text id="errorVal" x="87" y="51"
+                  font-family="Outfit, Inter, sans-serif"
+                  font-size="18" font-weight="800"
+                  fill="#22d3ee">—</text>
+          </g>
         </svg>
 
         <div class="model-panel-info">
@@ -1269,16 +1291,8 @@ body.predict-mode .predict-result > .val { display: none; }
               <span class="var">stress</span> = <span class="coef" id="coefM">m</span> · <span class="var">hours</span> + <span class="coef" id="coefB">b</span>
             </div>
           </div>
-          <div class="stats-row">
-            <div class="stat-box epoch">
-              <div class="lbl">Epoch</div>
-              <div class="val" id="epochVal">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="lbl">Error (MSE)</div>
-              <div class="val" id="errorVal">—</div>
-            </div>
-          </div>
+          <!-- Hidden epoch tracker to keep Javascript state updates perfectly functional -->
+          <span id="epochVal" style="display: none;"></span>
           <div class="predict-result" id="predictResult">
             <!-- Default (training) layout — used by Train stage -->
             <div class="lbl">Prediction</div>

@@ -1051,6 +1051,8 @@
         let glyphs = [];
         let raf = null;
         let lastT = 0;
+        const PLAYLIST = ['calculus', 'probability', 'regression', 'sigmoid', 'matrix'];
+        let playlistIndex = 0;
 
         function size() {
           const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1060,31 +1062,91 @@
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
 
-        function makeGlyph(initial = false) {
-          const w = cv.offsetWidth, h = cv.offsetHeight;
-          return {
-            text: GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
+        function makeGlyph(initial = false, forceGraph = false) {
+          const w = cv.offsetWidth || window.innerWidth, h = cv.offsetHeight || window.innerHeight;
+          const isGraph = forceGraph;
+          
+          const obj = {
             x: Math.random() * w,
             y: Math.random() * h,
-            // Slow drift — px/sec. Mostly horizontal with a hint of vertical sway.
             vx: (Math.random() - 0.5) * 8,
             vy: (Math.random() - 0.5) * 3,
-            size: 14 + Math.random() * 28,
-            // Targeted opacity — actual alpha lerps toward this via lifePhase.
             target: 0.10 + Math.random() * 0.16,
-            // Fade in over ~3s, hold, then fade out — independent of position.
             life: initial ? Math.random() * 18 : 0,
-            ttl: 16 + Math.random() * 22,   // seconds before respawn
+            ttl: 16 + Math.random() * 22,
             sway: Math.random() * Math.PI * 2,
-            font: Math.random() < 0.5
-              ? '"Cormorant Garamond", "Times New Roman", serif'
-              : '"JetBrains Mono", monospace',
+            type: isGraph ? 'graph' : 'text'
           };
+
+          if (isGraph) {
+            // Alternate strictly so the next appearing graph is never the same as the last
+            obj.graphType = PLAYLIST[playlistIndex];
+            playlistIndex = (playlistIndex + 1) % PLAYLIST.length;
+            obj.scale = 1.3 + Math.random() * 0.52;
+            obj.target = 0.08 + Math.random() * 0.06; // beautifully dim, extremely subtle background ambient
+            obj.ttl = 8 + Math.random() * 4;          // 8 to 12 seconds to fully trace curves
+            
+            // Gentle parabolic/bended offset parameters
+            obj.curveAmp = (Math.random() < 0.5 ? 1 : -1) * (60 + Math.random() * 40); // 60px to 100px gentle parabolic arch deflection
+
+            if (!initial) {
+              // Respawn: place exactly outside boundaries (horizontal or vertical) and drive inward
+              const enterHorizontal = Math.random() < 0.5;
+              obj.direction = enterHorizontal ? 'horizontal' : 'vertical';
+              if (enterHorizontal) {
+                const spawnLeft = Math.random() < 0.5;
+                obj.x = spawnLeft ? -80 : w + 80;
+                obj.vx = spawnLeft ? (55 + Math.random() * 25) : -(55 + Math.random() * 25);
+                obj.y = 0.25 * h + Math.random() * 0.5 * h;
+                obj.vy = (Math.random() - 0.5) * 1.5;
+              } else {
+                const spawnTop = Math.random() < 0.5;
+                obj.y = spawnTop ? -80 : h + 80;
+                obj.vy = spawnTop ? (40 + Math.random() * 20) : -(40 + Math.random() * 20);
+                obj.x = 0.25 * w + Math.random() * 0.5 * w;
+                obj.vx = (Math.random() - 0.5) * 3;
+              }
+            } else {
+              // Initial load: place somewhere nicely visible on the screen
+              obj.x = 0.15 * w + Math.random() * 0.7 * w;
+              obj.y = 0.25 * h + Math.random() * 0.5 * h;
+              
+              const moveHorizontal = Math.random() < 0.5;
+              obj.direction = moveHorizontal ? 'horizontal' : 'vertical';
+              if (moveHorizontal) {
+                obj.vx = Math.random() < 0.5 ? (55 + Math.random() * 25) : -(55 + Math.random() * 25);
+                obj.vy = (Math.random() - 0.5) * 1.5;
+              } else {
+                obj.vy = Math.random() < 0.5 ? (40 + Math.random() * 20) : -(40 + Math.random() * 20);
+                obj.vx = (Math.random() - 0.5) * 3;
+              }
+            }
+
+            obj.startX = obj.x;
+            obj.startY = obj.y;
+
+            if (obj.graphType === 'probability') {
+              obj.dots = [-24, -12, -4, 4, 16, 28].map(dx => ({
+                x: dx,
+                delay: Math.random() * 1.5
+              }));
+            }
+          } else {
+            obj.text = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+            obj.size = 14 + Math.random() * 28;
+            obj.font = Math.random() < 0.5
+              ? '"Cormorant Garamond", "Times New Roman", serif'
+              : '"JetBrains Mono", monospace';
+          }
+          return obj;
         }
 
         function init() {
           size();
-          glyphs = Array.from({ length: 15 }, () => makeGlyph(true));
+          glyphs = [];
+          // Keep strictly only the 2 plots and matrix elements — no text formulas!
+          glyphs.push(makeGlyph(true, true)); // Graph 1
+          glyphs.push(makeGlyph(true, true)); // Graph 2
         }
 
         function frame(now) {
@@ -1095,26 +1157,231 @@
 
           for (const g of glyphs) {
             g.life += dt;
-            g.x += g.vx * dt + Math.sin(g.sway + g.life * 0.3) * 0.15;
-            g.y += g.vy * dt;
 
-            // Alpha envelope: 0 → target over first 3s, hold, → 0 in last 3s.
+            if (g.type === 'text') {
+              g.x += g.vx * dt + Math.sin(g.sway + g.life * 0.3) * 0.15;
+              g.y += g.vy * dt;
+            } else if (g.type === 'graph') {
+              // Gentle bended parabolic arch trajectory (no multiple direction changes)
+              const baseX = g.startX + g.vx * g.life;
+              const baseY = g.startY + g.vy * g.life;
+              const bend = Math.sin((g.life / g.ttl) * Math.PI) * g.curveAmp;
+
+              if (g.direction === 'horizontal') {
+                g.x = baseX;
+                g.y = baseY + bend;
+              } else {
+                g.x = baseX + bend;
+                g.y = baseY;
+              }
+            }
+
             let alpha;
-            if (g.life < 3) alpha = (g.life / 3) * g.target;
-            else if (g.life > g.ttl - 3) alpha = Math.max(0, (g.ttl - g.life) / 3) * g.target;
+            const fadeDur = g.type === 'graph' ? 0.6 : 3.0; // graphs fade in/out super fast (0.6s), text formulas slow (3s)
+            if (g.life < fadeDur) alpha = (g.life / fadeDur) * g.target;
+            else if (g.life > g.ttl - fadeDur) alpha = Math.max(0, (g.ttl - g.life) / fadeDur) * g.target;
             else alpha = g.target;
 
-            ctx.font = `400 ${g.size}px ${g.font}`;
-            ctx.fillStyle = `rgba(180, 175, 165, ${alpha})`;
-            ctx.fillText(g.text, g.x, g.y);
+            if (g.type === 'text') {
+              ctx.font = `400 ${g.size}px ${g.font}`;
+              ctx.fillStyle = `rgba(180, 175, 165, ${alpha})`;
+              ctx.fillText(g.text, g.x, g.y);
+            } else if (g.type === 'graph') {
+              ctx.save();
+              ctx.translate(g.x, g.y);
+              ctx.scale(g.scale, g.scale);
+              
+              ctx.lineWidth = 1;
+              ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 0.7})`;
+              
+              if (g.graphType === 'calculus') {
+                // 1. Draw minimal axes (parabola curve bottom lies on x-axis at y=25)
+                ctx.beginPath(); 
+                ctx.moveTo(-45, 25); ctx.lineTo(45, 25); // x-axis
+                ctx.moveTo(0, -25); ctx.lineTo(0, 25);   // y-axis
+                ctx.stroke();
+                
+                // 2. Draw convex arch curve: y = (x^2 / 35) - 10
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = -35; x <= 35; x += 2) {
+                  let py = (x * x) / 35 - 10;
+                  if (x === -35) ctx.moveTo(x, py);
+                  else ctx.lineTo(x, py);
+                }
+                ctx.stroke();
 
-            // Respawn at edge or after TTL.
+                // 3. Tangent rider: moves back and forth
+                let x_t = 30 * Math.sin(g.life * 1.2);
+                let y_t = (x_t * x_t) / 35 - 10;
+                let m = (2 * x_t) / 35; // slope dy/dx
+                let L = 16;
+                let len = Math.hypot(1, m);
+                let dx = L / len;
+                let dy = (L * m) / len;
+
+                // Draw tangent line
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.8})`;
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                ctx.moveTo(x_t - dx, y_t - dy);
+                ctx.lineTo(x_t + dx, y_t + dy);
+                ctx.stroke();
+
+                // Draw rider dot
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 2.0})`;
+                ctx.beginPath();
+                ctx.arc(x_t, y_t, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+              }
+              else if (g.graphType === 'probability') {
+                // 1. Draw minimal axis
+                ctx.beginPath();
+                ctx.moveTo(-45, 25); ctx.lineTo(45, 25);
+                ctx.stroke();
+
+                // 2. Draw bell curve: y = 25 - 35 * e^(-(x/20)^2)
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 0.08})`;
+                ctx.lineWidth = 2;
+
+                ctx.beginPath();
+                ctx.moveTo(-45, 25);
+                for (let x = -45; x <= 45; x += 2) {
+                  let py = 25 - 35 * Math.exp(-(x / 20) * (x / 20));
+                  ctx.lineTo(x, py);
+                }
+                ctx.lineTo(45, 25);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // 3. Draw falling and settling sample dots
+                g.dots.forEach((dot) => {
+                  let t_dot = (g.life * 0.8 + dot.delay) % 2.0;
+                  let dx = dot.x;
+                  let dy;
+                  let dAlpha;
+                  
+                  if (t_dot < 1.2) {
+                    // Falling phase
+                    let progress = t_dot / 1.2;
+                    dy = -15 + 37 * progress;
+                    dAlpha = alpha * progress;
+                  } else {
+                    // Settled phase
+                    dy = 22;
+                    dAlpha = alpha * 0.6;
+                  }
+
+                  ctx.fillStyle = `rgba(180, 175, 165, ${dAlpha * 1.8})`;
+                  ctx.beginPath();
+                  ctx.arc(dx, dy, 2.5, 0, Math.PI * 2);
+                  ctx.fill();
+                });
+              }
+              else if (g.graphType === 'regression') {
+                // 1. Axes
+                ctx.beginPath();
+                ctx.moveTo(-45, 30); ctx.lineTo(45, 30); // x-axis
+                ctx.moveTo(-40, -30); ctx.lineTo(-40, 30); // y-axis
+                ctx.stroke();
+
+                // 2. Linear Regression Line: y = -0.5 * x
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.moveTo(-40, 20);
+                ctx.lineTo(40, -20);
+                ctx.stroke();
+
+                // 3. Scattered Dots Clustered Around the Line
+                const scatterDots = [
+                  { x: -35, y: 15 }, { x: -30, y: 19 }, { x: -25, y: 8 }, { x: -20, y: 12 },
+                  { x: -15, y: 4 }, { x: -10, y: 9 }, { x: -5, y: -2 }, { x: 0, y: 5 },
+                  { x: 5, y: -8 }, { x: 10, y: -3 }, { x: 15, y: -12 }, { x: 20, y: -7 },
+                  { x: 25, y: -18 }, { x: 30, y: -11 }, { x: 35, y: -22 }
+                ];
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.8})`;
+                scatterDots.forEach(dot => {
+                  ctx.beginPath();
+                  ctx.arc(dot.x, dot.y, 2.0, 0, Math.PI * 2);
+                  ctx.fill();
+                });
+
+                // 4. Tiny Label
+                ctx.font = '500 7px "JetBrains Mono", sans-serif';
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.4})`;
+                ctx.textAlign = 'center';
+                ctx.fillText('LINEAR REGRESSION', 0, -38);
+              }
+              else if (g.graphType === 'sigmoid') {
+                // 1. Axes
+                ctx.beginPath();
+                ctx.moveTo(-45, 20); ctx.lineTo(45, 20); // x-axis
+                ctx.moveTo(0, -30); ctx.lineTo(0, 30);   // y-axis
+                ctx.stroke();
+
+                // 2. Sigmoid curve: y = 20 - 40 / (1 + e^(-x/8))
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.6})`;
+                ctx.lineWidth = 2.0;
+                ctx.beginPath();
+                for (let x = -40; x <= 40; x += 2) {
+                  let py = 20 - 40 / (1 + Math.exp(-x / 8));
+                  if (x === -40) ctx.moveTo(x, py);
+                  else ctx.lineTo(x, py);
+                }
+                ctx.stroke();
+
+                // 3. Label ticks and equations
+                ctx.font = '400 9px "Cormorant Garamond", serif';
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.4})`;
+                ctx.textAlign = 'left';
+                ctx.fillText('1', -12, -18);
+                ctx.fillText('0', -12, 23);
+              }
+              else if (g.graphType === 'matrix') {
+                // 1. Square brackets
+                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.lineWidth = 1.8;
+                
+                // Left bracket [
+                ctx.beginPath();
+                ctx.moveTo(-18, -25);
+                ctx.lineTo(-26, -25);
+                ctx.lineTo(-26, 25);
+                ctx.lineTo(-18, 25);
+                ctx.stroke();
+                
+                // Right bracket ]
+                ctx.beginPath();
+                ctx.moveTo(18, -25);
+                ctx.lineTo(26, -25);
+                ctx.lineTo(26, 25);
+                ctx.lineTo(18, 25);
+                ctx.stroke();
+
+                // 2. Editorial numbers (1 2; 3 4)
+                ctx.font = '400 18px "Cormorant Garamond", serif';
+                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.7})`;
+                ctx.textAlign = 'center';
+                ctx.fillText('1', -11, -6);
+                ctx.fillText('2', 11, -6);
+                ctx.fillText('3', -11, 14);
+                ctx.fillText('4', 11, 14);
+              }
+              ctx.restore();
+            }
+
             const offscreen = g.x < -200 || g.x > cv.offsetWidth + 200 ||
                               g.y < -200 || g.y > cv.offsetHeight + 200;
             if (g.life > g.ttl || offscreen) {
-              Object.assign(g, makeGlyph(false));
-              // Push the respawn off-screen so it drifts INTO view.
-              g.x = g.vx > 0 ? -120 : cv.offsetWidth + 120;
+              const wasGraph = g.type === 'graph';
+              Object.assign(g, makeGlyph(false, wasGraph));
+              if (!wasGraph) {
+                g.x = g.vx > 0 ? -120 : cv.offsetWidth + 120;
+              }
             }
           }
 
@@ -1861,7 +2128,7 @@
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
         { id: 'slideAITransforming', enabled: true },
-        { id: 'slideFuture', enabled: true },
+        { id: 'slideFuture', enabled: false },
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyMLTitle', enabled: true },
         { id: 'slideWhyML', enabled: true },
@@ -1886,20 +2153,49 @@
       let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive'));
       if (hideInactive === null) hideInactive = true;
 
-      // Merge new slides from default state if they are missing in localStorage
+      // Merge new slides from default state if they are missing in localStorage,
+      // and align slide enabled states with the new defaults.
       DEFAULT_SLIDE_STATE.forEach((def, defIdx) => {
-        if (!slideState.find(s => s.id === def.id)) {
+        const existing = slideState.find(s => s.id === def.id);
+        if (!existing) {
           slideState.splice(defIdx, 0, { ...def });
+        } else {
+          // Keep active slideState's enabled status perfectly synced with the latest defaults in the codebase
+          existing.enabled = def.enabled;
         }
       });
 
       // Ensure slideState only contains slides present in metadata (cleans up potential stale localStorage)
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
-      // Activate default slide (workflow page) on load
+      // Save aligned state to localStorage on load so updates are persisted immediately
+      localStorage.setItem('ann_slide_state_v2', JSON.stringify(slideState));
+
+      // Dynamically hide/show sidebar accordion lessons based on enabled slides
+      function updateSidebarLessons() {
+        const lessons = document.querySelectorAll(".course-lesson");
+        lessons.forEach(lesson => {
+          const onclickStr = lesson.getAttribute('onclick');
+          if (onclickStr) {
+            const match = onclickStr.match(/goToSlide\(['"]([^'"]+)['"]\)/);
+            if (match) {
+              const slideId = match[1];
+              const slide = slideState.find(s => s.id === slideId);
+              if (slide) {
+                lesson.style.display = slide.enabled ? "" : "none";
+              }
+            }
+          }
+        });
+      }
+
+      // Initial call to hide disabled sidebar items on load
+      updateSidebarLessons();
+
+      // Activate default slide (intro page) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
+        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -1916,6 +2212,7 @@
         
         localStorage.setItem('ann_slide_state_v2', JSON.stringify(slideState));
         renderQuickNav();
+        updateSidebarLessons();
 
         const activeAfter = getActiveSlides();
         const newIdx = activeAfter.findIndex(s => s.id === currentId);
@@ -2498,9 +2795,18 @@
         else setPalette("midnight");
       };
 
-      // Force Warm Linen palette on load
+      // Load saved palette from localStorage, defaulting to "midnight" (dark theme)
       (function () {
-        setPalette("warm-linen");
+        // One-time migration to ensure everyone gets the new default "midnight" instead of legacy "warm-linen" cache
+        try {
+          if (!localStorage.getItem("ann_default_midnight_v2")) {
+            localStorage.setItem("ann_palette", "midnight");
+            localStorage.setItem("ann_default_midnight_v2", "true");
+          }
+        } catch (e) {}
+
+        const savedPalette = localStorage.getItem("ann_palette") || "midnight";
+        setPalette(savedPalette);
         updateDropdownDisplays();
       })();
 
@@ -2837,11 +3143,14 @@
       function syncSlider(index) {
         // New Course Accordion Nav
         const lessons = document.querySelectorAll(".course-lesson");
+        const activeSlides = getActiveSlides();
+        const currentSlideId = activeSlides[index]?.id;
+
         lessons.forEach(lesson => {
           lesson.classList.remove("active");
-          // Extract slide index from onclick attribute
+          // Extract slide index or ID from onclick attribute
           const onclickStr = lesson.getAttribute('onclick');
-          if (onclickStr && onclickStr.includes(`goToSlide(${index})`)) {
+          if (onclickStr && (onclickStr.includes(`goToSlide(${index})`) || (currentSlideId && onclickStr.includes(`goToSlide('${currentSlideId}')`)))) {
             lesson.classList.add("active");
             // Auto-expand parent sub-group (if any)
             const parentSubgroup = lesson.closest('.lesson-subgroup');
