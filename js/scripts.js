@@ -1071,7 +1071,7 @@
             y: Math.random() * h,
             vx: (Math.random() - 0.5) * 8,
             vy: (Math.random() - 0.5) * 3,
-            target: 0.10 + Math.random() * 0.16,
+            target: 0.25 + Math.random() * 0.25,
             life: initial ? Math.random() * 18 : 0,
             ttl: 16 + Math.random() * 22,
             sway: Math.random() * Math.PI * 2,
@@ -1083,7 +1083,7 @@
             obj.graphType = PLAYLIST[playlistIndex];
             playlistIndex = (playlistIndex + 1) % PLAYLIST.length;
             obj.scale = 1.3 + Math.random() * 0.52;
-            obj.target = 0.18 + Math.random() * 0.12; // lighter and more visible
+            obj.target = 0.38 + Math.random() * 0.22; // even lighter and more visible
             obj.ttl = 8 + Math.random() * 4;          // 8 to 12 seconds to fully trace curves
             
             // Gentle parabolic/bended offset parameters
@@ -1184,7 +1184,7 @@
 
             if (g.type === 'text') {
               ctx.font = `400 ${g.size}px ${g.font}`;
-              ctx.fillStyle = `rgba(180, 175, 165, ${alpha})`;
+              ctx.fillStyle = `rgba(240, 238, 233, ${alpha})`;
               ctx.fillText(g.text, g.x, g.y);
             } else if (g.type === 'graph') {
               ctx.save();
@@ -1192,7 +1192,7 @@
               ctx.scale(g.scale, g.scale);
               
               ctx.lineWidth = 1;
-              ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 0.7})`;
+              ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 0.7})`;
               
               if (g.graphType === 'calculus') {
                 // 1. Draw minimal axes (parabola curve bottom lies on x-axis at y=25)
@@ -1202,7 +1202,7 @@
                 ctx.stroke();
                 
                 // 2. Draw convex arch curve: y = (x^2 / 35) - 10
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 for (let x = -35; x <= 35; x += 2) {
@@ -1222,7 +1222,7 @@
                 let dy = (L * m) / len;
 
                 // Draw tangent line
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.8})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.8})`;
                 ctx.lineWidth = 2.2;
                 ctx.beginPath();
                 ctx.moveTo(x_t - dx, y_t - dy);
@@ -1230,7 +1230,7 @@
                 ctx.stroke();
 
                 // Draw rider dot
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 2.0})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 2.0})`;
                 ctx.beginPath();
                 ctx.arc(x_t, y_t, 3.5, 0, Math.PI * 2);
                 ctx.fill();
@@ -1242,8 +1242,8 @@
                 ctx.stroke();
 
                 // 2. Draw bell curve: y = 25 - 35 * e^(-(x/20)^2)
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 0.08})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 0.08})`;
                 ctx.lineWidth = 2;
 
                 ctx.beginPath();
@@ -1275,7 +1275,7 @@
                     dAlpha = alpha * 0.6;
                   }
 
-                  ctx.fillStyle = `rgba(180, 175, 165, ${dAlpha * 1.8})`;
+                  ctx.fillStyle = `rgba(240, 238, 233, ${dAlpha * 1.8})`;
                   ctx.beginPath();
                   ctx.arc(dx, dy, 2.5, 0, Math.PI * 2);
                   ctx.fill();
@@ -1289,7 +1289,7 @@
                 ctx.stroke();
 
                 // 2. Linear Regression Line: y = -0.5 * x
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
                 ctx.lineWidth = 1.8;
                 ctx.beginPath();
                 ctx.moveTo(-40, 20);
@@ -1303,7 +1303,7 @@
                   { x: 5, y: -8 }, { x: 10, y: -3 }, { x: 15, y: -12 }, { x: 20, y: -7 },
                   { x: 25, y: -18 }, { x: 30, y: -11 }, { x: 35, y: -22 }
                 ];
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.8})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.8})`;
                 scatterDots.forEach(dot => {
                   ctx.beginPath();
                   ctx.arc(dot.x, dot.y, 2.0, 0, Math.PI * 2);
@@ -1312,7 +1312,7 @@
 
                 // 4. Tiny Label
                 ctx.font = '500 7px "JetBrains Mono", sans-serif';
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.4})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.4})`;
                 ctx.textAlign = 'center';
                 ctx.fillText('LINEAR REGRESSION', 0, -38);
               }
@@ -1324,7 +1324,7 @@
                 ctx.stroke();
 
                 // 2. Sigmoid curve: y = 20 - 40 / (1 + e^(-x/8))
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.6})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.6})`;
                 ctx.lineWidth = 2.0;
                 ctx.beginPath();
                 for (let x = -40; x <= 40; x += 2) {
@@ -1336,14 +1336,14 @@
 
                 // 3. Label ticks and equations
                 ctx.font = '400 9px "Cormorant Garamond", serif';
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.4})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.4})`;
                 ctx.textAlign = 'left';
                 ctx.fillText('1', -12, -18);
                 ctx.fillText('0', -12, 23);
               }
               else if (g.graphType === 'matrix') {
                 // 1. Square brackets
-                ctx.strokeStyle = `rgba(180, 175, 165, ${alpha * 1.5})`;
+                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
                 ctx.lineWidth = 1.8;
                 
                 // Left bracket [
@@ -1364,7 +1364,7 @@
 
                 // 2. Editorial numbers (1 2; 3 4)
                 ctx.font = '400 18px "Cormorant Garamond", serif';
-                ctx.fillStyle = `rgba(180, 175, 165, ${alpha * 1.7})`;
+                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.7})`;
                 ctx.textAlign = 'center';
                 ctx.fillText('1', -11, -6);
                 ctx.fillText('2', 11, -6);
