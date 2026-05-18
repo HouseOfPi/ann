@@ -1027,6 +1027,130 @@
       }
       drawBrain();
 
+      // ── Slide 1 ambient math-glyph drift ─────────────────────────
+      // Subtle, low-density background layer that floats math notation
+      // across the hero. Sits behind #brain so it never competes with
+      // the foreground title or the existing decorative math. Pauses
+      // when the slide isn't visible so it doesn't burn CPU.
+      (function setupMathDrift() {
+        const cv = document.getElementById('mathDrift');
+        if (!cv) return;
+        const ctx = cv.getContext('2d');
+        if (!ctx) return;
+
+        // Curated glyphs — mix Greek, operators, and short formulas so
+        // it reads as "ambient math" rather than random characters.
+        const GLYPHS = [
+          'y = wx + b', '∂L/∂w', 'Σ', '∇', 'σ(z)',
+          'eˣ', 'argmin', '[1 2; 3 4]', 'ŷ', 'θ',
+          'α', 'λ', 'μ', 'π', 'φ',
+          'w·x', 'ReLU', '|x|²', 'log p(x)', '∫',
+          'P(A|B)', 'softmax', '1/(1+e⁻ˣ)', '∂/∂θ', 'tanh',
+        ];
+
+        let glyphs = [];
+        let raf = null;
+        let lastT = 0;
+
+        function size() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 2);
+          const w = cv.offsetWidth, h = cv.offsetHeight;
+          cv.width  = Math.max(1, Math.floor(w * dpr));
+          cv.height = Math.max(1, Math.floor(h * dpr));
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function makeGlyph(initial = false) {
+          const w = cv.offsetWidth, h = cv.offsetHeight;
+          return {
+            text: GLYPHS[Math.floor(Math.random() * GLYPHS.length)],
+            x: Math.random() * w,
+            y: Math.random() * h,
+            // Slow drift — px/sec. Mostly horizontal with a hint of vertical sway.
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 3,
+            size: 14 + Math.random() * 28,
+            // Targeted opacity — actual alpha lerps toward this via lifePhase.
+            target: 0.10 + Math.random() * 0.16,
+            // Fade in over ~3s, hold, then fade out — independent of position.
+            life: initial ? Math.random() * 18 : 0,
+            ttl: 16 + Math.random() * 22,   // seconds before respawn
+            sway: Math.random() * Math.PI * 2,
+            font: Math.random() < 0.5
+              ? '"Cormorant Garamond", "Times New Roman", serif'
+              : '"JetBrains Mono", monospace',
+          };
+        }
+
+        function init() {
+          size();
+          glyphs = Array.from({ length: 15 }, () => makeGlyph(true));
+        }
+
+        function frame(now) {
+          const dt = lastT ? Math.min((now - lastT) / 1000, 0.1) : 0;
+          lastT = now;
+
+          ctx.clearRect(0, 0, cv.offsetWidth, cv.offsetHeight);
+
+          for (const g of glyphs) {
+            g.life += dt;
+            g.x += g.vx * dt + Math.sin(g.sway + g.life * 0.3) * 0.15;
+            g.y += g.vy * dt;
+
+            // Alpha envelope: 0 → target over first 3s, hold, → 0 in last 3s.
+            let alpha;
+            if (g.life < 3) alpha = (g.life / 3) * g.target;
+            else if (g.life > g.ttl - 3) alpha = Math.max(0, (g.ttl - g.life) / 3) * g.target;
+            else alpha = g.target;
+
+            ctx.font = `400 ${g.size}px ${g.font}`;
+            ctx.fillStyle = `rgba(180, 175, 165, ${alpha})`;
+            ctx.fillText(g.text, g.x, g.y);
+
+            // Respawn at edge or after TTL.
+            const offscreen = g.x < -200 || g.x > cv.offsetWidth + 200 ||
+                              g.y < -200 || g.y > cv.offsetHeight + 200;
+            if (g.life > g.ttl || offscreen) {
+              Object.assign(g, makeGlyph(false));
+              // Push the respawn off-screen so it drifts INTO view.
+              g.x = g.vx > 0 ? -120 : cv.offsetWidth + 120;
+            }
+          }
+
+          raf = requestAnimationFrame(frame);
+        }
+
+        function start() {
+          if (raf) return;
+          if (!glyphs.length) init();
+          lastT = 0;
+          raf = requestAnimationFrame(frame);
+        }
+        function stop() {
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+        }
+
+        // Run only while slide 1 is the active slide — saves CPU on long
+        // sessions where someone leaves the deck open on a later slide.
+        const slideOne = document.getElementById('slideOne');
+        if (slideOne) {
+          const observer = new MutationObserver(() => {
+            if (slideOne.classList.contains('active-slide')) start();
+            else stop();
+          });
+          observer.observe(slideOne, { attributes: true, attributeFilter: ['class'] });
+          if (slideOne.classList.contains('active-slide')) start();
+        }
+
+        // Resize → relayout
+        let resizeT = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeT);
+          resizeT = setTimeout(() => { size(); }, 150);
+        });
+      })();
+
       // Intersection Observer for Slide 2 Anims
       const observer = new IntersectionObserver(
         (entries) => {

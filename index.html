@@ -357,6 +357,10 @@
     <div id="sliderContainer" class="slider-container">
       <!-- SLIDE 01: NEURAL NETWORK INTRO (HERO) -->
       <section class="scene" id="slideOne">
+        <!-- Ambient drifting math glyph layer — sits BEHIND #brain so it
+             never competes with the foreground type or the existing
+             decorative math/charts. -->
+        <canvas id="mathDrift"></canvas>
         <canvas id="brain"></canvas>
 
         <div class="ui ui-left">
