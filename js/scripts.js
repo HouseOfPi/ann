@@ -539,7 +539,7 @@
             if (distSq > (9000 * p1.scale)) continue;
             const alpha = (1 - distSq / (9000 * p1.scale)) * 0.4;
             bx.beginPath(); bx.moveTo(p1.x, p1.y); bx.lineTo(p2.x, p2.y);
-            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.45})` : `rgba(3,105,161,${alpha * 0.32})`;
+            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.28})` : `rgba(3,105,161,${alpha * 0.22})`;
             bx.stroke();
           }
         }
@@ -548,7 +548,7 @@
           const opacity = Math.max(0.1, (bRadius + p.z) / (bRadius * 2));
           bx.beginPath();
           bx.arc(p.x, p.y, 2 * p.scale, 0, Math.PI * 2);
-          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.7})` : `rgba(3,105,161,${opacity * 0.8})`;
+          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.45})` : `rgba(3,105,161,${opacity * 0.55})`;
           bx.fill();
         });
 
@@ -593,7 +593,7 @@
             const alphaFalloff = Math.max(0, 1 - distY / 400);
             if (alphaFalloff <= 0) return;
             const actBoost = Math.max(n1.activation, n2.activation);
-            const alpha = (0.12 + actBoost * 0.25) * alphaFalloff;
+            const alpha = (0.07 + actBoost * 0.16) * alphaFalloff;
             bx.lineWidth = 0.8 + actBoost * 1.5;
             const c1 = palette[n1.layer % palette.length];
             const c2 = palette[n2.layer % palette.length];
@@ -621,12 +621,12 @@
           p.trail.push({x: px, y: py}); if (p.trail.length > 10) p.trail.shift();
           if (p.trail.length > 1) {
             for (let ti = 1; ti < p.trail.length; ti++) {
-              bx.beginPath();
-              bx.moveTo(p.trail[ti-1].x, p.trail[ti-1].y);
-              bx.lineTo(p.trail[ti].x, p.trail[ti].y);
-              bx.strokeStyle = hexToRgba(p.color, (ti / p.trail.length) * 0.6);
-              bx.lineWidth = (ti / p.trail.length) * 2.5;
-              bx.stroke();
+               bx.beginPath();
+               bx.moveTo(p.trail[ti-1].x, p.trail[ti-1].y);
+               bx.lineTo(p.trail[ti].x, p.trail[ti].y);
+               bx.strokeStyle = hexToRgba(p.color, (ti / p.trail.length) * 0.38);
+               bx.lineWidth = (ti / p.trail.length) * 2.5;
+               bx.stroke();
             }
           }
           bx.beginPath(); bx.arc(px, py, isDark ? 4 : 3, 0, Math.PI * 2);
@@ -649,7 +649,7 @@
           if (isDark) {
             const glowR = nodeR + 10 + act * 12;
             const glow = bx.createRadialGradient(n.x, n.y, nodeR * 0.5, n.x, n.y, glowR);
-            glow.addColorStop(0, hexToRgba(lc, 0.08 + act * 0.15));
+            glow.addColorStop(0, hexToRgba(lc, 0.04 + act * 0.08));
             glow.addColorStop(1, hexToRgba(lc, 0));
             bx.beginPath(); bx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
             bx.fillStyle = glow; bx.fill();
@@ -659,25 +659,25 @@
           bx.beginPath(); bx.arc(n.x, n.y, nodeR, 0, Math.PI * 2);
           if (isDark) {
             const gFill = bx.createRadialGradient(n.x - nodeR * 0.3, n.y - nodeR * 0.3, 0, n.x, n.y, nodeR);
-            gFill.addColorStop(0, hexToRgba(lc, 0.20 + act * 0.25));
+            gFill.addColorStop(0, hexToRgba(lc, 0.12 + act * 0.15));
             gFill.addColorStop(1, 'rgba(8,12,24,0.92)');
             bx.fillStyle = gFill; bx.fill();
             bx.lineWidth = 1.5 + act * 1.2;
-            bx.strokeStyle = hexToRgba(lc, 0.55 + act * 0.4 + pulse * 0.05);
+            bx.strokeStyle = hexToRgba(lc, 0.35 + act * 0.25 + pulse * 0.03);
             if (act > 0.15) { bx.shadowBlur = 10 + act * 15; bx.shadowColor = lc; }
             bx.stroke(); bx.shadowBlur = 0;
           } else {
             bx.fillStyle = '#fff'; bx.fill();
             bx.lineWidth = 2 + act * 1.2;
-            bx.strokeStyle = hexToRgba(lc, 0.7 + act * 0.3); bx.stroke();
+            bx.strokeStyle = hexToRgba(lc, 0.45 + act * 0.2); bx.stroke();
           }
 
           // Core dot
           const coreR = nodeR * 0.28 + pulse * 1.2 + act * 1.5;
           bx.beginPath(); bx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
           bx.fillStyle = isDark
-            ? `rgba(255,255,255,${0.55 + act * 0.35 + pulse * 0.1})`
-            : hexToRgba(lc, 0.75 + act * 0.25);
+            ? `rgba(255,255,255,${0.35 + act * 0.20 + pulse * 0.06})`
+            : hexToRgba(lc, 0.48 + act * 0.15);
           bx.fill();
         });
 
@@ -962,12 +962,12 @@
               const dist = Math.sqrt(distSq);
               edges.push([i, j, dist]);
               const boost = Math.max(a.activation, b.activation) * 0.25;
-              const alpha = (1 - dist / maxD) * 0.4 + boost;
+              const alpha = ((1 - dist / maxD) * 0.4 + boost) * 0.65; // ~35% lighter connection opacities
               bx.beginPath(); bx.moveTo(a.x, a.y); bx.lineTo(b.x, b.y);
               bx.strokeStyle = isLightMode
-                ? `rgba(0,100,200,${Math.max(0.02, alpha)})`
-                : `rgba(0,170,255,${Math.max(0.02, alpha)})`;
-              bx.lineWidth = isLightMode ? 0.8 + boost * 3 : 0.5 + boost * 4;
+                ? `rgba(0,100,200,${Math.max(0.015, alpha)})`
+                : `rgba(0,170,255,${Math.max(0.015, alpha)})`;
+              bx.lineWidth = isLightMode ? 0.6 + boost * 2 : 0.4 + boost * 2.5; // thinner lines
               bx.stroke();
             }
           }
@@ -979,7 +979,7 @@
           const px = a.x + (b.x - a.x) * p.p, py = a.y + (b.y - a.y) * p.p;
           const al = Math.sin(p.p * Math.PI);
           bx.beginPath(); bx.arc(px, py, isLightMode ? 3 : 2.5, 0, Math.PI * 2);
-          bx.fillStyle = isLightMode ? `rgba(0,150,255,${al})` : `rgba(0,240,200,${al * 0.9})`;
+          bx.fillStyle = isLightMode ? `rgba(0,150,255,${al * 0.65})` : `rgba(0,240,200,${al * 0.6})`;
           if (!isLightMode) { bx.shadowColor = "rgba(0,240,200,.6)"; bx.shadowBlur = 10; }
           bx.fill(); bx.shadowBlur = 0;
         }
@@ -990,17 +990,17 @@
           const glowR = br * (isLightMode ? 2.5 + act * 5 : 3.5 + act * 7);
           if (!isLightMode || act > 0.1) {
             const g = bx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
-            g.addColorStop(0, `rgba(${hue},${isLightMode ? 0.15 + act * 0.4 : 0.25 + act * 0.5})`);
+            g.addColorStop(0, `rgba(${hue},${isLightMode ? 0.08 + act * 0.22 : 0.15 + act * 0.3})`); // softer glow
             g.addColorStop(1, `rgba(${hue},0)`);
             bx.beginPath(); bx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
             bx.fillStyle = g; bx.fill();
           }
           bx.beginPath(); bx.arc(n.x, n.y, br + act * (isLightMode ? 1.5 : 2), 0, Math.PI * 2);
-          bx.fillStyle = `rgba(${hue},${isLightMode ? 0.8 + act * 0.2 : 0.7 + act * 0.3})`;
-          if (!isLightMode) { bx.shadowColor = `rgba(${hue},${0.4 + act * 0.6})`; bx.shadowBlur = 5 + act * 15; }
+          bx.fillStyle = `rgba(${hue},${isLightMode ? 0.5 + act * 0.12 : 0.44 + act * 0.18})`; // softer bodies
+          if (!isLightMode) { bx.shadowColor = `rgba(${hue},${0.25 + act * 0.4})`; bx.shadowBlur = 4 + act * 10; }
           bx.fill(); bx.shadowBlur = 0;
           bx.beginPath(); bx.arc(n.x, n.y, br * 0.4, 0, Math.PI * 2);
-          bx.fillStyle = `rgba(255,255,255,${isLightMode ? 0.5 + act * 0.5 : 0.3 + act * 0.4})`;
+          bx.fillStyle = `rgba(255,255,255,${isLightMode ? 0.35 + act * 0.35 : 0.2 + act * 0.25})`;
           bx.fill();
         });
       }
@@ -1071,7 +1071,7 @@
             y: Math.random() * h,
             vx: (Math.random() - 0.5) * 8,
             vy: (Math.random() - 0.5) * 3,
-            target: 0.25 + Math.random() * 0.25,
+            target: 0.12 + Math.random() * 0.08, // Balanced text target opacity (original: 0.25 + 0.25)
             life: initial ? Math.random() * 18 : 0,
             ttl: 16 + Math.random() * 22,
             sway: Math.random() * Math.PI * 2,
@@ -1083,7 +1083,7 @@
             obj.graphType = PLAYLIST[playlistIndex];
             playlistIndex = (playlistIndex + 1) % PLAYLIST.length;
             obj.scale = 1.3 + Math.random() * 0.52;
-            obj.target = 0.38 + Math.random() * 0.22; // even lighter and more visible
+            obj.target = 0.18 + Math.random() * 0.12; // Balanced target opacity for plots (original: 0.38 + 0.22)
             obj.ttl = 8 + Math.random() * 4;          // 8 to 12 seconds to fully trace curves
             
             // Gentle parabolic/bended offset parameters
@@ -1155,6 +1155,9 @@
 
           ctx.clearRect(0, 0, cv.offsetWidth, cv.offsetHeight);
 
+          // Dynamically detect palette mode to ensure glyphs/plots stay perfectly subtle and legible
+          const glyphColor = isLightMode ? '15, 23, 42' : '240, 238, 233';
+
           for (const g of glyphs) {
             g.life += dt;
 
@@ -1184,15 +1187,15 @@
 
             if (g.type === 'text') {
               ctx.font = `400 ${g.size}px ${g.font}`;
-              ctx.fillStyle = `rgba(240, 238, 233, ${alpha})`;
+              ctx.fillStyle = `rgba(${glyphColor}, ${alpha})`;
               ctx.fillText(g.text, g.x, g.y);
             } else if (g.type === 'graph') {
               ctx.save();
               ctx.translate(g.x, g.y);
               ctx.scale(g.scale, g.scale);
               
-              ctx.lineWidth = 1;
-              ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 0.7})`;
+              ctx.lineWidth = 0.8; // balanced fine lines (original: 1)
+              ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 0.6})`; // balanced (original: alpha * 0.7)
               
               if (g.graphType === 'calculus') {
                 // 1. Draw minimal axes (parabola curve bottom lies on x-axis at y=25)
@@ -1202,8 +1205,8 @@
                 ctx.stroke();
                 
                 // 2. Draw convex arch curve: y = (x^2 / 35) - 10
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.5)
+                ctx.lineWidth = 1.3; // balanced (original: 2)
                 ctx.beginPath();
                 for (let x = -35; x <= 35; x += 2) {
                   let py = (x * x) / 35 - 10;
@@ -1222,17 +1225,17 @@
                 let dy = (L * m) / len;
 
                 // Draw tangent line
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.8})`;
-                ctx.lineWidth = 2.2;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.3})`; // balanced (original: alpha * 1.8)
+                ctx.lineWidth = 1.6; // balanced (original: 2.2)
                 ctx.beginPath();
                 ctx.moveTo(x_t - dx, y_t - dy);
                 ctx.lineTo(x_t + dx, y_t + dy);
                 ctx.stroke();
 
                 // Draw rider dot
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 2.0})`;
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 1.5})`; // balanced (original: alpha * 2.0)
                 ctx.beginPath();
-                ctx.arc(x_t, y_t, 3.5, 0, Math.PI * 2);
+                ctx.arc(x_t, y_t, 2.6, 0, Math.PI * 2); // balanced (original: 3.5)
                 ctx.fill();
               }
               else if (g.graphType === 'probability') {
@@ -1242,9 +1245,9 @@
                 ctx.stroke();
 
                 // 2. Draw bell curve: y = 25 - 35 * e^(-(x/20)^2)
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 0.08})`;
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.5)
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 0.06})`; // balanced (original: alpha * 0.08)
+                ctx.lineWidth = 1.3; // balanced (original: 2)
 
                 ctx.beginPath();
                 ctx.moveTo(-45, 25);
@@ -1275,9 +1278,9 @@
                     dAlpha = alpha * 0.6;
                   }
 
-                  ctx.fillStyle = `rgba(240, 238, 233, ${dAlpha * 1.8})`;
+                  ctx.fillStyle = `rgba(${glyphColor}, ${dAlpha * 1.5})`; // balanced (original: dAlpha * 1.8)
                   ctx.beginPath();
-                  ctx.arc(dx, dy, 2.5, 0, Math.PI * 2);
+                  ctx.arc(dx, dy, 2.0, 0, Math.PI * 2); // balanced (original: 2.5)
                   ctx.fill();
                 });
               }
@@ -1289,8 +1292,8 @@
                 ctx.stroke();
 
                 // 2. Linear Regression Line: y = -0.5 * x
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
-                ctx.lineWidth = 1.8;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.5)
+                ctx.lineWidth = 1.3; // balanced (original: 1.8)
                 ctx.beginPath();
                 ctx.moveTo(-40, 20);
                 ctx.lineTo(40, -20);
@@ -1303,16 +1306,16 @@
                   { x: 5, y: -8 }, { x: 10, y: -3 }, { x: 15, y: -12 }, { x: 20, y: -7 },
                   { x: 25, y: -18 }, { x: 30, y: -11 }, { x: 35, y: -22 }
                 ];
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.8})`;
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 1.5})`; // balanced (original: alpha * 1.8)
                 scatterDots.forEach(dot => {
                   ctx.beginPath();
-                  ctx.arc(dot.x, dot.y, 2.0, 0, Math.PI * 2);
+                  ctx.arc(dot.x, dot.y, 1.6, 0, Math.PI * 2); // balanced (original: 2.0)
                   ctx.fill();
                 });
 
                 // 4. Tiny Label
                 ctx.font = '500 7px "JetBrains Mono", sans-serif';
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.4})`;
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.4)
                 ctx.textAlign = 'center';
                 ctx.fillText('LINEAR REGRESSION', 0, -38);
               }
@@ -1324,8 +1327,8 @@
                 ctx.stroke();
 
                 // 2. Sigmoid curve: y = 20 - 40 / (1 + e^(-x/8))
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.6})`;
-                ctx.lineWidth = 2.0;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.2})`; // balanced (original: alpha * 1.6)
+                ctx.lineWidth = 1.3; // balanced (original: 2.0)
                 ctx.beginPath();
                 for (let x = -40; x <= 40; x += 2) {
                   let py = 20 - 40 / (1 + Math.exp(-x / 8));
@@ -1336,15 +1339,15 @@
 
                 // 3. Label ticks and equations
                 ctx.font = '400 9px "Cormorant Garamond", serif';
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.4})`;
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.4)
                 ctx.textAlign = 'left';
                 ctx.fillText('1', -12, -18);
                 ctx.fillText('0', -12, 23);
               }
               else if (g.graphType === 'matrix') {
                 // 1. Square brackets
-                ctx.strokeStyle = `rgba(240, 238, 233, ${alpha * 1.5})`;
-                ctx.lineWidth = 1.8;
+                ctx.strokeStyle = `rgba(${glyphColor}, ${alpha * 1.1})`; // balanced (original: alpha * 1.5)
+                ctx.lineWidth = 1.3; // balanced (original: 1.8)
                 
                 // Left bracket [
                 ctx.beginPath();
@@ -1364,7 +1367,7 @@
 
                 // 2. Editorial numbers (1 2; 3 4)
                 ctx.font = '400 18px "Cormorant Garamond", serif';
-                ctx.fillStyle = `rgba(240, 238, 233, ${alpha * 1.7})`;
+                ctx.fillStyle = `rgba(${glyphColor}, ${alpha * 1.4})`; // balanced (original: alpha * 1.7)
                 ctx.textAlign = 'center';
                 ctx.fillText('1', -11, -6);
                 ctx.fillText('2', 11, -6);
