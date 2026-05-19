@@ -1098,6 +1098,63 @@ body.predict-mode .predict-result > .val { display: none; }
   .stage-pill { padding: 4px 10px; font-size: 10px; }
   .sheet-table th, .sheet-table td { padding: 10px 12px; font-size: 12px; }
 }
+
+/* ── Intro Overlay ── */
+.intro-overlay {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 750px;
+  text-align: center;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.intro-lead {
+  font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 1.35;
+  color: var(--fg);
+  margin-bottom: 30px;
+  font-weight: 400;
+  opacity: 0.95;
+}
+.intro-btn {
+  background: color-mix(in srgb, var(--c2) 10%, transparent);
+  color: var(--fg);
+  border: 1.5px solid color-mix(in srgb, var(--c2) 35%, transparent);
+  padding: 14px 32px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px -10px color-mix(in srgb, var(--c2) 25%, transparent);
+  transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), background 0.22s, border-color 0.22s, box-shadow 0.22s;
+}
+.intro-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: color-mix(in srgb, var(--c2) 18%, transparent);
+  border-color: var(--c2);
+  box-shadow: 0 15px 35px -8px color-mix(in srgb, var(--c2) 45%, transparent);
+}
+.intro-btn i {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s ease;
+}
+.intro-btn:hover i {
+  transform: translateX(5px);
+}
 </style>
 <link rel="stylesheet" href="../shared/page-title.css">
 <script defer src="../shared/page-title.js"></script>
@@ -1105,6 +1162,14 @@ body.predict-mode .predict-result > .val { display: none; }
 <body style="--c1:#5fe8ec; --c2:#4ee0a0; --c3:#a78bfa">
 
 <page-title id="header" eyebrow="Let the data teach the model" title="The <em>Workflow</em>"></page-title>
+
+<div id="intro-overlay" class="intro-overlay">
+  <p class="intro-lead">Machine learning is not about writing rules. It's a workflow of teaching models from data.</p>
+  <button class="intro-btn" onclick="revealWorkflowCards(); event.stopPropagation();">
+    <span>Explore the 3 key stages</span>
+    <i data-lucide="arrow-right"></i>
+  </button>
+</div>
 
 <div class="cards-container">
   <!-- Step 1 -->
@@ -1389,6 +1454,46 @@ body.predict-mode .predict-result > .val { display: none; }
 // the rest of the script (which previously left the slide permanently blank).
 if (window.lucide) lucide.createIcons();
 
+let workflowRevealed = false;
+
+function revealWorkflowCards() {
+  if (workflowRevealed) return;
+  workflowRevealed = true;
+  
+  const intro = document.getElementById('intro-overlay');
+  if (intro) {
+    gsap.to(intro, {
+      opacity: 0,
+      y: -20,
+      duration: 0.5,
+      ease: "power2.in",
+      onComplete: () => intro.style.display = 'none'
+    });
+  }
+  
+  const cards = document.querySelectorAll('.card');
+  // Set initial state for slide up
+  gsap.set(cards, { y: 25 });
+  gsap.to(cards, {
+    opacity: 1,
+    y: 0,
+    pointerEvents: 'auto',
+    stagger: 0.15,
+    duration: 0.8,
+    ease: 'power2.out'
+  });
+  
+  cards.forEach((card, idx) => {
+    gsap.from(card.querySelectorAll('.bullet'), {
+      y: 10,
+      opacity: 0,
+      stagger: 0.08,
+      duration: 0.5,
+      delay: 0.3 + idx * 0.15
+    });
+  });
+}
+
 // Forward arrow-key nav up to the parent deck so prev/next still works
 // when this iframe has focus. The parent listens for { type: 'NAV' }.
 window.addEventListener('keydown', (e) => {
@@ -1397,7 +1502,11 @@ window.addEventListener('keydown', (e) => {
   if (document.body.classList.contains('modal-active')) return;
   if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
     e.preventDefault();
-    try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
+    if (!workflowRevealed) {
+      revealWorkflowCards();
+    } else {
+      try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
+    }
   } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
     e.preventDefault();
     try { window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*'); } catch (_) {}
@@ -2366,89 +2475,6 @@ window.addEventListener('message', (e) => {
   applyPalette(p);
 });
 
-// Progressive Animation State
-let currentStep = 0;
-let masterTimeline;
-
-function nextStep() {
-  if (currentStep >= 3) return;
-  currentStep++;
-  
-  const card1 = document.getElementById('card1');
-  const card2 = document.getElementById('card2');
-  const card3 = document.getElementById('card3');
-  const conn1 = document.querySelectorAll('.connector')[0];
-  const conn2 = document.querySelectorAll('.connector')[1];
-
-  if (currentStep === 1) {
-    // State 1: Card 1 at center (start immediately at center)
-    const container = document.querySelector('.cards-container');
-    const cRect = container.getBoundingClientRect();
-    const bRect = card1.getBoundingClientRect();
-    const offset = (cRect.width / 2) - (bRect.width / 2) - card1.offsetLeft;
-    
-    // Set position instantly, then animate opacity
-    gsap.set(card1, { x: offset });
-    gsap.to(card1, { 
-      opacity: 1, 
-      pointerEvents: "auto",
-      duration: 0.8, 
-      ease: "power2.out" 
-    });
-    
-    // Show bullets for card 1
-    gsap.from(card1.querySelectorAll('.bullet'), {
-      y: 10,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.6,
-      delay: 0.3
-    });
-  } 
-  else if (currentStep === 2) {
-    // State 2: Move Card 1 to left, Show Card 2 at center
-    // We'll actually just move Card 1 back to its original position and show Card 2
-    gsap.to(card1, { x: 0, duration: 1, ease: "power3.inOut" });
-    
-    gsap.to(card2, { 
-      opacity: 1, 
-      pointerEvents: "auto",
-      duration: 0.8, 
-      delay: 0.3,
-      ease: "power2.out"
-    });
-    
-    if (conn1) gsap.fromTo(conn1, { scaleX: 0 }, { scaleX: 1, opacity: 0.4, duration: 0.8, delay: 0.5 });
-    
-    gsap.from(card2.querySelectorAll('.bullet'), {
-      x: -10,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.6,
-      delay: 0.8
-    });
-  }
-  else if (currentStep === 3) {
-    // State 3: Show Evaluation card on right
-    gsap.to(card3, { 
-      opacity: 1, 
-      pointerEvents: "auto",
-      duration: 0.8, 
-      ease: "power2.out"
-    });
-    
-    if (conn2) gsap.fromTo(conn2, { scaleX: 0 }, { scaleX: 1, opacity: 0.4, duration: 0.8, delay: 0.2 });
-    
-    gsap.from(card3.querySelectorAll('.bullet'), {
-      x: -10,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.6,
-      delay: 0.5
-    });
-  }
-}
-
 // Entrance Animations
 // Run as soon as the DOM is ready (don't wait for every CDN font + iframe).
 // Falls back to a static reveal if GSAP isn't available so the page never
@@ -2459,6 +2485,8 @@ function startMlpEntrance() {
 
   if (!window.gsap) {
     // GSAP missing — show everything immediately.
+    const intro = document.getElementById('intro-overlay');
+    if (intro) intro.style.display = 'none';
     document.querySelectorAll('.card').forEach(c => {
       c.style.opacity = '1';
       c.style.pointerEvents = 'auto';
@@ -2468,7 +2496,7 @@ function startMlpEntrance() {
 
   const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
   tl.from("#header > *", { y: 20, opacity: 0, stagger: 0.1, duration: 0.8 });
-  setTimeout(nextStep, 500);
+  tl.from("#intro-overlay", { y: 15, opacity: 0, duration: 0.8 }, "-=0.4");
 }
 
 if (document.readyState === 'loading') {
@@ -2477,12 +2505,12 @@ if (document.readyState === 'loading') {
   startMlpEntrance();
 }
 
-// Safety net: if for any reason cards are still invisible after 2.5s
-// (slow CDN, blocked script, etc.) force-reveal the first card so the
-// page is never stuck on a blank canvas.
+// Safety net: if for any reason GSAP failed to load and show the page,
+// force-reveal everything so the page is never stuck on a blank canvas.
 setTimeout(() => {
-  const c1 = document.getElementById('card1');
-  if (c1 && getComputedStyle(c1).opacity === '0') {
+  if (!window.gsap) {
+    const intro = document.getElementById('intro-overlay');
+    if (intro) intro.style.display = 'none';
     document.querySelectorAll('.card').forEach(c => {
       c.style.opacity = '1';
       c.style.pointerEvents = 'auto';
@@ -2492,9 +2520,14 @@ setTimeout(() => {
 
 // Click to progress
 document.body.addEventListener('click', (e) => {
-  // Don't progress if clicking buttons or triggers
-  if (e.target.closest('button') || e.target.closest('.card-header-clickable')) return;
-  nextStep();
+  // Don't progress if clicking buttons or triggers or inside active modals
+  if (e.target.closest('button') || e.target.closest('.card-header-clickable') || document.body.classList.contains('modal-active')) return;
+  
+  if (!workflowRevealed) {
+    revealWorkflowCards();
+  } else {
+    try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
+  }
 });
 
 // Subtle Hover Interaction via JS if needed (though CSS handles most)
