@@ -1473,7 +1473,7 @@ window.addEventListener('keydown', (e) => {
     } else {
       try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
     }
-  } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+  } else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) {
     e.preventDefault();
     try { window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*'); } catch (_) {}
   }
@@ -2498,13 +2498,11 @@ setTimeout(() => {
 
 // Click to progress
 document.body.addEventListener('click', (e) => {
-  // Don't progress if clicking buttons or triggers or inside active modals
-  if (e.target.closest('button') || e.target.closest('.card-header-clickable') || document.body.classList.contains('modal-active')) return;
-  
+  // Don't progress if clicking buttons, cards, triggers, or inside active modals
+  if (e.target.closest('button') || e.target.closest('.card') || e.target.closest('.card-header-clickable') || document.body.classList.contains('modal-active')) return;
+
   if (!workflowRevealed) {
     revealWorkflowCards();
-  } else {
-    try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
   }
 });
 
