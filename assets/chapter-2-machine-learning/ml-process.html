@@ -2442,12 +2442,16 @@ window.addEventListener('message', (e) => {
     applyPalette(p);
   }
   if (e.data.type === 'RESTART_ANIMATION') {
+    if (window.gsap) gsap.killTweensOf('*');
     window.__mlpEntranceStarted = false;
     workflowRevealed = false;
-    // Reset card visibility and intro overlay
     document.querySelectorAll('.card').forEach(c => { c.style.opacity = '0'; c.style.pointerEvents = 'none'; });
     const intro = document.getElementById('intro-overlay');
-    if (intro) { intro.style.display = 'flex'; gsap.set(intro, { opacity: 0, y: 18 }); }
+    if (intro) { intro.style.removeProperty('display'); }
+    if (window.gsap) {
+      gsap.set('#header', { opacity: 0, y: 20 });
+      gsap.set('#intro-overlay', { opacity: 0, y: 18 });
+    }
     startMlpEntrance();
   }
 });
@@ -2471,9 +2475,10 @@ function startMlpEntrance() {
     return;
   }
 
+  gsap.set("#header", { opacity: 0, y: 20 });
   gsap.set("#intro-overlay", { opacity: 0, y: 18 });
   const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
-  tl.from("#header > *", { y: 20, opacity: 0, stagger: 0.1, duration: 0.8 });
+  tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
   tl.to("#intro-overlay", { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "-=0.3");
 }
 
