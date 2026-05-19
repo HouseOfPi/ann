@@ -2496,9 +2496,20 @@ function applyPalette(p) {
 }
 
 window.addEventListener('message', (e) => {
-  if (!e.data || e.data.type !== 'SET_THEME') return;
-  const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'dark' ? PALETTE_MAP['Deep Navy'] : PALETTE_MAP['Warm Linen']);
-  applyPalette(p);
+  if (!e.data) return;
+  if (e.data.type === 'SET_THEME') {
+    const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'dark' ? PALETTE_MAP['Deep Navy'] : PALETTE_MAP['Warm Linen']);
+    applyPalette(p);
+  }
+  if (e.data.type === 'RESTART_ANIMATION') {
+    window.__mlpEntranceStarted = false;
+    workflowRevealed = false;
+    // Reset card visibility and intro overlay
+    document.querySelectorAll('.card').forEach(c => { c.style.opacity = '0'; c.style.pointerEvents = 'none'; });
+    const intro = document.getElementById('intro-overlay');
+    if (intro) { intro.style.display = ''; intro.style.opacity = '0'; }
+    startMlpEntrance();
+  }
 });
 
 // Entrance Animations

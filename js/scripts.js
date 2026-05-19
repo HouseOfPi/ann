@@ -2208,6 +2208,18 @@
           el.style.opacity = "1";
           el.style.visibility = "visible";
           el.style.transform = "scale(1)";
+          // Kick the iframe animation once it has had time to load
+          const frame = el.querySelector('iframe');
+          if (frame) {
+            const send = () => {
+              try { frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*'); } catch (_) {}
+            };
+            if (frame.contentDocument && frame.contentDocument.readyState === 'complete') {
+              setTimeout(send, 80);
+            } else {
+              frame.addEventListener('load', () => setTimeout(send, 80), { once: true });
+            }
+          }
         }
       }
 
