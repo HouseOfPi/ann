@@ -1420,44 +1420,46 @@ body.predict-mode .predict-result > .val { display: none; }
 // the rest of the script (which previously left the slide permanently blank).
 if (window.lucide) lucide.createIcons();
 
-let workflowRevealed = false;
+// Script-driven sequential reveal:
+// Click 1 → dismiss intro + show Data Gathering
+// Click 2 → show Model Building
+// Click 3 → show Evaluation
+// Click 4+ → navigate to next slide
+let revealStep = 0;
+const CARDS = ['card1', 'card2', 'card3'];
 
-function revealWorkflowCards() {
-  if (workflowRevealed) return;
-  workflowRevealed = true;
-  
-  const intro = document.getElementById('intro-overlay');
-  if (intro) {
-    gsap.to(intro, {
-      opacity: 0,
-      y: -20,
-      duration: 0.5,
-      ease: "power2.in",
-      onComplete: () => intro.style.display = 'none'
+function revealNextStep() {
+  if (revealStep === 0) {
+    // Dismiss intro overlay
+    const intro = document.getElementById('intro-overlay');
+    if (intro) {
+      gsap.to(intro, { opacity: 0, y: -16, duration: 0.4, ease: 'power2.in',
+        onComplete: () => { intro.style.display = 'none'; }
+      });
+    }
+  }
+
+  const cardEl = document.getElementById(CARDS[revealStep]);
+  if (cardEl) {
+    gsap.set(cardEl, { y: 28, opacity: 0 });
+    gsap.to(cardEl, { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.65, ease: 'power3.out' });
+    gsap.set(cardEl.querySelectorAll('.bullet'), { opacity: 0, x: -8 });
+    gsap.to(cardEl.querySelectorAll('.bullet'), {
+      opacity: 1, x: 0, stagger: 0.1, duration: 0.45, ease: 'power2.out', delay: 0.25
     });
   }
-  
-  const cards = document.querySelectorAll('.card');
-  // Set initial state for slide up
-  gsap.set(cards, { y: 25 });
-  gsap.to(cards, {
-    opacity: 1,
-    y: 0,
-    pointerEvents: 'auto',
-    stagger: 0.15,
-    duration: 0.8,
-    ease: 'power2.out'
+
+  revealStep++;
+}
+
+function resetReveal() {
+  revealStep = 0;
+  CARDS.forEach(id => {
+    const c = document.getElementById(id);
+    if (c) { c.style.opacity = '0'; c.style.pointerEvents = 'none'; }
   });
-  
-  cards.forEach((card, idx) => {
-    gsap.from(card.querySelectorAll('.bullet'), {
-      y: 10,
-      opacity: 0,
-      stagger: 0.08,
-      duration: 0.5,
-      delay: 0.3 + idx * 0.15
-    });
-  });
+  const intro = document.getElementById('intro-overlay');
+  if (intro) { intro.style.removeProperty('display'); }
 }
 
 // Forward arrow-key nav up to the parent deck so prev/next still works
@@ -1468,8 +1470,8 @@ window.addEventListener('keydown', (e) => {
   if (document.body.classList.contains('modal-active')) return;
   if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
     e.preventDefault();
-    if (!workflowRevealed) {
-      revealWorkflowCards();
+    if (revealStep < CARDS.length) {
+      revealNextStep();
     } else {
       try { window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*'); } catch (_) {}
     }
@@ -2444,10 +2446,7 @@ window.addEventListener('message', (e) => {
   if (e.data.type === 'RESTART_ANIMATION') {
     if (window.gsap) gsap.killTweensOf('*');
     window.__mlpEntranceStarted = false;
-    workflowRevealed = false;
-    document.querySelectorAll('.card').forEach(c => { c.style.opacity = '0'; c.style.pointerEvents = 'none'; });
-    const intro = document.getElementById('intro-overlay');
-    if (intro) { intro.style.removeProperty('display'); }
+    resetReveal();
     if (window.gsap) {
       gsap.set('#header', { opacity: 0, y: 20 });
       gsap.set('#intro-overlay', { opacity: 0, y: 18 });
@@ -2503,11 +2502,9 @@ setTimeout(() => {
 
 // Click to progress
 document.body.addEventListener('click', (e) => {
-  // Don't progress if clicking buttons, cards, triggers, or inside active modals
   if (e.target.closest('button') || e.target.closest('.card') || e.target.closest('.card-header-clickable') || document.body.classList.contains('modal-active')) return;
-
-  if (!workflowRevealed) {
-    revealWorkflowCards();
+  if (revealStep < CARDS.length) {
+    revealNextStep();
   }
 });
 
