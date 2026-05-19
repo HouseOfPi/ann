@@ -1257,10 +1257,7 @@ body.predict-mode .predict-result > .val { display: none; }
     </div>
 
     <div class="view-tabs">
-      <button class="view-tab active" data-view="simple">
-        <i data-lucide="minimize-2"></i><span>Simplified</span><em>2 features</em>
-      </button>
-      <button class="view-tab" data-view="full">
+      <button class="view-tab active" data-view="full">
         <i data-lucide="table-2"></i><span>Full dataset</span><em>7 features</em>
       </button>
     </div>
@@ -1535,7 +1532,7 @@ const RAW_ROWS = [
 ];
 
 let currentStage = 'import';
-let currentView = 'simple'; // 'full' or 'simple'
+let currentView = 'full'; // 'full' or 'simple'
 
 const COL_HEADERS = ['age', 'gender', 'daily_hrs', 'platform', 'sleep_hrs', 'real_life', 'activity', 'stress (1–10) →'];
 const SIMPLE_COLS = [2, 7]; // daily_hrs, stress
