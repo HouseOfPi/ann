@@ -9,6 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
+  @keyframes nodeFire {
+    0%   { transform: scale(1); filter: brightness(1); }
+    15%  { transform: scale(1.45); filter: brightness(1.8); }
+    40%, 100% { transform: scale(1); filter: brightness(1); }
+  }
+  .nn-node-anim {
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  #dl-processing-card:hover .nn-node-anim {
+    animation: nodeFire 1.5s infinite linear;
+  }
   :root {
     --bg-page: transparent;
     --mesh-line: #1c2438;
@@ -1327,10 +1339,10 @@
                     <line x1="70" y1="80" x2="110" y2="30"/><line x1="70" y1="80" x2="110" y2="70"/>
                   </g>
                   <g filter="url(#dl-glow)">
-                    <circle cx="10" cy="20" r="4" fill="#FFB74D"/><circle cx="10" cy="46" r="4" fill="#FFB74D"/><circle cx="10" cy="72" r="4" fill="#FFB74D"/>
-                    <circle cx="40" cy="10" r="4" fill="#81C784"/><circle cx="40" cy="36" r="4" fill="#81C784"/><circle cx="40" cy="62" r="4" fill="#81C784"/><circle cx="40" cy="88" r="4" fill="#81C784"/>
-                    <circle cx="70" cy="20" r="4" fill="#81C784"/><circle cx="70" cy="50" r="4" fill="#81C784"/><circle cx="70" cy="80" r="4" fill="#81C784"/>
-                    <circle cx="110" cy="30" r="4" fill="#64B5F6"/><circle cx="110" cy="70" r="4" fill="#64B5F6"/>
+                    <circle cx="10" cy="20" r="4" fill="#FFB74D" class="nn-node-anim" style="animation-delay: 0s"/><circle cx="10" cy="46" r="4" fill="#FFB74D" class="nn-node-anim" style="animation-delay: 0s"/><circle cx="10" cy="72" r="4" fill="#FFB74D" class="nn-node-anim" style="animation-delay: 0s"/>
+                    <circle cx="40" cy="10" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="36" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="62" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="88" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.3s"/>
+                    <circle cx="70" cy="20" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.6s"/><circle cx="70" cy="50" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.6s"/><circle cx="70" cy="80" r="4" fill="#81C784" class="nn-node-anim" style="animation-delay: 0.6s"/>
+                    <circle cx="110" cy="30" r="4" fill="#64B5F6" class="nn-node-anim" style="animation-delay: 0.9s"/><circle cx="110" cy="70" r="4" fill="#64B5F6" class="nn-node-anim" style="animation-delay: 0.9s"/>
                   </g>
                 </svg>
 

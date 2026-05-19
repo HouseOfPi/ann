@@ -407,10 +407,24 @@ function Stage({
       if (e.code === 'Space') {
         e.preventDefault();
         setPlaying(p => !p);
-      } else if (e.code === 'ArrowLeft') {
-        setTime(t => clamp(t - (e.shiftKey ? 1 : 0.1), 0, duration));
-      } else if (e.code === 'ArrowRight') {
-        setTime(t => clamp(t + (e.shiftKey ? 1 : 0.1), 0, duration));
+      } else if (['ArrowLeft', 'PageUp', 'ArrowUp'].includes(e.key)) {
+        setTime(t => {
+          if (t <= 0 && window.parent !== window) {
+            window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+            return t;
+          }
+          if (['PageUp', 'ArrowUp'].includes(e.key)) return 0;
+          return clamp(t - (e.shiftKey ? 1 : 0.1), 0, duration);
+        });
+      } else if (['ArrowRight', 'PageDown', 'ArrowDown'].includes(e.key)) {
+        setTime(t => {
+          if (t >= duration && window.parent !== window) {
+            window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+            return t;
+          }
+          if (['PageDown', 'ArrowDown'].includes(e.key)) return duration;
+          return clamp(t + (e.shiftKey ? 1 : 0.1), 0, duration);
+        });
       } else if (e.key === '0' || e.code === 'Home') {
         setTime(0);
       }
