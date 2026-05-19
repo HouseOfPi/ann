@@ -1382,17 +1382,17 @@ function SceneTransition({ start = 15, end = 18 }) {
             }}>
               <div style={{
                 fontFamily: FONTS.mono,
-                fontSize: 13, letterSpacing: '0.32em',
+                fontSize: 22, letterSpacing: '0.32em',
                 color: 'oklch(72% 0.10 200)',
                 textTransform: 'uppercase',
-                marginBottom: 28,
+                marginBottom: 40,
                 opacity: clamp(localTime / 0.6, 0, 1),
               }}>
                 There's a better way
               </div>
               <div style={{
                 fontFamily: FONTS.serif,
-                fontSize: 88,
+                fontSize: 140,
                 fontWeight: 500,
                 letterSpacing: '-0.01em',
                 lineHeight: 1.05,
@@ -2939,22 +2939,16 @@ function MachineOutro({ start, end }) {
 }
 
 function App({ restartKey = 0 }) {
-  const [tab, setTab] = React.useState(() => {
-    try {
-      return localStorage.getItem('why-ml:tab') || 'spam';
-    } catch { return 'spam'; }
-  });
+  // Machine-failure example is disabled — spam filter is the only stage shown.
+  const tab = 'spam';
+  const setTab = () => {};
 
   const [stageTime, setStageTime] = React.useState(0);
 
   React.useEffect(() => {
-    try { localStorage.setItem('why-ml:tab', tab); } catch {}
     const root = document.getElementById('root');
-    if (root) {
-      const labels = { spam: 'Spam filter', machine: 'Machine failure' };
-      root.setAttribute('data-screen-label', `Tab · ${labels[tab]}`);
-    }
-  }, [tab]);
+    if (root) root.setAttribute('data-screen-label', 'Tab · Spam filter');
+  }, []);
 
   // Determine dynamic title based on tab and stageTime
   const getDynamicTitle = () => {
@@ -3013,13 +3007,7 @@ function App({ restartKey = 0 }) {
             })()}
           </div>
         </div>
-        <div role="tablist" style={{
-          display: 'flex', gap: 4,
-          background: COLORS.bgAlt,
-          border: `1px solid ${COLORS.rule}`,
-          borderRadius: 8,
-          padding: 3,
-        }}>
+        <div role="tablist" style={{ display: 'none' }}>
           {TABS.map(t => {
             const active = t.id === tab;
             return (
@@ -3081,8 +3069,7 @@ function App({ restartKey = 0 }) {
       </header>
 
       <main style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        {tab === 'spam'    && <SpamStage    onTime={setStageTime} key={`spam-${restartKey}`} />}
-        {tab === 'machine' && <MachineStage onTime={setStageTime} key={`machine-${restartKey}`} />}
+        <SpamStage onTime={setStageTime} key={`spam-${restartKey}`} />
       </main>
     </div>
   );

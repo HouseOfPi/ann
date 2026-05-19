@@ -276,7 +276,7 @@
       .palette-warm-linen  #slideOne   { background: #f4ede0; }
       .palette-green-linen #slideOne   { background: #f4ede0; }
       .palette-paper-white #slideOne   { background: #ffffff; }
-      .palette-midnight    #slideOne   { background: #070b16; }
+      .palette-midnight    #slideOne   { background: #000000; }
 
       /* Remove cyan/turquoise gradients from dark palettes for clean backgrounds */
       .palette-midnight { background-image: none; }

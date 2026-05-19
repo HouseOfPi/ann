@@ -2112,6 +2112,7 @@
         'slideWhyMLTitle': 'Ch. 2 — Title',
         'slideWhyML': 'Why Machine Learning?',
         'slideMLProcess': 'The ML Process',
+        'slideMathPillarsTitle': 'Ch. 3 — Title',
         'slideMathPillars': 'Mathematical Pillars',
         'slideLinearSingleVar': 'Linear: Single Variable',
         'slideLinearMultiVar': 'Linear: Multiple Variables',
@@ -2130,12 +2131,13 @@
 
       const DEFAULT_SLIDE_STATE = [
         { id: 'slideOne', enabled: true },
-        { id: 'slideAITransforming', enabled: true },
+        { id: 'slideAITransforming', enabled: false },
         { id: 'slideFuture', enabled: false },
         { id: 'slideMesh', enabled: true },
         { id: 'slideWhyMLTitle', enabled: true },
         { id: 'slideWhyML', enabled: true },
         { id: 'slideMLProcess', enabled: true },
+        { id: 'slideMathPillarsTitle', enabled: true },
         { id: 'slideMathPillars', enabled: true },
         { id: 'slideLinearSingleVar', enabled: true },
         { id: 'slideLinearMultiVar', enabled: true },
@@ -2198,7 +2200,7 @@
       // Activate default slide (intro page) on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideOne');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMesh');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {

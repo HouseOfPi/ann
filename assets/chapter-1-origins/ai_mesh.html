@@ -6,7 +6,7 @@
 <title>AI · ML · DL · GenAI — The Tangled Web</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <style>
   :root {
@@ -182,7 +182,7 @@
     background: linear-gradient(135deg, var(--bubble-bg) 0%, color-mix(in srgb, var(--bubble-bg), #000 2%) 100%);
     border-radius: 28px;
     padding: 28px 36px 24px;
-    max-width: 980px;
+    max-width: min(1100px, 96vw);
     width: fit-content;
     min-width: 760px;
     height: auto;
@@ -484,9 +484,9 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 40px;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 5vh 7vw 20px;
   }
 
   .header {
@@ -526,6 +526,7 @@
   }
 
   .footer-note {
+    display: none;
     position: absolute;
     bottom: 28px;
     left: 50%;
@@ -539,9 +540,9 @@
 
   .canvas-wrap {
     position: relative;
-    width: min(1100px, 92vw);
-    height: min(640px, 74vh);
-    margin-top: 40px;
+    width: min(820px, 70vw);
+    height: min(500px, 62vh);
+    margin: 100px auto 0;
   }
 
   svg.mesh {
@@ -582,11 +583,11 @@
   }
   .bubble-sub {
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 800;
     text-anchor: middle;
     dominant-baseline: central;
-    letter-spacing: 1.4px;
+    letter-spacing: 1.6px;
     text-transform: uppercase;
   }
 
@@ -625,6 +626,55 @@
     height: 10px;
     border-radius: 50%;
   }
+
+  /* ── Page Title (matches other pages) ── */
+  .page-title-section {
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    margin-bottom: 0;
+  }
+
+  [data-theme="midnight"] .page-title-section,
+  [data-theme="dark"] .page-title-section {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .page-eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gen-color);
+    margin-bottom: 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rise 0.8s ease-out 0.2s forwards;
+  }
+
+  .page-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--title-color);
+    margin: 0;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 1s cubic-bezier(.2,.7,.2,1) 0.4s forwards;
+  }
+
+  .page-title em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   /* ── Mobile Responsiveness ── */
   @media (max-width: 768px) {
     .detail-modal { min-width: 90%; width: 95%; padding: 24px; }
@@ -639,6 +689,11 @@
 </head>
 <body>
   <div class="stage">
+    <div class="page-title-section">
+      <div class="page-eyebrow">THE FOUNDATION</div>
+      <h1 class="page-title">The Complexity <em>Mesh</em></h1>
+    </div>
+
     <div class="canvas-wrap">
       <svg class="mesh" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet">
         <g id="scribbles"></g>
@@ -646,8 +701,6 @@
       </svg>
       <button class="big-picture-btn" onclick="openBigPicture()">💡 Big Picture</button>
     </div>
-
-    <div class="footer-note">Press <strong>R</strong> to replay</div>
   </div>
 
   <!-- Big Picture Modal -->
@@ -768,10 +821,10 @@
   // config: [cls, label, subLabel, x, y, w, h, tailX, tailY, tailSide]
   // tailSide: 'bottom'|'top'|'left'|'right'  (which side the tail protrudes from)
   const bubbles = [
-    { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 195, y: 105, w: 230, h: 120, tailX: 380, tailY: 225, side: 'bottom' },
-    { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 700, y: 155, w: 260, h: 120, tailX: 720, tailY: 275, side: 'bottom' },
-    { cls: 'dl',  label: 'NN',    sub: 'Neural Network',           x: 150, y: 420, w: 240, h: 120, tailX: 360, tailY: 420, side: 'top' },
-    { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 650, y: 460, w: 320, h: 130, tailX: 700, tailY: 460, side: 'top' },
+    { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 167, y: 90,  w: 288, h: 150, tailX: 380, tailY: 240, side: 'bottom' },
+    { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 668, y: 140, w: 325, h: 150, tailX: 720, tailY: 290, side: 'bottom' },
+    { cls: 'dl',  label: 'NN',    sub: 'Neural Network',           x: 120, y: 405, w: 300, h: 150, tailX: 360, tailY: 405, side: 'top' },
+    { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 610, y: 444, w: 400, h: 162, tailX: 700, tailY: 444, side: 'top' },
   ];
 
   function tailPath(x, y, w, h, tx, ty, side) {
@@ -831,15 +884,15 @@
     const sub = document.createElementNS(svgNS, 'text');
     sub.setAttribute('class', 'bubble-sub');
     sub.setAttribute('x', b.x + b.w / 2);
-    sub.setAttribute('y', b.y + 26);
+    sub.setAttribute('y', b.y + 32);
     sub.textContent = b.sub;
     g.appendChild(sub);
 
     const label = document.createElementNS(svgNS, 'text');
     label.setAttribute('class', 'bubble-text');
     label.setAttribute('x', b.x + b.w / 2);
-    label.setAttribute('y', b.y + b.h / 2 + 10);
-    label.setAttribute('font-size', b.label.length > 3 ? 52 : 64);
+    label.setAttribute('y', b.y + b.h / 2 + 18);
+    label.setAttribute('font-size', b.label.length > 3 ? 64 : 80);
     label.textContent = b.label;
     g.appendChild(label);
 
@@ -902,19 +955,6 @@
     }, 2.2);
 
     tl.to('.footer-note', { opacity: 1, duration: 0.6 }, '-=0.3');
-
-    // Subtle continuous drift on bubbles
-    document.querySelectorAll('.bubble-group').forEach((g, i) => {
-      gsap.to(g, {
-        y: (i % 2 === 0 ? -10 : 10),
-        duration: 4 + i * 0.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 3 + i * 0.4,
-        force3D: true
-      });
-    });
   }
 
   animate();
@@ -922,6 +962,20 @@
   // Replay on R
   document.addEventListener('keydown', (e) => {
     if (e.key === 'r' || e.key === 'R') { gsap.killTweensOf('*'); animate(); }
+  });
+
+  // Forward arrow-key navigation to the parent deck when this iframe has focus.
+  document.addEventListener('keydown', (e) => {
+    if (window.parent === window) return;
+    const tag = (e.target && e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+    }
   });
 
   // Theme sync
@@ -1002,36 +1056,28 @@
 
         <!-- Pane 0: What is ML? -->
         <div id="ml-pane-0" class="ml-tab-pane active">
-          <div class="ml-layout" style="gap: 36px; max-width: 720px; width: 100%; padding: 20px 0;">
-            <!-- One-liner definition -->
-            <div id="def-step-tagline" class="car-flow-step" style="text-align: center; font-size: 18px; font-weight: 700; color: var(--title-color); line-height: 1.5; padding: 0 10px;">
-              Teaching computers to <span style="color: var(--ml-color);">learn from data</span> — without being explicitly programmed for every situation.
-            </div>
-
+          <div class="ml-layout" style="gap: 40px; max-width: 980px; width: 100%; padding: 30px 0;">
             <!-- Three-pillar cards — each revealed individually -->
-            <div style="display: flex; gap: 22px; justify-content: center; flex-wrap: wrap;">
-              <div id="def-step-card1" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">📥</div>
-                <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Feed Data</div>
-                <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">Show the model thousands of examples — prices, images, text, measurements.</div>
+            <div style="display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;">
+              <div id="def-step-card1" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Feed Data</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">Show the model thousands of examples.</div>
               </div>
-              <div id="def-step-card2" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">⚙️</div>
-                <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Find Patterns</div>
-                <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">The algorithm adjusts itself, finding hidden relationships in the data.</div>
+              <div id="def-step-card2" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Find Patterns</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">The algorithm finds hidden relationships.</div>
               </div>
-              <div id="def-step-card3" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 170px; max-width: 210px; background: rgba(107,155,122,0.08); border: 1.5px solid rgba(107,155,122,0.25); border-radius: 16px; padding: 28px 20px; text-align: center;">
-                <div data-float style="font-size: 28px; margin-bottom: 8px; display: inline-block;">🎯</div>
-                <div style="font-size: 12px; font-weight: 900; color: var(--ml-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;">Make Predictions</div>
-                <div style="font-size: 13px; color: var(--subtitle-color); line-height: 1.5;">Given new, unseen inputs — the model predicts the right answer.</div>
+              <div id="def-step-card3" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Make Predictions</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">Predict the right answer for new inputs.</div>
               </div>
             </div>
 
             <!-- Key insight bar -->
-            <div id="def-step-insight" class="car-flow-step" style="display: flex; align-items: flex-start; gap: 12px; background: rgba(107,155,122,0.07); border-left: 4px solid var(--ml-color); border-radius: 0 12px 12px 0; padding: 18px 22px;">
-              <span style="font-size: 18px; flex-shrink: 0;">💡</span>
-              <div style="font-size: 13px; color: var(--title-color); line-height: 1.6;">
-                <strong>Key Idea:</strong> You don't write rules — you show examples. The model figures out the rules on its own. See the next tabs for a real-world walkthrough.
+            <div id="def-step-insight" class="car-flow-step" style="display: flex; align-items: flex-start; gap: 14px; background: rgba(107,155,122,0.1); border-left: 5px solid var(--ml-color); border-radius: 0 14px 14px 0; padding: 22px 26px;">
+              <span style="font-size: 22px; flex-shrink: 0;">💡</span>
+              <div style="font-size: 16px; font-weight: 500; color: var(--title-color); line-height: 1.6;">
+                <strong>Key Idea:</strong> You don't write rules — you show examples. The model figures out the rules on its own.
               </div>
             </div>
           </div>
@@ -1040,55 +1086,44 @@
         <!-- Pane 1: House listing -->
         <div id="ml-pane-1" class="ml-tab-pane">
           <div class="ml-layout" style="gap: 15px;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">List your house — AI suggests the right asking price</div>
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--title-color); letter-spacing: -0.3px; margin-top: 10px;">
+              Predicting <span style="color: var(--ml-color);">House Sale Price</span>
             </div>
-            
-            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 30px 0 25px 0; padding: 0;">
               <!-- Left: Features -->
               <div id="house-step-listing" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">YOUR LISTING</div>
-                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 240px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🏠</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Size</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">2,100 sq ft</span>
+                <div style="position: absolute; top: -26px; left: 0; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">YOUR LISTING</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1.5px solid rgba(128,128,128,0.35); border-radius: 14px; width: 270px; box-shadow: 0 10px 28px rgba(0,0,0,0.14);">
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Size</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">2,100 sq ft</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🛏️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Bedrooms</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">4 Units</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Bedrooms</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">4</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">📍</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Location</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Core City</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Location</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Core City</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🗓️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Age</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">5 Years</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Age</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">5 Years</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🛣️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Distance</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">2 Miles</span>
-                  </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
-                    <span style="font-size: 18px;">🍀</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Amenities</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Pool+Gym</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px;">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Amenities</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Pool + Gym</span>
                   </div>
                 </div>
               </div>
 
               <!-- Arrow 1 -->
-              <svg id="house-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;">
+              <svg id="house-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
                 <polyline points="10 6 16 12 10 18"></polyline>
               </svg>
 
               <!-- Middle: ML Model -->
-              <div id="house-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
+              <div id="house-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2.5px solid var(--ml-color); border-radius: 22px; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 200px;">
                 <!-- Upper Half: Model Logic -->
                 <div class="model-section-wrap">
                   <div class="training-preview">
@@ -1117,27 +1152,22 @@
                     <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
                     <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
                   </svg>
-                  <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
-                  <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8;">(Regression)</div>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--text-dim); opacity:0.9;">(Regression)</div>
                 </div>
               </div>
 
               <!-- Arrow 2 -->
-              <svg id="house-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;">
+              <svg id="house-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
                 <polyline points="10 6 16 12 10 18"></polyline>
               </svg>
 
               <!-- Right: Output -->
               <div id="house-step-output" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">AI SUGGESTED PRICE</div>
-                <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
-                  <svg viewBox="0 0 64 64" fill="none" stroke="var(--ml-color)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="width:60px; height:auto; margin-bottom: 20px;">
-                    <path d="M16 22.3 V54 H48 V22.3" />
-                    <path d="M6 30 L32 10 L58 30" />
-                    <text x="32" y="46" text-anchor="middle" font-size="24" font-weight="900" font-family="sans-serif" fill="var(--ml-color)" stroke="none">$</text>
-                  </svg>
-                  <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
-                  <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$780,000</div>
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">AI SUGGESTED PRICE</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 14%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 50%, transparent); border-radius: 22px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 230px;">
+                  <div style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
+                  <div style="font-size: 44px; font-weight: 950; color: var(--ml-color); margin-top: 14px;">$780,000</div>
                 </div>
               </div>
             </div>
@@ -1146,49 +1176,43 @@
 
         <div id="ml-pane-2" class="ml-tab-pane">
           <div class="ml-layout" style="gap: 15px;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div class="ml-top-pill" style="margin: 0; font-size: 15px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); font-weight: 700;">List your car — AI suggests the right asking price</div>
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--title-color); letter-spacing: -0.3px; margin-top: 10px;">
+              Predicting <span style="color: var(--ml-color);">Car Sale Price</span>
             </div>
-
-            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 35px; margin: 25px 0 15px 0; padding: 0;">
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 30px 0 25px 0; padding: 0;">
               <!-- Left: Features -->
               <div id="car-step-listing" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -22px; left: 0; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">YOUR LISTING</div>
-                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; width: 240px; box-shadow: 0 8px 25px rgba(0,0,0,0.12);">
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🚗</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Make / Model</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Toyota Camry</span>
+                <div style="position: absolute; top: -26px; left: 0; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">YOUR LISTING</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1.5px solid rgba(128,128,128,0.35); border-radius: 14px; width: 270px; box-shadow: 0 10px 28px rgba(0,0,0,0.14);">
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Make / Model</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Toyota Camry</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🗓️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Year</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">2021</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Year</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">2021</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">🛣️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Miles Driven</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">32,000 mi</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Miles Driven</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">32,000 mi</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid rgba(128,128,128,0.1); gap: 12px;">
-                    <span style="font-size: 18px;">⚙️</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Transmission</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Automatic</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Transmission</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Automatic</span>
                   </div>
-                  <div style="display: flex; align-items: center; padding: 10px 15px; gap: 12px;">
-                    <span style="font-size: 18px;">🔧</span>
-                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Condition</span>
-                    <span style="margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ml-color); background: rgba(128,128,128,0.1); padding: 2px 7px; border-radius: 6px;">Excellent</span>
+                  <div style="display: flex; align-items: center; padding: 14px 18px;">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Condition</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Excellent</span>
                   </div>
                 </div>
               </div>
               <!-- Arrow 1 -->
-              <svg id="car-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;">
+              <svg id="car-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
                 <polyline points="10 6 16 12 10 18"></polyline>
               </svg>
 
               <!-- Middle: ML Model -->
-              <div id="car-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2px solid var(--ml-color); border-radius: 20px; padding: 20px 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 170px;">
+              <div id="car-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2.5px solid var(--ml-color); border-radius: 22px; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 200px;">
                 <!-- Upper Half: Model Logic -->
                 <div class="model-section-wrap">
                   <div class="training-preview">
@@ -1217,28 +1241,22 @@
                     <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
                     <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
                   </svg>
-                  <div style="font-size: 17px; font-weight: 800; color: var(--ml-color);">ML Model</div>
-                  <div style="font-size: 13px; font-weight: 700; color: var(--text-dim); opacity:0.8;">(Regression)</div>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--text-dim); opacity:0.9;">(Regression)</div>
                 </div>
               </div>
 
               <!-- Arrow 2 -->
-              <svg id="car-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;">
+              <svg id="car-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
                 <polyline points="10 6 16 12 10 18"></polyline>
               </svg>
 
               <!-- Right: Output -->
               <div id="car-step-output" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -22px; width: 100%; text-align: center; font-size:10px; font-weight:900; color:var(--ml-color); letter-spacing:1px; opacity:0.8;">AI SUGGESTED PRICE</div>
-                <div style="background: color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 40%, transparent); border-radius: 20px; padding: 25px 20px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 220px;">
-                  <svg viewBox="0 0 64 48" fill="none" stroke="var(--ml-color)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="width:68px; height:auto; margin-bottom: 20px;">
-                    <path d="M4 30 L12 16 Q14 12 18 12 H46 Q50 12 52 16 L60 30 L60 38 Q60 42 56 42 H8 Q4 42 4 38 Z" />
-                    <circle cx="16" cy="42" r="5" fill="var(--bubble-bg)" stroke="var(--ml-color)" stroke-width="3" />
-                    <circle cx="48" cy="42" r="5" fill="var(--bubble-bg)" stroke="var(--ml-color)" stroke-width="3" />
-                    <path d="M18 12 L24 26 H40 L46 12" />
-                  </svg>
-                  <div style="font-size: 19px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
-                  <div style="font-size: 34px; font-weight: 950; color: var(--ml-color); margin-top: 10px;">$24,200</div>
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">AI SUGGESTED PRICE</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 14%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 50%, transparent); border-radius: 22px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 230px;">
+                  <div style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
+                  <div style="font-size: 44px; font-weight: 950; color: var(--ml-color); margin-top: 14px;">$24,200</div>
                 </div>
               </div>
             </div>
@@ -1247,8 +1265,8 @@
 
         <div id="ml-footer" class="ml-footer" style="display: flex; justify-content: center; visibility: hidden;">
             <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
-            <div id="ml-ki-content" class="ml-ki-text" style="font-size: 14px; line-height: 1.4;">
-              <strong>Key Idea:</strong> ML learns from past sales data to suggest a fair asking price &mdash; <span style="color:var(--text-main); opacity: 0.8; font-weight: 500;" id="ml-caption">just upload your listing specs and the model does the rest.</span>
+            <div id="ml-ki-content" class="ml-ki-text" style="font-size: 16px; line-height: 1.5; font-weight: 500; color: var(--title-color);">
+              <strong>Key Idea:</strong> ML learns from past sales data to suggest a fair asking price.
             </div>
           </div>
         </div>
@@ -1256,18 +1274,20 @@
       setTimeout(() => runFlowAnimation(0), 0);
     } else if (type === 'dl') {
       window.dlMode = 'digits';
+      window.dlState = { digits: { label: '7', variantIdx: 0 } };
+      window.dlFirstPredictionDone = false;
       content.innerHTML = `
         <div class="ml-layout dl-layout" style="gap: 5px;">
           <div class="ml-header" style="margin-bottom: 5px;">
-            <h1 style="margin: 0; color: var(--dl-color); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase; background: linear-gradient(135deg, var(--dl-color), color-mix(in srgb, var(--dl-color) 70%, white)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">NEURAL NETWORK</h1>
+            <h1 style="margin: 0; color: color-mix(in srgb, var(--dl-color), #000 35%); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase;">NEURAL NETWORK</h1>
           </div>
           
           <div class="ml-flow-container" style="display: flex; align-items: stretch; justify-content: center; gap: 25px; margin: 25px 0 45px 0; padding: 0; min-height: 220px;">
             <!-- Left: Input Image -->
             <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
-              <div id="dl-input-header" style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">INPUT IMAGE</div>
+              <div id="dl-input-header" style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">INPUT IMAGE</div>
               <div class="ml-card-lift" onclick="randomizeDLInput()" style="background: white; border: 2.5px solid rgba(128,128,128,0.2); border-radius: 16px; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; position: relative; cursor: pointer;">
-                <img id="dl-input-img" src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_7_v2_1777197297922.png" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
+                <img id="dl-input-img" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='white'/%3E%3C/svg%3E" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
               </div>
               <div style="position: absolute; bottom: -25px; display: flex; flex-direction: column; align-items: center; width: 220px;">
               </div>
@@ -1282,8 +1302,8 @@
 
             <!-- Middle: DL Model -->
             <div style="position: relative; display: flex; align-items: center;">
-              <div class="ml-card-lift" style="position: relative; background: var(--bubble-bg); border: 2.3px solid var(--dl-color); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px color-mix(in srgb, var(--dl-color) 12%, transparent); width: 190px;">
-                <div style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">PROCESSING</div>
+              <div id="dl-processing-card" class="ml-card-lift" onclick="runDLPrediction()" title="Click to run prediction" style="position: relative; background: var(--bubble-bg); border: 2.3px solid var(--dl-color); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px color-mix(in srgb, var(--dl-color) 12%, transparent); width: 190px; cursor: pointer;">
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">PROCESSING</div>
                 <!-- Neural Net SVG -->
                 <svg viewBox="0 0 120 100" style="width:100%; height:auto; margin-bottom: 12px; overflow: visible;">
                   <defs>
@@ -1312,7 +1332,8 @@
                   </g>
                 </svg>
 
-                <div style="font-size: 15px; font-weight: 800; color: var(--dl-color); text-align: center;">Deep Neural Network</div>
+                <div style="font-size: 18px; font-weight: 900; color: var(--dl-color); text-align: center;">Deep Neural Network</div>
+                <div id="dl-predict-hint" style="font-size: 11px; font-weight: 700; color: color-mix(in srgb, var(--dl-color), #000 25%); text-align: center; margin-top: 6px; letter-spacing: 0.6px; text-transform: uppercase; opacity: 0.85;">Click to predict ↓</div>
               </div>
             </div>
 
@@ -1325,10 +1346,11 @@
 
             <!-- Right: Output -->
             <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
-              <div id="dl-output-header" style="position: absolute; top: -20px; width: 100%; text-align: center; font-size:9px; font-weight:900; color:var(--dl-color); letter-spacing:1px; opacity:0.8;">PREDICTED LABEL</div>
+              <div id="dl-output-header" style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">PREDICTED LABEL</div>
               <div id="dl-output-card" class="ml-card-lift" style="background: color-mix(in srgb, var(--dl-color) 10%, var(--bubble-bg)); border: 2.3px solid color-mix(in srgb, var(--dl-color) 40%, transparent); border-radius: 20px; width: 150px; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; transition: all 0.4s ease;">
-                <div id="dl-output-box" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box;">
-                  <div id="dl-output-label" style="font-size: 72px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif; line-height: 1; text-shadow: 0 0 20px color-mix(in srgb, var(--dl-color) 30%, transparent); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">7</div>
+                <div id="dl-output-box" style="position: relative; width: 100%; height: 100%; padding: 10px; box-sizing: border-box;">
+                  <div id="dl-output-label" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6px 10px; font-size: 72px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif; line-height: 1.15; text-align: center; word-break: break-word; hyphens: auto; text-shadow: 0 0 20px color-mix(in srgb, var(--dl-color) 30%, transparent); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; box-sizing: border-box;">7</div>
+                  <div id="dl-output-placeholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800; color: color-mix(in srgb, var(--dl-color), #000 10%); opacity: 0.35; line-height: 1;">?</div>
                 </div>
               </div>
             </div>
@@ -1336,41 +1358,53 @@
 
           <!-- Real World Examples -->
           <div style="margin-top: 5px; width: 100%; max-width: 850px; margin-left: auto; margin-right: auto;">
-            <div style="text-align: center; font-size: 10px; font-weight: 800; color: var(--dl-color); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;">Switch Demonstration Mode</div>
+            <div style="text-align: center; font-size: 14px; font-weight: 900; color: var(--dl-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 14px;">Switch Demonstration Mode</div>
             <div style="display: flex; gap: 12px; justify-content: center;">
               <!-- Example: Digits -->
-              <div class="ml-card-lift" onclick="setDLMode('digits')" style="background: rgba(255,255,255,0.02); border: 1.5px solid var(--dl-color); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
-                <div style="width: 45px; height: 45px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #333; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">8</div>
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Handwritten Digits</div>
+              <div class="ml-card-lift" onclick="setDLMode('digits')" style="background: rgba(255,255,255,0.02); border: 1.5px solid var(--dl-color); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <div style="width: 52px; height: 52px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; color: #111; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">8</div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Handwritten Digits</div>
               </div>
               <!-- Example: Animals -->
-              <div class="ml-card-lift" onclick="setDLMode('animals')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
-                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Identify Animals</div>
+              <div class="ml-card-lift" onclick="setDLMode('animals')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Identify Animals</div>
               </div>
               <!-- Example: Vehicles -->
-              <div class="ml-card-lift" onclick="setDLMode('vehicles')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
-                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Detect Vehicles</div>
+              <div class="ml-card-lift" onclick="setDLMode('vehicles')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Detect Vehicles</div>
               </div>
               <!-- Example: Medical -->
-              <div class="ml-card-lift" onclick="setDLMode('medical')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 125px; padding: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
-                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                <div style="font-size: 11px; font-weight: 700; color: var(--text-main); line-height: 1.1;">Medical Diagnosis</div>
+              <div class="ml-card-lift" onclick="setDLMode('medical')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Medical Diagnosis</div>
               </div>
             </div>
           </div>
           
-          <div class="ml-footer" style="display: flex; justify-content: center; margin-top: 10px;">
-            <div class="ml-key-idea-box" style="padding: 10px 25px; min-height: auto; max-width: 850px; background: color-mix(in srgb, var(--dl-color) 10%, var(--bubble-bg)); border: 2px solid color-mix(in srgb, var(--dl-color) 30%, transparent);">
-              <div style="font-size: 24px; line-height: 1; margin-right: 15px;">⭐</div>
-              <div class="ml-ki-text" style="font-size: 13px; line-height: 1.4; text-align: left;">
-                <strong style="color: var(--dl-color);">Key Idea:</strong> DL uses multi-layer neural networks to automatically <span style="font-weight: 700; color: var(--text-main);">learn and understand complex patterns</span> in images.
+          <div class="ml-footer" style="display: flex; justify-content: center; margin-top: 18px;">
+            <div class="ml-key-idea-box" style="padding: 16px 28px; min-height: auto; max-width: 850px; background: color-mix(in srgb, var(--dl-color) 12%, var(--bubble-bg)); border: 2px solid color-mix(in srgb, var(--dl-color) 45%, transparent);">
+              <div style="font-size: 26px; line-height: 1; margin-right: 16px;">⭐</div>
+              <div class="ml-ki-text" style="font-size: 16px; font-weight: 500; line-height: 1.55; text-align: left; color: var(--title-color);">
+                <strong style="color: var(--dl-color);">Key Idea:</strong> Neural networks automatically <span style="font-weight: 800; color: var(--text-main);">learn complex patterns</span> from images.
               </div>
             </div>
           </div>
         </div>
       `;
+      // Seed the first SVG variant of "7" so the input image renders immediately
+      // (no flash of the old PNG / placeholder). Label stays hidden until the
+      // user clicks the processing block.
+      setTimeout(() => {
+        const imgEl = document.getElementById('dl-input-img');
+        if (imgEl) {
+          const v = dlDatasets.digits['7'][0];
+          imgEl.src = v.img;
+          window.dlPendingLabel = v.label;
+          window.dlPendingFontSize = '72px';
+        }
+      }, 0);
     } else if (type === 'genai' || type === 'gen') {
       window.genaiMode = 'image';
       window.genaiImageIndex = 0;
@@ -1401,9 +1435,6 @@
               <div style="font-size:9px; font-weight:900; letter-spacing:1.5px; color:var(--gen-color); text-transform:uppercase; opacity:0.8;">✍ Your Prompt</div>
               <div style="background:color-mix(in srgb,var(--gen-color) 6%,var(--bubble-bg)); border:2px solid color-mix(in srgb,var(--gen-color) 22%,transparent); border-radius:16px; padding:14px 16px; min-height:90px; display:flex; flex-direction:column; gap:10px; position:relative;">
                 <div id="genai-prompt-text" style="font-size:15px; font-weight:600; color:var(--text-main); font-style:italic; line-height:1.5; flex:1;">"A cinematic ultra-realistic space shuttle launching into a clear blue sky, massive plumes of white smoke"</div>
-                <button onclick="cycleGenAIPrompt()" style="align-self:flex-end; background:var(--gen-color); color:#fff; border:none; border-radius:20px; padding:6px 16px; font-size:11px; font-weight:800; cursor:pointer; letter-spacing:0.5px; display:flex; align-items:center; gap:6px; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                  ↻ Try Another
-                </button>
               </div>
               <div id="genai-model-pills" style="display:none;"></div>
             </div>
@@ -1422,7 +1453,7 @@
               <div id="genai-output-label" style="display:none;"></div>
 
               <!-- IMAGE output -->
-              <div id="genai-out-image" style="position:relative; background:#000; border-radius:16px; overflow:hidden; aspect-ratio:16/9; box-shadow:0 12px 36px rgba(0,0,0,0.35); border:2px solid rgba(255,255,255,0.06);">
+              <div id="genai-out-image" style="position:relative; background:transparent; border-radius:16px; overflow:hidden; aspect-ratio:16/9; border:1.5px dashed color-mix(in srgb, var(--gen-color) 35%, transparent);">
                 <img id="genai-result-img" src="../chapter-6-modern-explosion/images/gen_ai/space%20shuttle.png" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.5s ease;">
                 <div id="genai-loading" style="position:absolute; inset:0; background:rgba(0,0,0,0.82); display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(6px); z-index:5;">
                   <div style="width:36px; height:36px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gen-color); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:12px;"></div>
@@ -1437,7 +1468,6 @@
                   <span style="font-size:10px; font-weight:800; color:var(--text-dim); letter-spacing:1px;">CLAUDE / GPT-4o</span>
                 </div>
                 <div id="genai-text-output" style="font-size:13px; line-height:1.7; color:var(--text-main);"></div>
-                <div id="genai-text-cursor" style="display:inline-block; width:2px; height:16px; background:var(--gen-color); vertical-align:middle; animation:blink 1s step-end infinite;"></div>
               </div>
 
               <!-- CODE output (hidden by default) -->
@@ -1511,52 +1541,208 @@
     }
   }
 
-  function randomizeDLInput() {
-    const mode = window.dlMode || 'digits';
-    const datasets = {
-      digits: [
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_7_v2_1777197297922.png', label: '7' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_3_1777197470836.png', label: '3' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_5_1777197485453.png', label: '5' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_8_1777197501373.png', label: '8' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_handwritten_2_1777197517539.png', label: '2' }
-      ],
-      animals: [
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png', label: 'Dog' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_cat_1777197081962_1777202515518.png', label: 'Cat' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_bird_1777197081962_1777202532807.png', label: 'Bird' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_elephant_1777197081962_1777202548298.png', label: 'Elephant' }
-      ],
-      vehicles: [
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png', label: 'Car' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_truck_1777203370520.png', label: 'Truck' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_motorcycle_1777203387094.png', label: 'Motorcycle' }
-      ],
-      medical: [
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png', label: 'X-ray' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_mri_1777203408245.png', label: 'MRI' },
-        { img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_ctscan_1777203421747.png', label: 'CT Scan' }
-      ]
-    };
-    
-    const dataArr = datasets[mode];
-    const rand = dataArr[Math.floor(Math.random() * dataArr.length)];
-    const imgEl = document.getElementById('dl-input-img');
-    const labelEl = document.getElementById('dl-output-label');
-
-    gsap.to([imgEl, labelEl], { opacity: 0, scale: 0.95, duration: 0.2, onComplete: () => {
-      imgEl.src = rand.img;
-      labelEl.innerText = rand.label;
-      labelEl.style.fontSize = (mode === 'digits') ? '72px' : '28px';
-      gsap.to([imgEl, labelEl], { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" });
-    }});
+  // Dataset grouped by label, each label has multiple variation images.
+  // Each digit variant is a distinct handwritten-style SVG. We define each variant
+  // explicitly (path + transform + stroke width) so the styles look visibly different
+  // — like real handwriting samples in a dataset such as MNIST.
+  const DIGIT_VARIANTS = {
+    7: [
+      // Classic block 7
+      { d: 'M30 45 L170 45 L75 180', sw: 16, rotate: -4, skew: 0,  tx: 0,  ty: 0 },
+      // Tall slanted 7 with crossbar (European style)
+      { d: 'M40 55 L170 55 L65 180 M75 120 L140 120', sw: 14, rotate: 0, skew: -8, tx: 0,  ty: 0 },
+      // Curvy 7 with hooked top
+      { d: 'M35 70 Q60 30 100 45 L170 50 Q130 110 90 180', sw: 18, rotate: 5, skew: 4, tx: -5, ty: 0 },
+      // Short fat 7, leaning right
+      { d: 'M50 55 L155 55 L95 170', sw: 22, rotate: 8, skew: 6, tx: 0,  ty: 10 },
+      // Scribbled tall 7 with serif foot
+      { d: 'M30 50 Q90 40 165 55 Q120 120 80 180 M60 175 L100 180', sw: 13, rotate: -7, skew: -3, tx: 0, ty: -5 },
+    ],
+    3: [
+      // Standard rounded 3
+      { d: 'M40 55 Q120 30 160 65 Q140 100 95 105 Q150 110 165 145 Q130 185 40 160', sw: 16, rotate: -3, skew: 0,  tx: 0, ty: 0 },
+      // Angular 3 with flat top
+      { d: 'M40 50 L160 50 Q160 90 100 105 Q160 115 160 150 Q130 185 40 175', sw: 18, rotate: 4, skew: 5, tx: 0, ty: 0 },
+      // Loopy slanted 3
+      { d: 'M30 70 Q90 30 165 55 Q160 110 95 115 Q170 130 160 165 Q105 195 35 175', sw: 14, rotate: -8, skew: -6, tx: 0, ty: 0 },
+      // Small compressed 3
+      { d: 'M55 60 Q120 45 150 75 Q135 100 100 105 Q145 115 150 145 Q120 175 50 165', sw: 20, rotate: 0, skew: 3, tx: 0, ty: 5 },
+      // 3 with sharp bottom curve
+      { d: 'M35 55 Q130 25 165 65 Q150 105 95 110 Q165 125 160 160 Q110 195 40 165', sw: 13, rotate: 7, skew: 8, tx: 0, ty: -5 },
+    ],
+    5: [
+      // Classic 5 with flag top
+      { d: 'M155 40 L60 40 L55 105 Q120 90 160 130 Q140 180 50 165', sw: 16, rotate: -2, skew: 0, tx: 0, ty: 0 },
+      // Slanted 5 with curved cap
+      { d: 'M155 45 Q100 35 65 50 L55 110 Q140 95 165 140 Q140 185 40 170', sw: 14, rotate: -7, skew: -5, tx: 0, ty: 0 },
+      // Angular 5 with straight flag
+      { d: 'M160 45 L55 45 L55 115 L70 105 Q130 100 165 135 Q145 180 50 170', sw: 19, rotate: 5, skew: 6, tx: 0, ty: 5 },
+      // Loopy bottom 5
+      { d: 'M150 40 L60 50 L55 110 Q140 90 170 130 Q160 175 90 180 Q50 175 45 160', sw: 13, rotate: 3, skew: 3, tx: 0, ty: 0 },
+      // Sharp 5 with disconnected top
+      { d: 'M60 40 L155 40 M58 50 L55 110 Q130 90 165 130 Q140 185 45 170', sw: 22, rotate: -5, skew: -3, tx: -5, ty: -5 },
+    ],
+    8: [
+      // Symmetric 8
+      { d: 'M100 30 Q150 30 150 70 Q150 105 100 110 Q150 115 155 150 Q155 185 100 185 Q45 185 45 150 Q50 115 100 110 Q50 105 50 70 Q50 30 100 30 Z', sw: 14, rotate: -3, skew: 0, tx: 0, ty: 0 },
+      // Lopsided 8 with bigger bottom
+      { d: 'M100 35 Q145 35 145 70 Q140 100 100 105 Q160 115 165 155 Q160 188 100 188 Q35 188 38 155 Q42 115 100 105 Q55 100 55 70 Q55 35 100 35 Z', sw: 16, rotate: 5, skew: -4, tx: 0, ty: 0 },
+      // Slanted thin 8
+      { d: 'M105 30 Q145 30 145 65 Q145 105 100 110 Q145 115 150 150 Q150 185 100 185 Q50 185 50 150 Q55 115 100 110 Q55 105 55 65 Q55 30 105 30 Z', sw: 12, rotate: -10, skew: -8, tx: 0, ty: 0 },
+      // Chunky 8
+      { d: 'M100 30 Q155 30 155 72 Q155 108 100 112 Q155 116 160 155 Q160 188 100 188 Q40 188 40 155 Q45 116 100 112 Q45 108 45 72 Q45 30 100 30 Z', sw: 22, rotate: 4, skew: 5, tx: 0, ty: 0 },
+      // Open-top 8 (handwritten gap style)
+      { d: 'M110 32 Q150 35 148 68 Q140 100 100 108 Q150 115 152 150 Q148 185 100 185 Q48 185 45 150 Q50 115 100 108 Q60 100 55 70 Q55 35 95 30', sw: 15, rotate: 0, skew: 3, tx: 0, ty: 0 },
+    ],
+    2: [
+      // Classic curly 2
+      { d: 'M40 75 Q60 30 115 30 Q170 30 165 80 Q160 115 100 145 Q50 170 30 178 L170 178', sw: 16, rotate: -3, skew: 0, tx: 0, ty: 0 },
+      // Sharp 2 with straight base
+      { d: 'M35 65 Q70 30 120 35 Q170 45 160 85 L60 175 L170 175', sw: 18, rotate: 5, skew: 4, tx: 0, ty: 0 },
+      // Tall slanted 2 with loop
+      { d: 'M30 70 Q60 30 110 30 Q170 35 170 85 Q160 120 95 150 Q45 170 25 178 L160 178 M150 165 L170 178 L150 190', sw: 13, rotate: -8, skew: -6, tx: 0, ty: 0 },
+      // Compact rounded 2
+      { d: 'M50 80 Q70 45 115 45 Q160 45 160 85 Q150 115 105 140 Q60 165 50 170 L160 170', sw: 22, rotate: 4, skew: 6, tx: 0, ty: 10 },
+      // Cursive flowing 2 with curl bottom
+      { d: 'M35 80 Q45 30 110 35 Q175 45 165 90 Q145 125 95 150 Q50 168 35 178 Q120 170 165 178 Q175 172 170 165', sw: 13, rotate: 6, skew: 7, tx: 0, ty: -5 },
+    ],
+  };
+  function digitSvgDataUri(digit, idx) {
+    const variants = DIGIT_VARIANTS[digit];
+    const v = variants[idx % variants.length];
+    const svg =
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>` +
+      `<rect width='200' height='200' fill='white'/>` +
+      `<g transform='translate(${v.tx} ${v.ty}) rotate(${v.rotate} 100 110) skewX(${v.skew})' ` +
+      `fill='none' stroke='#111' stroke-width='${v.sw}' stroke-linecap='round' stroke-linejoin='round'>` +
+      `<path d='${v.d}'/></g>` +
+      `</svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+  function digitVariants(digit) {
+    return DIGIT_VARIANTS[digit].map((_, i) => ({ img: digitSvgDataUri(digit, i), label: String(digit) }));
   }
 
+  const dlDatasets = {
+    digits: {
+      '7': digitVariants(7),
+      '3': digitVariants(3),
+      '5': digitVariants(5),
+      '8': digitVariants(8),
+      '2': digitVariants(2),
+    },
+    animals: {
+      'Dog':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png', label: 'Dog' }],
+      'Cat':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_cat_1777197081962_1777202515518.png', label: 'Cat' }],
+      'Bird':     [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_bird_1777197081962_1777202532807.png', label: 'Bird' }],
+      'Elephant': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_elephant_1777197081962_1777202548298.png', label: 'Elephant' }],
+    },
+    vehicles: {
+      'Car':        [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png', label: 'Car' }],
+      'Truck':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_truck_1777203370520.png', label: 'Truck' }],
+      'Motorcycle': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_motorcycle_1777203387094.png', label: 'Motorcycle' }],
+    },
+    medical: {
+      'X-ray':   [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png',   label: 'Pneumonia' }],
+      'MRI':     [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_mri_1777203408245.png',    label: 'Brain Tumor' }],
+      'CT Scan': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_ctscan_1777203421747.png', label: 'Liver Lesion' }],
+    },
+  };
+
+  // Track current label per mode + which variant we last showed,
+  // so clicking the input picks a different variation of the SAME label.
+  window.dlState = window.dlState || {};
+
+  function applyDLImage(variant, mode) {
+    const imgEl = document.getElementById('dl-input-img');
+    const labelEl = document.getElementById('dl-output-label');
+    const placeholderEl = document.getElementById('dl-output-placeholder');
+    const hintEl = document.getElementById('dl-predict-hint');
+    if (!imgEl || !labelEl) return;
+    const fontSize = (mode === 'digits') ? '72px' : '28px';
+
+    gsap.to(imgEl, { opacity: 0, scale: 0.95, duration: 0.2, onComplete: () => {
+      imgEl.src = variant.img;
+      gsap.to(imgEl, { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
+    }});
+
+    // After the first prediction has been triggered, immediately update the label
+    // (no placeholder flow). The placeholder/hint only show on the very first load.
+    if (window.dlFirstPredictionDone) {
+      labelEl.innerText = variant.label;
+      labelEl.style.fontSize = fittedFontSize(variant.label, mode);
+      gsap.fromTo(labelEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2)' });
+    } else {
+      // First load: stash the label, show "?" placeholder + hint, wait for click.
+      window.dlPendingLabel = variant.label;
+      window.dlPendingFontSize = fittedFontSize(variant.label, mode);
+      gsap.to(labelEl, { opacity: 0, duration: 0.2 });
+      if (placeholderEl) gsap.to(placeholderEl, { opacity: 0.35, duration: 0.2 });
+      if (hintEl) gsap.to(hintEl, { opacity: 0.85, duration: 0.2 });
+    }
+  }
+
+  // Pick a label font size that fits the 150px-wide card without clipping.
+  function fittedFontSize(text, mode) {
+    if (mode === 'digits') return '72px';
+    const len = (text || '').length;
+    if (len <= 4)  return '34px';
+    if (len <= 6)  return '28px';
+    if (len <= 9)  return '22px';
+    if (len <= 12) return '18px';
+    return '16px';
+  }
+
+  function runDLPrediction() {
+    const labelEl = document.getElementById('dl-output-label');
+    const placeholderEl = document.getElementById('dl-output-placeholder');
+    const hintEl = document.getElementById('dl-predict-hint');
+    if (!labelEl) return;
+    // Brief "thinking" pulse on the processing card, then reveal the label.
+    const card = document.getElementById('dl-processing-card');
+    if (card) {
+      gsap.fromTo(card, { scale: 1 }, { scale: 1.05, duration: 0.15, yoyo: true, repeat: 1, ease: 'power2.inOut' });
+    }
+    if (hintEl) gsap.to(hintEl, { opacity: 0, duration: 0.2 });
+    if (placeholderEl) gsap.to(placeholderEl, { opacity: 0, duration: 0.2 });
+    setTimeout(() => {
+      labelEl.innerText = window.dlPendingLabel || labelEl.innerText;
+      labelEl.style.fontSize = window.dlPendingFontSize || labelEl.style.fontSize;
+      gsap.fromTo(labelEl, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(2)' });
+      window.dlFirstPredictionDone = true;
+    }, 320);
+  }
+
+  // Called when the user clicks the input image: show a DIFFERENT variation of the SAME label.
+  function randomizeDLInput() {
+    const mode = window.dlMode || 'digits';
+    const labels = Object.keys(dlDatasets[mode]);
+    if (!labels.length) return;
+
+    let state = window.dlState[mode];
+    if (!state) {
+      const initialLabel = labels[0];
+      state = { label: initialLabel, variantIdx: 0 };
+      window.dlState[mode] = state;
+    }
+    const variants = dlDatasets[mode][state.label];
+    if (variants.length > 1) {
+      let next = state.variantIdx;
+      while (next === state.variantIdx) {
+        next = Math.floor(Math.random() * variants.length);
+      }
+      state.variantIdx = next;
+    }
+    applyDLImage(variants[state.variantIdx], mode);
+  }
+
+  // Called when the user clicks a demo-mode card: switch mode AND advance to the next
+  // label in that mode (so "Handwritten Digits" cycles 7 -> 3 -> 5 -> 8 -> 2 -> 7 …)
   function setDLMode(mode) {
     window.dlMode = mode;
     const inputHeader = document.getElementById('dl-input-header');
     const outputHeader = document.getElementById('dl-output-header');
-    
+
     if (mode === 'animals') {
       inputHeader.innerText = 'RAW ANIMAL IMAGE';
       outputHeader.innerText = 'IDENTIFIED SPECIES';
@@ -1570,8 +1756,18 @@
       inputHeader.innerText = 'INPUT IMAGE';
       outputHeader.innerText = 'PREDICTED LABEL';
     }
-    
-    randomizeDLInput();
+
+    const labels = Object.keys(dlDatasets[mode]);
+    let state = window.dlState[mode];
+    if (!state) {
+      state = { label: labels[0], variantIdx: 0 };
+    } else {
+      const currentIdx = labels.indexOf(state.label);
+      const nextLabel = labels[(currentIdx + 1) % labels.length];
+      state = { label: nextLabel, variantIdx: 0 };
+    }
+    window.dlState[mode] = state;
+    applyDLImage(dlDatasets[mode][state.label][0], mode);
   }
 
   const genaiData = {
@@ -1646,12 +1842,108 @@
     }
   }
 
+  // Cancels any in-flight typewriter so re-typing on the same element doesn't race.
+  window.genaiTypers = window.genaiTypers || {};
+
+  // Type plain text one character at a time.
+  function typewriteText(el, text, opts = {}) {
+    if (!el) return;
+    const speed = opts.speed || 18;       // ms per char
+    const startDelay = opts.startDelay || 0;
+    if (window.genaiTypers[el.id]) clearInterval(window.genaiTypers[el.id]);
+    el.textContent = '';
+    el.style.opacity = '1';
+    setTimeout(() => {
+      let i = 0;
+      window.genaiTypers[el.id] = setInterval(() => {
+        i++;
+        el.textContent = text.slice(0, i);
+        if (i >= text.length) {
+          clearInterval(window.genaiTypers[el.id]);
+          delete window.genaiTypers[el.id];
+        }
+      }, speed);
+    }, startDelay);
+  }
+
+  // Type HTML one VISIBLE character at a time, leaving inline tags intact
+  // so styling (e.g. <strong>, <em>, <span style="...">) appears as the text grows.
+  function typewriteHTML(el, html, opts = {}) {
+    if (!el) return;
+    const speed = opts.speed || 14;
+    const startDelay = opts.startDelay || 0;
+    if (window.genaiTypers[el.id]) clearInterval(window.genaiTypers[el.id]);
+    el.innerHTML = '';
+    el.style.opacity = '1';
+
+    // Tokenise into either an opening tag, a closing tag, or a single character.
+    const tokens = [];
+    let i = 0;
+    while (i < html.length) {
+      if (html[i] === '<') {
+        const end = html.indexOf('>', i);
+        if (end === -1) { tokens.push(html[i]); i++; }
+        else { tokens.push(html.slice(i, end + 1)); i = end + 1; }
+      } else {
+        tokens.push(html[i]);
+        i++;
+      }
+    }
+
+    setTimeout(() => {
+      let built = '';
+      let openTags = []; // stack so we can keep the rendered HTML well-formed
+      let k = 0;
+      window.genaiTypers[el.id] = setInterval(() => {
+        // Append one visible character (skip over any tags we hit in the process).
+        let appended = false;
+        while (k < tokens.length && !appended) {
+          const t = tokens[k];
+          if (t.startsWith('<')) {
+            built += t;
+            if (t.startsWith('</')) openTags.pop();
+            else if (!t.endsWith('/>')) {
+              const tagName = t.slice(1).split(/[\s>]/)[0];
+              if (!['br','img','hr','input','meta','link'].includes(tagName)) {
+                openTags.push(tagName);
+              }
+            }
+            k++;
+          } else {
+            built += t;
+            k++;
+            appended = true;
+          }
+        }
+        // Close any currently-open tags so the partial HTML stays valid.
+        const closers = openTags.slice().reverse().map(tag => `</${tag}>`).join('');
+        el.innerHTML = built + closers;
+        if (k >= tokens.length) {
+          clearInterval(window.genaiTypers[el.id]);
+          delete window.genaiTypers[el.id];
+          el.innerHTML = html; // settle to the final canonical HTML
+        }
+      }, speed);
+    }, startDelay);
+  }
+
   function initGenAIMode(mode) {
     const data = genaiData[mode];
     const idx = window[`genai${mode.charAt(0).toUpperCase()+mode.slice(1)}Index`] || 0;
     const entry = data.prompts[idx];
     const promptEl = document.getElementById('genai-prompt-text');
-    if (promptEl) promptEl.textContent = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+    const promptText = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+    // Only the Image tab shows the prompt being typed. Other tabs show it fully.
+    if (mode === 'image') {
+      typewriteText(promptEl, promptText, { speed: 40 });
+    } else if (promptEl) {
+      if (window.genaiTypers && window.genaiTypers[promptEl.id]) {
+        clearInterval(window.genaiTypers[promptEl.id]);
+        delete window.genaiTypers[promptEl.id];
+      }
+      promptEl.textContent = promptText;
+      gsap.set(promptEl, { opacity: 1 });
+    }
 
     // Update model pills
     const pills = document.getElementById('genai-model-pills');
@@ -1667,20 +1959,31 @@
       if (el) el.style.display = m === mode ? (m === 'audio' ? 'flex' : 'block') : 'none';
     });
 
+    // For Image mode, the image fades in after the prompt finishes typing.
+    const outputDelay = (mode === 'image') ? Math.min(promptText.length * 40 + 400, 4000) : 0;
+
     if (mode === 'image') {
       const img = document.getElementById('genai-result-img');
-      if (img) img.src = entry.img;
+      const loadingEl = document.getElementById('genai-loading');
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (img) {
+        gsap.set(img, { opacity: 0 });
+        setTimeout(() => {
+          img.src = entry.img;
+          gsap.fromTo(img, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+        }, outputDelay);
+      }
     } else if (mode === 'text') {
       const el = document.getElementById('genai-text-output');
-      if (el) el.innerHTML = entry.response;
+      if (el) { el.innerHTML = entry.response; gsap.set(el, { opacity: 1 }); }
     } else if (mode === 'code') {
-      const el = document.getElementById('genai-code-output');
       const fn = document.getElementById('genai-code-filename');
-      if (el) el.innerHTML = entry.code;
       if (fn) fn.textContent = entry.filename;
+      const el = document.getElementById('genai-code-output');
+      if (el) { el.innerHTML = entry.code; gsap.set(el, { opacity: 1 }); }
     } else if (mode === 'audio') {
       const t = document.getElementById('genai-audio-title');
-      if (t) t.textContent = entry.title;
+      if (t) { t.textContent = entry.title; gsap.set(t, { opacity: 1 }); }
       const meta = document.getElementById('genai-audio-meta');
       if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
     }
@@ -1714,39 +2017,45 @@
 
     const entry = genaiData[mode].prompts[next];
     const promptEl = document.getElementById('genai-prompt-text');
-
-    const swapPrompt = () => {
-      gsap.to(promptEl, { opacity: 0, y: 8, duration: 0.15, onComplete: () => {
-        promptEl.textContent = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
-        gsap.to(promptEl, { opacity: 1, y: 0, duration: 0.3 });
-      }});
-    };
+    const promptText = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+    const outputDelay = Math.min(promptText.length * 40 + 400, 4000);
 
     if (mode === 'image') {
+      typewriteText(promptEl, promptText, { speed: 40 });
+      const img = document.getElementById('genai-result-img');
       const loadingEl = document.getElementById('genai-loading');
-      if (loadingEl) { loadingEl.style.display = 'flex'; gsap.fromTo(loadingEl, { opacity: 0 }, { opacity: 1, duration: 0.25 }); }
-      setTimeout(() => {
-        const img = document.getElementById('genai-result-img');
-        if (img) img.src = entry.img;
-        swapPrompt();
-        if (loadingEl) gsap.to(loadingEl, { opacity: 0, duration: 0.35, onComplete: () => { loadingEl.style.display = 'none'; } });
-      }, 1200);
-    } else if (mode === 'text') {
-      swapPrompt();
-      const el = document.getElementById('genai-text-output');
-      if (el) gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, onStart: () => { el.innerHTML = entry.response; } });
-    } else if (mode === 'code') {
-      swapPrompt();
-      const el = document.getElementById('genai-code-output');
-      const fn = document.getElementById('genai-code-filename');
-      if (el) gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.4, onStart: () => { el.innerHTML = entry.code; if (fn) fn.textContent = entry.filename; } });
-    } else if (mode === 'audio') {
-      swapPrompt();
-      const t = document.getElementById('genai-audio-title');
-      if (t) t.textContent = entry.title;
-      const meta = document.getElementById('genai-audio-meta');
-      if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
-      buildAudioWaveform();
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (img) {
+        gsap.to(img, { opacity: 0, duration: 0.2 });
+        setTimeout(() => {
+          img.src = entry.img;
+          gsap.fromTo(img, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+        }, outputDelay);
+      }
+    } else if (mode === 'text' || mode === 'code' || mode === 'audio') {
+      // Prompt shown fully (no typewriter) for non-image tabs.
+      if (window.genaiTypers && window.genaiTypers[promptEl.id]) {
+        clearInterval(window.genaiTypers[promptEl.id]);
+        delete window.genaiTypers[promptEl.id];
+      }
+      promptEl.textContent = promptText;
+      gsap.set(promptEl, { opacity: 1 });
+
+      if (mode === 'text') {
+        const el = document.getElementById('genai-text-output');
+        if (el) { el.innerHTML = entry.response; gsap.set(el, { opacity: 1 }); }
+      } else if (mode === 'code') {
+        const fn = document.getElementById('genai-code-filename');
+        if (fn) fn.textContent = entry.filename;
+        const el = document.getElementById('genai-code-output');
+        if (el) { el.innerHTML = entry.code; gsap.set(el, { opacity: 1 }); }
+      } else {
+        const t = document.getElementById('genai-audio-title');
+        if (t) { t.textContent = entry.title; gsap.set(t, { opacity: 1 }); }
+        const meta = document.getElementById('genai-audio-meta');
+        if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
+        buildAudioWaveform();
+      }
     }
   }
 
@@ -1774,7 +2083,6 @@
 
   const flowSteps = {
     0: [
-      ['def-step-tagline'],
       ['def-step-card1', 'def-step-card2', 'def-step-card3'],
       ['def-step-insight'],
     ],
@@ -1790,7 +2098,7 @@
     ],
   };
   const allFlowIds = [
-    'def-step-tagline','def-step-card1','def-step-card2','def-step-card3','def-step-insight',
+    'def-step-card1','def-step-card2','def-step-card3','def-step-insight',
     'house-step-listing','house-step-arrow1','house-step-model','house-step-arrow2','house-step-output',
     'car-step-listing','car-step-arrow1','car-step-model','car-step-arrow2','car-step-output',
   ];

@@ -237,6 +237,10 @@
             </span>
           </div>
           <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideMathPillarsTitle')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Chapter Title</span>
+            </div>
             <div class="course-lesson" onclick="goToSlide('slideMathPillars')">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Math Foundations</span>
@@ -347,7 +351,7 @@
       </div>
     </nav>
 
-    <div class="nav-arrows" style="display: none;">
+    <div class="nav-arrows">
       <button id="prevBtn" class="nav-arrow" disabled>&larr;</button>
       <div id="slideCounter" style="display:none;">1 / 8</div>
       <button id="nextBtn" class="nav-arrow">&rarr;</button>
@@ -447,6 +451,16 @@
           class="premium-iframe"
           src="assets/chapter-2-machine-learning/ml-process.html"
           title="The ML Process"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: CHAPTER 3 TITLE — MATHEMATICAL PILLARS -->
+      <section class="slide-why-ml" id="slideMathPillarsTitle">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/math-pillars-title.html"
+          title="Chapter 3 — Mathematical Pillars"
           allowtransparency="true"
         ></iframe>
       </section>
