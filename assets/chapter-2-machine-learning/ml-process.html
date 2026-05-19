@@ -2494,9 +2494,10 @@ function startMlpEntrance() {
     return;
   }
 
+  gsap.set("#intro-overlay", { opacity: 0, y: 15 });
   const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
   tl.from("#header > *", { y: 20, opacity: 0, stagger: 0.1, duration: 0.8 });
-  tl.from("#intro-overlay", { y: 15, opacity: 0, duration: 0.8 }, "-=0.4");
+  tl.to("#intro-overlay", { opacity: 1, y: 0, duration: 0.8 }, "-=0.4");
 }
 
 if (document.readyState === 'loading') {
