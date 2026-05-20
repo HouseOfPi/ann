@@ -2090,7 +2090,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 6;
+      let currentSlideIdx = 0;
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
