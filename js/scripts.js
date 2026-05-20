@@ -539,17 +539,16 @@
             if (distSq > (9000 * p1.scale)) continue;
             const alpha = (1 - distSq / (9000 * p1.scale)) * 0.4;
             bx.beginPath(); bx.moveTo(p1.x, p1.y); bx.lineTo(p2.x, p2.y);
-            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.28})` : `rgba(8,20,40,${Math.min(1, alpha * 1.4)})`;
-            bx.lineWidth = isDark ? 1 : 1.2;
+            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.28})` : `rgba(15,42,72,${alpha * 0.7})`;
             bx.stroke();
           }
         }
         // Ball nodes
         projected.forEach(p => {
-          const opacity = Math.max(0.25, (bRadius + p.z) / (bRadius * 2));
+          const opacity = Math.max(0.15, (bRadius + p.z) / (bRadius * 2));
           bx.beginPath();
-          bx.arc(p.x, p.y, (isDark ? 2 : 2.6) * p.scale, 0, Math.PI * 2);
-          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.45})` : `rgba(8,20,40,${Math.min(1, opacity * 1.25)})`;
+          bx.arc(p.x, p.y, 2 * p.scale, 0, Math.PI * 2);
+          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.45})` : `rgba(15,42,72,${opacity * 0.95})`;
           bx.fill();
         });
 
