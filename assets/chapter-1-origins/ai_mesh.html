@@ -1419,6 +1419,25 @@
                 <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                 <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Medical Diagnosis</div>
               </div>
+              <!-- Example: Face Recognition -->
+              <div class="ml-card-lift" onclick="setDLMode('faces')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <div style="width: 52px; height: 52px; border-radius: 8px; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden; position: relative;">
+                  <svg viewBox="0 0 64 64" style="width: 100%; height: 100%; display: block;">
+                    <!-- Face silhouette -->
+                    <circle cx="32" cy="26" r="11" fill="rgba(255,255,255,0.95)"/>
+                    <path d="M14 56 Q14 40 32 40 Q50 40 50 56 L50 64 L14 64 Z" fill="rgba(255,255,255,0.95)"/>
+                    <!-- Detection brackets -->
+                    <path d="M8 8 L8 16 M8 8 L16 8" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M56 8 L56 16 M56 8 L48 8" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M8 56 L8 48 M8 56 L16 56" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path d="M56 56 L56 48 M56 56 L48 56" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <!-- Eyes -->
+                    <circle cx="28" cy="24" r="1.5" fill="#1e293b"/>
+                    <circle cx="36" cy="24" r="1.5" fill="#1e293b"/>
+                  </svg>
+                </div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Face Recognition</div>
+              </div>
             </div>
           </div>
           
@@ -1690,7 +1709,49 @@
       'MRI':     [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_mri_1777203408245.png',    label: 'Brain Tumor' }],
       'CT Scan': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_ctscan_1777203421747.png', label: 'Liver Lesion' }],
     },
+    faces: {
+      'Person A': [{ img: facePortraitSVG('#fde68a', '#92400e', '#7c2d12', 'A'), label: 'Alice Chen' }],
+      'Person B': [{ img: facePortraitSVG('#fecaca', '#7f1d1d', '#1f2937', 'B'), label: 'Marcus Reed' }],
+      'Person C': [{ img: facePortraitSVG('#ddd6fe', '#5b21b6', '#1e293b', 'C'), label: 'Priya Sharma' }],
+      'Person D': [{ img: facePortraitSVG('#bbf7d0', '#14532d', '#451a03', 'D'), label: 'David Okafor' }],
+    },
   };
+
+  // Generate a stylized portrait SVG (as a data URI) for the face recognition demo.
+  // Each portrait uses a distinct skin tone + hair color so the four people look different,
+  // without depending on external image assets.
+  function facePortraitSVG(skin, hair, shirt, initial) {
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
+      <defs>
+        <linearGradient id='bg-${initial}' x1='0%' y1='0%' x2='100%' y2='100%'>
+          <stop offset='0%' stop-color='#1e293b'/>
+          <stop offset='100%' stop-color='#0f172a'/>
+        </linearGradient>
+      </defs>
+      <rect width='200' height='200' fill='url(#bg-${initial})'/>
+      <!-- Shoulders / shirt -->
+      <path d='M30 200 Q30 150 100 145 Q170 150 170 200 Z' fill='${shirt}'/>
+      <!-- Neck -->
+      <rect x='86' y='120' width='28' height='32' rx='4' fill='${skin}' opacity='0.85'/>
+      <!-- Head -->
+      <ellipse cx='100' cy='90' rx='42' ry='48' fill='${skin}'/>
+      <!-- Hair -->
+      <path d='M58 78 Q58 42 100 42 Q142 42 142 78 Q142 70 130 65 Q120 60 100 60 Q80 60 70 65 Q58 70 58 78 Z' fill='${hair}'/>
+      <!-- Eyes -->
+      <ellipse cx='85' cy='90' rx='3.5' ry='4' fill='#1f2937'/>
+      <ellipse cx='115' cy='90' rx='3.5' ry='4' fill='#1f2937'/>
+      <!-- Nose -->
+      <path d='M100 95 L96 110 L104 110 Z' fill='none' stroke='${hair}' stroke-width='1' opacity='0.4'/>
+      <!-- Mouth -->
+      <path d='M90 120 Q100 126 110 120' fill='none' stroke='#7f1d1d' stroke-width='2' stroke-linecap='round'/>
+      <!-- Detection brackets -->
+      <path d='M55 50 L55 60 M55 50 L65 50' stroke='#fbbf24' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.7'/>
+      <path d='M145 50 L145 60 M145 50 L135 50' stroke='#fbbf24' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.7'/>
+      <path d='M55 142 L55 132 M55 142 L65 142' stroke='#fbbf24' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.7'/>
+      <path d='M145 142 L145 132 M145 142 L135 142' stroke='#fbbf24' stroke-width='2' stroke-linecap='round' fill='none' opacity='0.7'/>
+    </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
 
   // Track current label per mode + which variant we last showed,
   // so clicking the input picks a different variation of the SAME label.
@@ -1795,6 +1856,9 @@
     } else if (mode === 'medical') {
       inputHeader.innerText = 'CLINICAL SCAN';
       outputHeader.innerText = 'DIAGNOSIS';
+    } else if (mode === 'faces') {
+      inputHeader.innerText = 'FACE IMAGE';
+      outputHeader.innerText = 'IDENTITY';
     } else {
       inputHeader.innerText = 'INPUT IMAGE';
       outputHeader.innerText = 'PREDICTED LABEL';
