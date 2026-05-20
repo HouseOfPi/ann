@@ -1378,13 +1378,20 @@
                 <div style="width: 52px; height: 52px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;">
                   <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; display: block;">
                     <rect width="200" height="200" fill="#ffffff"/>
-                    <line x1="50" y1="0" x2="50" y2="200" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4 4"/>
-                    <line x1="100" y1="0" x2="100" y2="200" stroke="#cbd5e1" stroke-width="2"/>
-                    <line x1="150" y1="0" x2="150" y2="200" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4 4"/>
-                    <line x1="0" y1="50" x2="200" y2="50" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4 4"/>
-                    <line x1="0" y1="100" x2="200" y2="100" stroke="#cbd5e1" stroke-width="2"/>
-                    <line x1="0" y1="150" x2="200" y2="150" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="4 4"/>
-                    <path d="M45 55 L155 55 L75 180" fill="none" stroke="#0f172a" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Grid lines -->
+                    <line x1="50" y1="0" x2="50" y2="200" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <line x1="100" y1="0" x2="100" y2="200" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <line x1="150" y1="0" x2="150" y2="200" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <line x1="0" y1="50" x2="200" y2="50" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <line x1="0" y1="100" x2="200" y2="100" stroke="#cbd5e1" stroke-width="1.5"/>
+                    <line x1="0" y1="150" x2="200" y2="150" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <!-- Digit variations for generalized representation -->
+                    <!-- Left: stylized 3 -->
+                    <path d="M25 30 L45 30 Q50 35 45 45 Q50 55 45 60 L25 60" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Center: stylized 5 -->
+                    <path d="M70 30 L110 30 L85 50 L110 70 L70 70" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Right: stylized 9 -->
+                    <path d="M135 40 Q155 35 160 55 Q155 75 135 70 L140 30" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
                 <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Handwritten Digits</div>
