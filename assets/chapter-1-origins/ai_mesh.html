@@ -277,6 +277,281 @@
   }
   .detail-placeholder-text { font-size: 14px; font-weight: 500; font-style: italic; }
 
+  /* ── Prediction Pane (Pro Redesign) ─────────────────────────────────
+     Editorial layout for the House/Car prediction demonstrations.
+     Uses real font sizes (no transform:scale) so type stays crisp. */
+  .pred-pane {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding: 10px 40px 20px;
+    color: var(--text-main);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .pred-header { text-align: center; max-width: 780px; margin: 0 auto; }
+  .pred-eyebrow {
+    font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ml-color);
+    opacity: 0.85;
+    margin-bottom: 14px;
+  }
+  .pred-title {
+    margin: 0 0 14px 0;
+    font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+    font-size: 52px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    color: var(--title-color);
+  }
+  .pred-title em { font-style: italic; font-weight: 500; color: var(--ml-color); }
+  .pred-sub {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  .pred-pipeline {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    max-width: 1500px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .pred-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+  .pred-col-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .pred-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ml-color) 18%, transparent);
+    color: var(--ml-color);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+  .pred-col-caption {
+    font-size: 13px;
+    color: var(--text-dim);
+    opacity: 0.75;
+    font-style: italic;
+    margin-top: 4px;
+  }
+  .pred-col-caption em { color: var(--ml-color); font-style: normal; font-weight: 700; opacity: 0.9; }
+
+  .pred-feature-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bubble-bg);
+    border: 1px solid color-mix(in srgb, var(--ml-color) 22%, transparent);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px -16px color-mix(in srgb, var(--ml-color) 30%, transparent);
+    overflow: hidden;
+  }
+  .pred-feature-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid color-mix(in srgb, var(--text-main) 8%, transparent);
+  }
+  .pred-feature-row:last-child { border-bottom: none; }
+  .pred-key {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    opacity: 0.78;
+  }
+  .pred-val {
+    font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ml-color);
+    letter-spacing: -0.01em;
+  }
+
+  .pred-arrow {
+    width: 36px;
+    height: 36px;
+    color: color-mix(in srgb, var(--ml-color) 65%, var(--text-dim));
+    opacity: 0.75;
+    flex-shrink: 0;
+  }
+
+  .pred-model-card {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1.05;
+    background: linear-gradient(165deg,
+      color-mix(in srgb, var(--ml-color) 12%, var(--bubble-bg)) 0%,
+      var(--bubble-bg) 100%);
+    border: 1.5px solid color-mix(in srgb, var(--ml-color) 38%, transparent);
+    border-radius: 22px;
+    box-shadow: 0 16px 44px -18px color-mix(in srgb, var(--ml-color) 45%, transparent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 30px 24px;
+    text-align: center;
+  }
+  .pred-model-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--ml-color) 16%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ml-color);
+  }
+  .pred-model-icon svg { width: 34px; height: 34px; }
+  .pred-model-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--title-color);
+    letter-spacing: -0.01em;
+  }
+  .pred-model-stat {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--ml-color) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ml-color) 18%, transparent);
+  }
+  .pred-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .pred-stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ml-color);
+    letter-spacing: -0.01em;
+  }
+  .pred-stat-key {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .pred-stat-divider {
+    width: 1px;
+    height: 22px;
+    background: color-mix(in srgb, var(--ml-color) 25%, transparent);
+  }
+
+  .pred-output-card {
+    width: 100%;
+    max-width: 320px;
+    background: linear-gradient(165deg,
+      color-mix(in srgb, var(--ml-color) 16%, var(--bubble-bg)) 0%,
+      color-mix(in srgb, var(--ml-color) 6%, var(--bubble-bg)) 100%);
+    border: 1.5px solid color-mix(in srgb, var(--ml-color) 45%, transparent);
+    border-radius: 22px;
+    box-shadow: 0 16px 44px -18px color-mix(in srgb, var(--ml-color) 50%, transparent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 36px 28px;
+    text-align: center;
+  }
+  .pred-output-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ml-color);
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .pred-output-value {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 64px;
+    font-weight: 600;
+    color: var(--ml-color);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .pred-output-range {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    opacity: 0.78;
+    letter-spacing: 0;
+  }
+
+  .pred-insight {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 28px;
+    background: color-mix(in srgb, var(--ml-color) 7%, var(--bubble-bg));
+    border-left: 3px solid var(--ml-color);
+    border-radius: 0 14px 14px 0;
+  }
+  .pred-insight-bullet {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--ml-color);
+    margin-top: 9px;
+    flex-shrink: 0;
+  }
+  .pred-insight-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-main);
+    opacity: 0.92;
+  }
+  .pred-insight-text strong { color: var(--ml-color); font-weight: 700; }
+  .pred-insight-text em { color: var(--ml-color); font-style: italic; font-weight: 600; }
+
+  /* Hide the legacy pane-2 overrides since the new design supersedes them. */
+  #ml-pane-2 > .ml-layout { gap: 0 !important; }
+
   /* ── ML Modal Content Styles (Premium Redesign) ── */
   .ml-layout {
     display: flex; flex-direction: column; gap: 20px;
@@ -1300,89 +1575,71 @@
         </div>
 
         <div id="ml-pane-2" class="ml-tab-pane">
-          <div class="ml-layout" style="gap: 15px;">
-            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--title-color); letter-spacing: -0.3px; margin-top: 10px;">
-              Predicting <span style="color: var(--ml-color);">Car Sale Price</span>
+          <div class="pred-pane">
+            <!-- Editorial header -->
+            <div class="pred-header">
+              <div class="pred-eyebrow">Regression · Use Case 02</div>
+              <h2 class="pred-title">Predicting <em>Car Sale Price</em></h2>
+              <p class="pred-sub">An ML model learns from thousands of past sales to suggest the right asking price for your listing.</p>
             </div>
-            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 30px 0 25px 0; padding: 0;">
-              <!-- Left: Features -->
-              <div id="car-step-listing" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -26px; left: 0; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">YOUR LISTING</div>
-                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1.5px solid rgba(128,128,128,0.35); border-radius: 14px; width: 270px; box-shadow: 0 10px 28px rgba(0,0,0,0.14);">
-                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Make / Model</span>
-                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Toyota Camry</span>
-                  </div>
-                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Year</span>
-                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">2021</span>
-                  </div>
-                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Miles Driven</span>
-                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">32,000 mi</span>
-                  </div>
-                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Transmission</span>
-                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Automatic</span>
-                  </div>
-                  <div style="display: flex; align-items: center; padding: 14px 18px;">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Condition</span>
-                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Excellent</span>
-                  </div>
-                </div>
-              </div>
-              <!-- Arrow 1 -->
-              <svg id="car-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
-                <polyline points="10 6 16 12 10 18"></polyline>
-              </svg>
 
-              <!-- Middle: ML Model -->
-              <div id="car-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2.5px solid var(--ml-color); border-radius: 22px; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 200px;">
-                <!-- Upper Half: Model Logic -->
-                <div class="model-section-wrap">
-                  <div class="training-preview">
-                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 CAR SALES TRAINING DATA</div>
-                    <div class="training-table-wrap" style="position: relative;">
-                      <table class="training-table" style="font-size: 8.5px;">
-                        <thead>
-                          <tr><th>Make</th><th>Year</th><th>Mi</th><th>Cond</th><th>Trans</th><th>Price</th></tr>
-                        </thead>
-                        <tbody>
-                          <tr><td>Honda</td><td>2019</td><td>45k</td><td>Good</td><td>Auto</td><td>$18k</td></tr>
-                          <tr><td>BMW</td><td>2022</td><td>12k</td><td>Excl</td><td>Auto</td><td>$42k</td></tr>
-                          <tr><td>Ford</td><td>2018</td><td>68k</td><td>Fair</td><td>Man</td><td>$14k</td></tr>
-                          <tr><td>Toyota</td><td>2021</td><td>28k</td><td>Excl</td><td>Auto</td><td>$26k</td></tr>
-                          <tr><td>Chevy</td><td>2017</td><td>82k</td><td>Good</td><td>Auto</td><td>$11k</td></tr>
-                          <tr><td>Audi</td><td>2023</td><td>8k</td><td>Excl</td><td>Auto</td><td>$55k</td></tr>
-                        </tbody>
-                      </table>
-                      <div class="features-box"><span class="box-label">FEATURES</span></div>
-                      <div class="target-box"><span class="box-label">TARGET</span></div>
-                    </div>
-                  </div>
-
-                  <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
-                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
-                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
-                    <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
-                  </svg>
-                  <div style="font-size: 20px; font-weight: 800; color: var(--ml-color);">ML Model</div>
-                  <div style="font-size: 15px; font-weight: 700; color: var(--text-dim); opacity:0.9;">(Regression)</div>
+            <!-- Pipeline -->
+            <div class="pred-pipeline car-flow-step">
+              <!-- INPUT: Features -->
+              <div class="pred-col">
+                <div class="pred-col-label"><span class="pred-step-num">01</span>Your Listing</div>
+                <div class="pred-feature-card">
+                  <div class="pred-feature-row"><span class="pred-key">Make / Model</span><span class="pred-val">Toyota Camry</span></div>
+                  <div class="pred-feature-row"><span class="pred-key">Year</span><span class="pred-val">2021</span></div>
+                  <div class="pred-feature-row"><span class="pred-key">Miles Driven</span><span class="pred-val">32,000</span></div>
+                  <div class="pred-feature-row"><span class="pred-key">Transmission</span><span class="pred-val">Automatic</span></div>
+                  <div class="pred-feature-row"><span class="pred-key">Condition</span><span class="pred-val">Excellent</span></div>
                 </div>
+                <div class="pred-col-caption">5 features</div>
               </div>
 
-              <!-- Arrow 2 -->
-              <svg id="car-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
-                <polyline points="10 6 16 12 10 18"></polyline>
-              </svg>
+              <svg class="pred-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg>
 
-              <!-- Right: Output -->
-              <div id="car-step-output" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
-                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">AI SUGGESTED PRICE</div>
-                <div style="background: color-mix(in srgb, var(--ml-color) 14%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 50%, transparent); border-radius: 22px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 230px;">
-                  <div style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
-                  <div style="font-size: 44px; font-weight: 950; color: var(--ml-color); margin-top: 14px;">$24,200</div>
+              <!-- MODEL -->
+              <div class="pred-col">
+                <div class="pred-col-label"><span class="pred-step-num">02</span>Trained Model</div>
+                <div class="pred-model-card">
+                  <div class="pred-model-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                      <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                      <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+                    </svg>
+                  </div>
+                  <div class="pred-model-name">Regression Model</div>
+                  <div class="pred-model-stat">
+                    <div class="pred-stat"><span class="pred-stat-val">12,400</span><span class="pred-stat-key">sales seen</span></div>
+                    <div class="pred-stat-divider"></div>
+                    <div class="pred-stat"><span class="pred-stat-val">R²&nbsp;0.94</span><span class="pred-stat-key">accuracy</span></div>
+                  </div>
                 </div>
+                <div class="pred-col-caption">Learns: <em>features → price</em></div>
+              </div>
+
+              <svg class="pred-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg>
+
+              <!-- OUTPUT -->
+              <div class="pred-col">
+                <div class="pred-col-label"><span class="pred-step-num">03</span>Suggested Price</div>
+                <div class="pred-output-card">
+                  <div class="pred-output-eyebrow">Fair asking price</div>
+                  <div class="pred-output-value">$24,200</div>
+                  <div class="pred-output-range">Range: $22.8k – $25.6k</div>
+                </div>
+                <div class="pred-col-caption">95% confidence interval</div>
+              </div>
+            </div>
+
+            <!-- Insight -->
+            <div class="pred-insight car-flow-step">
+              <div class="pred-insight-bullet"></div>
+              <div class="pred-insight-text">
+                <strong>Key Idea —</strong> The model never sees your car. It just maps <em>features</em> to <em>price</em>, learned from thousands of comparable listings.
               </div>
             </div>
           </div>
