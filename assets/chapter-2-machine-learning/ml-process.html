@@ -1109,7 +1109,11 @@ body.predict-mode .predict-result > .val { display: none; }
   z-index: 20;
   pointer-events: auto;
   cursor: pointer;
+  background: var(--bg);
   will-change: opacity, transform, filter;
+}
+.intro-overlay.is-dismissed {
+  display: none !important;
 }
 .intro-lead {
   font-family: 'Cormorant Garamond', 'Times New Roman', serif;
@@ -1232,15 +1236,22 @@ function revealWorkflow() {
   const container = document.querySelector('.cards-container');
   const cards     = document.querySelectorAll('.card');
 
-  if (!window.gsap) {
-    if (intro) intro.style.display = 'none';
+  const dismissIntro = () => { if (intro) intro.classList.add('is-dismissed'); };
+  const showCards    = () => {
     if (container) container.classList.remove('is-pre-reveal');
+    cards.forEach(c => { c.style.opacity = ''; c.style.transform = ''; c.style.filter = ''; });
+  };
+
+  if (!window.gsap) {
+    dismissIntro();
+    showCards();
     return;
   }
 
   try {
+    // Lock cards in pre-reveal state so they don't pop while intro fades.
+    if (container) container.classList.add('is-pre-reveal');
     gsap.set(cards, { opacity: 0, y: 28, filter: 'blur(6px)' });
-    if (container) container.classList.remove('is-pre-reveal');
 
     const tl = gsap.timeline();
     tl.to(intro, {
@@ -1249,8 +1260,10 @@ function revealWorkflow() {
       filter: 'blur(8px)',
       duration: 0.55,
       ease: 'power2.inOut',
-      onComplete: () => { if (intro) intro.style.display = 'none'; }
+      onComplete: dismissIntro,
     }, 0);
+    // Drop the CSS lock right before tween starts so GSAP can drive cards.
+    tl.add(() => { if (container) container.classList.remove('is-pre-reveal'); }, 0.25);
     tl.to(cards, {
       opacity: 1,
       y: 0,
@@ -1258,12 +1271,11 @@ function revealWorkflow() {
       duration: 0.85,
       ease: 'power3.out',
       stagger: 0.12,
+      clearProps: 'opacity,transform,filter',
     }, 0.25);
   } catch (err) {
-    // GSAP threw — fall back to instant reveal so the page is never blank.
-    if (intro) intro.style.display = 'none';
-    if (container) container.classList.remove('is-pre-reveal');
-    cards.forEach(c => { c.style.opacity = '1'; c.style.transform = 'none'; c.style.filter = 'none'; });
+    dismissIntro();
+    showCards();
   }
 }
 
@@ -1273,10 +1285,12 @@ function resetReveal() {
   const container = document.querySelector('.cards-container');
   const cards     = document.querySelectorAll('.card');
   if (intro) {
+    intro.classList.remove('is-dismissed');
     intro.style.removeProperty('display');
     if (window.gsap) { try { gsap.set(intro, { clearProps: 'all' }); } catch (_) {} }
   }
   if (container) container.classList.add('is-pre-reveal');
+  cards.forEach(c => { c.style.opacity = ''; c.style.transform = ''; c.style.filter = ''; });
   if (window.gsap) { try { gsap.set(cards, { clearProps: 'all' }); } catch (_) {} }
 }
 
@@ -1357,6 +1371,7 @@ function startMlpEntrance() {
   window.__mlpEntranceStarted = true;
 
   const container = document.querySelector('.cards-container');
+  const intro = document.getElementById('intro-overlay');
 
   if (!window.gsap) {
     // GSAP missing — everything stays at its CSS default (fully visible).
@@ -1364,20 +1379,19 @@ function startMlpEntrance() {
   }
 
   try {
-    // Apply the pre-reveal state in JS only AFTER GSAP confirmed loaded.
-    // Until this point the cards are visible in CSS so the page never blanks.
+    // Apply pre-reveal state in JS only AFTER GSAP confirmed loaded.
+    // Cards stay hidden behind the intro overlay (which has solid background).
     if (container) container.classList.add('is-pre-reveal');
+    if (intro) intro.classList.remove('is-dismissed');
 
     gsap.set('#header', { opacity: 0, y: 20 });
-    gsap.set('#intro-overlay', { opacity: 0, y: 18, scale: 1, filter: 'none', display: '' });
+    gsap.set('#intro-overlay', { opacity: 0, y: 18, scale: 1, filter: 'none' });
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1 } });
     tl.to('#header', { opacity: 1, y: 0, duration: 0.8 });
     tl.to('#intro-overlay', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3');
   } catch (err) {
-    // Entrance failed — force everything visible.
     if (container) container.classList.remove('is-pre-reveal');
-    const intro = document.getElementById('intro-overlay');
-    if (intro) { intro.style.opacity = '1'; intro.style.transform = 'none'; }
+    if (intro) { intro.classList.add('is-dismissed'); }
     const header = document.getElementById('header');
     if (header) { header.style.opacity = '1'; header.style.transform = 'none'; }
   }
