@@ -473,12 +473,12 @@
         const layers = isMobile ? [3, 4, 3] : [3, 5, 5, 3];
         dualAnnLayerCount = layers.length;
         
-        const centerX = BW * 0.705;
-        const annSpread = isMobile ? BW * 0.30 : Math.min(BW * 0.35, 500);
+        const centerX = BW * 0.75;
+        const annSpread = isMobile ? BW * 0.36 : Math.min(BW * 0.44, 640);
         const annLeft = centerX - annSpread / 2;
         const totalW = annSpread;
         const spacingX = totalW / (layers.length - 1);
-        const nodeSpacingY = isMobile ? 42 : Math.min(54, BH * 0.06);
+        const nodeSpacingY = isMobile ? 50 : Math.min(70, BH * 0.078);
 
         layers.forEach((count, li) => {
           const totalH = (count - 1) * nodeSpacingY;
@@ -489,7 +489,7 @@
               y: startY + j * nodeSpacingY,
               layer: li,
               idx: j,
-              r: isMobile ? 6 : 8,
+              r: isMobile ? 7.5 : 10,
               offset: Math.random() * Math.PI * 2,
               baseX: annLeft + li * spacingX,
               baseY: startY + j * nodeSpacingY,
@@ -509,8 +509,8 @@
         //  3D Ball (Right Side, behind ANN)
         // ═══════════════════════════════════════
         const isMob = BW < 768;
-        const annSpreadDraw = isMob ? BW * 0.30 : Math.min(BW * 0.35, 500);
-        const ballCx = BW * 0.705, ballCy = BH * 0.45;
+        const annSpreadDraw = isMob ? BW * 0.36 : Math.min(BW * 0.44, 640);
+        const ballCx = BW * 0.75, ballCy = BH * 0.45;
         const rotX = bt * 0.0018, rotY = bt * 0.0025;
         const baseRadius = annSpreadDraw * 0.45;
         const bPulse = 0.92 + Math.sin(bt * 0.006) * 0.08;

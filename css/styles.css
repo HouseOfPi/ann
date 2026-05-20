@@ -940,7 +940,7 @@
       }
       .ui.ui-left .title-wrap {
         width: auto;
-        max-width: 52%; /* Narrowed to avoid the diagram */
+        max-width: 42%; /* Narrowed further so animation has more breathing room */
         text-align: left;
         align-items: flex-start;
       }
