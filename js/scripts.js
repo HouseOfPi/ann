@@ -539,7 +539,7 @@
             if (distSq > (9000 * p1.scale)) continue;
             const alpha = (1 - distSq / (9000 * p1.scale)) * 0.4;
             bx.beginPath(); bx.moveTo(p1.x, p1.y); bx.lineTo(p2.x, p2.y);
-            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.28})` : `rgba(3,105,161,${alpha * 0.22})`;
+            bx.strokeStyle = isDark ? `rgba(34,211,238,${alpha * 0.28})` : `rgba(15,42,72,${alpha * 0.55})`;
             bx.stroke();
           }
         }
@@ -548,7 +548,7 @@
           const opacity = Math.max(0.1, (bRadius + p.z) / (bRadius * 2));
           bx.beginPath();
           bx.arc(p.x, p.y, 2 * p.scale, 0, Math.PI * 2);
-          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.45})` : `rgba(3,105,161,${opacity * 0.55})`;
+          bx.fillStyle = isDark ? `rgba(255,255,255,${opacity * 0.45})` : `rgba(15,42,72,${opacity * 0.85})`;
           bx.fill();
         });
 
@@ -593,8 +593,8 @@
             const alphaFalloff = Math.max(0, 1 - distY / 400);
             if (alphaFalloff <= 0) return;
             const actBoost = Math.max(n1.activation, n2.activation);
-            const alpha = (0.07 + actBoost * 0.16) * alphaFalloff;
-            bx.lineWidth = 0.8 + actBoost * 1.5;
+            const alpha = ((isDark ? 0.07 : 0.32) + actBoost * 0.22) * alphaFalloff;
+            bx.lineWidth = (isDark ? 0.8 : 1.2) + actBoost * 1.5;
             const c1 = palette[n1.layer % palette.length];
             const c2 = palette[n2.layer % palette.length];
             const grad = bx.createLinearGradient(n1.x, n1.y, n2.x, n2.y);
@@ -668,8 +668,8 @@
             bx.stroke(); bx.shadowBlur = 0;
           } else {
             bx.fillStyle = '#fff'; bx.fill();
-            bx.lineWidth = 2 + act * 1.2;
-            bx.strokeStyle = hexToRgba(lc, 0.45 + act * 0.2); bx.stroke();
+            bx.lineWidth = 2.5 + act * 1.2;
+            bx.strokeStyle = hexToRgba(lc, 0.95); bx.stroke();
           }
 
           // Core dot
@@ -677,7 +677,7 @@
           bx.beginPath(); bx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
           bx.fillStyle = isDark
             ? `rgba(255,255,255,${0.35 + act * 0.20 + pulse * 0.06})`
-            : hexToRgba(lc, 0.48 + act * 0.15);
+            : hexToRgba(lc, 0.9);
           bx.fill();
         });
 
@@ -691,7 +691,7 @@
         bx.textAlign = 'center';
         const ly = dualAnnNodes.reduce((m, n) => Math.max(m, n.baseY), 0) + 45;
         Object.keys(lxs).forEach((l, idx) => {
-          bx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.22)';
+          bx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.65)';
           bx.fillText(labels[idx] || '', lxs[l], ly);
         });
       }
@@ -700,7 +700,7 @@
       let annNodes = [], annPulses = [], annParticles = [], annLayerCount = 0;
       const annLayerColors = {
         dark:  ['#a78bfa','#60a5fa','#22d3ee','#34d399','#818cf8'],
-        light: ['#7c3aed','#3b82f6','#0891b2','#059669','#4f46e5'],
+        light: ['#6d28d9','#1d4ed8','#0e7490','#047857','#3730a3'],
       };
 
       function initAnn() {
@@ -779,9 +779,9 @@
             if (alphaFalloff <= 0) return;
 
             const actBoost = Math.max(n1.activation, n2.activation);
-            const baseAlpha = isDark ? 0.12 : 0.10;
-            const alpha = (baseAlpha + actBoost * 0.25) * alphaFalloff;
-            bx.lineWidth = 0.8 + actBoost * 1.5;
+            const baseAlpha = isDark ? 0.12 : 0.38;
+            const alpha = (baseAlpha + actBoost * 0.3) * alphaFalloff;
+            bx.lineWidth = (isDark ? 0.8 : 1.2) + actBoost * 1.5;
 
             const c1 = palette[n1.layer % palette.length];
             const c2 = palette[n2.layer % palette.length];
@@ -895,8 +895,8 @@
           } else {
             bx.fillStyle = '#fff';
             bx.fill();
-            bx.lineWidth = 2 + act * 1.2;
-            bx.strokeStyle = hexToRgba(layerColor, 0.7 + act * 0.3);
+            bx.lineWidth = 2.5 + act * 1.2;
+            bx.strokeStyle = hexToRgba(layerColor, 0.95);
             bx.stroke();
           }
 
@@ -923,7 +923,7 @@
         Object.keys(layerXs).forEach((l, idx) => {
           const lx = layerXs[l];
           const label = labelNames[idx] || '';
-          bx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.22)';
+          bx.fillStyle = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.65)';
           bx.fillText(label, lx, labelY);
         });
       }
