@@ -1635,12 +1635,12 @@
       .hqf-body { display: flex; flex-direction: column; gap: 10px; }
       .hqf-text {
         font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
-        font-size: 16px;
+        font-size: 22px;
         font-style: italic;
         font-weight: 500;
         line-height: 1.5;
         color: var(--text-main);
-        opacity: 0.9;
+        opacity: 1;
         margin: 0;
         letter-spacing: 0;
       }
@@ -1656,15 +1656,15 @@
         vertical-align: -0.15em;
         opacity: 0.85;
       }
-      .light-mode .hqf-text { color: var(--text-main); opacity: 0.9; }
+      .light-mode .hqf-text { color: var(--text-main); opacity: 1; }
       .hqf-author {
         font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
-        font-size: 10px;
+        font-size: 13px;
         font-weight: 700;
         letter-spacing: 0.32em;
         text-transform: uppercase;
         color: var(--accent-main);
-        opacity: 0.95;
+        opacity: 1;
       }
 
       /* keep for legacy reference */
