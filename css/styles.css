@@ -1123,105 +1123,19 @@
       .hero-h2-accent {
         font-weight: 600;
         color: var(--text-main);
-        position: relative;
-        z-index: 1;
-        display: inline-block;
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease, text-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
-        will-change: transform, letter-spacing, text-shadow;
-      }
-      .hero-h2-accent::before {
-        content: "";
-        position: absolute;
-        left: -6px; right: -6px;
-        bottom: 0;
-        height: 36%;
-        background: var(--accent-main);
-        opacity: 0.18;
-        border-radius: 2px;
-        z-index: -1;
-        transform-origin: left;
-        transform: scaleX(0);
-        animation: heroHighlight 0.8s cubic-bezier(0.22,0.61,0.36,1) 1.35s forwards;
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, border-radius 0.4s ease;
-      }
-      .hero-h2-accent:hover {
-        transform: translateY(-4px) scale(1.03);
-        color: var(--text-main);
-        letter-spacing: 0.02em;
-        text-shadow: 0 10px 30px var(--accent-main), 0 2px 10px var(--accent-main);
-      }
-      .hero-h2-accent:active {
-        transform: translateY(0) scale(0.97);
-        text-shadow: 0 2px 8px var(--accent-main);
-      }
-      .hero-h2-accent:hover::before {
-        transform: scaleX(1.04) scaleY(1.8) translateY(2px);
-        opacity: 0.25;
-        border-radius: 6px;
       }
       .hero-h2-amp {
         font-family: "Instrument Serif", Georgia, serif;
         font-style: italic;
         font-weight: 400;
-        font-size: 1.35em;
+        font-size: 1.1em;
         color: var(--accent-main);
-        opacity: 0.85;
         line-height: 1;
-        margin: 0 2px;
-        display: inline-block;
-        transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.4s ease, opacity 0.4s ease, text-shadow 0.6s ease;
-        cursor: pointer;
-      }
-      .hero-h2-amp:hover {
-        transform: scale(1.3) rotate(12deg) translateY(-2px);
-        opacity: 1;
-        color: var(--text-main);
-        text-shadow: 0 4px 16px var(--accent-main);
-      }
-      .hero-h2-amp:active {
-        transform: scale(0.9) rotate(-10deg);
+        margin: 0 4px;
       }
       .hero-h2-muted {
         color: var(--text-main);
-        opacity: 1;
         font-weight: 500;
-        letter-spacing: 0.01em;
-        position: relative;
-        display: inline-block;
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease, text-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
-        will-change: transform, letter-spacing;
-      }
-      .hero-h2-muted::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -4px;
-        height: 1px;
-        background: var(--accent-main);
-        opacity: 0.45;
-        transform-origin: left;
-        transform: scaleX(0);
-        animation: heroHighlight 0.9s cubic-bezier(0.22,0.61,0.36,1) 1.55s forwards;
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease, height 0.6s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.6s ease;
-      }
-      .hero-h2-muted:hover {
-        transform: translateY(-4px) scale(1.03);
-        color: var(--text-main);
-        letter-spacing: 0.015em;
-        text-shadow: 0 10px 30px var(--accent-main), 0 2px 10px var(--accent-main);
-      }
-      .hero-h2-muted:active {
-        transform: translateY(0) scale(0.97);
-        text-shadow: 0 2px 8px var(--accent-main);
-      }
-      .hero-h2-muted:hover::before {
-        transform: scaleX(1.02);
-        height: 6px;
-        bottom: -8px;
-        opacity: 0.75;
       }
 
       @keyframes heroFadeUp {
