@@ -2197,10 +2197,10 @@
       // Initial call to hide disabled sidebar items on load
       updateSidebarLessons();
 
-      // Activate default slide (intro page) on load
+      // Activate default slide on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideMesh');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMLProcess');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
