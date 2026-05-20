@@ -1361,22 +1361,22 @@
       }
       .hero-scratch-icon {
         font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
-        font-size: 11px;
+        font-size: 14px;
         font-weight: 700;
         letter-spacing: 0.32em;
         text-transform: uppercase;
         color: var(--text-dim, var(--text-main));
-        opacity: 0.65;
+        opacity: 1;
         padding-left: 48px;
         filter: none;
       }
       .hero-scratch-text {
         font-family: "Inter", "Space Grotesk", system-ui, sans-serif;
-        font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+        font-size: clamp(1.15rem, 1.4vw, 1.35rem);
         font-weight: 400;
         letter-spacing: 0;
         color: var(--text-main);
-        opacity: 0.85;
+        opacity: 1;
       }
       .hero-scratch-text strong {
         font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
