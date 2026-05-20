@@ -1275,19 +1275,19 @@
       }
       .hero-scratch-icon {
         font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
-        font-size: 14px;
-        font-weight: 700;
+        font-size: 17px;
+        font-weight: 800;
         letter-spacing: 0.32em;
         text-transform: uppercase;
-        color: var(--text-dim, var(--text-main));
+        color: var(--text-main);
         opacity: 1;
         padding-left: 48px;
         filter: none;
       }
       .hero-scratch-text {
         font-family: "Inter", "Space Grotesk", system-ui, sans-serif;
-        font-size: clamp(1.2rem, 1.45vw, 1.4rem);
-        font-weight: 400;
+        font-size: clamp(1.45rem, 1.75vw, 1.7rem);
+        font-weight: 500;
         letter-spacing: 0;
         color: var(--text-main);
         opacity: 1;
