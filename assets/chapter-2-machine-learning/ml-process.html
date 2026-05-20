@@ -1145,7 +1145,7 @@ body.predict-mode .predict-result > .val { display: none; }
   <p class="intro-lead">The <em>big picture.</em></p>
 </div>
 
-<div class="cards-container is-pre-reveal">
+<div class="cards-container">
   <!-- Step 1 -->
   <div class="card-wrapper">
     <div class="card" id="card1" style="--cc:var(--c1)">
@@ -1238,34 +1238,33 @@ function revealWorkflow() {
     return;
   }
 
-  // Lock the cards' starting state in JS so the CSS class can be removed
-  // safely (otherwise the class drop would snap them to the final state).
-  gsap.set(cards, { opacity: 0, y: 28, filter: 'blur(6px)' });
-  if (container) container.classList.remove('is-pre-reveal');
+  try {
+    gsap.set(cards, { opacity: 0, y: 28, filter: 'blur(6px)' });
+    if (container) container.classList.remove('is-pre-reveal');
 
-  const tl = gsap.timeline();
-
-  // Intro: ease out gently — scale up a touch, blur, fade.
-  tl.to(intro, {
-    opacity: 0,
-    scale: 1.04,
-    filter: 'blur(8px)',
-    duration: 0.55,
-    ease: 'power2.inOut',
-    onComplete: () => { if (intro) intro.style.display = 'none'; }
-  }, 0);
-
-  // Cards: overlap with the intro fade so the eye is handed off
-  // from one to the other without a visual gap. Slight stagger gives
-  // a wave that reads left → right.
-  tl.to(cards, {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    duration: 0.85,
-    ease: 'power3.out',
-    stagger: 0.12,
-  }, 0.25);
+    const tl = gsap.timeline();
+    tl.to(intro, {
+      opacity: 0,
+      scale: 1.04,
+      filter: 'blur(8px)',
+      duration: 0.55,
+      ease: 'power2.inOut',
+      onComplete: () => { if (intro) intro.style.display = 'none'; }
+    }, 0);
+    tl.to(cards, {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.85,
+      ease: 'power3.out',
+      stagger: 0.12,
+    }, 0.25);
+  } catch (err) {
+    // GSAP threw — fall back to instant reveal so the page is never blank.
+    if (intro) intro.style.display = 'none';
+    if (container) container.classList.remove('is-pre-reveal');
+    cards.forEach(c => { c.style.opacity = '1'; c.style.transform = 'none'; c.style.filter = 'none'; });
+  }
 }
 
 function resetReveal() {
@@ -1275,10 +1274,10 @@ function resetReveal() {
   const cards     = document.querySelectorAll('.card');
   if (intro) {
     intro.style.removeProperty('display');
-    if (window.gsap) gsap.set(intro, { clearProps: 'all' });
+    if (window.gsap) { try { gsap.set(intro, { clearProps: 'all' }); } catch (_) {} }
   }
   if (container) container.classList.add('is-pre-reveal');
-  if (window.gsap) gsap.set(cards, { clearProps: 'all' });
+  if (window.gsap) { try { gsap.set(cards, { clearProps: 'all' }); } catch (_) {} }
 }
 
 // Forward arrow-key nav up to the parent deck so prev/next still works
@@ -1332,41 +1331,56 @@ window.addEventListener('message', (e) => {
     applyPalette(p);
   }
   if (e.data.type === 'RESTART_ANIMATION') {
-    if (window.gsap) gsap.killTweensOf('*');
-    window.__mlpEntranceStarted = false;
-    resetReveal();
-    if (window.gsap) {
-      gsap.set('#header', { opacity: 0, y: 20 });
-      gsap.set('#intro-overlay', { opacity: 0, y: 18 });
+    try {
+      if (window.gsap) gsap.killTweensOf('*');
+      window.__mlpEntranceStarted = false;
+      resetReveal();
+      startMlpEntrance();
+    } catch (err) {
+      // If restart blows up, at least make sure things are visible.
+      document.querySelectorAll('#header, .card').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.filter = 'none';
+      });
+      const intro = document.getElementById('intro-overlay');
+      if (intro) { intro.style.opacity = '1'; intro.style.display = ''; }
     }
-    startMlpEntrance();
   }
 });
 
 // Entrance Animations
-// Run as soon as the DOM is ready (don't wait for every CDN font + iframe).
-// Falls back to a static reveal if GSAP isn't available so the page never
-// stays blank waiting for a third-party script.
+// Wrapped in try/catch + safety net so the page is NEVER stuck blank,
+// no matter what fails (GSAP not loaded, JS error, etc.).
 function startMlpEntrance() {
   if (window.__mlpEntranceStarted) return;
   window.__mlpEntranceStarted = true;
 
+  const container = document.querySelector('.cards-container');
+
   if (!window.gsap) {
-    // GSAP missing — show everything immediately.
-    const intro = document.getElementById('intro-overlay');
-    if (intro) intro.style.display = 'none';
-    document.querySelectorAll('.card').forEach(c => {
-      c.style.opacity = '1';
-      c.style.pointerEvents = 'auto';
-    });
+    // GSAP missing — everything stays at its CSS default (fully visible).
     return;
   }
 
-  gsap.set("#header", { opacity: 0, y: 20 });
-  gsap.set("#intro-overlay", { opacity: 0, y: 18 });
-  const tl = gsap.timeline({ defaults: { ease: "power3.out", duration: 1 } });
-  tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
-  tl.to("#intro-overlay", { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, "-=0.3");
+  try {
+    // Apply the pre-reveal state in JS only AFTER GSAP confirmed loaded.
+    // Until this point the cards are visible in CSS so the page never blanks.
+    if (container) container.classList.add('is-pre-reveal');
+
+    gsap.set('#header', { opacity: 0, y: 20 });
+    gsap.set('#intro-overlay', { opacity: 0, y: 18, scale: 1, filter: 'none', display: '' });
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1 } });
+    tl.to('#header', { opacity: 1, y: 0, duration: 0.8 });
+    tl.to('#intro-overlay', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.3');
+  } catch (err) {
+    // Entrance failed — force everything visible.
+    if (container) container.classList.remove('is-pre-reveal');
+    const intro = document.getElementById('intro-overlay');
+    if (intro) { intro.style.opacity = '1'; intro.style.transform = 'none'; }
+    const header = document.getElementById('header');
+    if (header) { header.style.opacity = '1'; header.style.transform = 'none'; }
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -1375,18 +1389,26 @@ if (document.readyState === 'loading') {
   startMlpEntrance();
 }
 
-// Safety net: if for any reason GSAP failed to load and show the page,
-// force-reveal everything so the page is never stuck on a blank canvas.
+// Hard safety net: 3s after load, if ANYTHING is still invisible, force it visible.
 setTimeout(() => {
-  if (!window.gsap) {
-    const intro = document.getElementById('intro-overlay');
-    if (intro) intro.style.display = 'none';
-    document.querySelectorAll('.card').forEach(c => {
-      c.style.opacity = '1';
-      c.style.pointerEvents = 'auto';
-    });
+  const header = document.getElementById('header');
+  if (header && getComputedStyle(header).opacity === '0') {
+    header.style.opacity = '1';
+    header.style.transform = 'none';
   }
-}, 2500);
+  const intro = document.getElementById('intro-overlay');
+  if (intro && intro.style.display !== 'none' && getComputedStyle(intro).opacity === '0') {
+    intro.style.opacity = '1';
+    intro.style.transform = 'none';
+  }
+  document.querySelectorAll('.card').forEach(c => {
+    if (getComputedStyle(c).opacity === '0') {
+      c.style.opacity = '1';
+      c.style.transform = 'none';
+      c.style.filter = 'none';
+    }
+  });
+}, 3000);
 
 // Click to dissolve the intro and reveal the cards.
 document.body.addEventListener('click', (e) => {

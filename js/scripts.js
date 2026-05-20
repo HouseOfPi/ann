@@ -2506,12 +2506,14 @@
           setTimeout(() => animateSlideEight(), 400);
         }
 
-        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar' || incoming.id === 'slideFuture' || incoming.id === 'slideAITransforming') {
+        if (incoming.id === 'slideSingleNeuron' || incoming.id === 'slideMesh' || incoming.id === 'slideWhyML' || incoming.id === 'slideMLProcess' || incoming.id === 'slideLinearMultiVar' || incoming.id === 'slideLinearSingleVar' || incoming.id === 'slideLinearNVar' || incoming.id === 'slideFuture' || incoming.id === 'slideAITransforming') {
           const frame = incoming.querySelector('iframe');
           if (frame) {
             if (incoming.id === 'slideMesh' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else if (incoming.id === 'slideWhyML' && frame.contentWindow) {
+               frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
+            } else if (incoming.id === 'slideMLProcess' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
             } else if (incoming.id === 'slideLinearNVar' && frame.contentWindow) {
                frame.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*');
