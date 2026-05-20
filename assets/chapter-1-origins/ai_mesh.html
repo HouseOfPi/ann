@@ -322,7 +322,14 @@
   .ml-bracket-svg { width: 25px; height: 180px; }
 
   /* Premium Effects */
-  .ml-card-lift:hover { transform: translateY(-8px) scale(1.02); }
+  .ml-card-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .ml-card-lift:hover { transform: translate3d(0, -8px, 0) scale(1.02); }
   @keyframes ml-pulse {
     0% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ml-color) 30%, transparent)); }
     50% { filter: drop-shadow(0 0 15px color-mix(in srgb, var(--ml-color) 60%, transparent)); }
@@ -1378,20 +1385,21 @@
                 <div style="width: 52px; height: 52px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;">
                   <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; display: block;">
                     <rect width="200" height="200" fill="#ffffff"/>
-                    <!-- Grid lines -->
-                    <line x1="50" y1="0" x2="50" y2="200" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
-                    <line x1="100" y1="0" x2="100" y2="200" stroke="#cbd5e1" stroke-width="1.5"/>
-                    <line x1="150" y1="0" x2="150" y2="200" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
-                    <line x1="0" y1="50" x2="200" y2="50" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
-                    <line x1="0" y1="100" x2="200" y2="100" stroke="#cbd5e1" stroke-width="1.5"/>
-                    <line x1="0" y1="150" x2="200" y2="150" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3 3"/>
-                    <!-- Digit variations for generalized representation -->
-                    <!-- Left: stylized 3 -->
-                    <path d="M25 30 L45 30 Q50 35 45 45 Q50 55 45 60 L25 60" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Center: stylized 5 -->
-                    <path d="M70 30 L110 30 L85 50 L110 70 L70 70" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <!-- Right: stylized 9 -->
-                    <path d="M135 40 Q155 35 160 55 Q155 75 135 70 L140 30" fill="none" stroke="#0f172a" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Subtle 3x3 grid (like MNIST samples) -->
+                    <line x1="66.6" y1="0" x2="66.6" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="133.3" y1="0" x2="133.3" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="0" y1="66.6" x2="200" y2="66.6" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="0" y1="133.3" x2="200" y2="133.3" stroke="#e2e8f0" stroke-width="1"/>
+                    <!-- Six digit thumbnails in a 3x2 layout, using bold sans-serif for clean readability -->
+                    <text x="33.3" y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">3</text>
+                    <text x="100"  y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">7</text>
+                    <text x="166.6" y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">2</text>
+                    <text x="33.3" y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">9</text>
+                    <text x="100"  y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">5</text>
+                    <text x="166.6" y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">8</text>
+                    <text x="33.3" y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">1</text>
+                    <text x="100"  y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">4</text>
+                    <text x="166.6" y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">6</text>
                   </svg>
                 </div>
                 <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Handwritten Digits</div>
@@ -1443,7 +1451,7 @@
       window.genaiCodeIndex = 0;
       window.genaiAudioIndex = 0;
       content.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:12px; font-family:'Inter',sans-serif; color:var(--text-main); min-width:820px;">
+        <div style="display:flex; flex-direction:column; gap:12px; font-family:'Inter',sans-serif; color:var(--text-main); width:980px; max-width:100%;">
 
           <!-- Header -->
           <div style="display:flex; align-items:center; justify-content:space-between; padding-right:48px;">
@@ -1459,7 +1467,7 @@
           </div>
 
           <!-- Main Content Row -->
-          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:center;">
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;">
 
             <!-- LEFT: Prompt Panel -->
             <div style="display:flex; flex-direction:column; gap:8px;">
@@ -1470,8 +1478,8 @@
               <div id="genai-model-pills" style="display:none;"></div>
             </div>
 
-            <!-- Center arrow -->
-            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <!-- Center arrow — vertically centered against the output frame -->
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; align-self:center;">
               <div id="genai-arrow-label" style="font-size:9px; font-weight:900; color:var(--gen-color); letter-spacing:1px; text-transform:uppercase; opacity:0.7;">Generates</div>
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--gen-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.55;">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -1479,12 +1487,14 @@
               </svg>
             </div>
 
-            <!-- RIGHT: Output Panel -->
-            <div style="display:flex; flex-direction:column; gap:8px;">
+            <!-- RIGHT: Output Panel — fixed-size frame so modal stays constant across tabs -->
+            <div style="display:flex; flex-direction:column; gap:8px; min-width:0;">
               <div id="genai-output-label" style="display:none;"></div>
 
+              <div style="position:relative; width:100%; height:240px;">
+
               <!-- IMAGE output -->
-              <div id="genai-out-image" style="position:relative; background:transparent; border-radius:16px; overflow:hidden; aspect-ratio:16/9; border:1.5px dashed color-mix(in srgb, var(--gen-color) 35%, transparent);">
+              <div id="genai-out-image" style="position:absolute; inset:0; background:transparent; border-radius:16px; overflow:hidden; border:1.5px dashed color-mix(in srgb, var(--gen-color) 35%, transparent);">
                 <img id="genai-result-img" src="../chapter-6-modern-explosion/images/gen_ai/space%20shuttle.png" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.5s ease;">
                 <div id="genai-loading" style="position:absolute; inset:0; background:rgba(0,0,0,0.82); display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(6px); z-index:5;">
                   <div style="width:36px; height:36px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gen-color); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:12px;"></div>
@@ -1493,7 +1503,7 @@
               </div>
 
               <!-- TEXT output (hidden by default) -->
-              <div id="genai-out-text" style="display:none; background:color-mix(in srgb,var(--gen-color) 5%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; min-height:130px; position:relative; overflow:hidden;">
+              <div id="genai-out-text" style="display:none; position:absolute; inset:0; background:color-mix(in srgb,var(--gen-color) 5%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; overflow:hidden;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(128,128,128,0.12);">
                   <div style="width:8px; height:8px; background:#4ade80; border-radius:50%;"></div>
                   <span style="font-size:10px; font-weight:800; color:var(--text-dim); letter-spacing:1px;">CLAUDE / GPT-4o</span>
@@ -1502,7 +1512,7 @@
               </div>
 
               <!-- CODE output (hidden by default) -->
-              <div id="genai-out-code" style="display:none; background:#0d1117; border-radius:16px; padding:0; overflow:hidden; min-height:130px; border:1.5px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+              <div id="genai-out-code" style="display:none; position:absolute; inset:0; background:#0d1117; border-radius:16px; padding:0; overflow:hidden; border:1.5px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3);">
                 <div style="display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.06);">
                   <div style="width:10px; height:10px; background:#ff5f57; border-radius:50%;"></div>
                   <div style="width:10px; height:10px; background:#febc2e; border-radius:50%;"></div>
@@ -1513,7 +1523,7 @@
               </div>
 
               <!-- AUDIO output (hidden by default) -->
-              <div id="genai-out-audio" style="display:none; background:linear-gradient(135deg,color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)),color-mix(in srgb,var(--gen-color) 4%,var(--bubble-bg))); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; min-height:130px; display:flex; flex-direction:column; gap:10px;">
+              <div id="genai-out-audio" style="display:none; position:absolute; inset:0; background:linear-gradient(135deg,color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)),color-mix(in srgb,var(--gen-color) 4%,var(--bubble-bg))); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; flex-direction:column; gap:10px;">
                 <div style="display:flex; align-items:center; gap:10px;">
                   <div id="genai-audio-play" onclick="toggleAudioPlayback()" style="width:40px; height:40px; background:var(--gen-color); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px color-mix(in srgb,var(--gen-color) 35%,transparent); transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                     <svg id="genai-play-icon" viewBox="0 0 24 24" fill="#fff" style="width:16px; height:16px; margin-left:2px;"><polygon points="5,3 19,12 5,21"/></svg>
@@ -1530,6 +1540,8 @@
                   AI composes original music, voiceovers, and sound effects from text descriptions.
                 </div>
               </div>
+
+              </div><!-- /fixed-size output frame -->
             </div>
           </div>
 
@@ -1990,16 +2002,25 @@
       if (el) el.style.display = m === mode ? (m === 'audio' ? 'flex' : 'block') : 'none';
     });
 
-    // For Image mode, the image fades in after the prompt finishes typing.
-    const outputDelay = (mode === 'image') ? Math.min(promptText.length * 40 + 400, 4000) : 0;
+    // For Image mode: wait for the full prompt typing to finish, then show
+    // a "generating" spinner for 3 seconds before the image fades in.
+    const typingDuration = (mode === 'image') ? promptText.length * 40 + 200 : 0;
+    const generationGap = 3000;
+    const outputDelay = (mode === 'image') ? typingDuration + generationGap : 0;
 
     if (mode === 'image') {
       const img = document.getElementById('genai-result-img');
       const loadingEl = document.getElementById('genai-loading');
-      if (loadingEl) loadingEl.style.display = 'none';
       if (img) {
         gsap.set(img, { opacity: 0 });
+        if (loadingEl) loadingEl.style.display = 'none';
+        // After typing finishes, show the spinner for the 3s gap.
         setTimeout(() => {
+          if (loadingEl) loadingEl.style.display = 'flex';
+        }, typingDuration);
+        // Then hide the spinner and fade the image in.
+        setTimeout(() => {
+          if (loadingEl) loadingEl.style.display = 'none';
           img.src = entry.img;
           gsap.fromTo(img, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
         }, outputDelay);
