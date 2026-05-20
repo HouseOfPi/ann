@@ -193,13 +193,13 @@
     --modal-accent: var(--text-dim);
     background: linear-gradient(135deg, var(--bubble-bg) 0%, color-mix(in srgb, var(--bubble-bg), #000 2%) 100%);
     border-radius: 28px;
-    padding: 36px 48px 32px;
-    max-width: min(1400px, 96vw);
-    width: fit-content;
-    min-width: 1000px;
-    height: auto;
-    max-height: 94vh;
-    overflow: hidden;
+    padding: 44px 60px 40px;
+    width: 94vw;
+    max-width: 94vw;
+    min-width: 0;
+    height: 90vh;
+    max-height: 90vh;
+    overflow: auto;
     position: relative;
     box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 0 0 1.5px color-mix(in srgb, var(--modal-accent) 30%, transparent);
     border: none;
@@ -1451,7 +1451,7 @@
       window.genaiCodeIndex = 0;
       window.genaiAudioIndex = 0;
       content.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:14px; font-family:'Inter',sans-serif; color:var(--text-main); width:1200px; max-width:100%;">
+        <div style="display:flex; flex-direction:column; gap:16px; font-family:'Inter',sans-serif; color:var(--text-main); width:100%; max-width:100%;">
 
           <!-- Header -->
           <div style="display:flex; align-items:center; justify-content:space-between; padding-right:48px;">
