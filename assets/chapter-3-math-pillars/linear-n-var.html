@@ -173,6 +173,259 @@
     }
     .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
 
+    /* Make the equation feel clickable */
+    .equation {
+      cursor: pointer;
+      transition: filter 0.25s ease, transform 0.25s ease;
+    }
+    .equation:hover {
+      filter: brightness(1.1);
+      transform: translateX(2px);
+    }
+    .equation-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--accent) 90%, transparent);
+      opacity: 0.85;
+      margin-top: -32px;
+      cursor: pointer;
+    }
+    .equation-hint::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ── Modal: linear → matrix ── */
+    .mtx-overlay {
+      position: fixed;
+      inset: 0;
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .mtx-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .mtx-modal {
+      width: min(960px, 92vw);
+      max-height: 88vh;
+      padding: 36px 44px 38px;
+      border-radius: 22px;
+      background: linear-gradient(150deg,
+        color-mix(in srgb, var(--fg) 4%, var(--bg)) 0%,
+        var(--bg) 100%);
+      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      box-shadow: 0 30px 80px -20px color-mix(in srgb, var(--bg) 70%, transparent),
+                  inset 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+      position: relative;
+      transform: scale(0.94);
+      opacity: 0;
+      transition: transform 0.36s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.36s ease;
+      overflow: hidden;
+    }
+    .mtx-overlay.open .mtx-modal {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .mtx-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      width: 32px; height: 32px;
+      border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      font-family: inherit;
+    }
+    .mtx-close:hover {
+      background: color-mix(in srgb, var(--fg) 8%, transparent);
+      color: var(--fg);
+      border-color: color-mix(in srgb, var(--fg) 32%, transparent);
+    }
+    .mtx-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .mtx-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 28px;
+    }
+    .mtx-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+
+    .mtx-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      align-items: center;
+    }
+
+    /* Step containers — each fades in sequentially */
+    .mtx-step {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .mtx-step-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+
+    /* Scalar equation (same as page hero) */
+    .mtx-eq {
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+      font-size: clamp(20px, 2.4vw, 30px);
+      font-weight: 500;
+      color: var(--fg);
+      display: flex;
+      align-items: baseline;
+      gap: 2px 8px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    .mtx-eq sub {
+      font-style: italic;
+      font-size: 0.42em;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+    }
+    .mtx-eq .e-op { font-style: normal; color: color-mix(in srgb, var(--fg) 50%, transparent); font-weight: 400; }
+    .mtx-eq .e-term { color: var(--accent); }
+    .mtx-eq .e-dots { font-style: normal; color: color-mix(in srgb, var(--fg) 50%, transparent); padding: 0 4px; letter-spacing: 0.2em; }
+
+    /* Matrix layout */
+    .mtx-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+    }
+    .mtx-op {
+      font-style: normal;
+      font-size: 28px;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+    }
+    .bracket {
+      display: grid;
+      gap: 6px;
+      padding: 6px 12px;
+      position: relative;
+    }
+    .bracket::before, .bracket::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 8px;
+      border: 1.5px solid color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+    .bracket::before { left: 0; border-right: none; border-radius: 3px 0 0 3px; }
+    .bracket::after { right: 0; border-left: none; border-radius: 0 3px 3px 0; }
+
+    .bracket.is-w::before, .bracket.is-w::after { border-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+    .bracket.is-x::before, .bracket.is-x::after { border-color: color-mix(in srgb, var(--fg) 55%, transparent); }
+    .bracket.is-y::before, .bracket.is-y::after { border-color: color-mix(in srgb, var(--fg) 70%, transparent); }
+
+    .bracket-cell {
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--fg);
+      min-width: 48px;
+      text-align: center;
+      padding: 4px 8px;
+    }
+    .bracket-cell sub {
+      font-size: 0.45em;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+    }
+    .bracket.is-w .bracket-cell { color: var(--accent); }
+
+    /* Row vector W */
+    .bracket.is-w {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(46px, auto);
+    }
+
+    /* Stack label below brackets */
+    .mtx-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .mtx-stack-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+    .mtx-stack.is-w .mtx-stack-tag { color: var(--accent); }
+
+    /* Caption */
+    .mtx-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      text-align: center;
+      max-width: 60ch;
+    }
+    .mtx-caption em { font-style: italic; color: var(--accent); font-weight: 600; }
+
     /* ── House data table (right half) ── */
     .data-card {
       width: 100%;
@@ -303,7 +556,7 @@
 
   <div class="body">
     <div class="left-half">
-      <div class="equation" aria-label="n-variable linear equation">
+      <div class="equation" id="eqClickable" role="button" tabindex="0" aria-label="n-variable linear equation — click to see matrix form">
         <span>y</span>
         <span class="eq-eq">=</span>
         <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
@@ -316,6 +569,7 @@
         <span class="eq-op">+</span>
         <span>b</span>
       </div>
+      <span class="equation-hint" id="eqHint">Click to see matrix form</span>
 
       <div class="legend">
         <div class="legend-item">
@@ -407,7 +661,146 @@
     </div>
   </div>
 
+  <!-- ── Matrix-form modal ── -->
+  <div class="mtx-overlay" id="mtxOverlay" role="dialog" aria-modal="true" aria-labelledby="mtxTitle">
+    <div class="mtx-modal">
+      <button class="mtx-close" id="mtxClose" aria-label="Close">✕</button>
+      <div class="mtx-eyebrow">From sum → matrix product</div>
+      <div class="mtx-title" id="mtxTitle">The scalar equation becomes <em>y = W · x + b</em>.</div>
+
+      <div class="mtx-stage">
+        <!-- Step 1: the scalar form (anchor) -->
+        <div class="mtx-step" data-step="1">
+          <div class="mtx-step-label">Step 1 · Scalar form</div>
+          <div class="mtx-eq">
+            <span>y</span>
+            <span class="e-op">=</span>
+            <span class="e-term">w<sub>1</sub>x<sub>1</sub></span>
+            <span class="e-op">+</span>
+            <span class="e-term">w<sub>2</sub>x<sub>2</sub></span>
+            <span class="e-op">+</span>
+            <span class="e-dots">⋯</span>
+            <span class="e-op">+</span>
+            <span class="e-term">w<sub>n</sub>x<sub>n</sub></span>
+            <span class="e-op">+</span>
+            <span>b</span>
+          </div>
+        </div>
+
+        <!-- Step 2: arrange weights as a row vector, inputs as a column vector -->
+        <div class="mtx-step" data-step="2">
+          <div class="mtx-step-label">Step 2 · Stack the weights and inputs</div>
+          <div class="mtx-row">
+            <div class="mtx-stack is-w">
+              <div class="bracket is-w" style="grid-template-columns: repeat(4, auto);">
+                <span class="bracket-cell">w<sub>1</sub></span>
+                <span class="bracket-cell">w<sub>2</sub></span>
+                <span class="bracket-cell">⋯</span>
+                <span class="bracket-cell">w<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">W · 1 × n</span>
+            </div>
+            <span class="mtx-op">·</span>
+            <div class="mtx-stack is-x">
+              <div class="bracket is-x">
+                <span class="bracket-cell">x<sub>1</sub></span>
+                <span class="bracket-cell">x<sub>2</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">x<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">x · n × 1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: full matrix form y = W·x + b -->
+        <div class="mtx-step" data-step="3">
+          <div class="mtx-step-label">Step 3 · Matrix form</div>
+          <div class="mtx-row">
+            <div class="mtx-stack is-y">
+              <div class="bracket is-y">
+                <span class="bracket-cell">y</span>
+              </div>
+              <span class="mtx-stack-tag">y</span>
+            </div>
+            <span class="mtx-op">=</span>
+            <div class="mtx-stack is-w">
+              <div class="bracket is-w" style="grid-template-columns: repeat(4, auto);">
+                <span class="bracket-cell">w<sub>1</sub></span>
+                <span class="bracket-cell">w<sub>2</sub></span>
+                <span class="bracket-cell">⋯</span>
+                <span class="bracket-cell">w<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">W</span>
+            </div>
+            <span class="mtx-op">·</span>
+            <div class="mtx-stack is-x">
+              <div class="bracket is-x">
+                <span class="bracket-cell">x<sub>1</sub></span>
+                <span class="bracket-cell">x<sub>2</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">x<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">x</span>
+            </div>
+            <span class="mtx-op">+</span>
+            <div class="mtx-stack">
+              <div class="bracket">
+                <span class="bracket-cell">b</span>
+              </div>
+              <span class="mtx-stack-tag">bias</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="mtx-caption" data-step="4" style="opacity:0; transform:translateY(8px); transition:opacity 0.6s ease, transform 0.6s ease;">
+          Same equation — written once with the <em>dot product</em>. Every neural-net layer is built from this.
+        </p>
+      </div>
+    </div>
+  </div>
+
   <script>
+    /* ── Modal open/close + sequential reveal ── */
+    const overlay = document.getElementById('mtxOverlay');
+    const eqClickable = document.getElementById('eqClickable');
+    const eqHint = document.getElementById('eqHint');
+    const closeBtn = document.getElementById('mtxClose');
+    const steps = overlay.querySelectorAll('[data-step]');
+
+    function openModal() {
+      overlay.classList.add('open');
+      // Stagger the reveal of each step
+      steps.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 200 + i * 320);
+      });
+    }
+    function closeModal() {
+      overlay.classList.remove('open');
+      steps.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+      });
+    }
+
+    eqClickable.addEventListener('click', openModal);
+    eqHint.addEventListener('click', openModal);
+    eqClickable.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+    });
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
     const PALETTE_MAP = {
       'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#c25d42', accent:'#c25d42' },
       'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57', accent:'#2e8b57' },
