@@ -148,7 +148,9 @@
     .matrix-wrap {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: clamp(12px, 1.5vw, 24px);
+      transform: scale(clamp(0.75, 4.5vw, 1));
+      transform-origin: center right;
     }
 
     .matrix {

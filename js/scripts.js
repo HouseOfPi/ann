@@ -3311,6 +3311,8 @@
       document.getElementById("prevBtn").addEventListener("click", () => goToSlide(currentSlideIdx - 1));
       document.getElementById("nextBtn").addEventListener("click", () => goToSlide(currentSlideIdx + 1));
 
+
+
       // Bubble nav requests up from iframe slides. When focus is inside an
       // iframe, the parent never receives ArrowLeft/Right — so iframes can
       // postMessage({ type: 'NAV', dir: 'next' | 'prev' }) instead.

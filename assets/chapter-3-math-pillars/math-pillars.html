@@ -198,6 +198,14 @@
       transform: translate(-50%, 0);
     }
 
+    /* Prevent clipping on left/right edges for the first and last pillars */
+    @media (min-width: 801px) {
+      .node:first-child .pillar-viz { transform: translate(-15%, 8px); }
+      .node:first-child:hover .pillar-viz { transform: translate(-15%, 0); }
+      .node:last-child .pillar-viz { transform: translate(-85%, 8px); }
+      .node:last-child:hover .pillar-viz { transform: translate(-85%, 0); }
+    }
+
     /* Linear Algebra — matrix cells */
     .la-cell {
       fill: color-mix(in srgb, var(--nc) 18%, transparent);

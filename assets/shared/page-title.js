@@ -21,4 +21,13 @@
   }
 
   customElements.define('page-title', PageTitle);
+
+  // Bubble arrow key navigation up to the parent window
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') {
+      window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+    } else if (e.key === 'ArrowLeft') {
+      window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+    }
+  });
 })();

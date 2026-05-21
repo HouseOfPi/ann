@@ -18,6 +18,7 @@
         --c3: #a78bfa;
         --bg: #000000;
         --fg: #eef2f8;
+        --accent: #c97a4a;
       }
 
       *,
@@ -35,12 +36,12 @@
       }
 
       body {
-        font-family: "Inter", sans-serif;
+        font-family: 'Inter', sans-serif;
         background: var(--bg);
         color: var(--fg);
         display: flex;
         flex-direction: column;
-        padding: 28px 50px 32px;
+        padding: 32px 50px 40px;
         transition: background 0.5s, color 0.5s;
       }
 
@@ -53,6 +54,31 @@
         border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
         opacity: 0;
         transform: translateY(20px);
+      }
+
+      .body {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+        width: 100%;
+      }
+      .equation-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 48px;
+        max-width: 720px;
+        padding-left: clamp(8px, 2vw, 32px);
+      }
+      .plot-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        opacity: 0;
       }
 
       .page-eyebrow {
@@ -76,148 +102,120 @@
         font-style: italic;
       }
 
-      .body-layout {
-        flex: 1;
-        display: grid;
-        grid-template-columns: 0.95fr 1.05fr;
-        gap: 36px;
-        align-items: center;
-        padding-top: 22px;
-      }
-
-      .left-col {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-      }
-
-      .intro-lede {
-        opacity: 0;
-        transform: translateX(-20px);
-        font-family: "Cormorant Garamond", serif;
-        font-size: clamp(17px, 1.5vw, 21px);
-        line-height: 1.5;
-        color: color-mix(in srgb, var(--fg) 78%, transparent);
-        max-width: 46ch;
-      }
-      .intro-lede em {
-        font-style: italic;
-        color: var(--fg);
-      }
-
-      .equation-block {
-        opacity: 0;
-        transform: translateX(-20px);
-        padding: 18px 20px;
-        border-radius: 12px;
-        border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
-        background: color-mix(in srgb, var(--fg) 3%, transparent);
-      }
-
+      /* ── The equation — hero element ── */
       .equation {
-        font-family: "JetBrains Mono", monospace;
-        font-size: clamp(22px, 2.6vw, 30px);
-        letter-spacing: 0.04em;
+        font-family: 'STIX Two Math', 'Cormorant Garamond', 'Times New Roman', serif;
+        font-style: italic;
+        font-size: clamp(22px, 2.6vw, 36px);
+        letter-spacing: 0;
+        line-height: 1.3;
         color: var(--fg);
-        margin-bottom: 8px;
-      }
-      .equation .var,
-      .equation .b {
-        color: var(--fg);
-        font-weight: 700;
-      }
-      .equation .op {
-        color: var(--fg);
-      }
-      .equation .m {
-        color: var(--c2);
-        font-weight: 700;
-      }
-
-      .equation-sub {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 11px;
-        color: color-mix(in srgb, var(--fg) 55%, transparent);
-        letter-spacing: 0.05em;
-      }
-
-      .breakdown {
+        text-align: left;
         display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .term {
-        display: flex;
-        gap: 14px;
-        align-items: flex-start;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: baseline;
+        gap: 2px 8px;
+        font-weight: 500;
+        white-space: nowrap;
         opacity: 0;
-        transform: translateX(-20px);
+        transform: translateY(8px);
       }
-
-      .term-symbol {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 18px;
-        font-weight: 700;
-        flex-shrink: 0;
-        width: 28px;
-        height: 28px;
-        padding-top: 1px;
+      .equation .eq-eq,
+      .equation .eq-op {
+        font-style: normal;
+        color: color-mix(in srgb, var(--fg) 50%, transparent);
+        font-weight: 400;
+        font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      }
+      .equation .eq-term {
+        display: inline-flex;
+        align-items: baseline;
+        color: var(--accent);
+      }
+      .equation span {
+        cursor: default;
+      }
+      .equation .eq-x,
+      .equation .eq-m,
+      .equation .eq-b {
         cursor: pointer;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s ease, transform 0.2s ease,
-          box-shadow 0.2s ease;
-        user-select: none;
+        transition: color 0.2s, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-block;
       }
-      .term-symbol:hover {
-        background: color-mix(in srgb, var(--c1) 14%, transparent);
-        transform: scale(1.12);
+      .equation .eq-x:hover,
+      .equation .eq-x.selected {
+        color: var(--fg);
+        transform: scale(1.15);
       }
-      .term-symbol:active {
-        transform: scale(0.96);
+      .equation .eq-m:hover,
+      .equation .eq-m.selected {
+        color: var(--accent);
+        transform: scale(1.15);
       }
-      .term-symbol.m {
+      .equation .eq-b:hover,
+      .equation .eq-b.selected {
         color: var(--c1);
-      }
-      .term-symbol.b {
-        color: var(--fg);
-      }
-      .term-symbol.x {
-        color: var(--c2);
-      }
-      .term-symbol.x:hover {
-        background: color-mix(in srgb, var(--c2) 14%, transparent);
+        transform: scale(1.15);
       }
 
-      .term-body {
-        flex: 1;
-      }
-
-      .term-title {
-        font-family: "Outfit", sans-serif;
-        font-size: clamp(13px, 1.3vw, 15px);
-        font-weight: 700;
-        color: var(--fg);
-        margin-bottom: 2px;
-      }
-
-      .term-desc {
-        font-size: clamp(11.5px, 1.05vw, 13px);
-        color: color-mix(in srgb, var(--fg) 60%, transparent);
-        line-height: 1.5;
-      }
-
-      /* Right: graph */
-      .visual-col {
+      /* ── Legend list — one point per line ── */
+      .legend {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 14px;
-        opacity: 0;
+        gap: 0;
+        max-width: 640px;
+        width: 100%;
       }
+      .legend-item {
+        display: grid;
+        grid-template-columns: 56px 110px 1fr;
+        align-items: baseline;
+        column-gap: 24px;
+        padding: 16px 8px;
+        border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .legend-item:last-child { border-bottom: none; }
+      .legend-item:hover {
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+      .legend-glyph {
+        font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(24px, 2.4vw, 30px);
+        font-weight: 500;
+        line-height: 1;
+        color: var(--fg);
+        text-align: center;
+      }
+      .legend-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--fg) 60%, transparent);
+      }
+      .legend-desc {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: color-mix(in srgb, var(--fg) 82%, transparent);
+      }
+
+      /* ── Tagline ── */
+      .tagline {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(18px, 1.9vw, 24px);
+        line-height: 1.5;
+        color: color-mix(in srgb, var(--fg) 80%, transparent);
+        text-align: left;
+        max-width: 56ch;
+      }
+      .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
 
       .graph-wrap {
         width: 100%;
@@ -286,9 +284,23 @@
         );
       }
 
+      /* Legend selection state */
+      .legend-item {
+        border-left: 3px solid transparent;
+        transition: background 0.2s ease, border-left-color 0.2s ease, padding-left 0.2s ease;
+      }
+      .legend-item:hover,
+      .legend-item.selected {
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
+      }
+      .legend-item.selected {
+        border-left-color: var(--accent);
+        padding-left: 12px;
+      }
+
       /* Slope visual on axes */
       .axis-arrow {
-        stroke: var(--c1);
+        stroke: var(--accent);
         stroke-width: 3;
         stroke-linecap: round;
         fill: none;
@@ -298,22 +310,24 @@
         font-family: "JetBrains Mono", monospace;
         font-size: 12px;
         font-weight: 700;
-        fill: var(--c1);
+        fill: var(--accent);
         opacity: 0;
       }
       .proj {
-        stroke: var(--c1);
+        stroke: var(--accent);
         stroke-width: 1.4;
         stroke-dasharray: 4 4;
         fill: none;
         opacity: 0;
       }
       .slope-anchor {
-        fill: color-mix(in srgb, var(--c1) 30%, transparent);
-        stroke: var(--c1);
-        stroke-width: 2;
+        fill: var(--bg);
+        stroke: var(--accent);
+        stroke-width: 2.5;
         opacity: 0;
       }
+
+
 
       .caption {
         font-family: "JetBrains Mono", monospace;
@@ -332,7 +346,7 @@
         background: color-mix(in srgb, var(--fg) 4%, transparent);
         border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
         box-shadow: 0 4px 16px -6px color-mix(in srgb, var(--bg) 40%, transparent);
-        opacity: 0;
+        opacity: 1;
       }
       .dialer-row {
         display: flex;
@@ -412,14 +426,15 @@
         text-align: right;
       }
 
-      @media (max-width: 800px) {
+      @media (max-width: 900px) {
         body {
           padding: 20px 20px 24px;
         }
-        .body-layout {
+        .body {
           grid-template-columns: 1fr;
-          gap: 22px;
+          gap: 24px;
         }
+        .equation-side { padding-left: 0; max-width: 100%; }
         .graph-wrap {
           max-width: 360px;
         }
@@ -431,62 +446,8 @@
   <body>
     <page-title id="header" eyebrow="Linear Algebra" title="Single <em>Variable</em>"></page-title>
 
-    <div class="body-layout">
-      <div class="left-col">
-        <p class="intro-lede" id="introLede">
-          A linear equation describes a
-          <em>simple, predictable relationship</em> — when the input changes,
-          the output changes in direct proportion.
-        </p>
-
-        <div class="equation-block" id="eqBlock">
-          <div class="equation">
-            <span class="var">y</span> <span class="op">=</span>
-            <span class="m">m</span><span class="var">x</span>
-            <span class="op">+</span> <span class="b">b</span>
-          </div>
-          <div class="equation-sub">
-            One input · one output · a single straight line
-          </div>
-        </div>
-
-        <div class="breakdown">
-          <div class="term" id="t0">
-            <span class="term-symbol x">x</span>
-            <div class="term-body">
-              <div class="term-title">The input</div>
-              <div class="term-desc">
-                The variable you control — temperature, hours studied, pixel
-                intensity. Whatever you feed in.
-              </div>
-            </div>
-          </div>
-
-          <div class="term" id="t1">
-            <span class="term-symbol m">m</span>
-            <div class="term-body">
-              <div class="term-title">The slope (weight)</div>
-              <div class="term-desc">
-                How steeply <em>y</em> rises as <em>x</em> increases. In a
-                neural network this is the <strong>weight</strong>.
-              </div>
-            </div>
-          </div>
-
-          <div class="term" id="t2">
-            <span class="term-symbol b">b</span>
-            <div class="term-body">
-              <div class="term-title">The intercept (bias)</div>
-              <div class="term-desc">
-                Where the line crosses the y-axis when <em>x</em> = 0. In a
-                neural network this is the <strong>bias</strong>.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="visual-col" id="visual">
+    <div class="body">
+      <div class="plot-side" id="visual">
         <div class="graph-wrap">
           <svg
             class="graph"
@@ -497,7 +458,7 @@
               <!-- Arrowhead used for the Δx / Δy axis arrows -->
               <marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5"
                       markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--c1)"/>
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
               </marker>
             </defs>
             <!-- gridlines -->
@@ -569,11 +530,6 @@
               stroke-dashoffset="600"
             />
 
-            <!-- slope triangle (rise/run between two points on the line) -->
-            <!-- Slope visual: Δx and Δy as arrows on the corresponding axes,
-                 with two anchor dots on the line and dashed projection lines
-                 dropping to each axis. All coordinates are recomputed by
-                 pulseSlope() against the live slope. -->
             <g id="slopeAxes">
               <!-- Dashed projections (line → x-axis, line → y-axis) -->
               <line class="proj" id="projX_A"/>
@@ -581,8 +537,7 @@
               <line class="proj" id="projY_A"/>
               <line class="proj" id="projY_B"/>
 
-              <!-- Δx arrow: lives on the x-axis. Slight offset below the axis
-                   so it doesn't visually merge with the axis line itself. -->
+              <!-- Δx arrow: lives on the x-axis. Slight offset below the axis -->
               <line class="axis-arrow" id="dxArrow" marker-end="url(#arrowHead)"/>
               <text class="axis-arrow-label" id="dxLabel">Δx</text>
 
@@ -625,18 +580,50 @@
           </div>
         </div>
       </div>
+
+      <div class="equation-side">
+        <div class="equation" id="eqClickable">
+          <span>y</span>
+          <span class="eq-eq">=</span>
+          <span class="eq-m eq-term">m</span><span class="eq-x">x</span>
+          <span class="eq-op">+</span>
+          <span class="eq-b">b</span>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item" id="t0">
+            <span class="legend-glyph" style="color:var(--fg)">x</span>
+            <span class="legend-label">input</span>
+            <span class="legend-desc">the variable you control</span>
+          </div>
+          <div class="legend-item" id="t1">
+            <span class="legend-glyph" style="color:var(--accent)">m</span>
+            <span class="legend-label">weight</span>
+            <span class="legend-desc">how steeply <em style="font-style:italic">y</em> rises as <em style="font-style:italic">x</em> increases</span>
+          </div>
+          <div class="legend-item" id="t2">
+            <span class="legend-glyph" style="color:var(--fg)">b</span>
+            <span class="legend-label">bias</span>
+            <span class="legend-desc">a constant offset</span>
+          </div>
+        </div>
+
+        <p class="tagline">
+          One input, one output — a <em>single straight line.</em>
+        </p>
+      </div>
     </div>
 
     <script>
       const PALETTE_MAP = {
-        "Warm Linen": { bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#0e7490", c2:"#e27b5e", c3:"#6d28d9", eyebrow:"#c25d42" },
-        "Green Linen":{ bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#15803d", c2:"#15803d", c3:"#6d28d9", eyebrow:"#2e8b57" },
-        "Paper White":{ bg:"#ffffff", fg:"#111111", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#6d28d9", eyebrow:"#d0465a" },
-        Midnight:     { bg:"#000000", fg:"#f0ece4", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#f59e0b" },
-        "Navy Lime":  { bg:"#0a1428", fg:"#f1f5fb", light:false, c1:"#5fb8e6", c2:"#5fb8e6", c3:"#a78bfa", eyebrow:"#a3e635" },
-        Mint:         { bg:"#f0f7f4", fg:"#0f2820", light:true,  c1:"#0e7490", c2:"#166534", c3:"#6d28d9", eyebrow:"#0e9488" },
-        Plum:         { bg:"#f5f0f7", fg:"#200f28", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#7c3aed", eyebrow:"#7c3aed" },
-        "Deep Navy":  { bg:"#0a1428", fg:"#eef2f8", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#5fe8ec" },
+        "Warm Linen": { bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#0e7490", c2:"#e27b5e", c3:"#6d28d9", eyebrow:"#c25d42", accent:"#c25d42" },
+        "Green Linen":{ bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#15803d", c2:"#15803d", c3:"#6d28d9", eyebrow:"#2e8b57", accent:"#2e8b57" },
+        "Paper White":{ bg:"#ffffff", fg:"#111111", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#6d28d9", eyebrow:"#d0465a", accent:"#d0465a" },
+        Midnight:     { bg:"#000000", fg:"#f0ece4", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#f59e0b", accent:"#f59e0b" },
+        "Navy Lime":  { bg:"#0a1428", fg:"#f1f5fb", light:false, c1:"#5fb8e6", c2:"#5fb8e6", c3:"#a78bfa", eyebrow:"#a3e635", accent:"#a3e635" },
+        Mint:         { bg:"#f0f7f4", fg:"#0f2820", light:true,  c1:"#0e7490", c2:"#166534", c3:"#6d28d9", eyebrow:"#0e9488", accent:"#0e9488" },
+        Plum:         { bg:"#f5f0f7", fg:"#200f28", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#7c3aed", eyebrow:"#7c3aed", accent:"#7c3aed" },
+        "Deep Navy":  { bg:"#0a1428", fg:"#eef2f8", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#5fe8ec", accent:"#5fe8ec" },
       };
 
       function applyPalette(p) {
@@ -647,6 +634,7 @@
         document.body.style.setProperty("--c2", p.c2);
         document.body.style.setProperty("--c3", p.c3);
         document.body.style.setProperty("--eyebrow-accent", p.eyebrow || p.c1);
+        document.body.style.setProperty("--accent", p.accent || p.c1);
       }
 
       window.addEventListener("message", (e) => {
@@ -679,7 +667,7 @@
       const gy2svg = (gy) => PLOT.oy - gy * PLOT.uy;
 
       // Current line state (graph-space).
-      const STATE = { m: 0.5, b: 1 };
+      const STATE = { m: 0.5, b: 0.5 };
 
       // Compute the line's two endpoints, clipped to the plot box.
       function lineEndpoints(m, b) {
@@ -768,50 +756,104 @@
 
       let lineDrawn = false;
       let slopeVisualShown = false;
+      let activeSelection = null;
+      let weightTimeline = null;
+      let inputTimeline = null;
+      let biasTimeline = null;
+      let inputAnimState = { progress: 0 };
+
+      function selectConcept(concept) {
+        if (activeSelection === concept) {
+          deselectAll();
+          return;
+        }
+        
+        deselectAll();
+        activeSelection = concept;
+        
+        if (concept === 'input') {
+          const t0 = document.getElementById("t0");
+          const eqX = document.querySelector(".eq-x");
+          if (t0) t0.classList.add("selected");
+          if (eqX) eqX.classList.add("selected");
+          startInputHighlight();
+        } else if (concept === 'weight') {
+          const t1 = document.getElementById("t1");
+          const eqM = document.querySelector(".eq-m");
+          if (t1) t1.classList.add("selected");
+          if (eqM) eqM.classList.add("selected");
+          startWeightHighlight();
+        } else if (concept === 'bias') {
+          const t2 = document.getElementById("t2");
+          const eqB = document.querySelector(".eq-b");
+          if (t2) t2.classList.add("selected");
+          if (eqB) eqB.classList.add("selected");
+          startBiasHighlight();
+        }
+      }
+
+      function deselectAll() {
+        activeSelection = null;
+        
+        const items = ["t0", "t1", "t2"];
+        items.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove("selected");
+        });
+        
+        const eqTerms = [".eq-x", ".eq-m", ".eq-b"];
+        eqTerms.forEach(sel => {
+          const el = document.querySelector(sel);
+          if (el) el.classList.remove("selected");
+        });
+        
+        stopInputHighlight();
+        stopWeightHighlight();
+        stopBiasHighlight();
+      }
+
       function startEntrance() {
         lineDrawn = false;
-        slopeVisualShown = false;
-        // Reset slope to the default so the entrance is consistent.
+        deselectAll();
+        
         STATE.m = 0.5;
-        STATE.b = 1;
+        STATE.b = 0.5;
         applyLine();
         syncDialerKnob();
 
         const len = lineLength();
         gsap.set("#header", { opacity: 0, y: 20 });
-        gsap.set("#introLede", { opacity: 0, x: -20 });
-        gsap.set("#eqBlock", { opacity: 0, x: -20 });
-        gsap.set(".term", { opacity: 0, x: -20 });
+        gsap.set("#eqClickable", { opacity: 0, y: 8 });
+        gsap.set(".legend-item", { opacity: 0, y: 10 });
+        gsap.set(".tagline", { opacity: 0, y: 10 });
         gsap.set("#visual", { opacity: 0 });
         gsap.set("#mainLine", { strokeDashoffset: len });
-        gsap.set("#interceptLine, #interceptLabel", { opacity: 0 });
-        gsap.set(
-          "#dxArrow, #dyArrow, #dxLabel, #dyLabel, " +
-          "#projX_A, #projX_B, #projY_A, #projY_B, " +
-          "#anchorA, #anchorB",
-          { opacity: 0 },
-        );
-        gsap.set("#anchorA, #anchorB", { attr: { r: 0 } });
+        
+        const slopeElements = [
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB"
+        ];
+        gsap.set(slopeElements, { opacity: 0 });
+        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
+        
+        gsap.set(["#interceptLine", "#interceptLabel"], { opacity: 0 });
         gsap.set("#xDot", { opacity: 0, attr: { cx: LINE.x1, cy: LINE.y1 } });
-        gsap.set("#dialer", { opacity: 0, y: 6 });
 
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
         tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
-        tl.to("#introLede", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
-        tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.35");
-        tl.to(
-          ".term",
-          {
+        tl.to("#eqClickable", { opacity: 1, y: 0, duration: 0.55 }, "-=0.3");
+        tl.to(".legend-item", {
             opacity: 1,
-            x: 0,
+            y: 0,
             stagger: 0.13,
             duration: 0.5,
             ease: "back.out(1.4)",
-          },
-          "-=0.2"
-        );
+          }, "-=0.2");
+        tl.to(".tagline", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
         tl.to("#visual", { opacity: 1, duration: 0.5 }, "-=0.4");
-        // The dialer is intentionally hidden until the line is first drawn.
+        
+        tl.add(drawLineOnClick, "-=0.1");
       }
 
       function lineLength() {
@@ -819,7 +861,6 @@
         return Math.hypot(e.x2 - e.x1, e.y2 - e.y1);
       }
 
-      // ─── Click-driven line draw ───
       function drawLineOnClick() {
         if (lineDrawn) return;
         lineDrawn = true;
@@ -829,15 +870,9 @@
           { strokeDashoffset: len },
           { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" }
         );
-        // Reveal the slope dialer once there's a line to manipulate.
-        gsap.to("#dialer", {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: "power3.out",
-          onStart: () => syncDialerKnob(), // ensure knob position is correct now that the dialer has width
-        });
+        syncDialerKnob();
       }
+
       document.addEventListener("DOMContentLoaded", () => {
         const wrap = document.querySelector(".graph-wrap");
         if (wrap) {
@@ -846,7 +881,6 @@
         }
       });
 
-      // ─── Slope dialer ───
       const M_MIN = 0,
         M_MAX = 2,
         M_STEP = 0.05;
@@ -863,17 +897,15 @@
         const zero = document.getElementById("dialerZero");
         if (!track || !knob || !fill || !zero) return;
         const w = track.clientWidth;
-        if (!w) return; // not laid out yet
-        const t = (STATE.m - M_MIN) / (M_MAX - M_MIN); // 0..1
-        const t0 = (0 - M_MIN) / (M_MAX - M_MIN); // m=0 mark
+        if (!w) return;
+        const t = (STATE.m - M_MIN) / (M_MAX - M_MIN);
+        const t0 = (0 - M_MIN) / (M_MAX - M_MIN);
         knob.style.left = `${t * 100}%`;
         zero.style.left = `${t0 * 100}%`;
-        // Fill from the m=0 tick to the knob, in either direction.
         const lo = Math.min(t, t0),
           hi = Math.max(t, t0);
         fill.style.left = `${lo * 100}%`;
         fill.style.width = `${(hi - lo) * 100}%`;
-        // ARIA
         const dialer = document.getElementById("dialer");
         if (dialer) dialer.setAttribute("aria-valuenow", STATE.m.toFixed(2));
       }
@@ -881,63 +913,243 @@
       function setM(m, opts = {}) {
         const next = clampM(m);
         if (Math.abs(next - STATE.m) < 1e-9 && !opts.force) {
-          // No change but keep the knob position consistent.
           syncDialerKnob();
           return;
         }
         STATE.m = next;
-        // Auto-draw the line on first dialer interaction.
         if (!lineDrawn) drawLineOnClick();
         applyLine();
         syncDialerKnob();
-        // If the Δx/Δy visual is on screen, recompute its geometry against
-        // the new slope so it tracks the line live.
         refreshSlopeVisual();
       }
 
-      function hideSlopeTriangle() {
+      function hideSlopeVisual() {
         const els = [
           "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
           "#projX_A", "#projX_B", "#projY_A", "#projY_B",
           "#anchorA", "#anchorB",
         ];
+        if (weightTimeline) weightTimeline.kill();
         gsap.killTweensOf(els);
         gsap.set(els, { opacity: 0 });
         gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
         slopeVisualShown = false;
       }
 
-      // Live-update the Δx / Δy visual against the current slope+bias. Only
-      // touches geometry — opacity stays as-is so we don't fade things in
-      // mid-drag. Call this from setM() once pulseSlope() has been clicked.
       function refreshSlopeVisual() {
         if (!slopeVisualShown) return;
-        const gxA = 2, gxB = 4;
+        let gxA = 2, gxB = 4;
+        if (STATE.m * gxB + STATE.b > 5.8) {
+          gxA = 1;
+          gxB = 2;
+        }
         const gyA = STATE.m * gxA + STATE.b;
         const gyB = STATE.m * gxB + STATE.b;
         const ax = gx2svg(gxA), ay = gy2svg(gyA);
         const bx = gx2svg(gxB), by = gy2svg(gyB);
+
         const xAxisY = PLOT.oy;
         const yAxisX = PLOT.ox;
-        const dxY = xAxisY + 14;
-        const dyX = yAxisX - 18;
+        const dxOffset = 14;
+        const dyOffset = 18;
+        const dxY = xAxisY + dxOffset;
+        const dyX = yAxisX - dyOffset;
 
         const setAttrs = (id, attrs) => {
           const el = document.getElementById(id);
-          for (const k in attrs) el.setAttribute(k, attrs[k]);
+          if (el) {
+            for (const k in attrs) el.setAttribute(k, attrs[k]);
+          }
         };
-        setAttrs("anchorA", { cx: ax, cy: ay });
-        setAttrs("anchorB", { cx: bx, cy: by });
-        setAttrs("projX_A", { x1: ax, y1: ay, x2: ax, y2: xAxisY });
-        setAttrs("projX_B", { x1: bx, y1: by, x2: bx, y2: xAxisY });
-        setAttrs("projY_A", { x1: ax, y1: ay, x2: yAxisX, y2: ay });
-        setAttrs("projY_B", { x1: bx, y1: by, x2: yAxisX, y2: by });
-        // Δx arrow stays put on the x-axis (run is fixed at 2 graph units).
-        setAttrs("dxArrow", { x1: ax, y1: dxY, x2: bx, y2: dxY });
-        setAttrs("dxLabel", { x: (ax + bx) / 2 - 8, y: dxY + 14 });
-        // Δy arrow tracks the new endpoints on the y-axis.
-        setAttrs("dyArrow", { x1: dyX, y1: ay, x2: dyX, y2: by });
-        setAttrs("dyLabel", { x: dyX - 24, y: (ay + by) / 2 + 4 });
+
+        setAttrs("anchorA", { cx: ax.toFixed(2), cy: ay.toFixed(2) });
+        setAttrs("anchorB", { cx: bx.toFixed(2), cy: by.toFixed(2) });
+
+        setAttrs("projX_A", { x1: ax.toFixed(2), y1: ay.toFixed(2), x2: ax.toFixed(2), y2: xAxisY });
+        setAttrs("projX_B", { x1: bx.toFixed(2), y1: by.toFixed(2), x2: bx.toFixed(2), y2: xAxisY });
+        setAttrs("projY_A", { x1: ax.toFixed(2), y1: ay.toFixed(2), x2: yAxisX, y2: ay.toFixed(2) });
+        setAttrs("projY_B", { x1: bx.toFixed(2), y1: by.toFixed(2), x2: yAxisX, y2: by.toFixed(2) });
+
+        setAttrs("dxArrow", { x1: ax.toFixed(2), y1: dxY.toFixed(2), x2: bx.toFixed(2), y2: dxY.toFixed(2) });
+        setAttrs("dxLabel", { x: ((ax + bx) / 2 - 8).toFixed(2), y: (dxY + 14).toFixed(2) });
+
+        setAttrs("dyArrow", { x1: dyX.toFixed(2), y1: ay.toFixed(2), x2: dyX.toFixed(2), y2: by.toFixed(2) });
+        
+        const dyArrow = document.getElementById("dyArrow");
+        const dyLabel = document.getElementById("dyLabel");
+        
+        if (Math.abs(STATE.m) < 0.001) {
+          if (dyArrow) dyArrow.style.visibility = "hidden";
+          if (dyLabel) {
+            dyLabel.textContent = "Δy = 0";
+            dyLabel.setAttribute("x", (dyX - 36).toFixed(2));
+            dyLabel.setAttribute("y", (ay + 4).toFixed(2));
+          }
+        } else {
+          if (dyArrow) dyArrow.style.visibility = "visible";
+          if (dyLabel) {
+            dyLabel.textContent = "Δy";
+            dyLabel.setAttribute("x", (dyX - 24).toFixed(2));
+            dyLabel.setAttribute("y", ((ay + by) / 2 + 4).toFixed(2));
+          }
+        }
+      }
+
+      function startWeightHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (weightTimeline) weightTimeline.kill();
+        
+        slopeVisualShown = true;
+        refreshSlopeVisual();
+        
+        gsap.set([
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB",
+        ], { opacity: 0 });
+        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
+        
+        gsap.to(["#t1 .legend-glyph", ".eq-m"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        weightTimeline = gsap.timeline();
+        
+        // Phase 1: anchor points appear on the line
+        weightTimeline.to(["#anchorA", "#anchorB"], {
+          opacity: 1, attr: { r: 5 }, duration: 0.3, ease: "back.out(2)"
+        });
+        
+        // Phase 2: project anchors down to the x-axis, then Δx arrow
+        weightTimeline.to(["#projX_A", "#projX_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.1");
+        weightTimeline.to("#dxArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
+        weightTimeline.to("#dxLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
+        
+        // Phase 3: project anchors across to the y-axis, then Δy arrow
+        weightTimeline.to(["#projY_A", "#projY_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.15");
+        weightTimeline.to("#dyArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
+        weightTimeline.to("#dyLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
+      }
+
+      function stopWeightHighlight() {
+        if (weightTimeline) weightTimeline.kill();
+        slopeVisualShown = false;
+        
+        gsap.to([
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB"
+        ], {
+          opacity: 0,
+          duration: 0.3,
+          overwrite: "auto"
+        });
+        
+        gsap.to(["#t1 .legend-glyph", ".eq-m"], { scale: 1, duration: 0.2 });
+      }
+
+      function startInputHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (inputTimeline) inputTimeline.kill();
+        
+        gsap.to(["#t0 .legend-glyph", ".eq-x"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        const dot = document.getElementById("xDot");
+        if (dot) {
+          gsap.set(dot, { opacity: 0 });
+        }
+        
+        inputAnimState.progress = 0;
+        inputTimeline = gsap.timeline({ repeat: -1 });
+        
+        inputTimeline.to(dot, { opacity: 1, duration: 0.2 }, 0);
+        
+        inputTimeline.to(inputAnimState, {
+          progress: 1,
+          duration: 1.8,
+          ease: "power1.inOut",
+          onUpdate: () => {
+            const cx = LINE.x1 + inputAnimState.progress * (LINE.x2 - LINE.x1);
+            const cy = LINE.y1 + inputAnimState.progress * (LINE.y2 - LINE.y1);
+            dot.setAttribute("cx", cx.toFixed(2));
+            dot.setAttribute("cy", cy.toFixed(2));
+          }
+        }, 0);
+        
+        inputTimeline.to(dot, { opacity: 0, duration: 0.2 }, 1.6);
+        inputTimeline.to({}, { duration: 0.3 });
+      }
+
+      function stopInputHighlight() {
+        if (inputTimeline) inputTimeline.kill();
+        
+        const dot = document.getElementById("xDot");
+        if (dot) {
+          gsap.to(dot, { opacity: 0, duration: 0.2 });
+        }
+        
+        gsap.to(["#t0 .legend-glyph", ".eq-x"], { scale: 1, duration: 0.2 });
+      }
+
+      function startBiasHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (biasTimeline) biasTimeline.kill();
+        
+        gsap.to(["#t2 .legend-glyph", ".eq-b"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        const line = document.getElementById("interceptLine");
+        const label = document.getElementById("interceptLabel");
+        
+        biasTimeline = gsap.timeline();
+        
+        biasTimeline.to(line, {
+          opacity: 1,
+          strokeWidth: 3,
+          duration: 0.3,
+          ease: "power2.out"
+        }, 0);
+        
+        biasTimeline.to(label, {
+          opacity: 1,
+          scale: 1.5,
+          transformOrigin: "center",
+          duration: 0.3,
+          ease: "back.out(2)"
+        }, 0);
+        
+        biasTimeline.to(label, {
+          scale: 1.1,
+          duration: 0.4,
+          ease: "power2.inOut"
+        });
+        
+        biasTimeline.to(line, {
+          strokeWidth: 2,
+          duration: 0.4,
+          ease: "power2.inOut"
+        }, "<");
+      }
+
+      function stopBiasHighlight() {
+        if (biasTimeline) biasTimeline.kill();
+        
+        const line = document.getElementById("interceptLine");
+        const label = document.getElementById("interceptLabel");
+        
+        gsap.to(line, {
+          opacity: 0,
+          strokeWidth: 1.5,
+          duration: 0.3
+        });
+        
+        gsap.to(label, {
+          opacity: 0,
+          scale: 1,
+          duration: 0.3
+        });
+        
+        gsap.to(["#t2 .legend-glyph", ".eq-b"], { scale: 1, duration: 0.2 });
       }
 
       function dialerXToM(clientX) {
@@ -953,7 +1165,6 @@
         const knob = document.getElementById("dialerKnob");
         if (!track || !knob) return;
 
-        // Initial paint
         syncDialerKnob();
 
         let dragging = false;
@@ -985,7 +1196,6 @@
         };
         track.addEventListener("pointerdown", onPointerDown);
 
-        // Keyboard support: focus the dialer and use arrow keys.
         const dialer = document.getElementById("dialer");
         if (dialer) {
           dialer.addEventListener("keydown", (ev) => {
@@ -1010,224 +1220,29 @@
           });
         }
 
-        // Re-sync knob on resize (track width changes).
         window.addEventListener("resize", syncDialerKnob);
       }
       document.addEventListener("DOMContentLoaded", initDialer);
 
-      // ─── Click-driven highlight animations ───
-      function pulseSlope() {
-        if (!lineDrawn) drawLineOnClick();
-
-        // Pick two anchor points on the line: graph-space x = 2 and x = 4
-        // (a 2-unit run, centred in the plot box [0..6]). Their y values come
-        // from the live slope+bias.
-        const gxA = 2, gxB = 4;
-        const gyA = STATE.m * gxA + STATE.b;
-        const gyB = STATE.m * gxB + STATE.b;
-        const ax = gx2svg(gxA), ay = gy2svg(gyA);
-        const bx = gx2svg(gxB), by = gy2svg(gyB);
-
-        // Axis baselines.
-        const xAxisY = PLOT.oy;          // y where the x-axis sits
-        const yAxisX = PLOT.ox;          // x where the y-axis sits
-        // Pull the Δx arrow a few px below the x-axis so the arrow + label
-        // don't sit on top of the axis line. Same idea for Δy on the left.
-        const dxOffset = 14;             // below x-axis
-        const dyOffset = 18;             // left of y-axis
-        const dxY = xAxisY + dxOffset;
-        const dyX = yAxisX - dyOffset;
-
-        // Anchor circles
-        const anchorA = document.getElementById("anchorA");
-        const anchorB = document.getElementById("anchorB");
-        anchorA.setAttribute("cx", ax.toFixed(2));
-        anchorA.setAttribute("cy", ay.toFixed(2));
-        anchorB.setAttribute("cx", bx.toFixed(2));
-        anchorB.setAttribute("cy", by.toFixed(2));
-
-        // Projection lines (anchor → corresponding axis)
-        const setProj = (id, x1, y1, x2, y2) => {
-          const el = document.getElementById(id);
-          el.setAttribute("x1", x1.toFixed(2));
-          el.setAttribute("y1", y1.toFixed(2));
-          el.setAttribute("x2", x2.toFixed(2));
-          el.setAttribute("y2", y2.toFixed(2));
-        };
-        setProj("projX_A", ax, ay, ax, xAxisY);
-        setProj("projX_B", bx, by, bx, xAxisY);
-        setProj("projY_A", ax, ay, yAxisX, ay);
-        setProj("projY_B", bx, by, yAxisX, by);
-
-        // Δx arrow: along the x-axis (just below it), from xA to xB.
-        const dxArrow = document.getElementById("dxArrow");
-        dxArrow.setAttribute("x1", ax.toFixed(2));
-        dxArrow.setAttribute("y1", dxY.toFixed(2));
-        dxArrow.setAttribute("x2", bx.toFixed(2));
-        dxArrow.setAttribute("y2", dxY.toFixed(2));
-        const dxLabel = document.getElementById("dxLabel");
-        dxLabel.setAttribute("x", ((ax + bx) / 2 - 8).toFixed(2));
-        dxLabel.setAttribute("y", (dxY + 14).toFixed(2));
-
-        // Δy arrow: along the y-axis (just left of it), from yA to yB.
-        // Direction follows slope sign (positive m → arrow points up).
-        const dyArrow = document.getElementById("dyArrow");
-        dyArrow.setAttribute("x1", dyX.toFixed(2));
-        dyArrow.setAttribute("y1", ay.toFixed(2));
-        dyArrow.setAttribute("x2", dyX.toFixed(2));
-        dyArrow.setAttribute("y2", by.toFixed(2));
-        const dyLabel = document.getElementById("dyLabel");
-        dyLabel.setAttribute("x", (dyX - 24).toFixed(2));
-        dyLabel.setAttribute("y", ((ay + by) / 2 + 4).toFixed(2));
-
-        // Stop any in-flight animation from a prior click.
-        const els = [
-          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
-          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
-          "#anchorA", "#anchorB", "#t1 .term-symbol",
-        ];
-        gsap.killTweensOf(els);
-        gsap.set([
-          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
-          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
-          "#anchorA", "#anchorB",
-        ], { opacity: 0 });
-        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
-
-        const tl = gsap.timeline();
-
-        // Bounce the m term-symbol
-        tl.to("#t1 .term-symbol", { scale: 1.25, duration: 0.18, ease: "power2.out" }, 0);
-        tl.to("#t1 .term-symbol", { scale: 1, duration: 0.35, ease: "power2.inOut" });
-
-        // ─── Phase 1: anchor points appear on the line ───
-        tl.to(
-          ["#anchorA", "#anchorB"],
-          { opacity: 1, attr: { r: 5 }, duration: 0.3, ease: "back.out(2)" },
-          "+=0.05"
-        );
-
-        // ─── Phase 2: project anchors down to the x-axis, then Δx arrow ───
-        tl.to(["#projX_A", "#projX_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.1");
-        tl.to("#dxArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
-        tl.to("#dxLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
-
-        // ─── Phase 3: project anchors across to the y-axis, then Δy arrow ───
-        tl.to(["#projY_A", "#projY_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.15");
-        tl.to("#dyArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
-        tl.to("#dyLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
-
-        // Mark the visual as live so subsequent dialer moves keep it in sync.
-        slopeVisualShown = true;
-
-        // Hold the final state — the slope visual stays visible and tracks
-        // any future slope changes through refreshSlopeVisual().
-      }
-
-      function pulseBias() {
-        if (!lineDrawn) drawLineOnClick();
-        // Highlight the y-intercept (b)
-        gsap.killTweensOf([
-          "#interceptLine",
-          "#interceptLabel",
-          "#mainLine",
-          "#t2 .term-symbol",
-        ]);
-
-        const tl = gsap.timeline();
-        tl.set("#interceptLine", { opacity: 1 });
-        tl.set("#interceptLabel", { opacity: 1 });
-
-        // term symbol pulse
-        tl.to(
-          "#t2 .term-symbol",
-          { scale: 1.25, duration: 0.18, ease: "power2.out" },
-          0
-        );
-        tl.to("#t2 .term-symbol", {
-          scale: 1,
-          duration: 0.35,
-          ease: "power2.inOut",
-        });
-
-        // intercept line glow + thicken
-        tl.to(
-          "#interceptLine",
-          {
-            strokeWidth: 3,
-            opacity: 1,
-            duration: 0.3,
-            ease: "power2.out",
-          },
-          0
-        );
-
-        // label pop
-        tl.to(
-          "#interceptLabel",
-          {
-            scale: 1.6,
-            transformOrigin: "center",
-            duration: 0.3,
-            ease: "back.out(2.2)",
-          },
-          0
-        );
-
-        tl.to({}, { duration: 0.25 });
-
-        // settle back
-        tl.to("#interceptLine", {
-          strokeWidth: 1.5,
-          duration: 0.4,
-          ease: "power2.inOut",
-        });
-        tl.to("#interceptLabel", { scale: 1, duration: 0.4 }, "<");
-      }
-
-      function pulseInput() {
-        // Slide a bright dot from x=0 along the line, illustrating "as x grows, y follows".
-        if (!lineDrawn) drawLineOnClick();
-        gsap.killTweensOf(["#xDot", "#t0 .term-symbol"]);
-
-        const tl = gsap.timeline();
-        tl.to(
-          "#t0 .term-symbol",
-          { scale: 1.25, duration: 0.18, ease: "power2.out" },
-          0
-        );
-        tl.to("#t0 .term-symbol", {
-          scale: 1,
-          duration: 0.35,
-          ease: "power2.inOut",
-        });
-
-        tl.set("#xDot", { attr: { cx: LINE.x1, cy: LINE.y1 } }, 0);
-        tl.to("#xDot", { opacity: 1, duration: 0.2, ease: "power2.out" }, 0);
-        tl.to(
-          "#xDot",
-          {
-            attr: { cx: LINE.x2, cy: LINE.y2 },
-            duration: 1.6,
-            ease: "power2.inOut",
-          },
-          0.1
-        );
-        tl.to(
-          "#xDot",
-          { opacity: 0, duration: 0.4, ease: "power2.in" },
-          ">-0.1"
-        );
-      }
-
-      // wire up clicks
       document.addEventListener("DOMContentLoaded", () => {
-        const xSym = document.querySelector("#t0 .term-symbol");
-        const mSym = document.querySelector("#t1 .term-symbol");
-        const bSym = document.querySelector("#t2 .term-symbol");
-        if (xSym) xSym.addEventListener("click", pulseInput);
-        if (mSym) mSym.addEventListener("click", pulseSlope);
-        if (bSym) bSym.addEventListener("click", pulseBias);
+        const t0 = document.getElementById("t0");
+        const t1 = document.getElementById("t1");
+        const t2 = document.getElementById("t2");
+        if (t0) t0.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('input'); });
+        if (t1) t1.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('weight'); });
+        if (t2) t2.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('bias'); });
+        
+        const eqX = document.querySelector(".eq-x");
+        const eqM = document.querySelector(".eq-m");
+        const eqB = document.querySelector(".eq-b");
+        if (eqX) eqX.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('input'); });
+        if (eqM) eqM.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('weight'); });
+        if (eqB) eqB.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('bias'); });
+        
+        document.addEventListener("click", (e) => {
+          if (e.target.closest('#dialer, .dialer, #t0, #t1, #t2, .eq-x, .eq-m, .eq-b')) return;
+          deselectAll();
+        });
       });
 
       window.addEventListener("load", startEntrance);

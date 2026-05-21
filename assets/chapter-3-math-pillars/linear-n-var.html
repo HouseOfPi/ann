@@ -38,7 +38,7 @@
       align-items: center;
       width: 100%;
     }
-    .left-half {
+    .equation-side {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -47,7 +47,7 @@
       max-width: 720px;
       padding-left: clamp(8px, 2vw, 32px);
     }
-    .right-half {
+    .table-side {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -57,7 +57,7 @@
 
     @media (max-width: 900px) {
       .body { grid-template-columns: 1fr; gap: 24px; }
-      .left-half { padding-left: 0; max-width: 100%; }
+      .equation-side { padding-left: 0; max-width: 100%; }
     }
 
     /* ── The equation — hero element ──
@@ -176,33 +176,13 @@
     /* Make the equation feel clickable */
     .equation {
       cursor: pointer;
-      transition: filter 0.25s ease, transform 0.25s ease;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+      transform-origin: center center;
+      display: inline-block;
     }
     .equation:hover {
-      filter: brightness(1.1);
-      transform: translateX(2px);
-    }
-    .equation-hint {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: color-mix(in srgb, var(--accent) 90%, transparent);
-      opacity: 0.85;
-      margin-top: -32px;
-      cursor: pointer;
-    }
-    .equation-hint::before {
-      content: '';
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
+      transform: scale(1.08) translateY(-3px);
+      filter: drop-shadow(0 12px 24px color-mix(in srgb, var(--accent) 35%, transparent));
     }
 
     /* ── Modal: linear → matrix ── */
@@ -525,8 +505,23 @@
       font-size: 13.5px;
     }
     .data-table tbody tr:hover td,
-    .data-table tbody tr.selected td {
+    .data-table tbody:not(:hover) tr.selected td {
       background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+
+    /* Column highlighting when hovering over column headers */
+    .data-table:has(th:nth-child(1):hover) th:nth-child(1),
+    .data-table:has(th:nth-child(1):hover) td:nth-child(1),
+    .data-table:has(th:nth-child(2):hover) th:nth-child(2),
+    .data-table:has(th:nth-child(2):hover) td:nth-child(2),
+    .data-table:has(th:nth-child(3):hover) th:nth-child(3),
+    .data-table:has(th:nth-child(3):hover) td:nth-child(3),
+    .data-table:has(th:nth-child(4):hover) th:nth-child(4),
+    .data-table:has(th:nth-child(4):hover) td:nth-child(4),
+    .data-table:has(th:nth-child(5):hover) th:nth-child(5),
+    .data-table:has(th:nth-child(5):hover) td:nth-child(5) {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border-radius: 4px;
     }
 
     /* When a row is hovered (and not selected), swap value text → weight text */
@@ -550,29 +545,26 @@
       bottom: -0.25em;
       padding-left: 1px;
     }
-    body:not(.popover-active) .data-table tbody tr:hover:not(.selected) td .cell-value { display: none; }
-    body:not(.popover-active) .data-table tbody tr:hover:not(.selected) td .cell-weight { display: inline; }
+
     .data-table tbody tr.selected td .cell-value { display: inline; }
     .data-table tbody tr.selected td .cell-weight { display: none; }
     
-    .data-table tbody tr:hover td.data-price-cell,
-    .data-table tbody tr.selected td.data-price-cell {
-      color: var(--accent);
-    }
     .data-table tbody tr {
       cursor: pointer;
     }
     .row-popover {
       position: fixed;
-      transform: translate(-100%, -50%) scale(0.92);
-      transform-origin: right center;
-      background: var(--bg);
-      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      transform: translate(0, -50%) scale(0.92);
+      transform-origin: left center;
+      background: color-mix(in srgb, var(--fg) 3%, color-mix(in srgb, var(--bg) 95%, transparent));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
       border-radius: 16px;
-      padding: 24px 32px;
-      box-shadow: 0 20px 60px -10px color-mix(in srgb, var(--bg) 90%, transparent),
-                  0 0 80px 20px color-mix(in srgb, var(--bg) 60%, transparent),
-                  inset 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+      padding: 20px 24px;
+      box-shadow: 0 20px 60px -10px color-mix(in srgb, var(--bg) 95%, transparent),
+                  0 0 80px 20px color-mix(in srgb, var(--bg) 70%, transparent),
+                  inset 0 0 0 1px color-mix(in srgb, var(--fg) 8%, transparent);
       visibility: hidden;
       pointer-events: none;
       transition: visibility 0s 0.25s, transform 0.25s ease;
@@ -580,18 +572,45 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
+      width: max-content;
     }
     .row-popover.open {
       visibility: visible;
       pointer-events: auto;
-      transform: translate(-100%, -50%) scale(1);
+      transform: translate(0, -50%) scale(1);
       transition: visibility 0s, transform 0.25s ease;
     }
-    .left-half {
+    
+    /* Popover Specific Matrix Elements overrides */
+    .row-popover .mtx-row {
+      gap: 8px;
+    }
+    .row-popover .mtx-op {
+      font-size: 20px;
+    }
+    .row-popover .bracket {
+      gap: 4px;
+      padding: 4px 8px;
+    }
+    .row-popover .bracket::before, 
+    .row-popover .bracket::after {
+      width: 5px;
+    }
+    .row-popover .bracket-cell {
+      font-size: 15px;
+      min-width: 32px;
+      padding: 2px 4px;
+    }
+    .row-popover .bracket.is-w {
+      grid-auto-flow: row;
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+    }
+    .equation-side {
       transition: filter 0.3s ease;
     }
-    body.popover-active .left-half {
+    body.popover-active .equation-side {
       filter: blur(6px);
     }
     .mtx-col-header {
@@ -604,7 +623,19 @@
       text-align: center;
       margin-bottom: 4px;
     }
-    .right-half { position: relative; }
+    .table-side { position: relative; }
+
+    /* Glass effect on the rest of the page when hovering the equation */
+    #header, .table-side, .legend {
+      transition: filter 0.4s ease, opacity 0.4s ease;
+    }
+    body:has(.equation:hover) #header,
+    body:has(.equation:hover) .table-side,
+    body:has(.equation:hover) .legend {
+      filter: blur(8px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -613,51 +644,7 @@
   <page-title id="header" eyebrow="Linear Algebra" title="<em>n</em> Variables"></page-title>
 
   <div class="body">
-    <div class="left-half">
-      <div class="equation" id="eqClickable" role="button" tabindex="0" aria-label="n-variable linear equation — click to see matrix form">
-        <span>y</span>
-        <span class="eq-eq">=</span>
-        <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
-        <span class="eq-op">+</span>
-        <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
-        <span class="eq-op">+</span>
-        <span class="eq-dots">⋯</span>
-        <span class="eq-op">+</span>
-        <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
-        <span class="eq-op">+</span>
-        <span>b</span>
-      </div>
-      <span class="equation-hint" id="eqHint">Click to see matrix form</span>
-
-      <div class="legend">
-        <div class="legend-item">
-          <span class="legend-glyph">y</span>
-          <span class="legend-label">output</span>
-          <span class="legend-desc">what we want to predict</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
-          <span class="legend-label">inputs</span>
-          <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
-          <span class="legend-label">weights</span>
-          <span class="legend-desc">how much each input matters</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-glyph">b</span>
-          <span class="legend-label">bias</span>
-          <span class="legend-desc">a constant offset</span>
-        </div>
-      </div>
-
-      <p class="tagline">
-        <em>n</em> inputs, each with its own weight, summed into a single output.
-      </p>
-    </div>
-
-    <div class="right-half" id="rightHalf">
+    <div class="table-side" id="rightHalf">
       <div class="data-card">
         <div class="data-title">House <em>Prices</em></div>
         <table class="data-table">
@@ -717,33 +704,129 @@
         </table>
       </div>
     </div>
+
+    <div class="equation-side">
+      <div class="equation" id="eqClickable" role="button" tabindex="0" aria-label="n-variable linear equation — click to see matrix form">
+        <span>y</span>
+        <span class="eq-eq">=</span>
+        <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-dots">⋯</span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
+        <span class="eq-op">+</span>
+        <span>b</span>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-glyph">y</span>
+          <span class="legend-label">output</span>
+          <span class="legend-desc">what we want to predict</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">inputs</span>
+          <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">weights</span>
+          <span class="legend-desc">how much each input matters</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph">b</span>
+          <span class="legend-label">bias</span>
+          <span class="legend-desc">a constant offset</span>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- ── Floating Matrix Popover ── -->
   <div class="row-popover" id="rowPopover">
-    <div class="mtx-eyebrow" style="margin-bottom: 0;">Data Matrix</div>
-    <div class="mtx-row" style="align-items: flex-start; gap: 32px;">
-      <div class="mtx-stack is-x">
-        <div class="bracket is-x" style="grid-template-columns: repeat(4, auto); column-gap: 20px; row-gap: 8px; padding: 8px 16px;">
-          <span class="mtx-col-header">Size</span><span class="mtx-col-header">Beds</span><span class="mtx-col-header">Dist</span><span class="mtx-col-header">Age</span>
-          <span class="bracket-cell" data-row="0">1,200</span><span class="bracket-cell" data-row="0">2</span><span class="bracket-cell" data-row="0">12.5</span><span class="bracket-cell" data-row="0">12</span>
-          <span class="bracket-cell" data-row="1">1,850</span><span class="bracket-cell" data-row="1">3</span><span class="bracket-cell" data-row="1">2.0</span><span class="bracket-cell" data-row="1">5</span>
-          <span class="bracket-cell" data-row="2">2,400</span><span class="bracket-cell" data-row="2">4</span><span class="bracket-cell" data-row="2">15.0</span><span class="bracket-cell" data-row="2">2</span>
-          <span class="bracket-cell" data-row="3">1,400</span><span class="bracket-cell" data-row="3">2</span><span class="bracket-cell" data-row="3">25.0</span><span class="bracket-cell" data-row="3">20</span>
-          <span class="bracket-cell" data-row="4">2,100</span><span class="bracket-cell" data-row="4">3</span><span class="bracket-cell" data-row="4">4.5</span><span class="bracket-cell" data-row="4">8</span>
-        </div>
-      </div>
+    <div class="mtx-eyebrow">Dataset prediction matrix</div>
+    <div class="mtx-title" style="font-size: 16px; margin-bottom: 4px; font-style: normal; font-family: 'STIX Two Math', serif; color: var(--fg); text-align: center;">
+      Y = X · W + b
+    </div>
+    <div class="mtx-row">
+      <!-- Y (Prices) -->
       <div class="mtx-stack is-y">
-        <div class="bracket is-y" style="grid-template-columns: 1fr; row-gap: 8px; padding: 8px 16px;">
-          <span class="mtx-col-header">Price</span>
-          <span class="bracket-cell" data-row="0">450k</span>
-          <span class="bracket-cell" data-row="1">680k</span>
-          <span class="bracket-cell" data-row="2">920k</span>
-          <span class="bracket-cell" data-row="3">510k</span>
-          <span class="bracket-cell" data-row="4">750k</span>
+        <div class="bracket is-y" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$450k</span>
+          <span class="bracket-cell" data-row="1" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$680k</span>
+          <span class="bracket-cell" data-row="2" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$920k</span>
+          <span class="bracket-cell" data-row="3" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$510k</span>
+          <span class="bracket-cell" data-row="4" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$750k</span>
         </div>
+        <span class="mtx-stack-tag">Y</span>
+      </div>
+      
+      <span class="mtx-op">=</span>
+      
+      <!-- X (Features) -->
+      <div class="mtx-stack is-x">
+        <div class="bracket is-x" style="grid-template-columns: repeat(4, auto); column-gap: 8px; row-gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0">1,200</span>
+          <span class="bracket-cell" data-row="0">2</span>
+          <span class="bracket-cell" data-row="0">12.5</span>
+          <span class="bracket-cell" data-row="0">12</span>
+          
+          <span class="bracket-cell" data-row="1">1,850</span>
+          <span class="bracket-cell" data-row="1">3</span>
+          <span class="bracket-cell" data-row="1">2.0</span>
+          <span class="bracket-cell" data-row="1">5</span>
+          
+          <span class="bracket-cell" data-row="2">2,400</span>
+          <span class="bracket-cell" data-row="2">4</span>
+          <span class="bracket-cell" data-row="2">15.0</span>
+          <span class="bracket-cell" data-row="2">2</span>
+          
+          <span class="bracket-cell" data-row="3">1,400</span>
+          <span class="bracket-cell" data-row="3">2</span>
+          <span class="bracket-cell" data-row="3">25.0</span>
+          <span class="bracket-cell" data-row="3">20</span>
+          
+          <span class="bracket-cell" data-row="4">2,100</span>
+          <span class="bracket-cell" data-row="4">3</span>
+          <span class="bracket-cell" data-row="4">4.5</span>
+          <span class="bracket-cell" data-row="4">8</span>
+        </div>
+        <span class="mtx-stack-tag">X</span>
+      </div>
+      
+      <span class="mtx-op">·</span>
+      
+      <!-- W (Weights) -->
+      <div class="mtx-stack is-w">
+        <div class="bracket is-w" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 10px;">
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>1</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>2</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>3</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>4</sub></span>
+        </div>
+        <span class="mtx-stack-tag">W</span>
+      </div>
+      
+      <span class="mtx-op">+</span>
+      
+      <!-- b (Bias) -->
+      <div class="mtx-stack">
+        <div class="bracket" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0">b</span>
+          <span class="bracket-cell" data-row="1">b</span>
+          <span class="bracket-cell" data-row="2">b</span>
+          <span class="bracket-cell" data-row="3">b</span>
+          <span class="bracket-cell" data-row="4">b</span>
+        </div>
+        <span class="mtx-stack-tag">bias</span>
       </div>
     </div>
+    
+    <div class="mtx-caption" id="popoverCaption" style="font-size: 13px; line-height: 1.4; color: color-mix(in srgb, var(--fg) 70%, transparent); text-align: center; max-width: 34ch; margin-top: 8px; font-family: 'STIX Two Math', serif;"></div>
   </div>
 
   <!-- ── Matrix-form modal ── -->
@@ -792,11 +875,6 @@
               <span class="mtx-stack-tag">bias</span>
             </div>
           </div>
-        </div>
-
-        <p class="mtx-caption" data-step="2" style="opacity:0; transform:translateY(8px); transition:opacity 0.6s ease, transform 0.6s ease;">
-          Same equation — written once with the <em>dot product</em>. Every neural-net layer is built from this.
-        </p>
       </div>
     </div>
   </div>
@@ -807,7 +885,6 @@
     /* ── Modal open/close + sequential reveal ── */
     const overlay = document.getElementById('mtxOverlay');
     const eqClickable = document.getElementById('eqClickable');
-    const eqHint = document.getElementById('eqHint');
     const closeBtn = document.getElementById('mtxClose');
     const steps = overlay.querySelectorAll('[data-step]');
 
@@ -832,7 +909,6 @@
     }
 
     eqClickable.addEventListener('click', openModal);
-    eqHint.addEventListener('click', openModal);
     eqClickable.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
     });
@@ -847,35 +923,78 @@
     /* ── Row Click Popover Logic ── */
     const rowPopover = document.getElementById('rowPopover');
     const tableRows = document.querySelectorAll('.data-table tbody tr');
-    const rightHalf = document.getElementById('rightHalf');
     const dataCard = document.querySelector('.data-card');
+    const popoverCaption = document.getElementById('popoverCaption');
+
+    // Keep track of the currently selected row index
+    let selectedRowIndex = -1;
+
+    function getRowData(row) {
+      const cells = row.querySelectorAll('td');
+      return {
+        size: cells[0].querySelector('.cell-value').textContent,
+        beds: cells[1].querySelector('.cell-value').textContent,
+        dist: cells[2].querySelector('.cell-value').textContent,
+        age: cells[3].querySelector('.cell-value').textContent,
+        price: cells[4].querySelector('.cell-value').textContent
+      };
+    }
+
+    function highlightPopoverRow(index) {
+      // Clear previous highlights in the popover
+      rowPopover.querySelectorAll('.bracket-cell').forEach(cell => cell.classList.remove('highlight'));
+      
+      if (index !== -1) {
+        // Highlight the new row's cells
+        rowPopover.querySelectorAll(`.bracket-cell[data-row="${index}"]`).forEach(cell => {
+          cell.classList.add('highlight');
+        });
+      }
+    }
+
+    function updatePopoverCaption(index) {
+      if (index === -1) {
+        popoverCaption.innerHTML = "";
+        return;
+      }
+      const data = getRowData(tableRows[index]);
+      popoverCaption.innerHTML = `${data.price} = w₁(${data.size}) + w₂(${data.beds}) + w₃(${data.dist}) + w₄(${data.age}) + b`;
+    }
 
     tableRows.forEach((row, index) => {
       row.addEventListener('click', (e) => {
         tableRows.forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
+        selectedRowIndex = index;
+
+        // Apply highlights & update caption
+        highlightPopoverRow(index);
+        updatePopoverCaption(index);
 
         // Position relative to viewport (fixed position regardless of row)
         const cardRect = dataCard.getBoundingClientRect();
         rowPopover.style.top = (cardRect.top + cardRect.height/2) + 'px';
-        rowPopover.style.left = (cardRect.left - 24) + 'px';
+        rowPopover.style.left = (cardRect.right + 24) + 'px';
         
         rowPopover.classList.add('open');
         document.body.classList.add('popover-active');
         e.stopPropagation();
       });
 
-      // Hover animation sync with matrix popover
+      // Hover sync with matrix popover when open
       row.addEventListener('mouseenter', () => {
-        document.querySelectorAll(`#rowPopover .bracket-cell[data-row="${index}"]`).forEach(cell => {
-          cell.classList.add('highlight');
-        });
+        if (rowPopover.classList.contains('open')) {
+          highlightPopoverRow(index);
+          updatePopoverCaption(index);
+        }
       });
       
       row.addEventListener('mouseleave', () => {
-        document.querySelectorAll(`#rowPopover .bracket-cell[data-row="${index}"]`).forEach(cell => {
-          cell.classList.remove('highlight');
-        });
+        if (rowPopover.classList.contains('open')) {
+          // Revert to selected row
+          highlightPopoverRow(selectedRowIndex);
+          updatePopoverCaption(selectedRowIndex);
+        }
       });
     });
 
@@ -884,6 +1003,7 @@
         rowPopover.classList.remove('open');
         document.body.classList.remove('popover-active');
         tableRows.forEach(r => r.classList.remove('selected'));
+        selectedRowIndex = -1;
       }
     });
 
