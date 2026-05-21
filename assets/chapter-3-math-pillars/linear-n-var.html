@@ -32,14 +32,32 @@
 
     .body {
       flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      width: 100%;
+    }
+    .left-half {
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 48px;
+      max-width: 720px;
+      padding-left: clamp(8px, 2vw, 32px);
+    }
+    .right-half {
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 56px;
-      max-width: 1100px;
-      width: 100%;
-      margin: 0 auto;
+      height: 100%;
+      /* Reserved for upcoming animation */
+    }
+
+    @media (max-width: 900px) {
+      .body { grid-template-columns: 1fr; gap: 24px; }
+      .left-half { padding-left: 0; max-width: 100%; }
     }
 
     /* ── The equation — hero element ──
@@ -52,10 +70,10 @@
       letter-spacing: 0;
       line-height: 1.3;
       color: var(--fg);
-      text-align: center;
+      text-align: left;
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: baseline;
       gap: 4px 14px;
       font-weight: 500;
@@ -149,7 +167,7 @@
       font-size: clamp(18px, 1.9vw, 24px);
       line-height: 1.5;
       color: color-mix(in srgb, var(--fg) 80%, transparent);
-      text-align: center;
+      text-align: left;
       max-width: 56ch;
     }
     .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
@@ -161,46 +179,52 @@
   <page-title id="header" eyebrow="Linear Algebra" title="<em>n</em> Variables"></page-title>
 
   <div class="body">
-    <div class="equation" aria-label="n-variable linear equation">
-      <span>y</span>
-      <span class="eq-eq">=</span>
-      <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
-      <span class="eq-op">+</span>
-      <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
-      <span class="eq-op">+</span>
-      <span class="eq-dots">⋯</span>
-      <span class="eq-op">+</span>
-      <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
-      <span class="eq-op">+</span>
-      <span>b</span>
+    <div class="left-half">
+      <div class="equation" aria-label="n-variable linear equation">
+        <span>y</span>
+        <span class="eq-eq">=</span>
+        <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-dots">⋯</span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
+        <span class="eq-op">+</span>
+        <span>b</span>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-glyph">y</span>
+          <span class="legend-label">output</span>
+          <span class="legend-desc">what we want to predict</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">inputs</span>
+          <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">weights</span>
+          <span class="legend-desc">how much each input matters</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph">b</span>
+          <span class="legend-label">bias</span>
+          <span class="legend-desc">a constant offset</span>
+        </div>
+      </div>
+
+      <p class="tagline">
+        <em>n</em> inputs, each with its own weight, summed into a single output.
+      </p>
     </div>
 
-    <div class="legend">
-      <div class="legend-item">
-        <span class="legend-glyph">y</span>
-        <span class="legend-label">output</span>
-        <span class="legend-desc">what we want to predict</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
-        <span class="legend-label">inputs</span>
-        <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
-        <span class="legend-label">weights</span>
-        <span class="legend-desc">how much each input matters</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-glyph">b</span>
-        <span class="legend-label">bias</span>
-        <span class="legend-desc">a constant offset</span>
-      </div>
+    <div class="right-half" id="rightHalf">
+      <!-- Animation will live here -->
     </div>
-
-    <p class="tagline">
-      <em>n</em> inputs, each with its own weight, summed into a single output.
-    </p>
   </div>
 
   <script>
