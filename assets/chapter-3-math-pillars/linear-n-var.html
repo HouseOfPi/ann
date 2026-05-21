@@ -54,30 +54,25 @@
       justify-content: center;
       align-items: baseline;
       gap: 6px 10px;
+      font-weight: 600;
     }
     .equation sub {
       font-size: 0.6em;
       padding: 0 1px;
-      color: color-mix(in srgb, var(--fg) 75%, transparent);
-      font-weight: 600;
-    }
-    .equation .eq-y,
-    .equation .eq-eq,
-    .equation .eq-op {
       color: color-mix(in srgb, var(--fg) 70%, transparent);
       font-weight: 500;
     }
-    .equation .eq-term {
-      display: inline-flex;
-      align-items: baseline;
-    }
-    .equation .eq-w { color: var(--c2); font-weight: 700; }
-    .equation .eq-x { color: var(--c1); font-weight: 700; padding-left: 2px; }
-    .equation .eq-b { color: var(--c3); font-weight: 700; }
-    .equation .eq-dots {
+    .equation .eq-op,
+    .equation .eq-eq {
       color: color-mix(in srgb, var(--fg) 55%, transparent);
+      font-weight: 400;
+    }
+    .equation .eq-term { display: inline-flex; align-items: baseline; }
+    .equation .eq-dots {
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
       padding: 0 4px;
       letter-spacing: 0.2em;
+      font-weight: 400;
     }
 
     /* ── Legend strip ── */
@@ -101,11 +96,8 @@
       font-size: clamp(22px, 2.4vw, 30px);
       font-weight: 700;
       line-height: 1;
+      color: var(--fg);
     }
-    .legend-glyph.lg-y { color: color-mix(in srgb, var(--fg) 85%, transparent); }
-    .legend-glyph.lg-w { color: var(--c2); }
-    .legend-glyph.lg-x { color: var(--c1); }
-    .legend-glyph.lg-b { color: var(--c3); }
     .legend-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
@@ -130,7 +122,7 @@
       text-align: center;
       max-width: 56ch;
     }
-    .tagline em { font-style: italic; color: var(--c2); font-weight: 600; }
+    .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -140,37 +132,37 @@
 
   <div class="body">
     <div class="equation" aria-label="n-variable linear equation">
-      <span class="eq-y">y</span>
+      <span>y</span>
       <span class="eq-eq">=</span>
-      <span class="eq-term"><span class="eq-w">w</span><sub>1</sub><span class="eq-x">x</span><sub>1</sub></span>
+      <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
       <span class="eq-op">+</span>
-      <span class="eq-term"><span class="eq-w">w</span><sub>2</sub><span class="eq-x">x</span><sub>2</sub></span>
+      <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
       <span class="eq-op">+</span>
       <span class="eq-dots">⋯</span>
       <span class="eq-op">+</span>
-      <span class="eq-term"><span class="eq-w">w</span><sub>n</sub><span class="eq-x">x</span><sub>n</sub></span>
+      <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
       <span class="eq-op">+</span>
-      <span class="eq-b">b</span>
+      <span>b</span>
     </div>
 
     <div class="legend">
       <div class="legend-item">
-        <span class="legend-glyph lg-y">y</span>
+        <span class="legend-glyph">y</span>
         <span class="legend-label">output</span>
         <span class="legend-desc">what we want to predict</span>
       </div>
       <div class="legend-item">
-        <span class="legend-glyph lg-x">x<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-glyph">x<sub style="font-size:0.55em">i</sub></span>
         <span class="legend-label">inputs</span>
-        <span class="legend-desc">the <em style="font-style:normal;color:var(--c1);font-weight:700">n</em> feature values</span>
+        <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
       </div>
       <div class="legend-item">
-        <span class="legend-glyph lg-w">w<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-glyph">w<sub style="font-size:0.55em">i</sub></span>
         <span class="legend-label">weights</span>
         <span class="legend-desc">how much each input matters</span>
       </div>
       <div class="legend-item">
-        <span class="legend-glyph lg-b">b</span>
+        <span class="legend-glyph">b</span>
         <span class="legend-label">bias</span>
         <span class="legend-desc">a constant offset</span>
       </div>
