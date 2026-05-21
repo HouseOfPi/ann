@@ -380,6 +380,13 @@
       min-width: 48px;
       text-align: center;
       padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
+    }
+    .bracket-cell.highlight {
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent);
+      text-shadow: 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent);
     }
     .bracket-cell sub {
       font-size: 0.45em;
@@ -517,11 +524,12 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 13.5px;
     }
-    .data-table tbody tr:hover td {
+    .data-table tbody tr:hover td,
+    .data-table tbody tr.selected td {
       background: color-mix(in srgb, var(--accent) 8%, transparent);
     }
 
-    /* When a row is hovered, swap value text → weight text */
+    /* When a row is hovered (and not selected), swap value text → weight text */
     .data-table tbody td .cell-value { display: inline; }
     .data-table tbody td .cell-weight {
       display: none;
@@ -542,9 +550,13 @@
       bottom: -0.25em;
       padding-left: 1px;
     }
-    .data-table tbody tr:hover td .cell-value { display: none; }
-    .data-table tbody tr:hover td .cell-weight { display: inline; }
-    .data-table tbody tr:hover td.data-price-cell {
+    body:not(.popover-active) .data-table tbody tr:hover:not(.selected) td .cell-value { display: none; }
+    body:not(.popover-active) .data-table tbody tr:hover:not(.selected) td .cell-weight { display: inline; }
+    .data-table tbody tr.selected td .cell-value { display: inline; }
+    .data-table tbody tr.selected td .cell-weight { display: none; }
+    
+    .data-table tbody tr:hover td.data-price-cell,
+    .data-table tbody tr.selected td.data-price-cell {
       color: var(--accent);
     }
     .data-table tbody tr {
@@ -840,6 +852,9 @@
 
     tableRows.forEach((row, index) => {
       row.addEventListener('click', (e) => {
+        tableRows.forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+
         // Position relative to viewport (fixed position regardless of row)
         const cardRect = dataCard.getBoundingClientRect();
         rowPopover.style.top = (cardRect.top + cardRect.height/2) + 'px';
@@ -849,12 +864,26 @@
         document.body.classList.add('popover-active');
         e.stopPropagation();
       });
+
+      // Hover animation sync with matrix popover
+      row.addEventListener('mouseenter', () => {
+        document.querySelectorAll(`#rowPopover .bracket-cell[data-row="${index}"]`).forEach(cell => {
+          cell.classList.add('highlight');
+        });
+      });
+      
+      row.addEventListener('mouseleave', () => {
+        document.querySelectorAll(`#rowPopover .bracket-cell[data-row="${index}"]`).forEach(cell => {
+          cell.classList.remove('highlight');
+        });
+      });
     });
 
     document.addEventListener('click', (e) => {
       if (!rowPopover.contains(e.target)) {
         rowPopover.classList.remove('open');
         document.body.classList.remove('popover-active');
+        tableRows.forEach(r => r.classList.remove('selected'));
       }
     });
 
