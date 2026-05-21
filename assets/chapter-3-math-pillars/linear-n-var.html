@@ -6,13 +6,12 @@
   <title>n Variables Linear Equation | Presentation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --c1: #5fe8ec;  /* X — inputs */
-      --c2: #4ee0a0;  /* W — weights */
-      --c3: #a78bfa;  /* Y — output (price) */
+      --c1: #5fe8ec;  /* x — inputs */
+      --c2: #4ee0a0;  /* w — weights */
+      --c3: #a78bfa;  /* b — bias */
       --bg: #000000;
       --fg: #eef2f8;
     }
@@ -26,368 +25,112 @@
       color: var(--fg);
       display: flex;
       flex-direction: column;
-      padding: 28px 50px 32px;
+      padding: 32px 50px 40px;
       transition: background 0.5s, color 0.5s;
     }
 
-    .body-layout {
+    .body {
       flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 44px;
-      align-items: center;
-      padding-top: 18px;
-    }
-
-    /* ─── LEFT COLUMN — House example card ──────────── */
-    .left-col {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-
-    .house-card {
-      padding: 20px 24px 22px;
-      border-radius: 18px;
-      background: linear-gradient(150deg,
-        color-mix(in srgb, var(--c3) 9%, transparent) 0%,
-        color-mix(in srgb, var(--c3) 2%, transparent) 100%);
-      border: 1px solid color-mix(in srgb, var(--c3) 22%, transparent);
-      box-shadow: 0 14px 38px -16px color-mix(in srgb, var(--c3) 30%, transparent);
-      position: relative;
-      overflow: hidden;
-    }
-    .house-card::before {
-      content: '';
-      position: absolute;
-      top: -50%; right: -30%;
-      width: 240px; height: 240px;
-      background: radial-gradient(circle, color-mix(in srgb, var(--c3) 18%, transparent), transparent 65%);
-      pointer-events: none;
-    }
-
-    .house-eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--c3);
-      opacity: 0.9;
-      margin-bottom: 8px;
-    }
-
-    .house-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(22px, 2.2vw, 28px);
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      line-height: 1.2;
-      color: var(--fg);
-      margin-bottom: 14px;
-    }
-    .house-title em { font-style: italic; color: var(--c3); font-weight: 500; }
-
-    .house-row {
-      display: grid;
-      grid-template-columns: 22px 1fr auto;
       align-items: center;
-      gap: 12px;
-      padding: 9px 0;
-      border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-      font-size: 14px;
+      justify-content: center;
+      gap: 56px;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
     }
-    .house-row:last-child { border-bottom: none; }
-    .house-row .hr-icon {
-      font-size: 14px;
-      opacity: 0.7;
+
+    /* ── The equation — hero element ── */
+    .equation {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(28px, 4.4vw, 56px);
+      letter-spacing: 0.01em;
+      line-height: 1.3;
+      color: var(--fg);
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: baseline;
+      gap: 6px 10px;
+    }
+    .equation sub {
+      font-size: 0.6em;
+      padding: 0 1px;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+      font-weight: 600;
+    }
+    .equation .eq-y,
+    .equation .eq-eq,
+    .equation .eq-op {
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      font-weight: 500;
+    }
+    .equation .eq-term {
+      display: inline-flex;
+      align-items: baseline;
+    }
+    .equation .eq-w { color: var(--c2); font-weight: 700; }
+    .equation .eq-x { color: var(--c1); font-weight: 700; padding-left: 2px; }
+    .equation .eq-b { color: var(--c3); font-weight: 700; }
+    .equation .eq-dots {
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      padding: 0 4px;
+      letter-spacing: 0.2em;
+    }
+
+    /* ── Legend strip ── */
+    .legend {
+      display: flex;
+      gap: clamp(28px, 4vw, 56px);
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .legend-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      max-width: 220px;
       text-align: center;
     }
-    .house-row .hr-key {
-      color: color-mix(in srgb, var(--fg) 80%, transparent);
-      font-weight: 500;
-    }
-    .house-row .hr-val {
+    .legend-glyph {
       font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(22px, 2.4vw, 30px);
       font-weight: 700;
-      color: var(--c1);
-      font-size: 13px;
-      padding: 3px 10px;
-      border-radius: 6px;
-      background: color-mix(in srgb, var(--c1) 10%, transparent);
-      border: 1px solid color-mix(in srgb, var(--c1) 24%, transparent);
-    }
-
-    .house-divider {
-      height: 1px;
-      background: color-mix(in srgb, var(--fg) 12%, transparent);
-      margin: 14px 0 12px;
-    }
-
-    .house-price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 4px 0;
-    }
-    .house-price-row .hp-key {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--c3);
-      opacity: 0.85;
-    }
-    .house-price-row .hp-val {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(26px, 2.8vw, 36px);
-      font-weight: 600;
-      color: var(--c3);
-      letter-spacing: -0.02em;
       line-height: 1;
     }
-
-    .lede {
-      opacity: 0;
-      transform: translateX(-20px);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(18px, 1.7vw, 22px);
-      font-style: italic;
-      line-height: 1.5;
-      color: color-mix(in srgb, var(--fg) 80%, transparent);
-      padding: 0 4px;
-    }
-    .lede em { font-style: italic; color: var(--c3); font-weight: 600; }
-    .lede .lede-y { color: var(--c3); font-weight: 700; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
-    .lede .lede-w { color: var(--c2); font-weight: 700; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
-    .lede .lede-x { color: var(--c1); font-weight: 700; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 0.88em; }
-
-    /* ─── RIGHT COLUMN — Matrix visualization ─────────── */
-    .visual-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      opacity: 0;
-      transform: translateX(20%);
-    }
-
-    .stage {
-      width: 100%;
-      max-width: 760px;
-      border-radius: 22px;
-      background:
-        radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--c3) 8%, transparent) 0%, transparent 55%),
-        radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--c2) 8%, transparent) 0%, transparent 55%),
-        color-mix(in srgb, var(--fg) 3%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 9%, transparent);
-      box-shadow: 0 18px 50px -16px color-mix(in srgb, var(--bg) 50%, transparent);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      padding: 28px 24px 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stage-label {
-      position: absolute;
-      top: 14px;
-      left: 20px;
+    .legend-glyph.lg-y { color: color-mix(in srgb, var(--fg) 85%, transparent); }
+    .legend-glyph.lg-w { color: var(--c2); }
+    .legend-glyph.lg-x { color: var(--c1); }
+    .legend-glyph.lg-b { color: var(--c3); }
+    .legend-label {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
+      font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
     }
-    .stage-label .sl-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--c3);
-      box-shadow: 0 0 8px var(--c3);
-      animation: pulseDot 2.4s ease-in-out infinite;
-    }
-    @keyframes pulseDot {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.25); }
+    .legend-desc {
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
     }
 
-    /* Matrix header — equation form: y = W · x + b */
-    .mx-header {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-top: 12px;
-    }
-    .mx-header .mxh-y { color: var(--c3); font-weight: 700; }
-    .mx-header .mxh-w { color: var(--c2); font-weight: 700; }
-    .mx-header .mxh-x { color: var(--c1); font-weight: 700; }
-    .mx-header .mxh-b { color: color-mix(in srgb, var(--fg) 65%, transparent); font-weight: 700; }
-    .mx-header .mxh-op { color: color-mix(in srgb, var(--fg) 40%, transparent); }
-
-    .mx-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      width: 100%;
-      flex-wrap: wrap;
-    }
-
-    .mx-stack {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .mx-stack-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      margin-bottom: 2px;
-    }
-    .mx-stack-label .mxsl-y { color: var(--c3); }
-    .mx-stack-label .mxsl-w { color: var(--c2); }
-    .mx-stack-label .mxsl-x { color: var(--c1); }
-    .mx-stack-label .mxsl-b { color: color-mix(in srgb, var(--fg) 70%, transparent); }
-
-    .mx-block {
-      position: relative;
-      display: grid;
-      gap: 6px;
-      padding: 4px 12px;
-    }
-    .mx-block::before,
-    .mx-block::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 8px;
-      border: 2px solid currentColor;
-      opacity: 0.6;
-    }
-    .mx-block::before { left: 0; border-right: none; border-radius: 4px 0 0 4px; }
-    .mx-block::after  { right: 0; border-left: none;  border-radius: 0 4px 4px 0; }
-
-    .mx-block.is-Y { color: var(--c3); }
-    .mx-block.is-W { color: var(--c2); }
-    .mx-block.is-X { color: var(--c1); }
-    .mx-block.is-B { color: color-mix(in srgb, var(--fg) 60%, transparent); }
-
-    .mx-cell {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--fg);
-      background: color-mix(in srgb, currentColor 6%, transparent);
-      border: 1.5px solid color-mix(in srgb, currentColor 30%, transparent);
-      border-radius: 8px;
-      min-width: 76px;
-      height: 38px;
-      padding: 0 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
-    }
-    .mx-cell .cell-tag {
-      font-size: 0.72em;
-      font-weight: 600;
-      color: color-mix(in srgb, currentColor 55%, var(--fg));
-      opacity: 0.8;
-    }
-    .mx-cell .cell-val {
-      font-weight: 700;
-    }
-
-    /* Color-coded cell variants */
-    .mx-block.is-Y .mx-cell { color: var(--c3); }
-    .mx-block.is-W .mx-cell { color: var(--c2); }
-    .mx-block.is-X .mx-cell { color: var(--c1); }
-    .mx-block.is-B .mx-cell { color: color-mix(in srgb, var(--fg) 70%, transparent); }
-
-    .mx-cell.glow {
-      background: color-mix(in srgb, currentColor 28%, transparent);
-      border-color: currentColor;
-      box-shadow: 0 0 18px color-mix(in srgb, currentColor 55%, transparent);
-      transform: scale(1.05);
-    }
-    .mx-cell.dim { opacity: 0.35; }
-
-    .mx-op-big {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 24px;
-      font-weight: 700;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      padding: 0 4px;
-    }
-
-    /* Dot-product readout: substituted with real values */
-    .dot-readout {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(13px, 1.2vw, 15px);
-      letter-spacing: 0.02em;
+    /* ── Tagline ── */
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(18px, 1.9vw, 24px);
+      line-height: 1.5;
       color: color-mix(in srgb, var(--fg) 80%, transparent);
-      min-height: 28px;
       text-align: center;
-      opacity: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      padding: 6px 14px;
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--fg) 3%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-      max-width: 92%;
+      max-width: 56ch;
     }
-    .dot-readout .dr-y { color: var(--c3); font-weight: 700; }
-    .dot-readout .dr-w { color: var(--c2); font-weight: 700; }
-    .dot-readout .dr-x { color: var(--c1); font-weight: 700; }
-    .dot-readout .dr-b { color: color-mix(in srgb, var(--fg) 70%, transparent); font-weight: 700; }
-    .dot-readout .dr-op { color: color-mix(in srgb, var(--fg) 45%, transparent); }
-    .dot-readout .dr-eq { color: color-mix(in srgb, var(--fg) 60%, transparent); margin: 0 4px; }
-    .dot-readout .dr-result {
-      color: var(--c3);
-      font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 8px;
-      background: color-mix(in srgb, var(--c3) 14%, transparent);
-      border: 1px solid color-mix(in srgb, var(--c3) 32%, transparent);
-    }
-
-    .stage-caption {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      text-align: center;
-    }
-    .stage-caption .sc-em { color: var(--c3); font-weight: 700; }
-
-    @media (max-width: 900px) {
-      body { padding: 20px 20px 24px; }
-      .body-layout { grid-template-columns: 1fr; gap: 22px; }
-    }
+    .tagline em { font-style: italic; color: var(--c2); font-weight: 600; }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -395,127 +138,47 @@
 <body>
   <page-title id="header" eyebrow="Linear Algebra" title="<em>n</em> Variables"></page-title>
 
-  <div class="body-layout">
-    <!-- LEFT: Real house example -->
-    <div class="left-col" id="leftCol">
-      <div class="house-card">
-        <div class="house-eyebrow">Real example · House listing</div>
-        <div class="house-title">Estimate this <em>house's</em> price.</div>
-
-        <div class="house-row">
-          <span class="hr-icon">📐</span>
-          <span class="hr-key">Size</span>
-          <span class="hr-val">2,100 sqft</span>
-        </div>
-        <div class="house-row">
-          <span class="hr-icon">🛏️</span>
-          <span class="hr-key">Bedrooms</span>
-          <span class="hr-val">3</span>
-        </div>
-        <div class="house-row">
-          <span class="hr-icon">📍</span>
-          <span class="hr-key">Location score</span>
-          <span class="hr-val">8 / 10</span>
-        </div>
-        <div class="house-row">
-          <span class="hr-icon">🗓️</span>
-          <span class="hr-key">Age</span>
-          <span class="hr-val">12 yrs</span>
-        </div>
-        <div class="house-row">
-          <span class="hr-icon">🚉</span>
-          <span class="hr-key">Distance to metro</span>
-          <span class="hr-val">2 km</span>
-        </div>
-
-        <div class="house-divider"></div>
-
-        <div class="house-price-row">
-          <span class="hp-key">Predicted price · Y</span>
-          <span class="hp-val" id="housePrice">$ ? ? ?</span>
-        </div>
-      </div>
-
-      <p class="lede" id="lede">
-        <span class="lede-y">y</span> = how much it sells for · <span class="lede-w">w</span> = how much each feature matters · <span class="lede-x">x</span> = the feature values
-      </p>
+  <div class="body">
+    <div class="equation" aria-label="n-variable linear equation">
+      <span class="eq-y">y</span>
+      <span class="eq-eq">=</span>
+      <span class="eq-term"><span class="eq-w">w</span><sub>1</sub><span class="eq-x">x</span><sub>1</sub></span>
+      <span class="eq-op">+</span>
+      <span class="eq-term"><span class="eq-w">w</span><sub>2</sub><span class="eq-x">x</span><sub>2</sub></span>
+      <span class="eq-op">+</span>
+      <span class="eq-dots">⋯</span>
+      <span class="eq-op">+</span>
+      <span class="eq-term"><span class="eq-w">w</span><sub>n</sub><span class="eq-x">x</span><sub>n</sub></span>
+      <span class="eq-op">+</span>
+      <span class="eq-b">b</span>
     </div>
 
-    <!-- RIGHT: Matrix visualization — Y on the LEFT -->
-    <div class="visual-col" id="visual">
-      <div class="stage" id="stage">
-        <span class="stage-label">
-          <span class="sl-dot"></span><span id="stepLabel">y = w · x + b</span>
-        </span>
-
-        <div class="mx-header">
-          <span class="mxh-y">y</span>
-          <span class="mxh-op">=</span>
-          <span class="mxh-w">w</span>
-          <span class="mxh-op">·</span>
-          <span class="mxh-x">x</span>
-          <span class="mxh-op">+</span>
-          <span class="mxh-b">b</span>
-        </div>
-
-        <div class="mx-row" id="matrixRow">
-
-          <!-- Y on the LEFT — the output / price we want -->
-          <div class="mx-stack">
-            <div class="mx-stack-label"><span class="mxsl-y">Y</span> · price</div>
-            <div class="mx-block is-Y" id="matY">
-              <div class="mx-cell" id="cellY"><span class="cell-val">price</span></div>
-            </div>
-          </div>
-
-          <span class="mx-op-big">=</span>
-
-          <!-- W — the weights (one per feature) -->
-          <div class="mx-stack">
-            <div class="mx-stack-label"><span class="mxsl-w">W</span> · weights</div>
-            <div class="mx-block is-W" id="matW">
-              <div class="mx-cell" data-i="0"><span class="cell-tag">w₁</span><span class="cell-val">320</span></div>
-              <div class="mx-cell" data-i="1"><span class="cell-tag">w₂</span><span class="cell-val">25k</span></div>
-              <div class="mx-cell" data-i="2"><span class="cell-tag">w₃</span><span class="cell-val">18k</span></div>
-              <div class="mx-cell" data-i="3"><span class="cell-tag">w₄</span><span class="cell-val">−2.5k</span></div>
-              <div class="mx-cell" data-i="4"><span class="cell-tag">w₅</span><span class="cell-val">−8k</span></div>
-            </div>
-          </div>
-
-          <span class="mx-op-big">·</span>
-
-          <!-- X — the feature values -->
-          <div class="mx-stack">
-            <div class="mx-stack-label"><span class="mxsl-x">X</span> · features</div>
-            <div class="mx-block is-X" id="matX">
-              <div class="mx-cell" data-i="0"><span class="cell-tag">x₁</span><span class="cell-val">2100</span></div>
-              <div class="mx-cell" data-i="1"><span class="cell-tag">x₂</span><span class="cell-val">3</span></div>
-              <div class="mx-cell" data-i="2"><span class="cell-tag">x₃</span><span class="cell-val">8</span></div>
-              <div class="mx-cell" data-i="3"><span class="cell-tag">x₄</span><span class="cell-val">12</span></div>
-              <div class="mx-cell" data-i="4"><span class="cell-tag">x₅</span><span class="cell-val">2</span></div>
-            </div>
-          </div>
-
-          <span class="mx-op-big">+</span>
-
-          <!-- b — bias -->
-          <div class="mx-stack">
-            <div class="mx-stack-label"><span class="mxsl-b">b</span> · bias</div>
-            <div class="mx-block is-B" id="matB">
-              <div class="mx-cell"><span class="cell-val">50k</span></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="dot-readout" id="dotReadout">
-          <span class="dr-eq">Click play to compute</span>
-        </div>
-
-        <div class="stage-caption">
-          <span class="sc-em">Y = W · X + b</span> · weighted sum of all features
-        </div>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-glyph lg-y">y</span>
+        <span class="legend-label">output</span>
+        <span class="legend-desc">what we want to predict</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-glyph lg-x">x<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-label">inputs</span>
+        <span class="legend-desc">the <em style="font-style:normal;color:var(--c1);font-weight:700">n</em> feature values</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-glyph lg-w">w<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-label">weights</span>
+        <span class="legend-desc">how much each input matters</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-glyph lg-b">b</span>
+        <span class="legend-label">bias</span>
+        <span class="legend-desc">a constant offset</span>
       </div>
     </div>
+
+    <p class="tagline">
+      <em>n</em> inputs, each with its own weight, summed into a single output.
+    </p>
   </div>
 
   <script>
@@ -546,134 +209,7 @@
         const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
         applyPalette(p);
       }
-      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
     });
-
-    // House data — keep weights/features in sync with the displayed cells.
-    const FEATURE_NAMES = ['size', 'bedrooms', 'location', 'age', 'metro dist'];
-    const WEIGHTS  = [320, 25000, 18000, -2500, -8000];
-    const FEATURES = [2100, 3, 8, 12, 2];
-    const BIAS = 50000;
-
-    // Format helpers
-    const fmtMoney = (v) => {
-      if (Math.abs(v) >= 1000) return `$${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k`;
-      return `$${v}`;
-    };
-    const fmtW = (w) => {
-      if (w === 0) return '0';
-      const abs = Math.abs(w);
-      const sign = w < 0 ? '−' : '';
-      if (abs >= 1000) return `${sign}${(abs/1000).toFixed(abs%1000===0?0:1)}k`;
-      return `${sign}${abs}`;
-    };
-
-    function clearGlow() {
-      document.querySelectorAll('.mx-cell').forEach(c => c.classList.remove('glow', 'dim'));
-    }
-
-    function highlightFeature(i) {
-      clearGlow();
-      const wCells = document.querySelectorAll('#matW .mx-cell');
-      const xCells = document.querySelectorAll('#matX .mx-cell');
-      // Dim all weights/features except index i
-      wCells.forEach((c, idx) => { if (idx !== i) c.classList.add('dim'); else c.classList.add('glow'); });
-      xCells.forEach((c, idx) => { if (idx !== i) c.classList.add('dim'); else c.classList.add('glow'); });
-      // Y cell stays neutral until total computed
-    }
-
-    function showFinalY(total) {
-      clearGlow();
-      const yCell = document.getElementById('cellY');
-      yCell.querySelector('.cell-val').textContent = fmtMoney(total);
-      yCell.classList.add('glow');
-      // Mirror into the house card price field
-      const housePrice = document.getElementById('housePrice');
-      housePrice.textContent = fmtMoney(total);
-    }
-
-    function resetY() {
-      const yCell = document.getElementById('cellY');
-      yCell.querySelector('.cell-val').textContent = 'price';
-      yCell.classList.remove('glow');
-      document.getElementById('housePrice').textContent = '$ ? ? ?';
-    }
-
-    let cycleTl = null;
-    function startCycle() {
-      if (cycleTl) cycleTl.kill();
-      const readout = document.getElementById('dotReadout');
-      const stepLabel = document.getElementById('stepLabel');
-
-      cycleTl = gsap.timeline({ repeat: -1, repeatDelay: 1.6 });
-
-      // For each feature, highlight w_i and x_i, show "w_i · x_i = ..."
-      let running = 0;
-      FEATURES.forEach((x, i) => {
-        const w = WEIGHTS[i];
-        const term = w * x;
-        running += term;
-        cycleTl.call(() => {
-          resetY();
-          highlightFeature(i);
-          stepLabel.textContent = `Step ${i+1} of ${FEATURES.length} · ${FEATURE_NAMES[i]}`;
-          readout.innerHTML = `
-            <span class="dr-w">w<sub>${i+1}</sub></span><span class="dr-op">·</span><span class="dr-x">x<sub>${i+1}</sub></span>
-            <span class="dr-eq">=</span>
-            <span class="dr-w">${fmtW(w)}</span><span class="dr-op">·</span><span class="dr-x">${x.toLocaleString()}</span>
-            <span class="dr-eq">=</span>
-            <span class="dr-result">${fmtMoney(term)}</span>
-          `;
-          gsap.fromTo(readout, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' });
-        });
-        cycleTl.to({}, { duration: 1.7 });
-      });
-
-      // Final sum: show all weights/features + bias, then reveal Y
-      cycleTl.call(() => {
-        clearGlow();
-        stepLabel.textContent = `Sum all · add bias · result`;
-        const total = running + BIAS;
-        readout.innerHTML = `
-          <span class="dr-y">y</span>
-          <span class="dr-eq">=</span>
-          <span class="dr-w">Σ w·x</span>
-          <span class="dr-op">+</span>
-          <span class="dr-b">b</span>
-          <span class="dr-eq">=</span>
-          <span class="dr-result">${fmtMoney(total)}</span>
-        `;
-        gsap.fromTo(readout, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.35 });
-        showFinalY(total);
-      });
-      cycleTl.to({}, { duration: 2.6 });
-    }
-
-    function startEntrance() {
-      if (cycleTl) cycleTl.kill();
-      gsap.set("#header", { opacity: 0, y: 20 });
-      gsap.set("#leftCol", { opacity: 0, x: -20 });
-      gsap.set("#lede", { opacity: 0, x: -20 });
-      gsap.set("#visual", { opacity: 0, x: '20%' });
-      gsap.set("#dotReadout", { opacity: 0, y: 4 });
-      gsap.set("#matrixRow .mx-cell", { opacity: 0, y: 8, scale: 0.92 });
-      clearGlow();
-      resetY();
-
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
-      tl.to("#leftCol", { opacity: 1, x: 0, duration: 0.6 }, "-=0.3");
-      tl.to("#lede", { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" }, "-=0.3");
-      tl.to("#visual", { opacity: 1, x: 0, duration: 0.7 }, "-=0.4");
-      tl.to("#matrixRow .mx-cell",
-        { opacity: 1, y: 0, scale: 1, duration: 0.35, stagger: 0.04 },
-        "-=0.45"
-      );
-      tl.to("#dotReadout", { opacity: 1, y: 0, duration: 0.4 }, "-=0.2");
-      tl.call(() => startCycle());
-    }
-
-    window.addEventListener('load', startEntrance);
   </script>
 </body>
 </html>
