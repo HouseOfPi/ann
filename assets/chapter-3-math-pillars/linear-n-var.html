@@ -172,6 +172,75 @@
       max-width: 56ch;
     }
     .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
+
+    /* ── House data table (right half) ── */
+    .data-card {
+      width: 100%;
+      max-width: 560px;
+      padding: 22px 24px 24px;
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 14px 38px -18px color-mix(in srgb, var(--bg) 60%, transparent);
+    }
+    .data-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      margin-bottom: 6px;
+    }
+    .data-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 18px;
+    }
+    .data-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+    }
+    .data-table thead th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+    }
+    .data-table thead th.data-price-col {
+      color: var(--accent);
+      text-align: right;
+    }
+    .data-table tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      color: color-mix(in srgb, var(--fg) 88%, transparent);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody td.data-price-cell {
+      text-align: right;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+    }
+    .data-table tbody tr:hover td {
+      background: color-mix(in srgb, var(--fg) 4%, transparent);
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -224,7 +293,58 @@
     </div>
 
     <div class="right-half" id="rightHalf">
-      <!-- Animation will live here -->
+      <div class="data-card">
+        <div class="data-eyebrow">Real-world example</div>
+        <div class="data-title">House features → <em>price</em></div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Size (sqft)</th>
+              <th>Beds</th>
+              <th>Location</th>
+              <th>Age (yrs)</th>
+              <th class="data-price-col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1,200</td>
+              <td>2</td>
+              <td>Suburb</td>
+              <td>12</td>
+              <td class="data-price-cell">$450k</td>
+            </tr>
+            <tr>
+              <td>1,850</td>
+              <td>3</td>
+              <td>Core</td>
+              <td>5</td>
+              <td class="data-price-cell">$680k</td>
+            </tr>
+            <tr>
+              <td>2,400</td>
+              <td>4</td>
+              <td>Suburb</td>
+              <td>2</td>
+              <td class="data-price-cell">$920k</td>
+            </tr>
+            <tr>
+              <td>1,400</td>
+              <td>2</td>
+              <td>Edge</td>
+              <td>20</td>
+              <td class="data-price-cell">$510k</td>
+            </tr>
+            <tr>
+              <td>2,100</td>
+              <td>3</td>
+              <td>Core</td>
+              <td>8</td>
+              <td class="data-price-cell">$750k</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
