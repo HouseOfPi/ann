@@ -91,29 +91,31 @@
       font-weight: 400;
     }
 
-    /* ── Legend strip ── */
+    /* ── Legend list — one point per line ── */
     .legend {
       display: flex;
-      gap: clamp(28px, 4vw, 56px);
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 0;
+      max-width: 640px;
+      width: 100%;
     }
     .legend-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      max-width: 220px;
-      text-align: center;
+      display: grid;
+      grid-template-columns: 56px 110px 1fr;
+      align-items: baseline;
+      column-gap: 24px;
+      padding: 16px 8px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
     }
+    .legend-item:last-child { border-bottom: none; }
     .legend-glyph {
       font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: clamp(26px, 2.8vw, 36px);
+      font-size: clamp(24px, 2.4vw, 30px);
       font-weight: 500;
       line-height: 1;
       color: var(--fg);
+      text-align: center;
     }
     .legend-glyph .lg-sub {
       font-style: italic;
@@ -131,13 +133,13 @@
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
     }
     .legend-desc {
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.5;
-      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      color: color-mix(in srgb, var(--fg) 82%, transparent);
     }
 
     /* ── Tagline ── */
