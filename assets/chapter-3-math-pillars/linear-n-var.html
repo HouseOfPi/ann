@@ -547,6 +547,52 @@
     .data-table tbody tr:hover td.data-price-cell {
       color: var(--accent);
     }
+    .data-table tbody tr {
+      cursor: pointer;
+    }
+    .row-popover {
+      position: fixed;
+      transform: translate(-100%, -50%) scale(0.92);
+      transform-origin: right center;
+      background: var(--bg);
+      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      border-radius: 16px;
+      padding: 24px 32px;
+      box-shadow: 0 20px 60px -10px color-mix(in srgb, var(--bg) 90%, transparent),
+                  0 0 80px 20px color-mix(in srgb, var(--bg) 60%, transparent),
+                  inset 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+      visibility: hidden;
+      pointer-events: none;
+      transition: visibility 0s 0.25s, transform 0.25s ease;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .row-popover.open {
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(-100%, -50%) scale(1);
+      transition: visibility 0s, transform 0.25s ease;
+    }
+    .left-half {
+      transition: filter 0.3s ease;
+    }
+    body.popover-active .left-half {
+      filter: blur(6px);
+    }
+    .mtx-col-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .right-half { position: relative; }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -601,7 +647,7 @@
 
     <div class="right-half" id="rightHalf">
       <div class="data-card">
-        <div class="data-eyebrow">Real-world example</div>
+        <div class="data-title">House <em>Prices</em></div>
         <table class="data-table">
           <thead>
             <tr class="data-var-row">
@@ -613,8 +659,8 @@
             </tr>
             <tr>
               <th>Size (sqft)</th>
-              <th>Beds</th>
-              <th>Location</th>
+              <th>Bedrooms</th>
+              <th>Distance (mi)</th>
               <th>Age (yrs)</th>
               <th class="data-price-col">Price</th>
             </tr>
@@ -623,40 +669,67 @@
             <tr>
               <td><span class="cell-value">1,200</span><span class="cell-weight">w<sub>1</sub></span></td>
               <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
-              <td><span class="cell-value">Suburb</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">12.5</span><span class="cell-weight">w<sub>3</sub></span></td>
               <td><span class="cell-value">12</span><span class="cell-weight">w<sub>4</sub></span></td>
               <td class="data-price-cell"><span class="cell-value">$450k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
               <td><span class="cell-value">1,850</span><span class="cell-weight">w<sub>1</sub></span></td>
               <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
-              <td><span class="cell-value">Core</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">2.0</span><span class="cell-weight">w<sub>3</sub></span></td>
               <td><span class="cell-value">5</span><span class="cell-weight">w<sub>4</sub></span></td>
               <td class="data-price-cell"><span class="cell-value">$680k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
               <td><span class="cell-value">2,400</span><span class="cell-weight">w<sub>1</sub></span></td>
               <td><span class="cell-value">4</span><span class="cell-weight">w<sub>2</sub></span></td>
-              <td><span class="cell-value">Suburb</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">15.0</span><span class="cell-weight">w<sub>3</sub></span></td>
               <td><span class="cell-value">2</span><span class="cell-weight">w<sub>4</sub></span></td>
               <td class="data-price-cell"><span class="cell-value">$920k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
               <td><span class="cell-value">1,400</span><span class="cell-weight">w<sub>1</sub></span></td>
               <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
-              <td><span class="cell-value">Edge</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">25.0</span><span class="cell-weight">w<sub>3</sub></span></td>
               <td><span class="cell-value">20</span><span class="cell-weight">w<sub>4</sub></span></td>
               <td class="data-price-cell"><span class="cell-value">$510k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
               <td><span class="cell-value">2,100</span><span class="cell-weight">w<sub>1</sub></span></td>
               <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
-              <td><span class="cell-value">Core</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">4.5</span><span class="cell-weight">w<sub>3</sub></span></td>
               <td><span class="cell-value">8</span><span class="cell-weight">w<sub>4</sub></span></td>
               <td class="data-price-cell"><span class="cell-value">$750k</span><span class="cell-weight">y</span></td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Floating Matrix Popover ── -->
+  <div class="row-popover" id="rowPopover">
+    <div class="mtx-eyebrow" style="margin-bottom: 0;">Data Matrix</div>
+    <div class="mtx-row" style="align-items: flex-start; gap: 32px;">
+      <div class="mtx-stack is-x">
+        <div class="bracket is-x" style="grid-template-columns: repeat(4, auto); column-gap: 20px; row-gap: 8px; padding: 8px 16px;">
+          <span class="mtx-col-header">Size</span><span class="mtx-col-header">Beds</span><span class="mtx-col-header">Dist</span><span class="mtx-col-header">Age</span>
+          <span class="bracket-cell" data-row="0">1,200</span><span class="bracket-cell" data-row="0">2</span><span class="bracket-cell" data-row="0">12.5</span><span class="bracket-cell" data-row="0">12</span>
+          <span class="bracket-cell" data-row="1">1,850</span><span class="bracket-cell" data-row="1">3</span><span class="bracket-cell" data-row="1">2.0</span><span class="bracket-cell" data-row="1">5</span>
+          <span class="bracket-cell" data-row="2">2,400</span><span class="bracket-cell" data-row="2">4</span><span class="bracket-cell" data-row="2">15.0</span><span class="bracket-cell" data-row="2">2</span>
+          <span class="bracket-cell" data-row="3">1,400</span><span class="bracket-cell" data-row="3">2</span><span class="bracket-cell" data-row="3">25.0</span><span class="bracket-cell" data-row="3">20</span>
+          <span class="bracket-cell" data-row="4">2,100</span><span class="bracket-cell" data-row="4">3</span><span class="bracket-cell" data-row="4">4.5</span><span class="bracket-cell" data-row="4">8</span>
+        </div>
+      </div>
+      <div class="mtx-stack is-y">
+        <div class="bracket is-y" style="grid-template-columns: 1fr; row-gap: 8px; padding: 8px 16px;">
+          <span class="mtx-col-header">Price</span>
+          <span class="bracket-cell" data-row="0">450k</span>
+          <span class="bracket-cell" data-row="1">680k</span>
+          <span class="bracket-cell" data-row="2">920k</span>
+          <span class="bracket-cell" data-row="3">510k</span>
+          <span class="bracket-cell" data-row="4">750k</span>
+        </div>
       </div>
     </div>
   </div>
@@ -669,53 +742,9 @@
       <div class="mtx-title" id="mtxTitle">The scalar equation becomes <em>y = W · x + b</em>.</div>
 
       <div class="mtx-stage">
-        <!-- Step 1: the scalar form (anchor) -->
+        <!-- full matrix form y = W·x + b -->
         <div class="mtx-step" data-step="1">
-          <div class="mtx-step-label">Step 1 · Scalar form</div>
-          <div class="mtx-eq">
-            <span>y</span>
-            <span class="e-op">=</span>
-            <span class="e-term">w<sub>1</sub>x<sub>1</sub></span>
-            <span class="e-op">+</span>
-            <span class="e-term">w<sub>2</sub>x<sub>2</sub></span>
-            <span class="e-op">+</span>
-            <span class="e-dots">⋯</span>
-            <span class="e-op">+</span>
-            <span class="e-term">w<sub>n</sub>x<sub>n</sub></span>
-            <span class="e-op">+</span>
-            <span>b</span>
-          </div>
-        </div>
-
-        <!-- Step 2: arrange weights as a row vector, inputs as a column vector -->
-        <div class="mtx-step" data-step="2">
-          <div class="mtx-step-label">Step 2 · Stack the weights and inputs</div>
-          <div class="mtx-row">
-            <div class="mtx-stack is-w">
-              <div class="bracket is-w" style="grid-template-columns: repeat(4, auto);">
-                <span class="bracket-cell">w<sub>1</sub></span>
-                <span class="bracket-cell">w<sub>2</sub></span>
-                <span class="bracket-cell">⋯</span>
-                <span class="bracket-cell">w<sub>n</sub></span>
-              </div>
-              <span class="mtx-stack-tag">W · 1 × n</span>
-            </div>
-            <span class="mtx-op">·</span>
-            <div class="mtx-stack is-x">
-              <div class="bracket is-x">
-                <span class="bracket-cell">x<sub>1</sub></span>
-                <span class="bracket-cell">x<sub>2</sub></span>
-                <span class="bracket-cell">⋮</span>
-                <span class="bracket-cell">x<sub>n</sub></span>
-              </div>
-              <span class="mtx-stack-tag">x · n × 1</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: full matrix form y = W·x + b -->
-        <div class="mtx-step" data-step="3">
-          <div class="mtx-step-label">Step 3 · Matrix form</div>
+          <div class="mtx-step-label">Matrix form</div>
           <div class="mtx-row">
             <div class="mtx-stack is-y">
               <div class="bracket is-y">
@@ -753,12 +782,14 @@
           </div>
         </div>
 
-        <p class="mtx-caption" data-step="4" style="opacity:0; transform:translateY(8px); transition:opacity 0.6s ease, transform 0.6s ease;">
+        <p class="mtx-caption" data-step="2" style="opacity:0; transform:translateY(8px); transition:opacity 0.6s ease, transform 0.6s ease;">
           Same equation — written once with the <em>dot product</em>. Every neural-net layer is built from this.
         </p>
       </div>
     </div>
   </div>
+
+
 
   <script>
     /* ── Modal open/close + sequential reveal ── */
@@ -799,6 +830,32 @@
     });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    /* ── Row Click Popover Logic ── */
+    const rowPopover = document.getElementById('rowPopover');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+    const rightHalf = document.getElementById('rightHalf');
+    const dataCard = document.querySelector('.data-card');
+
+    tableRows.forEach((row, index) => {
+      row.addEventListener('click', (e) => {
+        // Position relative to viewport (fixed position regardless of row)
+        const cardRect = dataCard.getBoundingClientRect();
+        rowPopover.style.top = (cardRect.top + cardRect.height/2) + 'px';
+        rowPopover.style.left = (cardRect.left - 24) + 'px';
+        
+        rowPopover.classList.add('open');
+        document.body.classList.add('popover-active');
+        e.stopPropagation();
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!rowPopover.contains(e.target)) {
+        rowPopover.classList.remove('open');
+        document.body.classList.remove('popover-active');
+      }
     });
 
     const PALETTE_MAP = {
