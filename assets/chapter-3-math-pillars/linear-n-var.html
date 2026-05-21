@@ -223,6 +223,32 @@
       color: var(--accent);
       text-align: right;
     }
+    /* Variable label row sits above the column names */
+    .data-table thead .data-var-row th {
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--accent);
+      padding: 4px 10px 2px;
+      border-bottom: none;
+    }
+    .data-table thead .data-var-row th.data-price-col {
+      color: var(--accent);
+      text-align: right;
+    }
+    .data-table thead .data-var-row th sub {
+      font-style: italic;
+      font-size: 0.5em;
+      font-weight: 500;
+      color: color-mix(in srgb, var(--accent) 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
     .data-table tbody td {
       padding: 12px 10px;
       border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
@@ -298,6 +324,13 @@
         <div class="data-title">House features → <em>price</em></div>
         <table class="data-table">
           <thead>
+            <tr class="data-var-row">
+              <th>x<sub>1</sub></th>
+              <th>x<sub>2</sub></th>
+              <th>x<sub>3</sub></th>
+              <th>x<sub>4</sub></th>
+              <th class="data-price-col">y</th>
+            </tr>
             <tr>
               <th>Size (sqft)</th>
               <th>Beds</th>
