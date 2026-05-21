@@ -2200,7 +2200,7 @@
       // Activate default slide on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideLinearNVar');
+        const idx = activeSlides.findIndex(el => el.id === 'slideLinearSingleVar');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
