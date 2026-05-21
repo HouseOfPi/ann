@@ -6,14 +6,15 @@
   <title>n Variables Linear Equation | Presentation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=STIX+Two+Math&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --c1: #5fe8ec;  /* x — inputs */
-      --c2: #4ee0a0;  /* w — weights */
-      --c3: #a78bfa;  /* b — bias */
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
       --bg: #000000;
       --fg: #eef2f8;
+      --accent: #c97a4a; /* warm amber/terracotta — single professional accent */
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,11 +42,14 @@
       margin: 0 auto;
     }
 
-    /* ── The equation — hero element ── */
+    /* ── The equation — hero element ──
+       Uses STIX Two Math (a true mathematical typeface) in italic
+       for variable letters, giving real math clarity. */
     .equation {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(28px, 4.4vw, 56px);
-      letter-spacing: 0.01em;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', 'Times New Roman', serif;
+      font-style: italic;
+      font-size: clamp(34px, 5vw, 64px);
+      letter-spacing: 0;
       line-height: 1.3;
       color: var(--fg);
       text-align: center;
@@ -53,24 +57,36 @@
       flex-wrap: wrap;
       justify-content: center;
       align-items: baseline;
-      gap: 6px 10px;
-      font-weight: 600;
+      gap: 4px 14px;
+      font-weight: 500;
     }
     .equation sub {
-      font-size: 0.6em;
+      font-style: italic;
+      font-size: 0.42em;
       padding: 0 1px;
-      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
       font-weight: 500;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      margin-left: 1px;
     }
     .equation .eq-op,
     .equation .eq-eq {
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
-      font-weight: 400;
-    }
-    .equation .eq-term { display: inline-flex; align-items: baseline; }
-    .equation .eq-dots {
+      font-style: normal;
       color: color-mix(in srgb, var(--fg) 50%, transparent);
-      padding: 0 4px;
+      font-weight: 400;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+    }
+    .equation .eq-term {
+      display: inline-flex;
+      align-items: baseline;
+      color: var(--accent, #c97a4a);
+    }
+    .equation .eq-dots {
+      font-style: normal;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+      padding: 0 6px;
       letter-spacing: 0.2em;
       font-weight: 400;
     }
@@ -92,24 +108,36 @@
       text-align: center;
     }
     .legend-glyph {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(22px, 2.4vw, 30px);
-      font-weight: 700;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(26px, 2.8vw, 36px);
+      font-weight: 500;
       line-height: 1;
       color: var(--fg);
     }
+    .legend-glyph .lg-sub {
+      font-style: italic;
+      font-size: 0.45em;
+      font-weight: 500;
+      color: color-mix(in srgb, currentColor 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
     .legend-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 65%, transparent);
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
     }
     .legend-desc {
-      font-size: 13.5px;
-      line-height: 1.45;
-      color: color-mix(in srgb, var(--fg) 75%, transparent);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
     }
 
     /* ── Tagline ── */
@@ -152,12 +180,12 @@
         <span class="legend-desc">what we want to predict</span>
       </div>
       <div class="legend-item">
-        <span class="legend-glyph">x<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
         <span class="legend-label">inputs</span>
         <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
       </div>
       <div class="legend-item">
-        <span class="legend-glyph">w<sub style="font-size:0.55em">i</sub></span>
+        <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
         <span class="legend-label">weights</span>
         <span class="legend-desc">how much each input matters</span>
       </div>
@@ -175,14 +203,14 @@
 
   <script>
     const PALETTE_MAP = {
-      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#c25d42' },
-      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
-      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
-      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
-      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#a3e635', c3:'#a78bfa', eyebrow:'#a3e635' },
-      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
-      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
-      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#c25d42', accent:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57', accent:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a', accent:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b', accent:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#a3e635', c3:'#a78bfa', eyebrow:'#a3e635', accent:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488', accent:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed', accent:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec', accent:'#5fe8ec' },
     };
 
     function applyPalette(p) {
@@ -193,6 +221,7 @@
       document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
       document.body.style.setProperty('--c2', p.c2);
       document.body.style.setProperty('--c3', p.c3);
+      document.body.style.setProperty('--accent', p.accent || p.eyebrow || p.c1);
     }
 
     window.addEventListener('message', (e) => {
