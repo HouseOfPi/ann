@@ -265,7 +265,34 @@
       font-size: 13.5px;
     }
     .data-table tbody tr:hover td {
-      background: color-mix(in srgb, var(--fg) 4%, transparent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+
+    /* When a row is hovered, swap value text → weight text */
+    .data-table tbody td .cell-value { display: inline; }
+    .data-table tbody td .cell-weight {
+      display: none;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: 18px;
+      color: var(--accent);
+      letter-spacing: 0;
+    }
+    .data-table tbody td .cell-weight sub {
+      font-style: italic;
+      font-size: 0.5em;
+      font-weight: 500;
+      color: color-mix(in srgb, var(--accent) 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
+    .data-table tbody tr:hover td .cell-value { display: none; }
+    .data-table tbody tr:hover td .cell-weight { display: inline; }
+    .data-table tbody tr:hover td.data-price-cell {
+      color: var(--accent);
     }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
@@ -340,39 +367,39 @@
           </thead>
           <tbody>
             <tr>
-              <td>1,200</td>
-              <td>2</td>
-              <td>Suburb</td>
-              <td>12</td>
-              <td class="data-price-cell">$450k</td>
+              <td><span class="cell-value">1,200</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">Suburb</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">12</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$450k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
-              <td>1,850</td>
-              <td>3</td>
-              <td>Core</td>
-              <td>5</td>
-              <td class="data-price-cell">$680k</td>
+              <td><span class="cell-value">1,850</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">Core</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">5</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$680k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
-              <td>2,400</td>
-              <td>4</td>
-              <td>Suburb</td>
-              <td>2</td>
-              <td class="data-price-cell">$920k</td>
+              <td><span class="cell-value">2,400</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">4</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">Suburb</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$920k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
-              <td>1,400</td>
-              <td>2</td>
-              <td>Edge</td>
-              <td>20</td>
-              <td class="data-price-cell">$510k</td>
+              <td><span class="cell-value">1,400</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">Edge</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">20</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$510k</span><span class="cell-weight">y</span></td>
             </tr>
             <tr>
-              <td>2,100</td>
-              <td>3</td>
-              <td>Core</td>
-              <td>8</td>
-              <td class="data-price-cell">$750k</td>
+              <td><span class="cell-value">2,100</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">Core</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">8</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$750k</span><span class="cell-weight">y</span></td>
             </tr>
           </tbody>
         </table>
