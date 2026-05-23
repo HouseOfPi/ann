@@ -1,0 +1,11 @@
+.DS_Store
+.claude/
+
+# Python / Manim
+manim_env/
+__pycache__/
+*.pyc
+
+# Manim per-render cache (mp4s actually used by slides live in
+# assets/chapter-3-math-pillars/equation-animation/ and are tracked).
+assets/chapter-3-math-pillars/media/
