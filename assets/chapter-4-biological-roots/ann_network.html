@@ -340,10 +340,10 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="sl-row"><span class="sl-lbl">Input nodes</span>
           <div class="counter">
             <button class="counter-btn" onclick="stepCounter('sl-input',-1)">−</button>
-            <input type="number" class="counter-val" id="iv" value="16" min="2" max="100" oninput="typeCounter('sl-input',this,false)" onblur="typeCounter('sl-input',this,true)">
+            <input type="number" class="counter-val" id="iv" value="4" min="2" max="100" oninput="typeCounter('sl-input',this,false)" onblur="typeCounter('sl-input',this,true)">
             <button class="counter-btn" onclick="stepCounter('sl-input',1)">+</button>
           </div>
-          <input type="hidden" id="sl-input" min="2" max="100" value="16">
+          <input type="hidden" id="sl-input" min="2" max="100" value="4">
         </div>
         <div class="sl-row"><span class="sl-lbl">Hidden layers</span>
           <div class="counter">
@@ -356,18 +356,18 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="sl-row"><span class="sl-lbl">Hidden nodes</span>
           <div class="counter">
             <button class="counter-btn" onclick="stepCounter('sl-nodes',-1)">−</button>
-            <input type="number" class="counter-val" id="nv" value="16" min="2" max="100" oninput="typeCounter('sl-nodes',this,false)" onblur="typeCounter('sl-nodes',this,true)">
+            <input type="number" class="counter-val" id="nv" value="6" min="2" max="100" oninput="typeCounter('sl-nodes',this,false)" onblur="typeCounter('sl-nodes',this,true)">
             <button class="counter-btn" onclick="stepCounter('sl-nodes',1)">+</button>
           </div>
-          <input type="hidden" id="sl-nodes" min="2" max="100" value="16">
+          <input type="hidden" id="sl-nodes" min="2" max="100" value="6">
         </div>
         <div class="sl-row"><span class="sl-lbl">Output nodes</span>
           <div class="counter">
             <button class="counter-btn" onclick="stepCounter('sl-output',-1)">−</button>
-            <input type="number" class="counter-val" id="ov" value="7" min="1" max="100" oninput="typeCounter('sl-output',this,false)" onblur="typeCounter('sl-output',this,true)">
+            <input type="number" class="counter-val" id="ov" value="3" min="1" max="100" oninput="typeCounter('sl-output',this,false)" onblur="typeCounter('sl-output',this,true)">
             <button class="counter-btn" onclick="stepCounter('sl-output',1)">+</button>
           </div>
-          <input type="hidden" id="sl-output" min="1" max="100" value="7">
+          <input type="hidden" id="sl-output" min="1" max="100" value="3">
         </div>
       </div>
 
@@ -384,7 +384,6 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 
         <div class="toggle-row" style="margin-top:8px"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
         <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Loop Animation</span><div class="t-track on" id="loop-toggle" onclick="toggleLoop()"><div class="t-thumb"></div></div></div>
-        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Pause Flow</span><div class="t-track" id="pause-toggle" onclick="togglePause()"><div class="t-thumb"></div></div></div>
 
         <div class="sl-row" style="margin-top:16px"><span class="sl-lbl">Speed</span>
           <div class="counter">
@@ -449,7 +448,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
       <span class="lp-lbl">Input nodes</span>
       <div class="counter">
         <button class="counter-btn" onclick="stepCounter('sl-input',-1)">−</button>
-        <input type="number" class="counter-val" id="iv2" value="16" min="2" max="100"
+        <input type="number" class="counter-val" id="iv2" value="4" min="2" max="100"
           oninput="document.getElementById('iv').value=this.value;typeCounter('sl-input',this,false)"
           onblur="document.getElementById('iv').value=this.value;typeCounter('sl-input',this,true)">
         <button class="counter-btn" onclick="stepCounter('sl-input',1)">+</button>
@@ -469,7 +468,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
       <span class="lp-lbl">Hidden nodes</span>
       <div class="counter">
         <button class="counter-btn" onclick="stepCounter('sl-nodes',-1)">−</button>
-        <input type="number" class="counter-val" id="nv2" value="16" min="2" max="100"
+        <input type="number" class="counter-val" id="nv2" value="6" min="2" max="100"
           oninput="document.getElementById('nv').value=this.value;typeCounter('sl-nodes',this,false)"
           onblur="document.getElementById('nv').value=this.value;typeCounter('sl-nodes',this,true)">
         <button class="counter-btn" onclick="stepCounter('sl-nodes',1)">+</button>
@@ -479,7 +478,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
       <span class="lp-lbl">Output nodes</span>
       <div class="counter">
         <button class="counter-btn" onclick="stepCounter('sl-output',-1)">−</button>
-        <input type="number" class="counter-val" id="ov2" value="7" min="1" max="100"
+        <input type="number" class="counter-val" id="ov2" value="3" min="1" max="100"
           oninput="document.getElementById('ov').value=this.value;typeCounter('sl-output',this,false)"
           onblur="document.getElementById('ov').value=this.value;typeCounter('sl-output',this,true)">
         <button class="counter-btn" onclick="stepCounter('sl-output',1)">+</button>
@@ -494,7 +493,6 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
     <div class="lp-row"><span class="lp-tgl-lbl">Number Classification</span><div class="t-track" id="mnist-toggle2" onclick="toggleDemo('mnist')"><div class="t-thumb"></div></div></div>
     <div class="lp-row"><span class="lp-tgl-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle2" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
     <div class="lp-row"><span class="lp-tgl-lbl">Loop Animation</span><div class="t-track on" id="loop-toggle2" onclick="toggleLoop()"><div class="t-thumb"></div></div></div>
-    <div class="lp-row"><span class="lp-tgl-lbl">Pause Flow</span><div class="t-track" id="pause-toggle2" onclick="togglePause()"><div class="t-thumb"></div></div></div>
 
     <div class="lp-row" style="margin-top:6px">
       <span class="lp-lbl">Speed</span>
@@ -728,9 +726,9 @@ function hexToRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),
 function randWeight(){return+(Math.random()*2-1).toFixed(2);}
 function initWeights(layers){weights={};for(let li=0;li<layers.length-1;li++)for(let ai=0;ai<layers[li];ai++)for(let bi=0;bi<layers[li+1];bi++)weights[`${li}-${ai}-${bi}`]=randWeight();}
 function iScale(){return .2+(intensity-1)*(1.8/9);}
-function wSW(w){return Math.max(1.5,(0.8+Math.abs(w)*3.5+(intensity-1)*.12)).toFixed(2);}
-function wOp(w){const minOp=isDark?0.15:0.28; return Math.max(minOp, Math.min(1,(0.1+Math.abs(w)*0.9)*iScale())).toFixed(3);}
-function lineColor(){return isDark?'#334155':'#cbd5e1';}
+function wSW(w){return Math.max(2.0,(1.2+Math.abs(w)*3.0+(intensity-1)*.12)).toFixed(2);}
+function wOp(w){return Math.max(0.5, Math.min(1,(0.35+Math.abs(w)*0.7)*iScale())).toFixed(3);}
+function lineColor(){return isDark?'#64748b':'#94a3b8';}
 
 let animPaused=false;
 function stepCounter(id, delta){
@@ -785,7 +783,6 @@ function initCounters(){
 
 function togglePause(){
   animPaused=!animPaused;
-  [document.getElementById('pause-toggle'), document.getElementById('pause-toggle2')].forEach(el=>{ if(el) el.classList.toggle('on',animPaused); });
   
   const svg=document.getElementById('nn-svg');
   if(!svg) return;
@@ -891,8 +888,8 @@ function toggleColorModeInline(){
   colorMode=!t.classList.contains('on');
   t.classList.toggle('on',colorMode);
   // sync input node count
-  document.getElementById('iv').value=16;
-  document.getElementById('sl-input').value=16;
+  document.getElementById('iv').value=4;
+  document.getElementById('sl-input').value=4;
   buildNetwork(false);
 }
 function toggleColorMode(){const t=document.getElementById('color-toggle');colorMode=!t.classList.contains('on');t.classList.toggle('on',colorMode);buildNetwork(false);}
@@ -1899,8 +1896,8 @@ function buildNetwork(keepWeights=false){
   pc=0; rep=loopAnim?'indefinite':'1';
 
   const maxN=Math.max(...layers);
-  const NODE_R=Math.max(3,Math.min(16,Math.floor(220/(maxN*2.2))));
-  const VSP=Math.max(NODE_R*2+1,Math.min(62,Math.floor(680/(maxN+1))));
+  const NODE_R=Math.max(5,Math.min(24,Math.floor(320/(maxN*2.2))));
+  const VSP=Math.max(NODE_R*2+8,Math.min(85,Math.floor(800/(maxN+1))));
   const autoHideLabels=maxN>50;
   const PAD_Y=78;
   const PAD_X=demoMode?440:120;
@@ -1909,7 +1906,7 @@ function buildNetwork(keepWeights=false){
   const availW=mainArea?mainArea.clientWidth:window.innerWidth;
   const availH=mainArea?mainArea.clientHeight:window.innerHeight;
   const layoutW=demoMode?Math.max(availW,PAD_X+RIGHT_PAD+(total-1)*90):availW;
-  const xStep=Math.min(220,Math.max(90,(layoutW-PAD_X-RIGHT_PAD)/Math.max(1,total-1)));
+  const xStep=Math.min(450,Math.max(90,(layoutW-PAD_X-RIGHT_PAD)/Math.max(1,total-1)));
   const contentW=PAD_X+xStep*(total-1)+RIGHT_PAD;
   const centerOffset=Math.max(0,Math.floor((availW-contentW)/2));
   // Balance visual top (labels at centerOffsetY+13) and visual bottom (last node at PAD_Y+centerOffsetY+VSP*maxN)
@@ -1982,9 +1979,8 @@ function buildNetwork(keepWeights=false){
         edgeG.appendChild(line);
         const hit=el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'transparent','stroke-width':'12',style:'cursor:pointer'});
         const str=edgeStrength(acts,li,a,b);
-        hit.addEventListener('mouseenter',ev=>{tip.textContent=`w: ${(w>=0?'+':'')+w.toFixed(2)}`;tip.style.opacity='1';gsap.to(line,{attr:{'stroke-width':parseFloat(sw)*2.4},duration:.25,ease:'back.out(2)',overwrite:true});});
-        hit.addEventListener('mousemove',ev=>{tip.style.left=(ev.clientX+14)+'px';tip.style.top=(ev.clientY-28)+'px';});
-        hit.addEventListener('mouseleave',()=>{tip.style.opacity='0';gsap.to(line,{attr:{'stroke-width':parseFloat(sw)},duration:.32,ease:'elastic.out(1,.5)',overwrite:true});});
+        hit.addEventListener('mouseenter',ev=>{gsap.to(line,{attr:{'stroke-width':parseFloat(sw)*2.4},duration:.25,ease:'back.out(2)',overwrite:true});});
+        hit.addEventListener('mouseleave',()=>{gsap.to(line,{attr:{'stroke-width':parseFloat(sw)},duration:.32,ease:'elastic.out(1,.5)',overwrite:true});});
         edgeG.appendChild(hit);
       }
     }
@@ -1998,7 +1994,7 @@ function buildNetwork(keepWeights=false){
       const ws = tPrep + li*layerDur, wd=layerDur;
       const connCount = pos[li].length * pos[li+1].length;
       svg._dotConnCount=connCount;
-      const strThreshold = connCount > 150 ? 0.15 : connCount > 60 ? 0.06 : connCount > 20 ? 0.02 : 0;
+      const strThreshold = 0;
       for(let a=0;a<pos[li].length;a++){
         for(let b=0;b<pos[li+1].length;b++){
           // In demo mode use uniform strength for input layer so all rows look equal
@@ -2092,24 +2088,7 @@ function buildNetwork(keepWeights=false){
         const outer=el('circle',{cx:x,cy:y,r,fill:outerFill,stroke:col.stroke,'stroke-width':'2',class:'nn-node-outer'});
         svg.appendChild(outer);
         
-        let core;
-        if (demoMode && li > 0 && r >= 6) {
-          core = el('g', {class:'nn-node-core', style:`transform-origin: ${x}px ${y}px;`});
-          const GRID_SZ = 5;
-          const featureW = r * 1.15; 
-          const ps = featureW / GRID_SZ;
-          for(let dy=0; dy<GRID_SZ; dy++){
-            for(let dx=0; dx<GRID_SZ; dx++){
-               const px = x - featureW/2 + dx*ps;
-               const py = y - featureW/2 + dy*ps;
-               const intensity = getFeatureIntensity(li, ni, dx, dy, GRID_SZ);
-               const rect = el('rect', {x:px, y:py, width:ps+.25, height:ps+.25, rx:0.5, fill:col.text, opacity:(0.15 + 0.85*intensity).toFixed(2)});
-               core.appendChild(rect);
-            }
-          }
-        } else {
-          core = el('circle',{cx:x,cy:y,r:r*.44,fill:coreFill,opacity:coreOp,class:'nn-node-core'});
-        }
+        let core = el('circle',{cx:x,cy:y,r:r*.44,fill:coreFill,opacity:coreOp,class:'nn-node-core'});
         svg.appendChild(core);
 
         // Node value labels (Input & Output)
@@ -2140,26 +2119,8 @@ function buildNetwork(keepWeights=false){
         hn.addEventListener('mouseenter',()=>{
           gsap.to(outer,{attr:{r:r*1.26,'stroke-width':3},duration:.28,ease:'back.out(2.5)',overwrite:true});
           if(core.tagName==='circle') gsap.to(core,{attr:{r:r*.62},duration:.28,ease:'back.out(2.5)',overwrite:true});
-          const actVal=acts[li]&&acts[li][ni]!=null?acts[li][ni].toFixed(3):'—';
-          if (core.tagName === 'g') {
-            const GRID_SZ = 5;
-            let gridHtml = `<div style="display:grid; grid-template-columns:repeat(${GRID_SZ}, 1fr); gap:2px; width:70px; height:70px; margin-bottom:8px">`;
-            for(let dy=0; dy<GRID_SZ; dy++){
-              for(let dx=0; dx<GRID_SZ; dx++){
-                const intensity = getFeatureIntensity(li, ni, dx, dy, GRID_SZ);
-                gridHtml += `<div style="background:${col.text}; opacity:${(0.15 + 0.85*intensity).toFixed(2)}; border-radius:1px"></div>`;
-              }
-            }
-            gridHtml += `</div><div style="text-align:center; color:${isDark?'#cbd5e1':'#e2e8f0'}">act: <span style="color:#fff">${actVal}</span></div>`;
-            tip.innerHTML = gridHtml;
-          } else {
-            tip.textContent = `act: ${actVal}`;
-          }
-          tip.style.opacity='1';
         });
-        hn.addEventListener('mousemove',ev=>{tip.style.left=(ev.clientX+14)+'px';tip.style.top=(ev.clientY-28)+'px';});
         hn.addEventListener('mouseleave',()=>{
-          tip.style.opacity='0';
           gsap.to(outer,{attr:{r,'stroke-width':2},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
           if(core.tagName==='circle') gsap.to(core,{attr:{r:r*.44},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
         });
@@ -2258,6 +2219,8 @@ document.addEventListener('click', (e) => {
     panel.classList.remove('open');
   }
 });
+
+document.addEventListener('dblclick', togglePause);
 </script>
 </body>
 </html>
