@@ -1337,6 +1337,10 @@ function BiasPulse() {
 
 // ─── Formula panel below the neuron ──────────────────────────────────────
 function FormulaPanel() {
+  const palette = usePaletteVersion();
+  const ink = PALETTES[palette].ink;
+  const accent = PALETTES[palette].accent;
+  const accent2 = PALETTES[palette].accent2;
   const t = useTime();
 
   // Stage 1: Σ wᵢxᵢ + b appears as inputs arrive (11-14.5s)
@@ -1359,59 +1363,59 @@ function FormulaPanel() {
     }}>
       <div style={{
         fontSize: 32,
-        color: COLORS.ink,
+        color: ink,
         letterSpacing: '0.01em',
         whiteSpace: 'nowrap',
         lineHeight: 1.4,
       }}>
-        <span style={{ color: COLORS.ink }}>z</span>
-        <span style={{ color: COLORS.ink, margin: '0 12px' }}>=</span>
-        
+        <span style={{ color: ink }}>z</span>
+        <span style={{ color: ink, margin: '0 12px' }}>=</span>
+
         <span style={{ opacity: sumOp }}>
           {/* Term 1 */}
-          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.ink }}>1</sub>
-          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.ink }}>1</sub>
-          
-          <span style={{ margin: '0 8px', color: COLORS.ink }}>+</span>
-          
+          <span style={{ color: ink }}>w</span><sub style={{ fontSize: 16, color: ink }}>1</sub>
+          <span style={{ color: ink }}>·x</span><sub style={{ fontSize: 16, color: ink }}>1</sub>
+
+          <span style={{ margin: '0 8px', color: ink }}>+</span>
+
           {/* Term 2 */}
-          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.ink }}>2</sub>
-          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.ink }}>2</sub>
-          
-          <span style={{ margin: '0 8px', color: COLORS.ink }}>+</span>
-          
+          <span style={{ color: ink }}>w</span><sub style={{ fontSize: 16, color: ink }}>2</sub>
+          <span style={{ color: ink }}>·x</span><sub style={{ fontSize: 16, color: ink }}>2</sub>
+
+          <span style={{ margin: '0 8px', color: ink }}>+</span>
+
           {/* Term 3 */}
-          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.ink }}>3</sub>
-          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.ink }}>3</sub>
-          
-          <span style={{ margin: '0 8px', color: COLORS.ink }}>+</span>
-          
+          <span style={{ color: ink }}>w</span><sub style={{ fontSize: 16, color: ink }}>3</sub>
+          <span style={{ color: ink }}>·x</span><sub style={{ fontSize: 16, color: ink }}>3</sub>
+
+          <span style={{ margin: '0 8px', color: ink }}>+</span>
+
           {/* Term 4 */}
-          <span style={{ color: COLORS.ink }}>w</span><sub style={{ fontSize: 16, color: COLORS.ink }}>4</sub>
-          <span style={{ color: COLORS.ink }}>·x</span><sub style={{ fontSize: 16, color: COLORS.ink }}>4</sub>
-          
-          <span style={{ margin: '0 10px', color: COLORS.accent }}>+</span>
-          <span style={{ color: COLORS.accent }}>b</span>
+          <span style={{ color: ink }}>w</span><sub style={{ fontSize: 16, color: ink }}>4</sub>
+          <span style={{ color: ink }}>·x</span><sub style={{ fontSize: 16, color: ink }}>4</sub>
+
+          <span style={{ margin: '0 10px', color: accent }}>+</span>
+          <span style={{ color: accent }}>b</span>
         </span>
 
         <span style={{ opacity: zOp }}>
-          <span style={{ color: COLORS.ink, margin: '0 14px' }}>=</span>
-          <span style={{ color: COLORS.accent, fontWeight: 700 }}>{Z.toFixed(2)}</span>
+          <span style={{ color: ink, margin: '0 14px' }}>=</span>
+          <span style={{ color: accent, fontWeight: 700 }}>{Z.toFixed(2)}</span>
         </span>
       </div>
 
       <div style={{
         fontSize: 30,
-        color: COLORS.ink,
+        color: ink,
         marginTop: 24,
         opacity: fOp,
         whiteSpace: 'nowrap',
       }}>
-        <span style={{ color: COLORS.ink }}>output</span>
-        <span style={{ color: COLORS.ink, margin: '0 14px' }}>=</span>
-        <span style={{ color: COLORS.ink }}>f(z)</span>
-        <span style={{ color: COLORS.ink, margin: '0 14px' }}>=</span>
-        <span style={{ color: COLORS.accent2, fontWeight: 600 }}>{OUTPUT_VAL.toFixed(2)}</span>
+        <span style={{ color: ink }}>output</span>
+        <span style={{ color: ink, margin: '0 14px' }}>=</span>
+        <span style={{ color: ink }}>f(z)</span>
+        <span style={{ color: ink, margin: '0 14px' }}>=</span>
+        <span style={{ color: accent2, fontWeight: 600 }}>{OUTPUT_VAL.toFixed(2)}</span>
       </div>
     </div>
   );
@@ -1499,6 +1503,10 @@ function OutputNode() {
 
 // ─── Stage labels (inputs, weights, bias, activation) ────────────────────
 function StageLabels() {
+  const palette = usePaletteVersion();
+  const ink = PALETTES[palette].ink;
+  const dim = PALETTES[palette].dim;
+  const accent2 = PALETTES[palette].accent2;
   const t = useTime();
 
   // "Inputs" label above input column
@@ -1530,7 +1538,7 @@ function StageLabels() {
         width: 160, textAlign: 'center',
         fontFamily: FONT_SANS, fontSize: 20, fontWeight: 500,
         letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: COLORS.dim,
+        color: dim,
         opacity: clamp(inputsOp, 0, 1),
       }}>
         Inputs
@@ -1542,7 +1550,7 @@ function StageLabels() {
         width: 200, textAlign: 'center',
         fontFamily: FONT_SANS, fontSize: 20, fontWeight: 500,
         letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: COLORS.accent2,
+        color: accent2,
         opacity: clamp(weightsOp, 0, 1),
       }}>
         Weights
@@ -1554,7 +1562,7 @@ function StageLabels() {
         width: 200, textAlign: 'center',
         fontFamily: FONT_SANS, fontSize: 20, fontWeight: 500,
         letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: COLORS.dim,
+        color: dim,
         opacity: clamp(inputsOp, 0, 1),
       }}>
         Output
@@ -1567,7 +1575,7 @@ function StageLabels() {
           left: CX - 300, top: CY - 230,
           width: 600, textAlign: 'center',
           fontFamily: FONT_SANS, fontSize: 28, fontWeight: 500,
-          color: COLORS.ink,
+          color: ink,
           opacity: clamp(captionOp, 0, 1),
           transition: 'opacity 0.2s',
         }}>

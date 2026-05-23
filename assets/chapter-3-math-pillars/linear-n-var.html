@@ -378,10 +378,9 @@
     }
     .bracket.is-w .bracket-cell { color: var(--accent); }
 
-    /* Row vector W */
+    /* W matrix */
     .bracket.is-w {
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(46px, auto);
+      grid-auto-flow: row;
     }
 
     /* Stack label below brackets */
@@ -837,29 +836,65 @@
       <div class="mtx-title" id="mtxTitle">The scalar equation becomes <em>y = W · x + b</em>.</div>
 
       <div class="mtx-stage">
-        <!-- full matrix form y = W·x + b -->
+        <!-- Step 1: scalar equation -->
         <div class="mtx-step" data-step="1">
+          <div class="mtx-step-label">Scalar form</div>
+          <div class="mtx-eq">
+            <span>y</span>
+            <span class="e-op">=</span>
+            <span class="e-term">w<sub>1</sub>x<sub>1</sub></span>
+            <span class="e-op">+</span>
+            <span class="e-term">w<sub>2</sub>x<sub>2</sub></span>
+            <span class="e-op">+</span>
+            <span class="e-dots">⋯</span>
+            <span class="e-op">+</span>
+            <span class="e-term">w<sub>n</sub>x<sub>n</sub></span>
+            <span class="e-op">+</span>
+            <span>b</span>
+          </div>
+        </div>
+
+        <!-- Step 2: matrix form with W as 2D matrix -->
+        <div class="mtx-step" data-step="2">
           <div class="mtx-step-label">Matrix form</div>
           <div class="mtx-row">
+            <!-- y column vector -->
             <div class="mtx-stack is-y">
-              <div class="bracket is-y">
-                <span class="bracket-cell">y</span>
+              <div class="bracket is-y" style="grid-template-columns: 1fr;">
+                <span class="bracket-cell">y<sub>1</sub></span>
+                <span class="bracket-cell">y<sub>2</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">y<sub>m</sub></span>
               </div>
               <span class="mtx-stack-tag">y</span>
             </div>
             <span class="mtx-op">=</span>
+            <!-- W as 2D matrix (m × n) -->
             <div class="mtx-stack is-w">
               <div class="bracket is-w" style="grid-template-columns: repeat(4, auto);">
-                <span class="bracket-cell">w<sub>1</sub></span>
-                <span class="bracket-cell">w<sub>2</sub></span>
+                <span class="bracket-cell">w<sub>11</sub></span>
+                <span class="bracket-cell">w<sub>12</sub></span>
                 <span class="bracket-cell">⋯</span>
-                <span class="bracket-cell">w<sub>n</sub></span>
+                <span class="bracket-cell">w<sub>1n</sub></span>
+                <span class="bracket-cell">w<sub>21</sub></span>
+                <span class="bracket-cell">w<sub>22</sub></span>
+                <span class="bracket-cell">⋯</span>
+                <span class="bracket-cell">w<sub>2n</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">⋱</span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">w<sub>m1</sub></span>
+                <span class="bracket-cell">w<sub>m2</sub></span>
+                <span class="bracket-cell">⋯</span>
+                <span class="bracket-cell">w<sub>mn</sub></span>
               </div>
               <span class="mtx-stack-tag">W</span>
             </div>
             <span class="mtx-op">·</span>
+            <!-- x column vector -->
             <div class="mtx-stack is-x">
-              <div class="bracket is-x">
+              <div class="bracket is-x" style="grid-template-columns: 1fr;">
                 <span class="bracket-cell">x<sub>1</sub></span>
                 <span class="bracket-cell">x<sub>2</sub></span>
                 <span class="bracket-cell">⋮</span>
@@ -868,13 +903,18 @@
               <span class="mtx-stack-tag">x</span>
             </div>
             <span class="mtx-op">+</span>
+            <!-- b column vector -->
             <div class="mtx-stack">
-              <div class="bracket">
-                <span class="bracket-cell">b</span>
+              <div class="bracket" style="grid-template-columns: 1fr;">
+                <span class="bracket-cell">b<sub>1</sub></span>
+                <span class="bracket-cell">b<sub>2</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">b<sub>m</sub></span>
               </div>
               <span class="mtx-stack-tag">bias</span>
             </div>
           </div>
+        </div>
       </div>
     </div>
   </div>
