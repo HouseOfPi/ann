@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>n Variables Linear Equation | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=STIX+Two+Math&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+      --accent: #c97a4a; /* warm amber/terracotta — single professional accent */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 50px 40px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      width: 100%;
+    }
+    .equation-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 48px;
+      max-width: 720px;
+      padding-left: clamp(8px, 2vw, 32px);
+    }
+    .table-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      /* Reserved for upcoming animation */
+    }
+
+    @media (max-width: 900px) {
+      .body { grid-template-columns: 1fr; gap: 24px; }
+      .equation-side { padding-left: 0; max-width: 100%; }
+    }
+
+    /* ── The equation — hero element ──
+       Uses STIX Two Math (a true mathematical typeface) in italic
+       for variable letters, giving real math clarity. */
+    .equation {
+      font-family: 'STIX Two Math', 'Cormorant Garamond', 'Times New Roman', serif;
+      font-style: italic;
+      font-size: clamp(22px, 2.6vw, 36px);
+      letter-spacing: 0;
+      line-height: 1.3;
+      color: var(--fg);
+      text-align: left;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: baseline;
+      gap: 2px 8px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .equation sub {
+      font-style: italic;
+      font-size: 0.42em;
+      padding: 0 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+      font-weight: 500;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      margin-left: 1px;
+    }
+    .equation .eq-op,
+    .equation .eq-eq {
+      font-style: normal;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+      font-weight: 400;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+    }
+    .equation .eq-term {
+      display: inline-flex;
+      align-items: baseline;
+      color: var(--accent, #c97a4a);
+    }
+    .equation .eq-dots {
+      font-style: normal;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+      padding: 0 6px;
+      letter-spacing: 0.2em;
+      font-weight: 400;
+    }
+
+    /* ── Legend list — one point per line ── */
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 640px;
+      width: 100%;
+    }
+    .legend-item {
+      display: grid;
+      grid-template-columns: 56px 110px 1fr;
+      align-items: baseline;
+      column-gap: 24px;
+      padding: 16px 8px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+    }
+    .legend-item:last-child { border-bottom: none; }
+    .legend-glyph {
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(24px, 2.4vw, 30px);
+      font-weight: 500;
+      line-height: 1;
+      color: var(--fg);
+      text-align: center;
+    }
+    .legend-glyph .lg-sub {
+      font-style: italic;
+      font-size: 0.45em;
+      font-weight: 500;
+      color: color-mix(in srgb, currentColor 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
+    .legend-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+    }
+    .legend-desc {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 82%, transparent);
+    }
+
+    /* ── Tagline ── */
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(18px, 1.9vw, 24px);
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      text-align: left;
+      max-width: 56ch;
+    }
+    .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
+
+    /* Make the equation feel clickable */
+    .equation {
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+      transform-origin: center center;
+      display: inline-block;
+    }
+    .equation:hover {
+      transform: scale(1.08) translateY(-3px);
+      filter: drop-shadow(0 12px 24px color-mix(in srgb, var(--accent) 35%, transparent));
+    }
+
+    /* ── Modal: linear → matrix ── */
+    .mtx-overlay {
+      position: fixed;
+      inset: 0;
+      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .mtx-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .mtx-modal {
+      width: min(960px, 92vw);
+      max-height: 88vh;
+      padding: 36px 44px 38px;
+      border-radius: 22px;
+      background: linear-gradient(150deg,
+        color-mix(in srgb, var(--fg) 4%, var(--bg)) 0%,
+        var(--bg) 100%);
+      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      box-shadow: 0 30px 80px -20px color-mix(in srgb, var(--bg) 70%, transparent),
+                  inset 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+      position: relative;
+      transform: scale(0.94);
+      opacity: 0;
+      transition: transform 0.36s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.36s ease;
+      overflow: hidden;
+    }
+    .mtx-overlay.open .mtx-modal {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .mtx-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      width: 32px; height: 32px;
+      border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      font-size: 16px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      font-family: inherit;
+    }
+    .mtx-close:hover {
+      background: color-mix(in srgb, var(--fg) 8%, transparent);
+      color: var(--fg);
+      border-color: color-mix(in srgb, var(--fg) 32%, transparent);
+    }
+    .mtx-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .mtx-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 28px;
+    }
+    .mtx-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+
+    .mtx-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      align-items: center;
+    }
+
+    /* Step containers — each fades in sequentially */
+    .mtx-step {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .mtx-step-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+
+    /* Scalar equation (same as page hero) */
+    .mtx-eq {
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+      font-size: clamp(20px, 2.4vw, 30px);
+      font-weight: 500;
+      color: var(--fg);
+      display: flex;
+      align-items: baseline;
+      gap: 2px 8px;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    .mtx-eq sub {
+      font-style: italic;
+      font-size: 0.42em;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+    }
+    .mtx-eq .e-op { font-style: normal; color: color-mix(in srgb, var(--fg) 50%, transparent); font-weight: 400; }
+    .mtx-eq .e-term { color: var(--accent); }
+    .mtx-eq .e-dots { font-style: normal; color: color-mix(in srgb, var(--fg) 50%, transparent); padding: 0 4px; letter-spacing: 0.2em; }
+
+    /* Matrix layout */
+    .mtx-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+    }
+    .mtx-op {
+      font-style: normal;
+      font-size: 28px;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+    }
+    .bracket {
+      display: grid;
+      gap: 6px;
+      padding: 6px 12px;
+      position: relative;
+    }
+    .bracket::before, .bracket::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 8px;
+      border: 1.5px solid color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+    .bracket::before { left: 0; border-right: none; border-radius: 3px 0 0 3px; }
+    .bracket::after { right: 0; border-left: none; border-radius: 0 3px 3px 0; }
+
+    .bracket.is-w::before, .bracket.is-w::after { border-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+    .bracket.is-x::before, .bracket.is-x::after { border-color: color-mix(in srgb, var(--fg) 55%, transparent); }
+    .bracket.is-y::before, .bracket.is-y::after { border-color: color-mix(in srgb, var(--fg) 70%, transparent); }
+
+    .bracket-cell {
+      font-family: 'STIX Two Math', serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--fg);
+      min-width: 48px;
+      text-align: center;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
+    }
+    .bracket-cell.highlight {
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent);
+      text-shadow: 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent);
+    }
+    .bracket-cell sub {
+      font-size: 0.45em;
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+      color: color-mix(in srgb, var(--fg) 65%, transparent);
+    }
+    .bracket.is-w .bracket-cell { color: var(--accent); }
+
+    /* Row vector W */
+    .bracket.is-w {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(46px, auto);
+    }
+
+    /* Stack label below brackets */
+    .mtx-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .mtx-stack-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+    .mtx-stack.is-w .mtx-stack-tag { color: var(--accent); }
+
+    /* Caption */
+    .mtx-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      text-align: center;
+      max-width: 60ch;
+    }
+    .mtx-caption em { font-style: italic; color: var(--accent); font-weight: 600; }
+
+    /* ── House data table (right half) ── */
+    .data-card {
+      width: 100%;
+      max-width: 560px;
+      padding: 22px 24px 24px;
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 14px 38px -18px color-mix(in srgb, var(--bg) 60%, transparent);
+    }
+    .data-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      margin-bottom: 6px;
+    }
+    .data-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--fg);
+      margin-bottom: 18px;
+    }
+    .data-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px;
+    }
+    .data-table thead th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+    }
+    .data-table thead th.data-price-col {
+      color: var(--accent);
+      text-align: right;
+    }
+    /* Variable label row sits above the column names */
+    .data-table thead .data-var-row th {
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--accent);
+      padding: 4px 10px 2px;
+      border-bottom: none;
+    }
+    .data-table thead .data-var-row th.data-price-col {
+      color: var(--accent);
+      text-align: right;
+    }
+    .data-table thead .data-var-row th sub {
+      font-style: italic;
+      font-size: 0.5em;
+      font-weight: 500;
+      color: color-mix(in srgb, var(--accent) 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
+    .data-table tbody td {
+      padding: 12px 10px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      color: color-mix(in srgb, var(--fg) 88%, transparent);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody td.data-price-cell {
+      text-align: right;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+    }
+    .data-table tbody tr:hover td,
+    .data-table tbody:not(:hover) tr.selected td {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+    }
+
+    /* Column highlighting when hovering over column headers */
+    .data-table:has(th:nth-child(1):hover) th:nth-child(1),
+    .data-table:has(th:nth-child(1):hover) td:nth-child(1),
+    .data-table:has(th:nth-child(2):hover) th:nth-child(2),
+    .data-table:has(th:nth-child(2):hover) td:nth-child(2),
+    .data-table:has(th:nth-child(3):hover) th:nth-child(3),
+    .data-table:has(th:nth-child(3):hover) td:nth-child(3),
+    .data-table:has(th:nth-child(4):hover) th:nth-child(4),
+    .data-table:has(th:nth-child(4):hover) td:nth-child(4),
+    .data-table:has(th:nth-child(5):hover) th:nth-child(5),
+    .data-table:has(th:nth-child(5):hover) td:nth-child(5) {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border-radius: 4px;
+    }
+
+    /* When a row is hovered (and not selected), swap value text → weight text */
+    .data-table tbody td .cell-value { display: inline; }
+    .data-table tbody td .cell-weight {
+      display: none;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: 18px;
+      color: var(--accent);
+      letter-spacing: 0;
+    }
+    .data-table tbody td .cell-weight sub {
+      font-style: italic;
+      font-size: 0.5em;
+      font-weight: 500;
+      color: color-mix(in srgb, var(--accent) 70%, transparent);
+      vertical-align: baseline;
+      position: relative;
+      bottom: -0.25em;
+      padding-left: 1px;
+    }
+
+    .data-table tbody tr.selected td .cell-value { display: inline; }
+    .data-table tbody tr.selected td .cell-weight { display: none; }
+    
+    .data-table tbody tr {
+      cursor: pointer;
+    }
+    .row-popover {
+      position: fixed;
+      transform: translate(0, -50%) scale(0.92);
+      transform-origin: left center;
+      background: color-mix(in srgb, var(--fg) 3%, color-mix(in srgb, var(--bg) 95%, transparent));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 20px 60px -10px color-mix(in srgb, var(--bg) 95%, transparent),
+                  0 0 80px 20px color-mix(in srgb, var(--bg) 70%, transparent),
+                  inset 0 0 0 1px color-mix(in srgb, var(--fg) 8%, transparent);
+      visibility: hidden;
+      pointer-events: none;
+      transition: visibility 0s 0.25s, transform 0.25s ease;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: max-content;
+    }
+    .row-popover.open {
+      visibility: visible;
+      pointer-events: auto;
+      transform: translate(0, -50%) scale(1);
+      transition: visibility 0s, transform 0.25s ease;
+    }
+    
+    /* Popover Specific Matrix Elements overrides */
+    .row-popover .mtx-row {
+      gap: 8px;
+    }
+    .row-popover .mtx-op {
+      font-size: 20px;
+    }
+    .row-popover .bracket {
+      gap: 4px;
+      padding: 4px 8px;
+    }
+    .row-popover .bracket::before, 
+    .row-popover .bracket::after {
+      width: 5px;
+    }
+    .row-popover .bracket-cell {
+      font-size: 15px;
+      min-width: 32px;
+      padding: 2px 4px;
+    }
+    .row-popover .bracket.is-w {
+      grid-auto-flow: row;
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+    }
+    .equation-side {
+      transition: filter 0.3s ease;
+    }
+    body.popover-active .equation-side {
+      filter: blur(6px);
+    }
+    .mtx-col-header {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .table-side { position: relative; }
+
+    /* Glass effect on the rest of the page when hovering the equation */
+    #header, .table-side, .legend {
+      transition: filter 0.4s ease, opacity 0.4s ease;
+    }
+    body:has(.equation:hover) #header,
+    body:has(.equation:hover) .table-side,
+    body:has(.equation:hover) .legend {
+      filter: blur(8px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Linear Algebra" title="<em>n</em> Variables"></page-title>
+
+  <div class="body">
+    <div class="table-side" id="rightHalf">
+      <div class="data-card">
+        <div class="data-title">House <em>Prices</em></div>
+        <table class="data-table">
+          <thead>
+            <tr class="data-var-row">
+              <th>x<sub>1</sub></th>
+              <th>x<sub>2</sub></th>
+              <th>x<sub>3</sub></th>
+              <th>x<sub>4</sub></th>
+              <th class="data-price-col">y</th>
+            </tr>
+            <tr>
+              <th>Size (sqft)</th>
+              <th>Bedrooms</th>
+              <th>Distance (mi)</th>
+              <th>Age (yrs)</th>
+              <th class="data-price-col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cell-value">1,200</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">12.5</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">12</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$450k</span><span class="cell-weight">y</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-value">1,850</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">2.0</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">5</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$680k</span><span class="cell-weight">y</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-value">2,400</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">4</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">15.0</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$920k</span><span class="cell-weight">y</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-value">1,400</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">2</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">25.0</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">20</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$510k</span><span class="cell-weight">y</span></td>
+            </tr>
+            <tr>
+              <td><span class="cell-value">2,100</span><span class="cell-weight">w<sub>1</sub></span></td>
+              <td><span class="cell-value">3</span><span class="cell-weight">w<sub>2</sub></span></td>
+              <td><span class="cell-value">4.5</span><span class="cell-weight">w<sub>3</sub></span></td>
+              <td><span class="cell-value">8</span><span class="cell-weight">w<sub>4</sub></span></td>
+              <td class="data-price-cell"><span class="cell-value">$750k</span><span class="cell-weight">y</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="equation-side">
+      <div class="equation" id="eqClickable" role="button" tabindex="0" aria-label="n-variable linear equation — click to see matrix form">
+        <span>y</span>
+        <span class="eq-eq">=</span>
+        <span class="eq-term">w<sub>1</sub>x<sub>1</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>2</sub>x<sub>2</sub></span>
+        <span class="eq-op">+</span>
+        <span class="eq-dots">⋯</span>
+        <span class="eq-op">+</span>
+        <span class="eq-term">w<sub>n</sub>x<sub>n</sub></span>
+        <span class="eq-op">+</span>
+        <span>b</span>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-glyph">y</span>
+          <span class="legend-label">output</span>
+          <span class="legend-desc">what we want to predict</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">x<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">inputs</span>
+          <span class="legend-desc">the <em style="font-style:italic">n</em> feature values</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph" style="color:var(--accent)">w<sub class="lg-sub">i</sub></span>
+          <span class="legend-label">weights</span>
+          <span class="legend-desc">how much each input matters</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-glyph">b</span>
+          <span class="legend-label">bias</span>
+          <span class="legend-desc">a constant offset</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Floating Matrix Popover ── -->
+  <div class="row-popover" id="rowPopover">
+    <div class="mtx-eyebrow">Dataset prediction matrix</div>
+    <div class="mtx-title" style="font-size: 16px; margin-bottom: 4px; font-style: normal; font-family: 'STIX Two Math', serif; color: var(--fg); text-align: center;">
+      Y = X · W + b
+    </div>
+    <div class="mtx-row">
+      <!-- Y (Prices) -->
+      <div class="mtx-stack is-y">
+        <div class="bracket is-y" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$450k</span>
+          <span class="bracket-cell" data-row="1" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$680k</span>
+          <span class="bracket-cell" data-row="2" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$920k</span>
+          <span class="bracket-cell" data-row="3" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$510k</span>
+          <span class="bracket-cell" data-row="4" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">$750k</span>
+        </div>
+        <span class="mtx-stack-tag">Y</span>
+      </div>
+      
+      <span class="mtx-op">=</span>
+      
+      <!-- X (Features) -->
+      <div class="mtx-stack is-x">
+        <div class="bracket is-x" style="grid-template-columns: repeat(4, auto); column-gap: 8px; row-gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0">1,200</span>
+          <span class="bracket-cell" data-row="0">2</span>
+          <span class="bracket-cell" data-row="0">12.5</span>
+          <span class="bracket-cell" data-row="0">12</span>
+          
+          <span class="bracket-cell" data-row="1">1,850</span>
+          <span class="bracket-cell" data-row="1">3</span>
+          <span class="bracket-cell" data-row="1">2.0</span>
+          <span class="bracket-cell" data-row="1">5</span>
+          
+          <span class="bracket-cell" data-row="2">2,400</span>
+          <span class="bracket-cell" data-row="2">4</span>
+          <span class="bracket-cell" data-row="2">15.0</span>
+          <span class="bracket-cell" data-row="2">2</span>
+          
+          <span class="bracket-cell" data-row="3">1,400</span>
+          <span class="bracket-cell" data-row="3">2</span>
+          <span class="bracket-cell" data-row="3">25.0</span>
+          <span class="bracket-cell" data-row="3">20</span>
+          
+          <span class="bracket-cell" data-row="4">2,100</span>
+          <span class="bracket-cell" data-row="4">3</span>
+          <span class="bracket-cell" data-row="4">4.5</span>
+          <span class="bracket-cell" data-row="4">8</span>
+        </div>
+        <span class="mtx-stack-tag">X</span>
+      </div>
+      
+      <span class="mtx-op">·</span>
+      
+      <!-- W (Weights) -->
+      <div class="mtx-stack is-w">
+        <div class="bracket is-w" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 10px;">
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>1</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>2</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>3</sub></span>
+          <span class="bracket-cell" style="color: var(--accent);">w<sub>4</sub></span>
+        </div>
+        <span class="mtx-stack-tag">W</span>
+      </div>
+      
+      <span class="mtx-op">+</span>
+      
+      <!-- b (Bias) -->
+      <div class="mtx-stack">
+        <div class="bracket" style="grid-template-columns: 1fr; gap: 4px; padding: 6px 12px;">
+          <span class="bracket-cell" data-row="0">b</span>
+          <span class="bracket-cell" data-row="1">b</span>
+          <span class="bracket-cell" data-row="2">b</span>
+          <span class="bracket-cell" data-row="3">b</span>
+          <span class="bracket-cell" data-row="4">b</span>
+        </div>
+        <span class="mtx-stack-tag">bias</span>
+      </div>
+    </div>
+    
+    <div class="mtx-caption" id="popoverCaption" style="font-size: 13px; line-height: 1.4; color: color-mix(in srgb, var(--fg) 70%, transparent); text-align: center; max-width: 34ch; margin-top: 8px; font-family: 'STIX Two Math', serif;"></div>
+  </div>
+
+  <!-- ── Matrix-form modal ── -->
+  <div class="mtx-overlay" id="mtxOverlay" role="dialog" aria-modal="true" aria-labelledby="mtxTitle">
+    <div class="mtx-modal">
+      <button class="mtx-close" id="mtxClose" aria-label="Close">✕</button>
+      <div class="mtx-eyebrow">From sum → matrix product</div>
+      <div class="mtx-title" id="mtxTitle">The scalar equation becomes <em>y = W · x + b</em>.</div>
+
+      <div class="mtx-stage">
+        <!-- full matrix form y = W·x + b -->
+        <div class="mtx-step" data-step="1">
+          <div class="mtx-step-label">Matrix form</div>
+          <div class="mtx-row">
+            <div class="mtx-stack is-y">
+              <div class="bracket is-y">
+                <span class="bracket-cell">y</span>
+              </div>
+              <span class="mtx-stack-tag">y</span>
+            </div>
+            <span class="mtx-op">=</span>
+            <div class="mtx-stack is-w">
+              <div class="bracket is-w" style="grid-template-columns: repeat(4, auto);">
+                <span class="bracket-cell">w<sub>1</sub></span>
+                <span class="bracket-cell">w<sub>2</sub></span>
+                <span class="bracket-cell">⋯</span>
+                <span class="bracket-cell">w<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">W</span>
+            </div>
+            <span class="mtx-op">·</span>
+            <div class="mtx-stack is-x">
+              <div class="bracket is-x">
+                <span class="bracket-cell">x<sub>1</sub></span>
+                <span class="bracket-cell">x<sub>2</sub></span>
+                <span class="bracket-cell">⋮</span>
+                <span class="bracket-cell">x<sub>n</sub></span>
+              </div>
+              <span class="mtx-stack-tag">x</span>
+            </div>
+            <span class="mtx-op">+</span>
+            <div class="mtx-stack">
+              <div class="bracket">
+                <span class="bracket-cell">b</span>
+              </div>
+              <span class="mtx-stack-tag">bias</span>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    /* ── Modal open/close + sequential reveal ── */
+    const overlay = document.getElementById('mtxOverlay');
+    const eqClickable = document.getElementById('eqClickable');
+    const closeBtn = document.getElementById('mtxClose');
+    const steps = overlay.querySelectorAll('[data-step]');
+
+    function openModal() {
+      overlay.classList.add('open');
+      // Stagger the reveal of each step
+      steps.forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 200 + i * 320);
+      });
+    }
+    function closeModal() {
+      overlay.classList.remove('open');
+      steps.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(8px)';
+      });
+    }
+
+    eqClickable.addEventListener('click', openModal);
+    eqClickable.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(); }
+    });
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    /* ── Row Click Popover Logic ── */
+    const rowPopover = document.getElementById('rowPopover');
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+    const dataCard = document.querySelector('.data-card');
+    const popoverCaption = document.getElementById('popoverCaption');
+
+    // Keep track of the currently selected row index
+    let selectedRowIndex = -1;
+
+    function getRowData(row) {
+      const cells = row.querySelectorAll('td');
+      return {
+        size: cells[0].querySelector('.cell-value').textContent,
+        beds: cells[1].querySelector('.cell-value').textContent,
+        dist: cells[2].querySelector('.cell-value').textContent,
+        age: cells[3].querySelector('.cell-value').textContent,
+        price: cells[4].querySelector('.cell-value').textContent
+      };
+    }
+
+    function highlightPopoverRow(index) {
+      // Clear previous highlights in the popover
+      rowPopover.querySelectorAll('.bracket-cell').forEach(cell => cell.classList.remove('highlight'));
+      
+      if (index !== -1) {
+        // Highlight the new row's cells
+        rowPopover.querySelectorAll(`.bracket-cell[data-row="${index}"]`).forEach(cell => {
+          cell.classList.add('highlight');
+        });
+      }
+    }
+
+    function updatePopoverCaption(index) {
+      if (index === -1) {
+        popoverCaption.innerHTML = "";
+        return;
+      }
+      const data = getRowData(tableRows[index]);
+      popoverCaption.innerHTML = `${data.price} = w₁(${data.size}) + w₂(${data.beds}) + w₃(${data.dist}) + w₄(${data.age}) + b`;
+    }
+
+    tableRows.forEach((row, index) => {
+      row.addEventListener('click', (e) => {
+        tableRows.forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        selectedRowIndex = index;
+
+        // Apply highlights & update caption
+        highlightPopoverRow(index);
+        updatePopoverCaption(index);
+
+        // Position relative to viewport (fixed position regardless of row)
+        const cardRect = dataCard.getBoundingClientRect();
+        rowPopover.style.top = (cardRect.top + cardRect.height/2) + 'px';
+        rowPopover.style.left = (cardRect.right + 24) + 'px';
+        
+        rowPopover.classList.add('open');
+        document.body.classList.add('popover-active');
+        e.stopPropagation();
+      });
+
+      // Hover sync with matrix popover when open
+      row.addEventListener('mouseenter', () => {
+        if (rowPopover.classList.contains('open')) {
+          highlightPopoverRow(index);
+          updatePopoverCaption(index);
+        }
+      });
+      
+      row.addEventListener('mouseleave', () => {
+        if (rowPopover.classList.contains('open')) {
+          // Revert to selected row
+          highlightPopoverRow(selectedRowIndex);
+          updatePopoverCaption(selectedRowIndex);
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!rowPopover.contains(e.target)) {
+        rowPopover.classList.remove('open');
+        document.body.classList.remove('popover-active');
+        tableRows.forEach(r => r.classList.remove('selected'));
+        selectedRowIndex = -1;
+      }
+    });
+
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#c25d42', accent:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57', accent:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a', accent:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b', accent:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#a3e635', c3:'#a78bfa', eyebrow:'#a3e635', accent:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488', accent:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed', accent:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec', accent:'#5fe8ec' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+      document.body.style.setProperty('--accent', p.accent || p.eyebrow || p.c1);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+    });
+  </script>
+</body>
+</html>

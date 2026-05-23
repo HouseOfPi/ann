@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mathematical Pillars | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 50px 40px 50px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    /* ── Header ── */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--eyebrow-accent, var(--c1));
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 4.6vw, 60px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em { font-style: italic; }
+
+    /* ── Timeline ── */
+    .timeline-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: color-mix(in srgb, var(--c2) 35%, transparent);
+      transform: translateY(-50%);
+      z-index: 1;
+      border-radius: 2px;
+    }
+
+    .timeline-nodes {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .node {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 0;
+      opacity: 0;
+    }
+
+    /* All nodes share the same accent color */
+    .node { --nc: var(--c2); }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0px color-mix(in srgb, var(--nc) 50%, transparent), 0 0 16px var(--nc); }
+      70%  { box-shadow: 0 0 0 10px color-mix(in srgb, var(--nc) 0%, transparent), 0 0 16px var(--nc); }
+      100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--nc) 0%, transparent), 0 0 16px var(--nc); }
+    }
+
+    @keyframes float-up {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-5px); }
+    }
+
+    @keyframes float-down {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+
+    .node-dot {
+      width: 16px;
+      height: 16px;
+      background: var(--nc);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--nc) 20%, transparent), 0 0 16px var(--nc);
+      animation: pulse-ring 2.4s ease-out infinite;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+    .node:hover .node-dot { transform: scale(1.5); }
+
+    /* stagger the pulse so dots don't all fire together */
+    .node:nth-child(2) .node-dot { animation-delay: 0.6s; }
+    .node:nth-child(3) .node-dot { animation-delay: 1.2s; }
+    .node:nth-child(4) .node-dot { animation-delay: 1.8s; }
+
+    .node.up   .node-content { animation: float-up   3.5s ease-in-out infinite; }
+    .node.down .node-content { animation: float-down 3.5s ease-in-out infinite; }
+
+    /* stagger the float too */
+    .node:nth-child(2) .node-content { animation-delay: 0.8s; }
+    .node:nth-child(3) .node-content { animation-delay: 1.6s; }
+    .node:nth-child(4) .node-content { animation-delay: 2.4s; }
+
+    .node-content {
+      position: absolute;
+      width: 220px;
+      text-align: center;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .node.up .node-content { bottom: 38px; }
+    .node.down .node-content { top: 38px; }
+
+    .node-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(18px, 1.9vw, 24px);
+      font-weight: 700;
+      color: var(--nc);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .node-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+    }
+
+    /* ── Hover micro-animations per pillar ─────────────────── */
+    /* Position absolutely so the label/sub layout never shifts.
+       For 'down' nodes the viz sits BELOW the sub text;
+       for 'up' nodes the viz sits ABOVE the label. */
+    .pillar-viz {
+      position: absolute;
+      left: 50%;
+      width: 320px;
+      height: 192px;
+      transform: translate(-50%, 8px);
+      opacity: 0;
+      transition: opacity 0.35s ease, transform 0.45s cubic-bezier(.2,.7,.2,1);
+      pointer-events: none;
+    }
+    .node.down .pillar-viz { top: 100%; margin-top: 14px; }
+    .node.up   .pillar-viz { bottom: 100%; margin-bottom: 14px; }
+
+    .node:hover .pillar-viz {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* Prevent clipping on left/right edges for the first and last pillars */
+    @media (min-width: 801px) {
+      .node:first-child .pillar-viz { transform: translate(-15%, 8px); }
+      .node:first-child:hover .pillar-viz { transform: translate(-15%, 0); }
+      .node:last-child .pillar-viz { transform: translate(-85%, 8px); }
+      .node:last-child:hover .pillar-viz { transform: translate(-85%, 0); }
+    }
+
+    /* Linear Algebra — matrix cells */
+    .la-cell {
+      fill: color-mix(in srgb, var(--nc) 18%, transparent);
+      stroke: color-mix(in srgb, var(--nc) 55%, transparent);
+      stroke-width: 1;
+      transition: fill 0.4s ease, stroke 0.4s ease;
+    }
+    .la-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      fill: color-mix(in srgb, var(--fg) 75%, transparent);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .la-bracket {
+      stroke: color-mix(in srgb, var(--nc) 80%, transparent);
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .la-op {
+      fill: color-mix(in srgb, var(--fg) 70%, transparent);
+    }
+    .la-op-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      fill: color-mix(in srgb, var(--fg) 70%, transparent);
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+    .node:hover .la-cell { animation: la-flash 1.8s ease-in-out infinite; }
+    /* Wave cascades: W (6 cells) → x (3 cells) → y (2 cells) */
+    .node:hover .la-cell:nth-of-type(1)  { animation-delay: 0.00s; }
+    .node:hover .la-cell:nth-of-type(2)  { animation-delay: 0.08s; }
+    .node:hover .la-cell:nth-of-type(3)  { animation-delay: 0.16s; }
+    .node:hover .la-cell:nth-of-type(4)  { animation-delay: 0.24s; }
+    .node:hover .la-cell:nth-of-type(5)  { animation-delay: 0.32s; }
+    .node:hover .la-cell:nth-of-type(6)  { animation-delay: 0.40s; }
+    .node:hover .la-cell:nth-of-type(7)  { animation-delay: 0.52s; }
+    .node:hover .la-cell:nth-of-type(8)  { animation-delay: 0.60s; }
+    .node:hover .la-cell:nth-of-type(9)  { animation-delay: 0.68s; }
+    .node:hover .la-cell:nth-of-type(10) { animation-delay: 0.84s; }
+    .node:hover .la-cell:nth-of-type(11) { animation-delay: 0.92s; }
+    @keyframes la-flash {
+      0%, 70%, 100% { fill: color-mix(in srgb, var(--nc) 18%, transparent); }
+      35%           { fill: color-mix(in srgb, var(--nc) 55%, transparent); }
+    }
+
+    /* Calculus — y=x² curve with a tangent that rides the curve */
+    .ca-curve   { stroke: color-mix(in srgb, var(--nc) 80%, transparent); stroke-width: 2; fill: none; }
+    .ca-axis    { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .ca-tangent {
+      stroke: var(--nc);
+      stroke-width: 2;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--nc) 60%, transparent));
+    }
+    .ca-dot {
+      fill: var(--nc);
+      filter: drop-shadow(0 0 4px var(--nc));
+    }
+
+    /* Probability — bell curve + falling sample dots */
+    .pr-curve { stroke: color-mix(in srgb, var(--nc) 75%, transparent); stroke-width: 2; fill: color-mix(in srgb, var(--nc) 8%, transparent); }
+    .pr-axis  { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .pr-dot {
+      fill: var(--nc);
+      opacity: 0;
+    }
+    .node:hover .pr-dot {
+      animation: pr-drop 1.8s ease-in infinite;
+    }
+    .node:hover .pr-dot:nth-child(2) { animation-delay: 0.20s; }
+    .node:hover .pr-dot:nth-child(3) { animation-delay: 0.50s; }
+    .node:hover .pr-dot:nth-child(4) { animation-delay: 0.80s; }
+    .node:hover .pr-dot:nth-child(5) { animation-delay: 1.10s; }
+    .node:hover .pr-dot:nth-child(6) { animation-delay: 1.40s; }
+    @keyframes pr-drop {
+      0%   { opacity: 0; transform: translateY(-22px); }
+      60%  { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0.6; transform: translateY(0); }
+    }
+    .pr-dot { transform-box: fill-box; transform-origin: center; }
+
+    /* Optimization — gradient-descent ball stepping down a bowl */
+    .op-curve  { stroke: color-mix(in srgb, var(--nc) 75%, transparent); stroke-width: 2; fill: none; }
+    .op-axis   { stroke: color-mix(in srgb, var(--fg) 25%, transparent); stroke-width: 1; }
+    .op-ball   { fill: var(--nc); filter: drop-shadow(0 0 6px var(--nc)); }
+    .op-target { stroke: color-mix(in srgb, var(--nc) 60%, transparent); stroke-width: 1; stroke-dasharray: 2 2; fill: none; }
+    .op-trail  { fill: var(--nc); opacity: 0; }
+    .op-arrow  {
+      stroke: var(--nc);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      fill: none;
+      opacity: 0;
+    }
+    .op-flag {
+      fill: color-mix(in srgb, var(--nc) 70%, transparent);
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(.34,1.5,.64,1);
+    }
+    .op-flag.show { opacity: 1; transform: scaleY(1); }
+
+    /* ── Mobile ── */
+    @media (max-width: 800px) {
+      .timeline-container {
+        flex-direction: column;
+        padding-top: 40px;
+        justify-content: flex-start;
+      }
+      .timeline-line {
+        top: 0; left: 50%;
+        width: 2px; height: 0%;
+        transform: translateX(-50%);
+        background: color-mix(in srgb, var(--c2) 35%, transparent);
+      }
+      .timeline-nodes {
+        flex-direction: column;
+        height: 100%;
+        gap: 100px;
+      }
+      .node {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+      }
+      .node-content {
+        position: static;
+        width: auto;
+        text-align: left;
+        margin-left: 20px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="The Foundation" title="The Four <em>Pillars</em>"></page-title>
+
+  <div class="timeline-container">
+    <div class="timeline-line" id="timelineLine"></div>
+    <div class="timeline-nodes">
+
+      <div class="node down">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Linear Algebra</div>
+          <div class="node-sub">Vectors · Matrices</div>
+          <!-- y = W · x — viewBox aspect matches the other pillar SVGs
+               (160×96 → 5:3). Cells, brackets and operators sized so the
+               composition feels balanced with the other animations. -->
+          <svg class="pillar-viz" viewBox="0 0 200 120">
+            <!-- ── y: 2×1 output column vector ────────────────── -->
+            <path class="la-bracket" d="M10 32 L4 32 L4 88 L10 88" />
+            <rect class="la-cell" x="12" y="34" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="12" y="60" width="22" height="22" rx="3"/>
+            <text class="la-num" x="23" y="46">y₁</text>
+            <text class="la-num" x="23" y="72">y₂</text>
+            <path class="la-bracket" d="M36 32 L42 32 L42 88 L36 88" />
+
+            <!-- equals -->
+            <text class="la-op-text" x="54" y="62">=</text>
+
+            <!-- ── W: 2×3 weight matrix ────────────────────────── -->
+            <path class="la-bracket" d="M70 32 L64 32 L64 88 L70 88" />
+            <rect class="la-cell" x="72"  y="34" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="96"  y="34" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="120" y="34" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="72"  y="60" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="96"  y="60" width="22" height="22" rx="3"/>
+            <rect class="la-cell" x="120" y="60" width="22" height="22" rx="3"/>
+            <text class="la-num" x="83"  y="46">1</text>
+            <text class="la-num" x="107" y="46">2</text>
+            <text class="la-num" x="131" y="46">3</text>
+            <text class="la-num" x="83"  y="72">4</text>
+            <text class="la-num" x="107" y="72">5</text>
+            <text class="la-num" x="131" y="72">6</text>
+            <path class="la-bracket" d="M144 32 L150 32 L150 88 L144 88" />
+
+            <!-- dot operator -->
+            <circle cx="160" cy="58" r="1.8" class="la-op"/>
+
+            <!-- ── x: 3×1 input column vector ─────────────────── -->
+            <!-- Tighter vertical pack so brackets fit inside the same
+                 y-band as the matrix (no clipping at the SVG bottom). -->
+            <path class="la-bracket" d="M172 26 L166 26 L166 94 L172 94" />
+            <rect class="la-cell" x="174" y="28" width="18" height="18" rx="3"/>
+            <rect class="la-cell" x="174" y="51" width="18" height="18" rx="3"/>
+            <rect class="la-cell" x="174" y="74" width="18" height="18" rx="3"/>
+            <text class="la-num" x="183" y="37">x₁</text>
+            <text class="la-num" x="183" y="60">x₂</text>
+            <text class="la-num" x="183" y="83">x₃</text>
+            <path class="la-bracket" d="M194 26 L200 26 L200 94 L194 94" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="node up">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Calculus</div>
+          <div class="node-sub">Derivatives · Chain Rule</div>
+          <!-- y = x² (convex-up smile). A dot rides the curve and the
+               tangent rotates to match the local slope. -->
+          <svg class="pillar-viz pillar-viz-calc" viewBox="0 0 160 96">
+            <line class="ca-axis" x1="10" y1="86" x2="150" y2="86"/>
+            <line class="ca-axis" x1="80" y1="6"  x2="80"  y2="86"/>
+            <!-- Parabola y(x) = (x-80)^2 / 60 + 14
+                 → at x=20: y=14+60=74; x=80: y=14; x=140: y=74.
+                 Convex up so the smile sits in the lower half. -->
+            <path class="ca-curve" d="M20 74 Q80 -46 140 74"/>
+            <g class="ca-tangent-group">
+              <line class="ca-tangent" x1="60" y1="0" x2="100" y2="0"/>
+              <circle class="ca-dot" cx="80" cy="0" r="3.5"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="node down">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Probability</div>
+          <div class="node-sub">Distributions · Bayes</div>
+          <!-- Bell curve with sample dots falling under it -->
+          <svg class="pillar-viz" viewBox="0 0 160 96">
+            <line class="pr-axis" x1="10" y1="80" x2="150" y2="80"/>
+            <path class="pr-curve" d="M16 80 C 50 80, 60 18, 80 18 C 100 18, 110 80, 144 80 Z"/>
+            <circle class="pr-dot" cx="56"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="72"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="80"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="88"  cy="74" r="3"/>
+            <circle class="pr-dot" cx="100" cy="74" r="3"/>
+            <circle class="pr-dot" cx="64"  cy="74" r="3"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="node up">
+        <div class="node-dot"></div>
+        <div class="node-content">
+          <div class="node-label">Optimization</div>
+          <div class="node-sub">Gradients · SGD</div>
+          <!-- Gradient descent: ball steps down a bowl, leaving a trail,
+               overshoots, and settles at the minimum where a flag plants. -->
+          <svg class="pillar-viz pillar-viz-opt" viewBox="0 0 160 96">
+            <line class="op-axis"   x1="10" y1="86" x2="150" y2="86"/>
+            <!-- Bowl: convex-down parabola through (16,18) vertex (80,78) (144,18) -->
+            <path class="op-curve"  d="M16 18 Q80 138 144 18"/>
+            <line class="op-target" x1="80" y1="20" x2="80" y2="86"/>
+
+            <!-- Trail of past iterations (filled after each step) -->
+            <g class="op-trail-group">
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+              <circle class="op-trail" cx="0" cy="0" r="2.4"/>
+            </g>
+
+            <!-- Mini gradient arrow that points downhill at each step -->
+            <path class="op-arrow" d="M0 0 L0 0 M0 0 l-3 -3 M0 0 l-3 3"/>
+
+            <!-- The ball -->
+            <circle class="op-ball" cx="22" cy="22" r="5"/>
+
+            <!-- Flag planted at the minimum once it settles -->
+            <g class="op-flag">
+              <line x1="80" y1="78" x2="80" y2="58" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M80 58 L92 62 L80 66 Z" />
+            </g>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', eyebrow:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+    });
+
+    function startEntrance() {
+      const isMobile = window.innerWidth <= 800;
+      gsap.set("#header", { opacity: 0, y: 20 });
+      gsap.set(".node", { opacity: 0, scale: 0.5 });
+      gsap.set("#timelineLine", isMobile ? { height: "0%", width: "2px" } : { width: "0%", height: "2px" });
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.to("#header", { opacity: 1, y: 0, duration: 0.8 });
+      tl.to("#timelineLine", isMobile ? { height: "100%", duration: 1.2 } : { width: "100%", duration: 1.2 }, "-=0.4");
+      tl.to(".node", { opacity: 1, scale: 1, stagger: 0.18, duration: 0.6, ease: "back.out(1.7)" }, "-=0.8");
+    }
+
+    window.addEventListener('load', startEntrance);
+
+    // ── Calculus pillar: drive the tangent along y = (x-80)²/60 + 14 ──
+    // Pure rAF (no CSS keyframes) so the dot stays on the curve and the
+    // tangent rotates to match the true local slope dy/dx = (x-80)/30.
+    (function setupCalcAnim() {
+      const svg = document.querySelector('.pillar-viz-calc');
+      if (!svg) return;
+      const dot     = svg.querySelector('.ca-dot');
+      const tangent = svg.querySelector('.ca-tangent');
+      const node    = svg.closest('.node');
+      if (!dot || !tangent || !node) return;
+
+      const cx = 80;          // vertex x
+      const cy = 14;          // vertex y
+      const a  = 1 / 60;      // curvature
+      const yOf  = (x) => a * (x - cx) * (x - cx) + cy;
+      const dyOf = (x) => 2 * a * (x - cx);   // slope at x
+      const TANGENT_HALF = 22;
+      const X_MIN = 28, X_MAX = 132;          // sweep range (stay on curve)
+
+      let raf = null;
+      let t0  = null;
+      const period = 3200;    // ms per full sweep (left → right → left)
+
+      function frame(now) {
+        if (t0 == null) t0 = now;
+        const phase = ((now - t0) % period) / period;       // 0..1
+        // ping-pong: 0 → 1 → 0
+        const pp = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+        const x = X_MIN + (X_MAX - X_MIN) * pp;
+        const y = yOf(x);
+        const m = dyOf(x);
+
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+
+        // Place tangent line through (x, y) with slope m, length 2*HALF.
+        // Use a unit direction vector to keep length consistent regardless of slope.
+        const len = Math.hypot(1, m);
+        const dx  = TANGENT_HALF / len;
+        const dy  = TANGENT_HALF * m / len;
+        tangent.setAttribute('x1', x - dx);
+        tangent.setAttribute('y1', y - dy);
+        tangent.setAttribute('x2', x + dx);
+        tangent.setAttribute('y2', y + dy);
+
+        raf = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        if (raf) return;
+        t0 = null;
+        raf = requestAnimationFrame(frame);
+      }
+      function stop() {
+        if (!raf) return;
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+
+      node.addEventListener('mouseenter', start);
+      node.addEventListener('mouseleave', stop);
+    })();
+
+    // ── Optimization pillar: discrete gradient-descent steps ─────────
+    // The ball doesn't slide; it HOPS down the bowl one update at a time,
+    // leaves a fading trail of past positions, overshoots near the bottom,
+    // and finally settles at the minimum with a flag planted.
+    (function setupOptAnim() {
+      const svg = document.querySelector('.pillar-viz-opt');
+      if (!svg) return;
+      const ball   = svg.querySelector('.op-ball');
+      const arrow  = svg.querySelector('.op-arrow');
+      const flag   = svg.querySelector('.op-flag');
+      const trails = Array.from(svg.querySelectorAll('.op-trail'));
+      const node   = svg.closest('.node');
+      if (!ball || !node) return;
+
+      // Bowl: convex-down y = -(x-80)²/60 + 78. Domain x∈[16,144].
+      const cx = 80, baseY = 78, a = -1 / 60;
+      const yOf  = (x) => a * (x - cx) * (x - cx) + baseY;
+      const dyOf = (x) => 2 * a * (x - cx);    // slope; negative on left, positive on right
+
+      // Waypoints: x positions of each "gradient step" along the bowl.
+      // The ball glides smoothly between them so motion is continuous,
+      // but each waypoint drops a trail dot so you still see discrete
+      // iterations. Big strides on the steep side, smaller near the
+      // minimum, then a deliberate overshoot + correction.
+      const seq = [
+        { x:  22, d: 0    },   // starting pose (no travel)
+        { x:  36, d: 520  },
+        { x:  52, d: 520  },
+        { x:  66, d: 500  },
+        { x:  76, d: 460  },
+        { x:  92, d: 520  },   // overshoot past minimum
+        { x:  84, d: 460  },   // correct back
+        { x:  78, d: 380  },
+        { x:  80, d: 320  },   // settle
+      ];
+      const SETTLE_PAUSE = 1200;
+
+      // Easing per leg — out-then-in so the ball decelerates into each
+      // waypoint and accelerates out of it, giving the "stepping" feel
+      // without ever stopping cold.
+      const easeInOutCubic = (t) =>
+        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      let raf = null;
+      let restartTimer = null;
+
+      function placeBall(x) {
+        const y = yOf(x);
+        ball.setAttribute('cx', x);
+        ball.setAttribute('cy', y - 5);
+        const m = dyOf(x);
+        const len = Math.hypot(1, m);
+        const dx = 10 / len;
+        const dy = 10 * m / len;
+        const tx = x + dx;
+        const ty = (y - 5) + dy;
+        arrow.setAttribute('d',
+          `M ${x} ${y - 5} L ${tx} ${ty} ` +
+          `M ${tx} ${ty} l ${-dx * 0.4 + dy * 0.3} ${-dy * 0.4 - dx * 0.3} ` +
+          `M ${tx} ${ty} l ${-dx * 0.4 - dy * 0.3} ${-dy * 0.4 + dx * 0.3}`
+        );
+      }
+
+      function dropTrail(x, slotIdx) {
+        const slot = trails[slotIdx % trails.length];
+        slot.setAttribute('cx', x);
+        slot.setAttribute('cy', yOf(x) - 5);
+        // Fade older trail dots a touch each time a new one drops.
+        trails.forEach(t => {
+          if (t === slot) {
+            t.style.opacity = '0.6';
+          } else {
+            const cur = parseFloat(t.style.opacity || '0');
+            t.style.opacity = String(Math.max(0, cur - 0.12));
+          }
+        });
+      }
+
+      function reset() {
+        trails.forEach(t => { t.style.opacity = '0'; });
+        flag.classList.remove('show');
+        arrow.style.opacity = '0';
+        placeBall(seq[0].x);
+      }
+
+      function run() {
+        let leg = 0;             // we tween from seq[leg] → seq[leg+1]
+        let legStart = null;
+        // Drop the first dot at the starting pose.
+        dropTrail(seq[0].x, 0);
+        arrow.style.opacity = '0.85';
+
+        function frame(now) {
+          if (legStart == null) legStart = now;
+          const seg = seq[leg + 1];
+          if (!seg) return;
+          const raw = Math.min((now - legStart) / seg.d, 1);
+          const t   = easeInOutCubic(raw);
+          const x   = seq[leg].x + (seg.x - seq[leg].x) * t;
+          placeBall(x);
+
+          if (raw < 1) {
+            raf = requestAnimationFrame(frame);
+          } else {
+            // Arrived at waypoint — drop a trail dot, advance.
+            leg++;
+            dropTrail(seq[leg].x, leg);
+            legStart = null;
+            if (leg >= seq.length - 1) {
+              // Settled at the minimum.
+              arrow.style.opacity = '0';
+              flag.classList.add('show');
+              raf = null;
+              restartTimer = setTimeout(() => { reset(); run(); }, SETTLE_PAUSE);
+            } else {
+              raf = requestAnimationFrame(frame);
+            }
+          }
+        }
+        raf = requestAnimationFrame(frame);
+      }
+
+      function start() {
+        if (raf || restartTimer) return;
+        reset();
+        // Tiny pre-roll so the starting pose is visible before motion.
+        restartTimer = setTimeout(() => { restartTimer = null; run(); }, 220);
+      }
+      function stop() {
+        if (raf) { cancelAnimationFrame(raf); raf = null; }
+        if (restartTimer) { clearTimeout(restartTimer); restartTimer = null; }
+        reset();
+      }
+
+      node.addEventListener('mouseenter', start);
+      node.addEventListener('mouseleave', stop);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+assets/ann animation/02-bio_t13.png
+assets/ann animation/check8.png
+assets/ann animation/check9.png
+assets/ann animation/02-bio_t11.png
+assets/ann animation/02-bias_check.png
+assets/ann animation/01-check7.png
+assets/ann animation/check10.png
+assets/ann animation/01-bio2.png
+assets/ann animation/check2.png
+assets/ann animation/check3.png
+assets/ann animation/02-check7.png
+assets/ann animation/bio_check.png
+assets/ann animation/check6.png
+assets/ann animation/check4.png
+assets/ann animation/check5.png
+assets/ann animation/net_check.png
+assets/click_sound.wav
+assets/Neuron Firing.mp4

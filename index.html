@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Artificial Intelligence Video Series</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Orbitron:wght@500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Instrument+Serif:ital@0;1&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500;1,600;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body class="palette-midnight">
+    <!-- ── 08. TOP-LEVEL UI COMPONENTS ────────────────────────────────────────── -->
+    <button class="menu-toggle" id="menuToggle" title="Menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="settings-side" id="settingsSide">
+      <div class="settings-group">
+        <div class="settings-label">Color Palette</div>
+        <div class="settings-dropdown" id="paletteDropdown">
+          <div class="dropdown-trigger" onclick="toggleCustomDropdown('paletteDropdown')">
+            <div id="currentPaletteDisplay" class="dropdown-current">
+              <!-- Initialized by JS -->
+              <span class="palette-name">Midnight</span>
+            </div>
+            <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dropdown-menu" id="paletteList">
+            <button class="palette-row" data-palette="warm-linen" onclick="setPalette('warm-linen'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#f3f1e9"></span>
+                <span style="background:#1c1c1c"></span>
+                <span style="background:#4a8bdd"></span>
+                <span style="background:#e27b5e"></span>
+              </div>
+              <span class="palette-name">Warm Linen</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="green-linen" onclick="setPalette('green-linen'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#f3f1e9"></span>
+                <span style="background:#1c1c1c"></span>
+                <span style="background:#15803d"></span>
+                <span style="background:#e27b5e"></span>
+              </div>
+              <span class="palette-name">Green Linen</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="paper-white" onclick="setPalette('paper-white'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#ffffff;border:1px solid #ddd"></span>
+                <span style="background:#0a0a0a"></span>
+                <span style="background:#2e5bff"></span>
+                <span style="background:#d0465a"></span>
+              </div>
+              <span class="palette-name">Paper White</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row active" data-palette="midnight" onclick="setPalette('midnight'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#0a0a0f"></span>
+                <span style="background:#f5f5f5"></span>
+                <span style="background:#22d3ee"></span>
+                <span style="background:#f59e0b"></span>
+              </div>
+              <span class="palette-name">Midnight</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="navy-lime" onclick="setPalette('navy-lime'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#0a1428"></span>
+                <span style="background:#f1f5fb"></span>
+                <span style="background:#a3e635"></span>
+                <span style="background:#5fb8e6"></span>
+              </div>
+              <span class="palette-name">Navy Lime</span>
+              <span class="palette-check">✓</span>
+            </button>
+            <button class="palette-row" data-palette="dark" onclick="setPalette('dark'); closeAllDropdowns()">
+              <div class="palette-swatches">
+                <span style="background:#07101f"></span>
+                <span style="background:#f0f6ff"></span>
+                <span style="background:#22d3ee"></span>
+                <span style="background:#34d399"></span>
+              </div>
+              <span class="palette-name">Deep Navy</span>
+              <span class="palette-check">✓</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-label">Hero Background</div>
+        <div class="settings-dropdown" id="bgDropdown">
+          <div class="dropdown-trigger" onclick="toggleCustomDropdown('bgDropdown')">
+            <div id="currentBgDisplay" class="dropdown-current">
+              <span class="bg-icon">◐</span>Dual
+            </div>
+            <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dropdown-menu settings-bg-btns">
+            <button class="palette-row bg-btn" data-bg="neural" onclick="setHeroBg('neural'); closeAllDropdowns()">
+              <span class="bg-icon">⬡</span>Neural
+            </button>
+            <button class="palette-row bg-btn" data-bg="synapse" onclick="setHeroBg('synapse'); closeAllDropdowns()">
+              <span class="bg-icon">〰</span>Synapse
+            </button>
+            <button class="palette-row bg-btn" data-bg="storm" onclick="setHeroBg('storm'); closeAllDropdowns()">
+              <span class="bg-icon">⚡</span>Storm
+            </button>
+            <button class="palette-row bg-btn" data-bg="ball" onclick="setHeroBg('ball'); closeAllDropdowns()">
+              <span class="bg-icon">🧶</span>Ball
+            </button>
+            <button class="palette-row bg-btn active" data-bg="dual" onclick="setHeroBg('dual'); closeAllDropdowns()">
+              <span class="bg-icon">◐</span>Dual
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+
+        <div class="settings-btns" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px;">
+            <span class="settings-label" style="font-family: var(--font-heading); font-size: 13px; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0; white-space: nowrap;">Interface Sounds</span>
+            <label class="toggle-switch" style="margin-left: auto;" title="Toggle all interface sounds and video audio">
+                <input type="checkbox" id="soundToggle" checked onchange="toggleSound()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="settings-btns" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; margin-top: 10px;">
+            <span class="settings-label" style="font-family: var(--font-heading); font-size: 13px; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0; white-space: nowrap;">Animation Controls</span>
+            <label class="toggle-switch" style="margin-left: auto;" title="Show or hide animation playback controls">
+                <input type="checkbox" id="animControlsToggle" onchange="toggleAnimControls()">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+      </div>
+    </div>
+
+    <nav class="side-nav-panel" id="sideNav" style="display: none !important;">
+      <div class="nav-ribbon" id="navRibbon">
+        <div class="ribbon-line"></div>
+        <div class="ribbon-text">Quick Nav</div>
+      </div>
+      
+      <div class="course-nav-header">
+        <div class="course-nav-titlewrap">
+          <span class="course-nav-eyebrow">Course</span>
+          <span class="course-nav-title">Content</span>
+        </div>
+        <button class="course-nav-close" onclick="toggleMenu()" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="course-accordion" id="courseAccordion">
+        <!-- Section 1: Origins of AI -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">01</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Origins</span>
+              <span class="section-title">Origins of AI</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideOne')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">AI Explained: Hero Intro</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideAITransforming')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">AI Is Transforming the World</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideFuture')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">The Future, Already Arriving</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideMesh')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">The Complexity Mesh</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideTwo')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">The Dartmouth Dream</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideThree')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Historical Pioneers</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Machine Learning -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">02</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Machine Learning</span>
+              <span class="section-title">Machine Learning</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideWhyMLTitle')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Chapter Title</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideWhyML')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Why Machine Learning?</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideMLProcess')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">The ML Process</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Mathematical Pillars -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">03</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Mathematics</span>
+              <span class="section-title">Mathematical Pillars</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideMathPillarsTitle')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Chapter Title</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideMathPillars')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Math Foundations</span>
+            </div>
+
+            <!-- Sub-group: Linear Algebra -->
+            <div class="lesson-subgroup">
+              <div class="subgroup-header" onclick="toggleSubGroup(this, event)">
+                <span class="lesson-dot"></span>
+                <span class="lesson-name">Linear Algebra</span>
+                <span class="sub-chevron">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <div class="subgroup-content">
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideLinearSingleVar')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Single Variable</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideLinearMultiVar')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Multiple Variables</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideLinearNVar')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">n Variables</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideLinearAlgebra')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Linear Algebra Overview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Biological Roots -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">04</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Biology</span>
+              <span class="section-title">Biological Roots</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideFive')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Biological Inspiration</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideSingleNeuron')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Single Neuron Interaction</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideSeven')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">ANN Architecture</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 5: Training & Power -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">05</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Training</span>
+              <span class="section-title">Training &amp; Power</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="goToSlide('slideEight')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Learning Without Rules</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideRobotFootball')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Robot Football Simulation</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 6: Modern Explosion -->
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="toggleAccordion(this, event)">
+            <span class="section-num">06</span>
+            <div class="accordion-header-main">
+              <span class="section-eyebrow">Evolution</span>
+              <span class="section-title">Modern Explosion</span>
+            </div>
+            <span class="chevron">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="accordion-content">
+            <div class="course-lesson" onclick="openGenAIModalDirectly()">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">GenAI Creation Workshop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-arrows" style="display: none !important;">
+      <button id="prevBtn" class="nav-arrow" disabled>&larr;</button>
+      <div id="slideCounter" style="display:none;">1 / 8</div>
+      <button id="nextBtn" class="nav-arrow">&rarr;</button>
+    </div>
+
+    <!-- ── 10. MAIN CONTENT SLIDER ────────────────────────────────────────────── -->
+    <div id="sliderContainer" class="slider-container">
+      <!-- SLIDE 01: NEURAL NETWORK INTRO (HERO) -->
+      <section class="scene" id="slideOne">
+        <!-- Ambient drifting math glyph layer — sits BEHIND #brain so it
+             never competes with the foreground type or the existing
+             decorative math/charts. -->
+        <canvas id="mathDrift"></canvas>
+        <canvas id="brain"></canvas>
+
+        <div class="ui ui-left">
+          <div class="title-wrap">
+            <h1 class="hero-h1"><span class="hero-h1-bold">AI</span><span class="hero-h1-italic">Explained</span></h1>
+            <h2 class="hero-h2"><span class="hero-h2-accent">Machine Learning</span><span class="hero-h2-amp">&amp;</span><span class="hero-h2-muted">Neural Networks</span></h2>
+            <div class="hero-meta">
+              <div class="hero-scratch-label">
+                <span class="hero-scratch-icon">From scratch</span>
+                <span class="hero-scratch-text">in <strong>Python</strong></span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Slide counter — top right -->
+      </section>
+
+      <!-- SLIDE: AI IS TRANSFORMING THE WORLD — 3-column infographic -->
+      <section class="slide-why-ml" id="slideAITransforming">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-1-origins/ai_transforming_world.html"
+          title="AI Is Transforming the World"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: THE FUTURE, ALREADY ARRIVING — 2×2 video reel -->
+      <section class="slide-why-ml" id="slideFuture">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-1-origins/future_of_ai.html"
+          title="The Future, Already Arriving"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: AI / ML / DL / GenAI — The Tangled Mesh -->
+      <section class="scene" id="slideMesh" style="background: var(--bg);">
+        <iframe src="assets/chapter-1-origins/ai_mesh.html" class="premium-iframe"></iframe>
+      </section>
+
+
+      <!-- SLIDE: CHAPTER 2 TITLE — WHY MACHINE LEARNING? -->
+      <section class="slide-why-ml" id="slideWhyMLTitle">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-2-machine-learning/why-ml-title.html"
+          title="Chapter 2 — Why Machine Learning?"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: WHY MACHINE LEARNING? -->
+      <section class="slide-why-ml" id="slideWhyML">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-2-machine-learning/why-ml.html"
+          title="Why Machine Learning?"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: ML PROCESS -->
+      <section class="slide-why-ml" id="slideMLProcess">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-2-machine-learning/ml-process.html"
+          title="The ML Process"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: CHAPTER 3 TITLE — MATHEMATICAL PILLARS -->
+      <section class="slide-why-ml" id="slideMathPillarsTitle">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/math-pillars-title.html"
+          title="Chapter 3 — Mathematical Pillars"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: MATHEMATICAL PILLARS -->
+      <section class="slide-why-ml" id="slideMathPillars">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/math-pillars.html"
+          title="Mathematical Pillars"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR EQUATION — SINGLE VARIABLE -->
+      <section class="slide-why-ml" id="slideLinearSingleVar">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-single-var.html"
+          title="Single Variable Linear Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR EQUATION — MULTIPLE VARIABLES (HIDDEN) -->
+      <!-- <section class="slide-why-ml" id="slideLinearMultiVar">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-multi-var.html"
+          title="Multiple Variables Linear Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section> -->
+
+      <!-- SLIDE: LINEAR EQUATION — n VARIABLES -->
+      <section class="slide-why-ml" id="slideLinearNVar">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-n-var.html"
+          title="n Variables Linear Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: LINEAR ALGEBRA (matrix overview) -->
+      <section class="slide-why-ml" id="slideLinearAlgebra">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-3-math-pillars/linear-algebra.html"
+          title="Linear Algebra"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE 02: HISTORICAL CONTEXT (DARTMOUTH 1956) -->
+      <section class="slide-two" id="slideTwo">
+        <div class="s2-header premium-header" style="margin-top: 30px; margin-bottom: 20px;">
+           <div style="display:flex; align-items:center; gap:20px;">
+             <span class="year">1956</span>
+             <span class="dot">•</span>
+             <span class="text" style="font-family: var(--font-heading)">Dartmouth Conference</span>
+             <span class="dot">•</span>
+             <span class="text" style="font-family: var(--font-heading)">The Birth of AI</span>
+           </div>
+        </div>
+
+        <div class="s2-content">
+          <div
+            class="s2-image-cont"
+            style="flex-direction: column; align-items: flex-end"
+          >
+            <img
+              id="mainPhoto"
+              src="assets/chapter-1-origins/darthmouth.png"
+              alt="Dartmouth Conference 1956"
+            />
+            <div
+              style="
+                display: flex;
+                width: 100%;
+                justify-content: flex-end;
+                align-items: center;
+                margin-top: 8px;
+              "
+            >
+              <div class="image-credit" style="margin-top: 0; width: auto">
+                Ref: IEEE Spectrum
+                (https://spectrum.ieee.org/dartmouth-ai-workshop)
+              </div>
+            </div>
+          </div>
+          <div class="s2-text-cont">
+            <div class="s2-title-top">AI Didn't Start With</div>
+            <div><span class="s2-chatgpt">ChatGPT</span></div>
+
+            <div class="s2-pioneers-label">P i o n e e r s</div>
+            <div class="s2-grid">
+              <div class="s2-btn" onclick="showPioneer('mccarthy')">
+                John McCarthy
+              </div>
+              <div class="s2-btn" onclick="showPioneer('minsky')">
+                Marvin Minsky
+              </div>
+              <div class="s2-btn" onclick="showPioneer('shannon')">
+                Claude Shannon
+              </div>
+              <div class="s2-btn" onclick="showPioneer('solomonoff')">
+                Ray Solomonoff
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s2-footer">
+          Summer 1956 <span class="dot">•</span> Hanover, New Hampshire
+          <span class="dot">•</span> The conference that named Artificial
+          Intelligence
+        </div>
+      </section>
+
+      <!-- SLIDE 03: PIONEER SPOTLIGHT (GEOFFREY HINTON) -->
+      <section class="slide-three" id="slideThree">
+        <!-- Dynamic Neural Grid Background -->
+        <div class="s3-bg-grid"></div>
+        <div class="s3-ambient">
+          <div class="s3-orb s3-orb-1"></div>
+          <div class="s3-orb s3-orb-2"></div>
+        </div>
+
+        <div class="s3-container">
+          <!-- LEFT: Interactive Hover Profile Card -->
+          <div class="s3-profile-col">
+            <div
+              class="s3-profile-card"
+              onclick="showPioneer('hinton')"
+              title="Click for full biography"
+            >
+              <div class="s3-img-wrap">
+                <img src="assets/chapter-1-origins/hinton.jpg" alt="Geoffrey Hinton" />
+                <div class="s3-img-overlay"></div>
+              </div>
+              <h2 class="s3-profile-name">Geoffrey Hinton</h2>
+              <div class="s3-tagline">
+                He believed the brain was the blueprint. When everyone gave up
+                on AI, he didn't.
+              </div>
+              <div class="s3-badges">
+                <span class="s3-pill s3-pill-purple" onclick="openPillPopup('godfather', event)">Godfather of AI ↗</span>
+                <span class="s3-pill s3-pill-gold"   onclick="openPillPopup('nobel', event)">Nobel Prize 2024 ↗</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Glassmorphic Cards Grid -->
+          <div class="s3-data-col">
+            <div class="s3-eyebrow">
+              <div class="s3-eyebrow-line"></div>
+              <div class="s3-eyebrow-text">Pioneer of Deep Learning</div>
+            </div>
+
+            <div class="s3-cards-grid">
+              <!-- Card 1 -->
+              <div class="s3-glass-card" onclick="openS3CardPopup(0)">
+                <div class="s3-card-year">1986</div>
+                <div class="s3-card-title">Backpropagation</div>
+                <div class="s3-card-desc">Made training multi-layer neural networks highly practical, unlocking modern AI computation.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
+              </div>
+              <!-- Card 2 -->
+              <div class="s3-glass-card" onclick="openS3CardPopup(1)">
+                <div class="s3-card-year">2012</div>
+                <div class="s3-card-title">AlexNet Triumph</div>
+                <div class="s3-card-desc">Shattered ImageNet benchmark records with Deep CNNs, proving deep learning works at scale.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
+              </div>
+              <!-- Card 3 -->
+              <div class="s3-glass-card" onclick="openS3CardPopup(2)">
+                <div class="s3-card-year">2018</div>
+                <div class="s3-card-title">Turing Award</div>
+                <div class="s3-card-desc">Honored with the "Nobel Prize of Computing" for creating deep neural networks.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
+              </div>
+              <!-- Card 4 -->
+              <div class="s3-glass-card" onclick="openS3CardPopup(3)">
+                <div class="s3-card-year">2024</div>
+                <div class="s3-card-title">Nobel Prize</div>
+                <div class="s3-card-desc">Awarded the Nobel Prize in Physics for foundational discoveries enabling deep machine learning.</div>
+                <div class="s3-card-expand-hint text-glow">Click for Details →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 04: BIOLOGICAL INSPIRATION (NEURON STRUCTURE) -->
+      <section class="slide-five" id="slideFive">
+        <div class="s5-bg"></div>
+        <div class="s5-content">
+
+          <!-- Compact header: title left, stats right -->
+          <div class="s5-header">
+            <div class="s5-header-left">
+              <div class="s5-kicker">
+                The Biological Inspiration
+                <span class="s5-kicker-sep"></span>
+                <span class="s5-kicker-sub">We just reverse-engineered the idea.</span>
+              </div>
+              <h2 class="s5-title">Nature Built It <span class="s5-title-accent">First.</span></h2>
+            </div>
+            <div class="s5-stat-pills">
+              <div class="s5-pill">
+                <div class="s5-pill-value">86B</div>
+                <div class="s5-pill-label">neurons</div>
+              </div>
+              <div class="s5-pill">
+                <div class="s5-pill-value">7,000</div>
+                <div class="s5-pill-label">connections per neuron</div>
+              </div>
+              <div class="s5-pill">
+                <div class="s5-pill-value">100-500T</div>
+                <div class="s5-pill-label">total connections</div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Two-column visual area -->
+          <div class="s5-visual-row">
+
+            <!-- Left: Micro -->
+            <div class="s5-neuron-col">
+                <div class="s5-img-frame" style="background:#000;">
+                <video id="neuronVideo" src="assets/chapter-4-biological-roots/Neuron%20Firing.mp4" loop playsinline title="Biological neuron firing" style="cursor: pointer;" onclick="toggleNeuronVideo(event)"></video>
+                <button id="neuronPlayBtn" class="s5-video-btn" onclick="toggleNeuronVideo(event)" aria-label="Play/Pause Video">▶</button>
+              </div>
+              <div class="s5-insight-card">
+                <div class="s5-insight-icon">⚡</div>
+                <p class="s5-insight-text">A tiny biological switch. Signals enter via dendrites, and if the electrical pulse is strong enough, the neuron "fires" an output.</p>
+              </div>
+            </div>
+
+            <!-- Right: Macro -->
+            <div class="s5-brain-col">
+              
+              <div class="s5-brain-card">
+                <img src="assets/chapter-4-biological-roots/brain_network.png" alt="Neural network visualization" />
+              </div>
+              <div class="s5-insight-card">
+                <div class="s5-insight-icon">🧠</div>
+                <p class="s5-insight-text">Intelligence emerges from the <strong>network</strong> — billions of neurons forming 100 trillion connections to process reality.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom accent bar -->
+          <div class="s5-accent-bar"></div>
+        </div>
+      </section>
+
+
+      <!-- SLIDE 05: ANN ARCHITECTURE -->
+      <section class="slide-seven" id="slideSeven">
+        <iframe
+          class="s7-iframe"
+          src="assets/chapter-4-biological-roots/ann_network.html"
+          title="ANN Architecture Visualizer"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE 06: SINGLE NEURON INTERACTIVE -->
+      <section class="slide-single-neuron" id="slideSingleNeuron" style="overflow: hidden; background: var(--bg);">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-biological-roots/ann animation/index.html"
+          title="Single Neuron Interactive"
+          allowtransparency="true"
+          style="width: 100%; height: 100vh; border: none;"
+        ></iframe>
+      </section>
+
+
+      <!-- SLIDE 07: FOOTBALL ROBOT (TRAINING ANALOGY) -->
+      <section class="slide-eight" id="slideEight">
+        <div class="s8-content">
+          <div class="premium-header" style="margin-bottom: 24px;">
+            <div class="year-badge">TRAINING</div>
+            <h2 style="font-family: var(--font-heading); font-size: clamp(28px, 4vw, 52px); font-weight: 800; font-style: italic; color: var(--text-main); margin: 0;">Learning Without Rules</h2>
+          </div>
+
+          <p class="s8-intro">
+            Imagine building a robot to play football — without programming it with any rules on how to play. Instead, it learns entirely through training.
+          </p>
+
+          <div class="s8-timeline">
+            <!-- Step 1 -->
+            <div class="s8-step" data-s8-delay="0">
+              <div class="s8-step-icon">⚽</div>
+              <div class="s8-step-number">01</div>
+              <div class="s8-step-title">Takes Action</div>
+              <div class="s8-step-desc">The robot moves, passes, or shoots — with no prior knowledge of what's right or wrong.</div>
+            </div>
+
+            <div class="s8-arrow" data-s8-delay="100">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="s8-step" data-s8-delay="200">
+              <div class="s8-step-icon">📡</div>
+              <div class="s8-step-number">02</div>
+              <div class="s8-step-title">Gets Feedback</div>
+              <div class="s8-step-desc">Each action receives feedback — was that move good or bad? Did it lead closer to the goal?</div>
+            </div>
+
+            <div class="s8-arrow" data-s8-delay="300">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="s8-step" data-s8-delay="400">
+              <div class="s8-step-icon">🔗</div>
+              <div class="s8-step-number">03</div>
+              <div class="s8-step-title">Adjusts Connections</div>
+              <div class="s8-step-desc">Good action? Strengthen those neural connections. Bad action? Weaken them. The network rewires itself.</div>
+            </div>
+
+            <div class="s8-arrow" data-s8-delay="500">
+              <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="s8-step" data-s8-delay="600">
+              <div class="s8-step-icon">🏆</div>
+              <div class="s8-step-number">04</div>
+              <div class="s8-step-title">Recognizes Patterns</div>
+              <div class="s8-step-desc">Over time, the robot learns which actions lead to better outcomes — and performance improves.</div>
+            </div>
+          </div>
+
+          <div class="s8-result" data-s8-delay="900">
+            <div class="s8-result-text">
+              No one taught it the rules. Through thousands of iterations of <span class="s8-result-highlight">action → feedback → adjustment</span>, the network discovered them on its own.
+            </div>
+            <div class="s8-loop-badge">
+              <svg viewBox="0 0 24 24"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+              REPEAT × 1000s
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 08: ROBOT FOOTBALL TRAINING DEMO -->
+      <section class="slide-robot-football" id="slideRobotFootball">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-5-training/robot-football.html?v=3"
+          title="Robot Football Training Simulation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+
+      <!-- SLIDE 09: THE THREE PILLARS (DATA, COMPUTE, ALGORITHMS) -->
+      <section class="slide-four" id="slideFour">
+        <div class="s4-header premium-header">
+           <div class="year-badge">EVOLUTION</div>
+           <h2 class="s4-title">So, What Changed?</h2>
+           <p class="s4-subtitle">Three factors that converged to enable the modern AI era</p>
+        </div>
+
+        <div class="s4-layout">
+          <!-- LEFT PANE: TABS -->
+          <div class="s4-nav-pane">
+            <div class="s4-tab active" onclick="switchS4Tab(0)">
+              <div class="s4-tab-number-circle"><span class="s4-tab-number">01</span></div>
+              <div class="s4-tab-content">
+                <span class="s4-tab-title">Massive Data</span>
+              </div>
+            </div>
+            <div class="s4-tab" onclick="switchS4Tab(1)">
+              <div class="s4-tab-number-circle"><span class="s4-tab-number">02</span></div>
+              <div class="s4-tab-content">
+                <span class="s4-tab-title">GPU Power</span>
+              </div>
+            </div>
+            <div class="s4-tab" onclick="switchS4Tab(2)">
+              <div class="s4-tab-number-circle"><span class="s4-tab-number">03</span></div>
+              <div class="s4-tab-content">
+                <span class="s4-tab-title">Transformers</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="s4-pane-divider"></div>
+
+          <!-- RIGHT PANE: DETAIL -->
+          <div class="s4-detail-pane">
+            <!-- Detail 0: Massive Data -->
+            <div class="s4-detail-content active" id="s4-detail-0">
+              <div class="s4-detail-header">
+                <svg class="s4-detail-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 4.24 2 7c0 2.27 3.32 4.26 7.84 4.84.45.06.91.1 1.38.13.91.06 1.84.09 2.78.09.94 0 1.87-.03 2.78-.09.47-.03.93-.07 1.38-.13C20.68 11.26 24 9.27 24 7c0-2.76-4.48-5-10-5zm0 2c4.42 0 8 1.57 8 3.5S16.42 11 12 11s-8-1.57-8-3.5S7.58 4 12 4zm0 9c-.93 0-1.85-.03-2.75-.08-.46-.03-.91-.07-1.35-.13-4.52-.58-7.9-2.58-7.9-4.88v2.09c0 2.76 4.48 5 10 5s10-2.24 10-5V9.91c0 2.3-3.38 4.3-7.9 4.88-.44.06-.89.1-1.35.13-.9.05-1.82.08-2.75.08zm0 5c-.93 0-1.85-.03-2.75-.08-.46-.03-.91-.06-1.35-.12-4.52-.58-7.9-2.58-7.9-4.89v2.09c0 2.76 4.48 5 10 5s10-2.24 10-5v-2.09c0 2.31-3.38 4.31-7.9 4.89-.44.06-.89.09-1.35.12-.9.05-1.82.08-2.75.08z"/>
+                </svg>
+                <div class="s4-detail-title">Massive Data</div>
+              </div>
+              <div class="s4-detail-body">
+                <span class="s4-detail-highlight">An Ocean of Data</span>
+                <span class="s4-detail-subtext">The internet became the world's largest training set</span>
+                <p>Models are only as good as the data they learn from — and suddenly there was an ocean of it.</p>
+                <p>Billions of text documents, images, and videos became available for training. Curated datasets like <strong>Common Crawl</strong>, <strong>Wikipedia dumps</strong>, and <strong>ImageNet</strong> gave researchers the raw material to build ever more powerful models.</p>
+                <p>Instead of manually programming rules, we fed the machines human history, and they learned the patterns.</p>
+              </div>
+            </div>
+
+            <!-- Detail 1: GPU Power -->
+            <div class="s4-detail-content" id="s4-detail-1">
+              <div class="s4-detail-header">
+                <svg class="s4-detail-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21 9V7h-2V5c0-1.1-.9-2-2-2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H7V5h10v14zM9 7h6v2H9V7zm0 4h6v2H9v-2zm0 4h6v2H9v-2z"/>
+                </svg>
+                <div class="s4-detail-title">GPU Power</div>
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                  <button class="gpu-demo-btn gpu-demo-icon-btn" onclick="openGpuDemo()" title="GPU Illustration" style="margin-left: 0;">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 6h12v12H6V6m-2-2v16h16V4H4zm8-2h-2v2h2V2zm4 0h-2v2h2V2zM8 2H6v2h2V2zM2 10v2h2v-2H2zm0 4v2h2v-2H2zM2 6v2h2V6H2zm18 4v2h2v-2h-2zm0 4v2h2v-2h-2zm0-8v2h2V6h-2zm-6 14h2v2-h-2v-2zm-4 0h2v2h-2v-2zm-4 0h2v2H6v-2z"/>
+                    </svg>
+                  </button>
+                  <button class="gpu-demo-btn gpu-demo-icon-btn" onclick="openCpuGpuComparison()" title="CPU vs GPU Comparison" style="margin-left: 0; background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5cc0-1.1-.9-2-2-2zm-1 14H6V7h12v10z"/>
+                      <path d="M12 9h4v2h-4V9zm-4 0h2v2H8V9zm0 4h2v2H8v-2zm4 0h4v2h-4v-2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="s4-detail-body">
+                <span class="s4-detail-highlight">From Gaming to AI</span>
+                <span class="s4-detail-subtext">NVIDIA's CUDA platform (2007) turned gaming graphics cards into parallel computing monsters.</span>
+                <p>Neural networks require an astronomical amount of simple matrix multiplication. A modern CPU has <strong>8 to 24 powerful cores</strong> built for complex, multi-step logic, making them too slow for AI because they handle these tasks sequentially.</p>
+                <p>A modern AI GPU, however, packs <strong>thousands of smaller cores (often 10,000+)</strong>. While not built for complex logic, they calculate thousands of simple operations simultaneously. This massive parallel architecture is <strong>perfect</strong> for AI.</p>
+                <p><strong>1000x faster:</strong> By 2012, AlexNet trained on two gaming GPUs crushed the ImageNet competition, proving hardware was no longer the bottleneck.</p>
+              </div>
+            </div>
+
+            <!-- Detail 2: Transformers -->
+            <div class="s4-detail-content" id="s4-detail-2">
+              <div class="s4-detail-header">
+                <svg class="s4-detail-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11 21h-1l1-7H7.5c-.58 0-.57-.32-.38-.66C7.67 12.16 9.4 9.06 12.5 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15C12.96 17.55 11 21 11 21z"/>
+                </svg>
+                <div class="s4-detail-title">Transformers</div>
+              </div>
+              <div class="s4-detail-body">
+                <span class="s4-detail-highlight">"Attention Is All You Need"</span>
+                <span class="s4-detail-subtext">2017 — The Google Research paper that started it all</span>
+                <p>This single algorithm is the backbone of <strong>GPT</strong>, <strong>BERT</strong>, and virtually every large language model you've heard of.</p>
+                <p>Before Transformers, models processed text sequentially, one word at a time, often forgetting the beginning of a sentence by the time they reached the end.</p>
+                <p>The <strong>self-attention mechanism</strong> changed everything. It allows the model to look at <em>all parts of the input simultaneously</em>, dynamically deciding which words are most relevant to each other, unlocking unprecedented logic, reasoning, and context understanding.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 09: THE JOURNEY (CLOSING) -->
+      <section class="slide-nine" id="slideNine">
+        <div class="s9-bg-glow"></div>
+        <div class="s9-container">
+          <div class="s9-header">
+            <div class="premium-header" style="margin-bottom: 0;">
+              <div class="year-badge">THE JOURNEY</div>
+            </div>
+            <h2 class="s9-title">The Evolution of Neural Networks — <span class="s9-accent">A 70-Year Timeline</span></h2>
+
+          </div>
+
+          <div class="s9-timeline">
+            <div class="s9-card clickable-card" onclick="openImagePopup('assets/chapter-1-origins/darthmouth.png', true)">
+              <div class="s9-dot"></div>
+              <div class="s9-year">1956</div>
+              <div class="s9-card-title">The Dartmouth Dream <svg style="display:inline; margin-left:6px; vertical-align:middle; opacity:0.6;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              <div class="s9-card-desc">At the Dartmouth Summer Project, researchers believed they could solve AI in a single summer. Progress proved far slower. <span style="display:block; margin-top:8px; color:var(--s2-gold); font-size:0.85em; opacity:0.9;">Click to view Dartmouth Proposal &rarr;</span></div>
+            </div>
+
+            <div class="s9-card clickable-card" onclick="openImagePopup('assets/chapter-1-origins/hinton.jpg', false, true)">
+              <div class="s9-dot"></div>
+              <div class="s9-year">1986</div>
+              <div class="s9-card-title">Geoffrey Hinton <svg style="display:inline; margin-left:6px; vertical-align:middle; opacity:0.6;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              <div class="s9-card-desc">Called the <strong style="color: var(--text-main);">Godfather of AI</strong>, his work on backpropagation gave neural networks the ability to learn from their mistakes. <span style="display:block; margin-top:8px; color:var(--s2-gold); font-size:0.85em; opacity:0.9;">Click to view photo &rarr;</span></div>
+            </div>
+
+            <div class="s9-card">
+              <div class="s9-dot"></div>
+              <div class="s9-year">2012</div>
+              <div class="s9-card-title">AlexNet Breakthrough</div>
+              <div class="s9-card-desc">Hinton's team dramatically outperformed every other system in image recognition — showing the world what deep learning could really do.</div>
+            </div>
+
+            <div class="s9-card clickable-card" onclick="openImagePopup('assets/chapter-1-origins/hinton.jpg', false, true)">
+              <div class="s9-dot"></div>
+              <div class="s9-year">2024</div>
+              <div class="s9-card-title">Nobel Prize in Physics <svg style="display:inline; margin-left:6px; vertical-align:middle; opacity:0.6;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+              <div class="s9-card-desc">Hinton was awarded the Nobel Prize in Physics for his foundational work that made modern AI possible. <span style="display:block; margin-top:8px; color:var(--s2-gold); font-size:0.85em; opacity:0.9;">Click to view photo &rarr;</span></div>
+            </div>
+          </div>
+
+          <div class="s9-closing">
+            <p class="s9-closing-text">
+              What took <strong>70 years of persistence</strong> now shapes everything we build.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── 11. MODAL COMPONENTS ────────────────────────────────────────────────── -->
+    <!-- Pioneer Modal -->
+    <div class="pioneer-modal" id="pioneerModal">
+      <div class="modal-content">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <img id="modalImg" class="modal-img" src="" alt="Pioneer" />
+        <div id="modalName" class="modal-name">Name</div>
+        <div id="modalMeta" class="modal-meta"></div>
+        <div id="modalIntro" class="modal-intro">Intro text</div>
+        <ul id="modalFacts" class="modal-facts"></ul>
+      </div>
+    </div>
+
+    <div id="imagePopupOverlay" onclick="closeImagePopup(event)">
+      <button class="image-pp-close" onclick="closeImagePopup(event)">&times;</button>
+      <div style="display:flex; flex-direction:column; align-items:center; max-height:100%; max-width:100%;">
+        <img id="imagePopupImg" src="" alt="Popup Image" />
+        <div id="imagePopupCaption" style="color: rgba(255,255,255,0.6); margin-top: 12px; font-size: 0.9em; max-width: 80%; text-align: center; display: none;">
+          Ref: IEEE Spectrum (<a href="https://spectrum.ieee.org/dartmouth-ai-workshop" target="_blank" style="color: var(--s2-gold); text-decoration: none;">https://spectrum.ieee.org/dartmouth-ai-workshop</a>)
+        </div>
+      </div>
+    </div>
+
+    <!-- Pill Popups (Godfather of AI / Nobel Prize 2024) -->
+    <div class="s3-pill-popup-overlay" id="pillPopupOverlay" onclick="closePillPopup()"></div>
+    <div class="s3-pill-popup popup-purple" id="pillPopupGodfather">
+      <button class="s3-pp-close" onclick="closePillPopup()">✕</button>
+      <div class="s3-pp-eyebrow">Legacy & Recognition</div>
+      <div class="s3-pp-title">The Godfather of Deep Learning</div>
+      <div class="s3-pp-body">
+        Through <strong>two AI winters</strong> — when funding dried up, careers collapsed, and the entire field was written off as a dead end — Hinton kept going. For nearly <strong>30 years</strong> he was considered an eccentric fringe researcher by mainstream computer science.
+        <div class="s3-pp-divider"></div>
+        His conviction: the brain is the only proof of concept we need. If biology can do it, we can engineer it. He bet his entire career on that idea.
+      </div>
+      <div class="s3-pp-stat-row">
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">30+</div>
+          <div class="s3-pp-stat-lbl">years of persistence</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">2×</div>
+          <div class="s3-pp-stat-lbl">AI winters survived</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">3</div>
+          <div class="s3-pp-stat-lbl">Godfathers of Deep Learning</div>
+        </div>
+      </div>
+      <div class="s3-pp-quote">"I have always been convinced that the only way to get artificial intelligence to work is to do what the brain does." — Geoffrey Hinton</div>
+    </div>
+
+    <div class="s3-pill-popup popup-gold" id="pillPopupNobel">
+      <button class="s3-pp-close" onclick="closePillPopup()">✕</button>
+      <div class="s3-pp-eyebrow">Nobel Prize in Physics · 2024</div>
+      <div class="s3-pp-title">Physics Recognises Machine Learning</div>
+      <div class="s3-pp-body">
+        Shared with <strong>John Hopfield</strong>, the Royal Swedish Academy cited "foundational discoveries and inventions that enable machine learning with artificial neural networks." It was the first time the Nobel in Physics was awarded for AI research.
+        <div class="s3-pp-divider"></div>
+        Why <em>Physics?</em> Hopfield Networks and Boltzmann Machines are grounded in <strong>statistical mechanics</strong> — the same mathematics used to describe atoms and magnets. The Nobel committee recognised that the physics of information is the physics of intelligence.
+      </div>
+      <div class="s3-pp-stat-row">
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">2024</div>
+          <div class="s3-pp-stat-lbl">Nobel Prize in Physics</div>
+        </div>
+        <div class="s3-pp-stat">
+          <div class="s3-pp-stat-val">11M</div>
+          <div class="s3-pp-stat-lbl">SEK prize (~$1M USD)</div>
+        </div>
+      </div>
+      <div class="s3-pp-quote">"He showed a willingness to go against the scientific consensus — and he was right." — Nobel Committee, 2024</div>
+    </div>
+
+    <!-- CPU vs GPU Animation Modal -->
+    <div class="cgd-overlay" id="cgdOverlay">
+      <div class="cgd-modal">
+        <button class="cgd-close" onclick="closeGpuDemo()">&times;</button>
+
+        <div class="cgd-header-row">
+          <div class="cgd-title">Architectural Shift</div>
+          <button class="cgd-btn-both" onclick="startBoth()">▶ Run Both</button>
+          <button class="cgd-btn-reset" onclick="resetGpuDemo()">
+            ↺ Reset
+          </button>
+        </div>
+        <div class="cgd-subtitle">Sequential Logic vs Massive Parallelism</div>
+
+        <div class="cgd-arena">
+          <!-- CPU Side -->
+          <div class="cgd-side cpu">
+            <div class="cgd-side-header">
+              <div class="cgd-label">CPU architecture</div>
+              <button class="cgd-btn-run" id="cpuBtn" onclick="startCPU()">▶ run solo</button>
+              <button class="cgd-btn-run" id="cpuFinishBtn" onclick="finishCPU()" style="display:none; margin-left: 6px; opacity: 0.7;">⏩ skip to end</button>
+            </div>
+            <div class="chip-pipeline-wrap">
+              <div class="cgd-inbound-wrap">
+                <div class="cgd-inbound-queue aligned-cpu" id="cpuSupply"></div>
+              </div>
+              <div class="chip-package cpu">
+                <div class="pins-col pins-left" id="cpuPinsL"></div>
+                <div class="chip-container" id="cpuChip"></div>
+              </div>
+            </div>
+            <div class="cgd-progress-wrap">
+              <div class="cgd-progress-bar">
+                <div class="progress-fill" id="cpuProgress"></div>
+              </div>
+              <div class="cgd-progress-labels">
+                <span id="cpuCount">0/100</span>
+                <span id="cpuPct">0%</span>
+              </div>
+            </div>
+            <div class="queue-label">DATA QUEUE</div>
+            <div class="queue-container" id="cpuQueue"></div>
+            <div class="status-tag" id="cpuStatus">IDLE</div>
+          </div>
+
+          <!-- GPU Side -->
+          <div class="cgd-side gpu">
+            <div class="cgd-side-header">
+              <div class="cgd-label">GPU architecture</div>
+              <button class="cgd-btn-run" id="gpuBtn" onclick="startGPU()">▶ run solo</button>
+            </div>
+            <div class="chip-pipeline-wrap">
+              <div class="cgd-inbound-wrap">
+                <div class="cgd-inbound-queue aligned-gpu" id="gpuSupply"></div>
+              </div>
+              <div class="chip-package gpu">
+                <div class="pins-col pins-left" id="gpuPinsL"></div>
+                <div class="chip-container" id="gpuChip"></div>
+              </div>
+            </div>
+            <div class="cgd-progress-wrap">
+              <div class="cgd-progress-bar">
+                <div class="progress-fill" id="gpuProgress"></div>
+              </div>
+              <div class="cgd-progress-labels">
+                <span id="gpuCount">0/100</span>
+                <span id="gpuPct">0%</span>
+              </div>
+            </div>
+            <div class="queue-label">DATA QUEUE</div>
+            <div class="queue-container" id="gpuQueue"></div>
+            <div class="status-tag" id="gpuStatus">IDLE</div>
+          </div>
+        </div>
+
+        <div class="cgd-stats">
+          <div class="cgd-stat-card cpu-stat">
+            <div class="stat-val" id="cpuTimeVal">—</div>
+            <div class="stat-label">CPU Cycles</div>
+          </div>
+          <div class="cgd-stat-card ratio-stat">
+            <div class="stat-val" id="speedupVal">—</div>
+            <div class="stat-label">Speedup</div>
+          </div>
+          <div class="cgd-stat-card gpu-stat">
+            <div class="stat-val" id="gpuTimeVal">—</div>
+            <div class="stat-label">GPU Cycles</div>
+          </div>
+        </div>
+
+        <div class="cgd-insight">
+          A CPU has a few powerful cores (e.g., 8 to 24) designed to handle highly complex logic sequentially. In contrast, a modern AI GPU packs an army of thousands of simpler cores. Since AI needs millions of simple matrix operations rather than a few complex ones, GPUs can compute them all simultaneously.
+        </div>
+      </div>
+    </div>
+
+    <!-- CPU vs GPU Comparison Popup -->
+    <div class="cgd-overlay" id="cpuGpuComparisonOverlay" style="display:none;">
+      <div class="cgd-modal" style="max-width: 900px; height: 80vh; overflow-y: auto;">
+        <button class="cgd-close" onclick="closeCpuGpuComparison()">&times;</button>
+        <div class="cgd-header-row">
+          <div class="cgd-title">CPU vs GPU Comparison</div>
+        </div>
+        <div class="cgd-subtitle">Architectural Differences & Performance Benchmarks</div>
+        
+        <div style="padding: 60px 40px; text-align: center;">
+          <div style="font-size: 24px; color: var(--s2-gold); font-family: var(--font-heading); margin-bottom: 20px; font-weight: 700;">
+            Comparison Dashboard Coming Soon
+          </div>
+          <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            This section will showcase a detailed side-by-side comparison between CPU and GPU architectures, including throughput metrics, core counts, and typical AI workload performance.
+          </p>
+          <div style="margin-top: 40px; display: inline-flex; gap: 20px; align-items: center; opacity: 0.5;">
+            <div style="width: 100px; height: 100px; border: 2px dashed var(--text-dim); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 32px;">💻</div>
+            <div style="font-size: 24px;">VS</div>
+            <div style="width: 100px; height: 100px; border: 2px dashed var(--accent-main); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🔋</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="js/scripts.js"></script>
+  </body>
+</html>

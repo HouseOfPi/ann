@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Future, Already Arriving | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 40px 28px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    /* ── Header ── */
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--eyebrow-accent, var(--c1));
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 3.4vw, 46px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em { font-style: italic; }
+
+    /* ── Stage: single landscape player, centred ── */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 18px;
+      min-height: 0;
+      gap: 14px;
+      flex-direction: column;
+    }
+
+    .player {
+      position: relative;
+      /* Width is the binding constraint up to a cap; height comes from 16:9.
+         Also cap by viewport height so the player never overflows on
+         short slides. */
+      width: min(100%, 1100px, calc(72vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      flex: 0 0 auto;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+      box-shadow: 0 28px 70px -20px color-mix(in srgb, var(--bg) 60%, transparent);
+      opacity: 0;
+      transform: scale(0.985);
+    }
+
+    .player video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Slower, gentler cross-fade. Different curves for opacity vs
+         transform so the new clip blooms in instead of snapping. */
+      transition: opacity 1.05s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      transform: scale(1.06);
+      z-index: 0;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+    .player video.is-active {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    /* Bottom gradient under the caption so text stays legible. */
+    .player::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 50%;
+      pointer-events: none;
+      background: linear-gradient(to top,
+        rgba(0,0,0,0.78) 0%,
+        rgba(0,0,0,0.36) 50%,
+        rgba(0,0,0,0) 100%);
+      z-index: 2;
+    }
+
+    /* Caption overlay anchored bottom-left of the player */
+    .player-caption {
+      position: absolute;
+      left: 36px;
+      right: 36px;
+      bottom: 56px;
+      z-index: 3;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 64ch;
+      transition: opacity 0.32s ease;
+    }
+
+    .player-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--c1);
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    }
+
+    .player-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 2.4vw, 36px);
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.12;
+      letter-spacing: -0.005em;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.55);
+    }
+    .player-title em { font-style: italic; }
+
+    .player-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(13px, 1.05vw, 15px);
+      line-height: 1.55;
+      color: rgba(255,255,255,0.86);
+      max-width: 60ch;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+    }
+
+    .sound-control-group {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.22);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      width: 170px;
+      height: 34px;
+    }
+    .sound-control-group:hover, .sound-control-group:focus-within {
+      background: rgba(0,0,0,0.65);
+      border-color: rgba(255,255,255,0.4);
+    }
+    .sound-toggle {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .sound-toggle:active { transform: scale(0.95); }
+    .sound-toggle svg { display: block; }
+
+    .volume-wrapper {
+      width: 80px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      padding-right: 12px;
+      pointer-events: auto;
+    }
+    .volume-percent {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #fff;
+      margin-left: 8px;
+      width: 28px;
+      text-align: right;
+    }
+    .volume-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .volume-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .volume-slider::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s;
+    }
+    .volume-slider::-moz-range-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Progress bar (4 segments along the very bottom of the player) */
+    .progress {
+      position: absolute;
+      left: 36px;
+      right: 36px;
+      bottom: 24px;
+      height: 3px;
+      display: flex;
+      gap: 8px;
+      z-index: 3;
+    }
+    .progress-segment {
+      flex: 1;
+      height: 100%;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.22);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-segment::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: var(--fill, 0%);
+      background: rgba(255,255,255,0.9);
+      transition: width 0.2s linear;
+    }
+    .progress-segment.is-done::after { width: 100%; }
+    .progress-segment.is-active::after { background: var(--c1, #5fe8ec); }
+
+    .stage-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 40%, transparent);
+      opacity: 0;
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 18px 18px 22px; }
+      .player-caption { left: 22px; right: 22px; bottom: 44px; gap: 6px; }
+      .progress { left: 22px; right: 22px; bottom: 18px; }
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="The Road Ahead" title="The Future, <em>Already Arriving</em>"></page-title>
+
+  <div class="stage">
+    <div class="player" id="player">
+      <!-- Landscape videos, stacked; only one is .is-active at a time.
+           Folder name contains a space → URL-encoded. -->
+      <video data-tile="0" src="videos/AI%20future/mars.mp4"  playsinline preload="auto" class="is-active"></video>
+      <video data-tile="1" src="videos/AI%20future/DNA.mp4"   playsinline preload="auto" muted></video>
+      <video data-tile="2" src="videos/AI%20future/fire.mp4"  playsinline preload="auto" muted></video>
+      <video data-tile="3" src="videos/AI%20future/Kids.mp4"  playsinline preload="auto" muted></video>
+
+      <div class="sound-control-group">
+        <button class="sound-toggle" id="soundBtn" type="button" aria-label="Toggle sound">
+          <svg id="soundIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <div class="volume-wrapper">
+          <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.5" aria-label="Volume">
+          <span id="volumePercent" class="volume-percent">50%</span>
+        </div>
+      </div>
+
+      <!-- In-frame caption: eyebrow + serif headline + short description -->
+      <div class="player-caption" id="playerCaption">
+        <span class="player-eyebrow" id="capEyebrow">Exploration</span>
+        <h2 class="player-title" id="capTitle">Mars, <em>already settled</em></h2>
+        <p class="player-desc" id="capDesc">Autonomous humanoids land first — building shelter, generating power, preparing a civilisation before the first human boot touches the soil.</p>
+      </div>
+
+      <div class="progress" id="progress">
+        <div class="progress-segment is-active" data-tile="0"></div>
+        <div class="progress-segment" data-tile="1"></div>
+        <div class="progress-segment" data-tile="2"></div>
+        <div class="progress-segment" data-tile="3"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', eyebrow:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    // Index aligned with data-tile order: mars · DNA · fire · kids
+    const CAPTIONS = [
+      { eyebrow: 'Exploration', title: 'Mars, <em>already settled</em>',
+        desc: 'Autonomous humanoids land first — building shelter, generating power, preparing a civilisation before the first human boot touches the soil.' },
+      { eyebrow: 'Discovery',   title: 'Reading the <em>book of life</em>',
+        desc: 'AI compresses decades of genetics work into days — diseases mapped, vaccines designed and tested, cures within reach.' },
+      { eyebrow: 'Hazardous Work', title: 'Into the <em>fire</em>',
+        desc: 'Humanoid robots take on rescues, reactor work, chemical spills — every job too dangerous for a person.' },
+      { eyebrow: 'Care',        title: 'A gentle <em>nanny</em>, always present',
+        desc: 'AI caregivers watch over the smallest of us — soothing, monitoring, learning each child as a parent would.' },
+    ];
+
+    const TOTAL = 4;
+    let currentIdx = -1;
+    let soundOn = true;
+    let globalVolume = 0.5;
+    let progressRaf = null;
+    let segmentDoneMask = [false, false, false, false];
+
+    function videoEls() { return document.querySelectorAll('.player video'); }
+
+    function applyAudioState() {
+      videoEls().forEach((v) => {
+        const isActive = Number(v.dataset.tile) === currentIdx;
+        v.muted = !(isActive && soundOn);
+      });
+    }
+
+    function tryPlay(v, { fromStart = false } = {}) {
+      // Only rewind when caller explicitly asks (e.g. switching clips).
+      // A pause → resume must keep the existing currentTime.
+      if (fromStart) {
+        try { v.currentTime = 0; } catch (_) {}
+      }
+      const p = v.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => {
+          if (!v.muted) {
+            v.muted = true;
+            soundOn = false;
+            updateSoundButton();
+            v.play().catch(() => {});
+          }
+        });
+      }
+    }
+
+    function setSegmentStates() {
+      document.querySelectorAll('.progress-segment').forEach((seg) => {
+        const tile = Number(seg.dataset.tile);
+        seg.classList.toggle('is-active', tile === currentIdx);
+        seg.classList.toggle('is-done', segmentDoneMask[tile] && tile !== currentIdx);
+        if (tile !== currentIdx && !segmentDoneMask[tile]) {
+          seg.style.setProperty('--fill', '0%');
+        }
+        if (tile === currentIdx) {
+          seg.style.setProperty('--fill', '0%');
+        }
+      });
+    }
+
+    function tickProgress() {
+      const active = Array.from(videoEls()).find(v => Number(v.dataset.tile) === currentIdx);
+      const seg = document.querySelector(`.progress-segment[data-tile="${currentIdx}"]`);
+      if (active && seg && active.duration > 0) {
+        const pct = Math.min(100, (active.currentTime / active.duration) * 100);
+        seg.style.setProperty('--fill', pct.toFixed(2) + '%');
+      }
+      progressRaf = requestAnimationFrame(tickProgress);
+    }
+
+    function setActive(idx) {
+      idx = ((idx % TOTAL) + TOTAL) % TOTAL;
+      const prevIdx = currentIdx;
+      if (idx === prevIdx) return;
+
+      if (prevIdx >= 0) segmentDoneMask[prevIdx] = true;
+      segmentDoneMask[idx] = false;
+
+      currentIdx = idx;
+
+      const all = videoEls();
+      const outgoing = Array.from(all).find(v => Number(v.dataset.tile) === prevIdx);
+      const incoming = Array.from(all).find(v => Number(v.dataset.tile) === idx);
+
+      // Pre-roll the incoming clip so the cross-fade lands on real frames.
+      if (incoming) {
+        incoming.muted = !soundOn;
+        try { incoming.currentTime = 0; } catch (_) {}
+        tryPlay(incoming);
+      }
+
+      // Caption swap, paced to match the longer video cross-fade.
+      const cap = CAPTIONS[idx];
+      const eb  = document.getElementById('capEyebrow');
+      const ttl = document.getElementById('capTitle');
+      const dsc = document.getElementById('capDesc');
+      gsap.killTweensOf('#playerCaption');
+      gsap.timeline()
+        .to('#playerCaption', { opacity: 0, duration: 0.32, ease: 'power2.inOut' })
+        .add(() => {
+          if (eb)  eb.textContent  = cap.eyebrow;
+          if (ttl) ttl.innerHTML   = cap.title;
+          if (dsc) dsc.textContent = cap.desc;
+        })
+        .to('#playerCaption', { opacity: 1, duration: 0.5, ease: 'power2.out' });
+
+      // Wait for the incoming video to have a decoded frame before flipping
+      // classes — eliminates the brief black/frozen flash at the start of
+      // the cross-fade. Falls back to a short delay if the event never fires.
+      const swap = () => {
+        all.forEach((v) => {
+          v.classList.toggle('is-active', Number(v.dataset.tile) === idx);
+        });
+        setSegmentStates();
+      };
+      if (incoming) {
+        let swapped = false;
+        const trigger = () => {
+          if (swapped) return;
+          swapped = true;
+          incoming.removeEventListener('loadeddata', trigger);
+          incoming.removeEventListener('canplay', trigger);
+          requestAnimationFrame(swap);
+        };
+        if (incoming.readyState >= 2) {
+          // HAVE_CURRENT_DATA — frame already available.
+          requestAnimationFrame(swap);
+        } else {
+          incoming.addEventListener('loadeddata', trigger, { once: true });
+          incoming.addEventListener('canplay', trigger, { once: true });
+          // Safety: don't hang forever if the events never fire.
+          setTimeout(trigger, 350);
+        }
+      } else {
+        requestAnimationFrame(swap);
+      }
+
+      // Pause outgoing after the cross-fade completes (~1.05s + buffer).
+      if (outgoing) {
+        setTimeout(() => {
+          if (Number(outgoing.dataset.tile) !== currentIdx) {
+            try { outgoing.pause(); outgoing.muted = true; } catch (_) {}
+          }
+        }, 1150);
+      }
+
+      applyAudioState();
+    }
+
+    function next() { setActive(currentIdx + 1); }
+    function prev() { setActive(currentIdx - 1); }
+
+    function updateSoundButton() {
+      const icon = document.getElementById('soundIcon');
+      const btn  = document.getElementById('soundBtn');
+      if (!icon || !btn) return;
+      btn.setAttribute('aria-label', soundOn ? 'Mute' : 'Unmute');
+      icon.innerHTML = soundOn
+        ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>' +
+          '<path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>' +
+          '<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>'
+        : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>' +
+          '<line x1="22" y1="9" x2="16" y2="15"/>' +
+          '<line x1="16" y1="9" x2="22" y2="15"/>';
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      if (soundOn && globalVolume == 0) {
+        globalVolume = 0.5;
+        const volSlider = document.getElementById('volumeSlider');
+        if (volSlider) volSlider.value = globalVolume;
+        videoEls().forEach(v => v.volume = globalVolume);
+      }
+      applyAudioState();
+      if (soundOn) {
+        videoEls().forEach((v) => {
+          if (Number(v.dataset.tile) === currentIdx) tryPlay(v);
+        });
+      }
+      const volPercent = document.getElementById('volumePercent');
+      if (volPercent) volPercent.textContent = Math.round((soundOn ? globalVolume : 0) * 100) + '%';
+      updateSoundButton();
+    }
+
+    function pauseAllMedia() {
+      if (progressRaf) { cancelAnimationFrame(progressRaf); progressRaf = null; }
+      videoEls().forEach((v) => {
+        try { v.pause(); v.muted = true; } catch (_) {}
+      });
+    }
+
+    function togglePlayback() {
+      const active = Array.from(videoEls()).find(v => Number(v.dataset.tile) === currentIdx);
+      if (!active) return;
+      if (active.paused) {
+        tryPlay(active);
+      } else {
+        try { active.pause(); } catch (_) {}
+      }
+    }
+
+    function initCarousel() {
+      videoEls().forEach((v) => {
+        v.volume = globalVolume;
+        v.addEventListener('ended', () => {
+          if (Number(v.dataset.tile) === currentIdx) next();
+        });
+      });
+
+      // Click anywhere on the player surface to pause / resume the current
+      // clip. Skip clicks on the controls overlaid on top of the video.
+      const player = document.getElementById('player');
+      if (player) {
+        player.addEventListener('click', (e) => {
+          if (e.target.closest('button, .progress-segment, .sound-control-group')) return;
+          togglePlayback();
+        });
+        player.addEventListener('dblclick', (e) => {
+          if (e.target.closest('button, .progress-segment, .sound-control-group')) return;
+          e.preventDefault();
+          next();
+        });
+        player.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = -Math.sign(e.deltaY) * 0.05;
+          globalVolume = Math.max(0, Math.min(1, globalVolume + delta));
+          soundOn = globalVolume > 0;
+          
+          const volSlider = document.getElementById('volumeSlider');
+          if (volSlider) volSlider.value = globalVolume;
+          
+          const volPercent = document.getElementById('volumePercent');
+          if (volPercent) volPercent.textContent = Math.round(globalVolume * 100) + '%';
+          
+          applyAudioState();
+          videoEls().forEach(v => v.volume = globalVolume);
+          updateSoundButton();
+        }, { passive: false });
+        player.style.cursor = 'pointer';
+      }
+
+      document.querySelectorAll('.progress-segment').forEach((seg) => {
+        seg.addEventListener('click', () => setActive(Number(seg.dataset.tile)));
+      });
+
+      const soundBtn = document.getElementById('soundBtn');
+      if (soundBtn) soundBtn.addEventListener('click', toggleSound);
+
+      const volSlider = document.getElementById('volumeSlider');
+      const volPercent = document.getElementById('volumePercent');
+      if (volSlider) {
+        volSlider.addEventListener('input', (e) => {
+          globalVolume = parseFloat(e.target.value);
+          soundOn = globalVolume > 0;
+          applyAudioState();
+          videoEls().forEach(v => v.volume = globalVolume);
+          if (volPercent) volPercent.textContent = Math.round(globalVolume * 100) + '%';
+          updateSoundButton();
+        });
+      }
+
+      updateSoundButton();
+
+      window.addEventListener('keydown', (e) => {
+        if (!document.hasFocus()) return;
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+        if (e.key === 'm' || e.key === 'M') { e.preventDefault(); toggleSound(); }
+      });
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+      if (e.data.type === 'PAUSE_MEDIA') pauseAllMedia();
+    });
+
+    function startEntrance() {
+      gsap.set('#header',        { opacity: 0, y: 20 });
+      gsap.set('#player',        { opacity: 0, scale: 0.985 });
+      gsap.set('#playerCaption', { opacity: 0 });
+
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.to('#header',        { opacity: 1, y: 0,    duration: 0.7 });
+      tl.to('#player',        { opacity: 1, scale: 1, duration: 0.7 }, '-=0.3');
+      tl.to('#playerCaption', { opacity: 1,           duration: 0.5 }, '-=0.25');
+
+      soundOn = true;
+      segmentDoneMask = [false, false, false, false];
+      currentIdx = -1;
+      updateSoundButton();
+      setActive(0);
+
+      if (progressRaf) cancelAnimationFrame(progressRaf);
+      progressRaf = requestAnimationFrame(tickProgress);
+    }
+
+    document.addEventListener('DOMContentLoaded', initCarousel);
+    // Do NOT auto-start playback on iframe load — wait for the parent
+    // deck to send RESTART_ANIMATION when this slide actually becomes active.
+    // Otherwise the videos would play (and emit audio) while a different
+    // slide is on screen.
+  </script>
+</body>
+</html>

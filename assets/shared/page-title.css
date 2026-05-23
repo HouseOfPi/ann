@@ -1,0 +1,48 @@
+/* Shared page title component.
+   Used across all chapter pages so headers stay perfectly in sync.
+   Reference design: "THE FOUNDATION / The Four Pillars" (math-pillars.html).
+
+   Markup:
+     <page-title eyebrow="THE FOUNDATION" title="The Four <em>Pillars</em>"></page-title>
+
+   Pages that already have a CSS-driven .header / .page-eyebrow / .main-title
+   classes can also import this file to override their local definitions.
+*/
+
+page-title {
+  display: block;
+  flex-shrink: 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg, currentColor) 14%, transparent);
+  margin-bottom: 24px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+page-title .pt-eyebrow {
+  display: block;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  /* Unified eyebrow accent across all chapter pages.
+     Matches the Spam Problem / Traditional Way / Mathematical Pillars headers. */
+  color: oklch(58% 0.13 30);
+  margin-bottom: 8px;
+}
+
+page-title .pt-title {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(36px, 4.6vw, 60px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--page-title-fg, var(--fg, var(--title-color, #1c1c1c)));
+  margin: 0;
+}
+
+page-title .pt-title em {
+  font-style: italic;
+  font-weight: 500;
+}

@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Single Variable Linear Equation | Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      :root {
+        --c1: #5fe8ec;
+        --c2: #4ee0a0;
+        --c3: #a78bfa;
+        --bg: #000000;
+        --fg: #eef2f8;
+        --accent: #c97a4a;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        display: flex;
+        flex-direction: column;
+        padding: 32px 50px 40px;
+        transition: background 0.5s, color 0.5s;
+      }
+
+      .header {
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .body {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+        width: 100%;
+      }
+      .equation-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 48px;
+        max-width: 720px;
+        padding-left: clamp(8px, 2vw, 32px);
+      }
+      .plot-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        opacity: 0;
+      }
+
+      .page-eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--eyebrow-accent, var(--c1));
+      }
+
+      .main-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(32px, 4vw, 56px);
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        line-height: 1.05;
+        color: var(--fg);
+      }
+      .main-title em {
+        font-style: italic;
+      }
+
+      /* ── The equation — hero element ── */
+      .equation {
+        font-family: 'STIX Two Math', 'Cormorant Garamond', 'Times New Roman', serif;
+        font-style: italic;
+        font-size: clamp(22px, 2.6vw, 36px);
+        letter-spacing: 0;
+        line-height: 1.3;
+        color: var(--fg);
+        text-align: left;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: baseline;
+        gap: 2px 8px;
+        font-weight: 500;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .equation .eq-eq,
+      .equation .eq-op {
+        font-style: normal;
+        color: color-mix(in srgb, var(--fg) 50%, transparent);
+        font-weight: 400;
+        font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      }
+      .equation .eq-term {
+        display: inline-flex;
+        align-items: baseline;
+        color: var(--accent);
+      }
+      .equation span {
+        cursor: default;
+      }
+      .equation .eq-x,
+      .equation .eq-m,
+      .equation .eq-b {
+        cursor: pointer;
+        transition: color 0.2s, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-block;
+      }
+      .equation .eq-x:hover,
+      .equation .eq-x.selected {
+        color: var(--fg);
+        transform: scale(1.15);
+      }
+      .equation .eq-m:hover,
+      .equation .eq-m.selected {
+        color: var(--accent);
+        transform: scale(1.15);
+      }
+      .equation .eq-b:hover,
+      .equation .eq-b.selected {
+        color: var(--c1);
+        transform: scale(1.15);
+      }
+
+      /* ── Legend list — one point per line ── */
+      .legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        max-width: 640px;
+        width: 100%;
+      }
+      .legend-item {
+        display: grid;
+        grid-template-columns: 56px 110px 1fr;
+        align-items: baseline;
+        column-gap: 24px;
+        padding: 16px 8px;
+        border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .legend-item:last-child { border-bottom: none; }
+      .legend-item:hover {
+        background: color-mix(in srgb, var(--accent) 6%, transparent);
+      }
+      .legend-glyph {
+        font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(24px, 2.4vw, 30px);
+        font-weight: 500;
+        line-height: 1;
+        color: var(--fg);
+        text-align: center;
+      }
+      .legend-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--fg) 60%, transparent);
+      }
+      .legend-desc {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: color-mix(in srgb, var(--fg) 82%, transparent);
+      }
+
+      /* ── Tagline ── */
+      .tagline {
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: clamp(18px, 1.9vw, 24px);
+        line-height: 1.5;
+        color: color-mix(in srgb, var(--fg) 80%, transparent);
+        text-align: left;
+        max-width: 56ch;
+      }
+      .tagline em { font-style: italic; font-weight: 600; color: color-mix(in srgb, var(--fg) 95%, transparent); }
+
+      .graph-wrap {
+        width: 100%;
+        max-width: 460px;
+        aspect-ratio: 1.05 / 1;
+        position: relative;
+      }
+
+      svg.graph {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .axis {
+        stroke: color-mix(in srgb, var(--fg) 35%, transparent);
+        stroke-width: 1.5;
+      }
+      .axis-tick {
+        stroke: color-mix(in srgb, var(--fg) 22%, transparent);
+        stroke-width: 1;
+      }
+      .axis-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        fill: color-mix(in srgb, var(--fg) 55%, transparent);
+      }
+      .gridline {
+        stroke: color-mix(in srgb, var(--fg) 10%, transparent);
+        stroke-width: 1;
+        stroke-dasharray: 3 4;
+      }
+
+      .line {
+        fill: none;
+        stroke: var(--c2);
+        stroke-width: 3;
+        stroke-linecap: round;
+        filter: drop-shadow(
+          0 0 6px color-mix(in srgb, var(--c2) 50%, transparent)
+        );
+      }
+
+      .intercept-line {
+        stroke: var(--c1);
+        stroke-width: 1.5;
+        stroke-dasharray: 4 4;
+        opacity: 0;
+      }
+
+      .point-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        fill: var(--c2);
+        font-weight: 700;
+      }
+
+      /* Travelling dot used by the x-click animation */
+      .x-dot {
+        fill: var(--c2);
+        stroke: var(--bg);
+        stroke-width: 2;
+        opacity: 0;
+        filter: drop-shadow(
+          0 0 6px color-mix(in srgb, var(--c2) 60%, transparent)
+        );
+      }
+
+      /* Legend selection state */
+      .legend-item {
+        border-left: 3px solid transparent;
+        transition: background 0.2s ease, border-left-color 0.2s ease, padding-left 0.2s ease;
+      }
+      .legend-item:hover,
+      .legend-item.selected {
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
+      }
+      .legend-item.selected {
+        border-left-color: var(--accent);
+        padding-left: 12px;
+      }
+
+      /* Slope visual on axes */
+      .axis-arrow {
+        stroke: var(--accent);
+        stroke-width: 3;
+        stroke-linecap: round;
+        fill: none;
+        opacity: 0;
+      }
+      .axis-arrow-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        font-weight: 700;
+        fill: var(--accent);
+        opacity: 0;
+      }
+      .proj {
+        stroke: var(--accent);
+        stroke-width: 1.4;
+        stroke-dasharray: 4 4;
+        fill: none;
+        opacity: 0;
+      }
+      .slope-anchor {
+        fill: var(--bg);
+        stroke: var(--accent);
+        stroke-width: 2.5;
+        opacity: 0;
+      }
+
+
+
+      .caption {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: color-mix(in srgb, var(--fg) 45%, transparent);
+        letter-spacing: 0.1em;
+        text-align: center;
+      }
+
+      /* ── Slope dialer ─────────────────────────────────────────────── */
+      .dialer {
+        width: 100%;
+        max-width: 420px;
+        padding: 12px 16px;
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--fg) 4%, transparent);
+        border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+        box-shadow: 0 4px 16px -6px color-mix(in srgb, var(--bg) 40%, transparent);
+        opacity: 1;
+      }
+      .dialer-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .dialer-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--c1);
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+        min-width: 96px;
+      }
+      .dialer-label .val {
+        color: var(--fg);
+        font-weight: 700;
+        margin-left: 2px;
+      }
+      .dialer-track {
+        position: relative;
+        flex: 1;
+        height: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        touch-action: none;
+      }
+      .dialer-rail {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 4px;
+        border-radius: 2px;
+        background: color-mix(in srgb, var(--fg) 14%, transparent);
+      }
+      /* Range is 0..+2, so the signed midpoint tick is gone. */
+      .dialer-zero { display: none; }
+      .dialer-fill {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 4px;
+        border-radius: 2px;
+        background: var(--c1);
+        transition: background 0.4s;
+        pointer-events: none;
+      }
+      .dialer-knob {
+        position: absolute;
+        top: 50%;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--c1);
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--c1) 25%, transparent),
+          0 4px 14px -2px color-mix(in srgb, var(--c1) 60%, transparent);
+        transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.4s;
+        will-change: left;
+      }
+      .dialer-knob:hover {
+        transform: translate(-50%, -50%) scale(1.12);
+      }
+      .dialer-knob.dragging {
+        transform: translate(-50%, -50%) scale(1.18);
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--c1) 30%, transparent),
+          0 6px 20px -2px color-mix(in srgb, var(--c1) 75%, transparent);
+      }
+      .dialer-bounds {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10.5px;
+        color: color-mix(in srgb, var(--fg) 40%, transparent);
+        flex-shrink: 0;
+        min-width: 56px;
+        text-align: right;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding: 20px 20px 24px;
+        }
+        .body {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        .equation-side { padding-left: 0; max-width: 100%; }
+        .graph-wrap {
+          max-width: 360px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="../shared/page-title.css">
+    <script defer src="../shared/page-title.js"></script>
+  </head>
+  <body>
+    <page-title id="header" eyebrow="Linear Algebra" title="Single <em>Variable</em>"></page-title>
+
+    <div class="body">
+      <div class="plot-side" id="visual">
+        <div class="graph-wrap">
+          <svg
+            class="graph"
+            viewBox="0 0 420 400"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <!-- Arrowhead used for the Δx / Δy axis arrows -->
+              <marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent)"/>
+              </marker>
+            </defs>
+            <!-- gridlines -->
+            <g id="grid">
+              <!-- vertical -->
+              <line class="gridline" x1="100" y1="40" x2="100" y2="340" />
+              <line class="gridline" x1="160" y1="40" x2="160" y2="340" />
+              <line class="gridline" x1="220" y1="40" x2="220" y2="340" />
+              <line class="gridline" x1="280" y1="40" x2="280" y2="340" />
+              <line class="gridline" x1="340" y1="40" x2="340" y2="340" />
+              <!-- horizontal -->
+              <line class="gridline" x1="40" y1="100" x2="380" y2="100" />
+              <line class="gridline" x1="40" y1="160" x2="380" y2="160" />
+              <line class="gridline" x1="40" y1="220" x2="380" y2="220" />
+              <line class="gridline" x1="40" y1="280" x2="380" y2="280" />
+            </g>
+
+            <!-- axes: origin at (40, 340). x: right, y: up. -->
+            <line class="axis" x1="40" y1="340" x2="390" y2="340" />
+            <line class="axis" x1="40" y1="340" x2="40" y2="30" />
+
+            <!-- arrowheads -->
+            <polygon
+              points="390,340 382,336 382,344"
+              fill="color-mix(in srgb, var(--fg) 45%, transparent)"
+            />
+            <polygon
+              points="40,30 36,38 44,38"
+              fill="color-mix(in srgb, var(--fg) 45%, transparent)"
+            />
+
+            <!-- axis labels -->
+            <text class="axis-label" x="395" y="356">x</text>
+            <text class="axis-label" x="22" y="32">y</text>
+            <text class="axis-label" x="32" y="356">0</text>
+
+            <!-- intercept marker (b) -->
+            <line
+              class="intercept-line"
+              id="interceptLine"
+              x1="40"
+              y1="280"
+              x2="100"
+              y2="280"
+            />
+            <text
+              class="point-label"
+              id="interceptLabel"
+              x="14"
+              y="284"
+              style="opacity: 0; fill: var(--c1)"
+            >
+              b
+            </text>
+
+            <!-- the line: y = 0.7x + 60 (in graph units) maps to slope ~ -0.7 in svg space.
+               equation (visually): y = (1/2)x + 1, line from (40,280) to (380,100) approx.
+               start: (40, 280) = (x=0, y=1)
+               end:   (380, 100) = (x=6, y=4)
+               slope per x-tick (60px): rise = -60px (up 60), run = 60px → m = 1 -->
+            <line
+              class="line"
+              id="mainLine"
+              x1="40"
+              y1="280"
+              x2="380"
+              y2="100"
+              stroke-dasharray="600"
+              stroke-dashoffset="600"
+            />
+
+            <g id="slopeAxes">
+              <!-- Dashed projections (line → x-axis, line → y-axis) -->
+              <line class="proj" id="projX_A"/>
+              <line class="proj" id="projX_B"/>
+              <line class="proj" id="projY_A"/>
+              <line class="proj" id="projY_B"/>
+
+              <!-- Δx arrow: lives on the x-axis. Slight offset below the axis -->
+              <line class="axis-arrow" id="dxArrow" marker-end="url(#arrowHead)"/>
+              <text class="axis-arrow-label" id="dxLabel">Δx</text>
+
+              <!-- Δy arrow: lives on the y-axis. -->
+              <line class="axis-arrow" id="dyArrow" marker-end="url(#arrowHead)"/>
+              <text class="axis-arrow-label" id="dyLabel">Δy</text>
+
+              <!-- Two ringed anchor points on the line. -->
+              <circle class="slope-anchor" id="anchorA"/>
+              <circle class="slope-anchor" id="anchorB"/>
+            </g>
+
+            <!-- travelling dot for the x-click animation (slides along the line) -->
+            <circle class="x-dot" id="xDot" cx="40" cy="280" r="6" />
+          </svg>
+        </div>
+        <div class="caption">y = mx + b · one input draws one line</div>
+
+        <div
+          class="dialer"
+          id="dialer"
+          role="slider"
+          aria-label="Slope m"
+          aria-valuemin="0"
+          aria-valuemax="2"
+          aria-valuenow="0.5"
+          tabindex="0"
+        >
+          <div class="dialer-row">
+            <span class="dialer-label"
+              >m = <span class="val" id="mVal">0.50</span></span
+            >
+            <div class="dialer-track" id="dialerTrack">
+              <div class="dialer-rail"></div>
+              <div class="dialer-zero" id="dialerZero"></div>
+              <div class="dialer-fill" id="dialerFill"></div>
+              <div class="dialer-knob" id="dialerKnob"></div>
+            </div>
+            <span class="dialer-bounds">0 … +2</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="equation-side">
+        <div class="equation" id="eqClickable">
+          <span>y</span>
+          <span class="eq-eq">=</span>
+          <span class="eq-m eq-term">m</span><span class="eq-x">x</span>
+          <span class="eq-op">+</span>
+          <span class="eq-b">b</span>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item" id="t0">
+            <span class="legend-glyph" style="color:var(--fg)">x</span>
+            <span class="legend-label">input</span>
+            <span class="legend-desc">the variable you control</span>
+          </div>
+          <div class="legend-item" id="t1">
+            <span class="legend-glyph" style="color:var(--accent)">m</span>
+            <span class="legend-label">weight</span>
+            <span class="legend-desc">how steeply <em style="font-style:italic">y</em> rises as <em style="font-style:italic">x</em> increases</span>
+          </div>
+          <div class="legend-item" id="t2">
+            <span class="legend-glyph" style="color:var(--fg)">b</span>
+            <span class="legend-label">bias</span>
+            <span class="legend-desc">a constant offset</span>
+          </div>
+        </div>
+
+        <p class="tagline">
+          One input, one output — a <em>single straight line.</em>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const PALETTE_MAP = {
+        "Warm Linen": { bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#0e7490", c2:"#e27b5e", c3:"#6d28d9", eyebrow:"#c25d42", accent:"#c25d42" },
+        "Green Linen":{ bg:"#f4f1ea", fg:"#1a1815", light:true,  c1:"#15803d", c2:"#15803d", c3:"#6d28d9", eyebrow:"#2e8b57", accent:"#2e8b57" },
+        "Paper White":{ bg:"#ffffff", fg:"#111111", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#6d28d9", eyebrow:"#d0465a", accent:"#d0465a" },
+        Midnight:     { bg:"#000000", fg:"#f0ece4", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#f59e0b", accent:"#f59e0b" },
+        "Navy Lime":  { bg:"#0a1428", fg:"#f1f5fb", light:false, c1:"#5fb8e6", c2:"#5fb8e6", c3:"#a78bfa", eyebrow:"#a3e635", accent:"#a3e635" },
+        Mint:         { bg:"#f0f7f4", fg:"#0f2820", light:true,  c1:"#0e7490", c2:"#166534", c3:"#6d28d9", eyebrow:"#0e9488", accent:"#0e9488" },
+        Plum:         { bg:"#f5f0f7", fg:"#200f28", light:true,  c1:"#0e7490", c2:"#15803d", c3:"#7c3aed", eyebrow:"#7c3aed", accent:"#7c3aed" },
+        "Deep Navy":  { bg:"#0a1428", fg:"#eef2f8", light:false, c1:"#5fe8ec", c2:"#4ee0a0", c3:"#a78bfa", eyebrow:"#5fe8ec", accent:"#5fe8ec" },
+      };
+
+      function applyPalette(p) {
+        document.body.style.setProperty("--bg", p.bg);
+        document.body.style.setProperty("--fg", p.fg);
+        document.body.classList.toggle("light", p.light);
+        document.body.style.setProperty("--c1", p.c1);
+        document.body.style.setProperty("--c2", p.c2);
+        document.body.style.setProperty("--c3", p.c3);
+        document.body.style.setProperty("--eyebrow-accent", p.eyebrow || p.c1);
+        document.body.style.setProperty("--accent", p.accent || p.c1);
+      }
+
+      window.addEventListener("message", (e) => {
+        if (!e.data) return;
+        if (e.data.type === "SET_THEME") {
+          const p =
+            PALETTE_MAP[e.data.palette] ||
+            (e.data.mode === "light"
+              ? PALETTE_MAP["Warm Linen"]
+              : PALETTE_MAP["Deep Navy"]);
+          applyPalette(p);
+        }
+        if (e.data.type === "RESTART_ANIMATION") startEntrance();
+      });
+
+      // ── Graph ↔ SVG coordinate mapping ──
+      // Origin at SVG (40, 340). 1 graph unit on x = 56.667 px (340/6).
+      // 1 graph unit on y = 60 px (300/5). Visible plot box: x∈[0,6], y∈[0,5].
+      const PLOT = {
+        ox: 40,
+        oy: 340, // SVG origin
+        ux: 340 / 6,
+        uy: 300 / 5, // px per graph unit
+        xMin: 0,
+        xMax: 6,
+        yMin: 0,
+        yMax: 5,
+      };
+      const gx2svg = (gx) => PLOT.ox + gx * PLOT.ux;
+      const gy2svg = (gy) => PLOT.oy - gy * PLOT.uy;
+
+      // Current line state (graph-space).
+      const STATE = { m: 0.5, b: 0.5 };
+
+      // Compute the line's two endpoints, clipped to the plot box.
+      function lineEndpoints(m, b) {
+        // y(x) = m·x + b. For each side (x = xMin, x = xMax), compute y; if it
+        // falls outside [yMin, yMax], clip against the relevant horizontal edge.
+        const pts = [];
+        const tryAdd = (gx, gy) => {
+          if (
+            gx >= PLOT.xMin - 1e-6 &&
+            gx <= PLOT.xMax + 1e-6 &&
+            gy >= PLOT.yMin - 1e-6 &&
+            gy <= PLOT.yMax + 1e-6
+          ) {
+            pts.push({ gx, gy });
+          }
+        };
+        // Intersections with vertical edges
+        tryAdd(PLOT.xMin, m * PLOT.xMin + b);
+        tryAdd(PLOT.xMax, m * PLOT.xMax + b);
+        // Intersections with horizontal edges (only if slope is non-zero)
+        if (Math.abs(m) > 1e-9) {
+          tryAdd((PLOT.yMin - b) / m, PLOT.yMin);
+          tryAdd((PLOT.yMax - b) / m, PLOT.yMax);
+        }
+        // Pick the two extreme x values among the candidates.
+        if (pts.length < 2) {
+          // Line entirely outside plot — fall back to a flat line at b clipped.
+          return {
+            x1: gx2svg(PLOT.xMin),
+            y1: gy2svg(b),
+            x2: gx2svg(PLOT.xMax),
+            y2: gy2svg(b),
+          };
+        }
+        pts.sort((a, b_) => a.gx - b_.gx);
+        const a = pts[0],
+          z = pts[pts.length - 1];
+        return {
+          x1: gx2svg(a.gx),
+          y1: gy2svg(a.gy),
+          x2: gx2svg(z.gx),
+          y2: gy2svg(z.gy),
+        };
+      }
+
+      function applyLine() {
+        const e = lineEndpoints(STATE.m, STATE.b);
+        const line = document.getElementById("mainLine");
+        line.setAttribute("x1", e.x1.toFixed(2));
+        line.setAttribute("y1", e.y1.toFixed(2));
+        line.setAttribute("x2", e.x2.toFixed(2));
+        line.setAttribute("y2", e.y2.toFixed(2));
+        // Recompute dasharray length so the draw-on animation still works
+        // proportionally (and so a redraw mid-animation doesn't show a partial
+        // line at a stale length).
+        const len = Math.hypot(e.x2 - e.x1, e.y2 - e.y1);
+        line.setAttribute("stroke-dasharray", len.toFixed(2));
+        // If the line is already drawn we keep dashoffset at 0; else honour
+        // the entrance state where it's hidden.
+        if (lineDrawn) line.setAttribute("stroke-dashoffset", "0");
+        else line.setAttribute("stroke-dashoffset", len.toFixed(2));
+
+        // The travelling x-dot uses the same endpoints — keep it in sync.
+        LINE.x1 = e.x1;
+        LINE.y1 = e.y1;
+        LINE.x2 = e.x2;
+        LINE.y2 = e.y2;
+
+        // The b-intercept marker dashed line: from y-axis to where the line
+        // hits x = 0. Only meaningful when b is in [yMin, yMax].
+        const bSvgY = gy2svg(STATE.b);
+        const interceptLine = document.getElementById("interceptLine");
+        interceptLine.setAttribute("y1", bSvgY.toFixed(2));
+        interceptLine.setAttribute("y2", bSvgY.toFixed(2));
+        const interceptLabel = document.getElementById("interceptLabel");
+        interceptLabel.setAttribute("y", (bSvgY + 4).toFixed(2));
+
+        // Live dialer chip (equation block stays symbolic — m, not the value)
+        const mVal = document.getElementById("mVal");
+        if (mVal)
+          mVal.textContent = (Math.round(STATE.m * 100) / 100).toFixed(2);
+      }
+
+      // Mutable so applyLine() can keep #xDot's slide path in sync with m/b.
+      const LINE = { x1: 40, y1: 280, x2: 380, y2: 100 };
+
+      let lineDrawn = false;
+      let slopeVisualShown = false;
+      let activeSelection = null;
+      let weightTimeline = null;
+      let inputTimeline = null;
+      let biasTimeline = null;
+      let inputAnimState = { progress: 0 };
+
+      function selectConcept(concept) {
+        if (activeSelection === concept) {
+          deselectAll();
+          return;
+        }
+        
+        deselectAll();
+        activeSelection = concept;
+        
+        if (concept === 'input') {
+          const t0 = document.getElementById("t0");
+          const eqX = document.querySelector(".eq-x");
+          if (t0) t0.classList.add("selected");
+          if (eqX) eqX.classList.add("selected");
+          startInputHighlight();
+        } else if (concept === 'weight') {
+          const t1 = document.getElementById("t1");
+          const eqM = document.querySelector(".eq-m");
+          if (t1) t1.classList.add("selected");
+          if (eqM) eqM.classList.add("selected");
+          startWeightHighlight();
+        } else if (concept === 'bias') {
+          const t2 = document.getElementById("t2");
+          const eqB = document.querySelector(".eq-b");
+          if (t2) t2.classList.add("selected");
+          if (eqB) eqB.classList.add("selected");
+          startBiasHighlight();
+        }
+      }
+
+      function deselectAll() {
+        activeSelection = null;
+        
+        const items = ["t0", "t1", "t2"];
+        items.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove("selected");
+        });
+        
+        const eqTerms = [".eq-x", ".eq-m", ".eq-b"];
+        eqTerms.forEach(sel => {
+          const el = document.querySelector(sel);
+          if (el) el.classList.remove("selected");
+        });
+        
+        stopInputHighlight();
+        stopWeightHighlight();
+        stopBiasHighlight();
+      }
+
+      function startEntrance() {
+        lineDrawn = false;
+        deselectAll();
+        
+        STATE.m = 0.5;
+        STATE.b = 0.5;
+        applyLine();
+        syncDialerKnob();
+
+        const len = lineLength();
+        gsap.set("#header", { opacity: 0, y: 20 });
+        gsap.set("#eqClickable", { opacity: 0, y: 8 });
+        gsap.set(".legend-item", { opacity: 0, y: 10 });
+        gsap.set(".tagline", { opacity: 0, y: 10 });
+        gsap.set("#visual", { opacity: 0 });
+        gsap.set("#mainLine", { strokeDashoffset: len });
+        
+        const slopeElements = [
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB"
+        ];
+        gsap.set(slopeElements, { opacity: 0 });
+        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
+        
+        gsap.set(["#interceptLine", "#interceptLabel"], { opacity: 0 });
+        gsap.set("#xDot", { opacity: 0, attr: { cx: LINE.x1, cy: LINE.y1 } });
+
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
+        tl.to("#eqClickable", { opacity: 1, y: 0, duration: 0.55 }, "-=0.3");
+        tl.to(".legend-item", {
+            opacity: 1,
+            y: 0,
+            stagger: 0.13,
+            duration: 0.5,
+            ease: "back.out(1.4)",
+          }, "-=0.2");
+        tl.to(".tagline", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
+        tl.to("#visual", { opacity: 1, duration: 0.5 }, "-=0.4");
+        
+        tl.add(drawLineOnClick, "-=0.1");
+      }
+
+      function lineLength() {
+        const e = lineEndpoints(STATE.m, STATE.b);
+        return Math.hypot(e.x2 - e.x1, e.y2 - e.y1);
+      }
+
+      function drawLineOnClick() {
+        if (lineDrawn) return;
+        lineDrawn = true;
+        const len = lineLength();
+        gsap.fromTo(
+          "#mainLine",
+          { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" }
+        );
+        syncDialerKnob();
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const wrap = document.querySelector(".graph-wrap");
+        if (wrap) {
+          wrap.style.cursor = "pointer";
+          wrap.addEventListener("click", drawLineOnClick);
+        }
+      });
+
+      const M_MIN = 0,
+        M_MAX = 2,
+        M_STEP = 0.05;
+
+      function clampM(m) {
+        const stepped = Math.round(m / M_STEP) * M_STEP;
+        return Math.max(M_MIN, Math.min(M_MAX, stepped));
+      }
+
+      function syncDialerKnob() {
+        const track = document.getElementById("dialerTrack");
+        const knob = document.getElementById("dialerKnob");
+        const fill = document.getElementById("dialerFill");
+        const zero = document.getElementById("dialerZero");
+        if (!track || !knob || !fill || !zero) return;
+        const w = track.clientWidth;
+        if (!w) return;
+        const t = (STATE.m - M_MIN) / (M_MAX - M_MIN);
+        const t0 = (0 - M_MIN) / (M_MAX - M_MIN);
+        knob.style.left = `${t * 100}%`;
+        zero.style.left = `${t0 * 100}%`;
+        const lo = Math.min(t, t0),
+          hi = Math.max(t, t0);
+        fill.style.left = `${lo * 100}%`;
+        fill.style.width = `${(hi - lo) * 100}%`;
+        const dialer = document.getElementById("dialer");
+        if (dialer) dialer.setAttribute("aria-valuenow", STATE.m.toFixed(2));
+      }
+
+      function setM(m, opts = {}) {
+        const next = clampM(m);
+        if (Math.abs(next - STATE.m) < 1e-9 && !opts.force) {
+          syncDialerKnob();
+          return;
+        }
+        STATE.m = next;
+        if (!lineDrawn) drawLineOnClick();
+        applyLine();
+        syncDialerKnob();
+        refreshSlopeVisual();
+      }
+
+      function hideSlopeVisual() {
+        const els = [
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB",
+        ];
+        if (weightTimeline) weightTimeline.kill();
+        gsap.killTweensOf(els);
+        gsap.set(els, { opacity: 0 });
+        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
+        slopeVisualShown = false;
+      }
+
+      function refreshSlopeVisual() {
+        if (!slopeVisualShown) return;
+        let gxA = 2, gxB = 4;
+        if (STATE.m * gxB + STATE.b > 5.8) {
+          gxA = 1;
+          gxB = 2;
+        }
+        const gyA = STATE.m * gxA + STATE.b;
+        const gyB = STATE.m * gxB + STATE.b;
+        const ax = gx2svg(gxA), ay = gy2svg(gyA);
+        const bx = gx2svg(gxB), by = gy2svg(gyB);
+
+        const xAxisY = PLOT.oy;
+        const yAxisX = PLOT.ox;
+        const dxOffset = 14;
+        const dyOffset = 18;
+        const dxY = xAxisY + dxOffset;
+        const dyX = yAxisX - dyOffset;
+
+        const setAttrs = (id, attrs) => {
+          const el = document.getElementById(id);
+          if (el) {
+            for (const k in attrs) el.setAttribute(k, attrs[k]);
+          }
+        };
+
+        setAttrs("anchorA", { cx: ax.toFixed(2), cy: ay.toFixed(2) });
+        setAttrs("anchorB", { cx: bx.toFixed(2), cy: by.toFixed(2) });
+
+        setAttrs("projX_A", { x1: ax.toFixed(2), y1: ay.toFixed(2), x2: ax.toFixed(2), y2: xAxisY });
+        setAttrs("projX_B", { x1: bx.toFixed(2), y1: by.toFixed(2), x2: bx.toFixed(2), y2: xAxisY });
+        setAttrs("projY_A", { x1: ax.toFixed(2), y1: ay.toFixed(2), x2: yAxisX, y2: ay.toFixed(2) });
+        setAttrs("projY_B", { x1: bx.toFixed(2), y1: by.toFixed(2), x2: yAxisX, y2: by.toFixed(2) });
+
+        setAttrs("dxArrow", { x1: ax.toFixed(2), y1: dxY.toFixed(2), x2: bx.toFixed(2), y2: dxY.toFixed(2) });
+        setAttrs("dxLabel", { x: ((ax + bx) / 2 - 8).toFixed(2), y: (dxY + 14).toFixed(2) });
+
+        setAttrs("dyArrow", { x1: dyX.toFixed(2), y1: ay.toFixed(2), x2: dyX.toFixed(2), y2: by.toFixed(2) });
+        
+        const dyArrow = document.getElementById("dyArrow");
+        const dyLabel = document.getElementById("dyLabel");
+        
+        if (Math.abs(STATE.m) < 0.001) {
+          if (dyArrow) dyArrow.style.visibility = "hidden";
+          if (dyLabel) {
+            dyLabel.textContent = "Δy = 0";
+            dyLabel.setAttribute("x", (dyX - 36).toFixed(2));
+            dyLabel.setAttribute("y", (ay + 4).toFixed(2));
+          }
+        } else {
+          if (dyArrow) dyArrow.style.visibility = "visible";
+          if (dyLabel) {
+            dyLabel.textContent = "Δy";
+            dyLabel.setAttribute("x", (dyX - 24).toFixed(2));
+            dyLabel.setAttribute("y", ((ay + by) / 2 + 4).toFixed(2));
+          }
+        }
+      }
+
+      function startWeightHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (weightTimeline) weightTimeline.kill();
+        
+        slopeVisualShown = true;
+        refreshSlopeVisual();
+        
+        gsap.set([
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB",
+        ], { opacity: 0 });
+        gsap.set(["#anchorA", "#anchorB"], { attr: { r: 0 } });
+        
+        gsap.to(["#t1 .legend-glyph", ".eq-m"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        weightTimeline = gsap.timeline();
+        
+        // Phase 1: anchor points appear on the line
+        weightTimeline.to(["#anchorA", "#anchorB"], {
+          opacity: 1, attr: { r: 5 }, duration: 0.3, ease: "back.out(2)"
+        });
+        
+        // Phase 2: project anchors down to the x-axis, then Δx arrow
+        weightTimeline.to(["#projX_A", "#projX_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.1");
+        weightTimeline.to("#dxArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
+        weightTimeline.to("#dxLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
+        
+        // Phase 3: project anchors across to the y-axis, then Δy arrow
+        weightTimeline.to(["#projY_A", "#projY_B"], { opacity: 0.7, duration: 0.35, ease: "power2.out" }, "+=0.15");
+        weightTimeline.to("#dyArrow", { opacity: 1, duration: 0.45, ease: "power2.out" }, "-=0.05");
+        weightTimeline.to("#dyLabel", { opacity: 1, duration: 0.3, ease: "power2.out" }, "-=0.25");
+      }
+
+      function stopWeightHighlight() {
+        if (weightTimeline) weightTimeline.kill();
+        slopeVisualShown = false;
+        
+        gsap.to([
+          "#dxArrow", "#dyArrow", "#dxLabel", "#dyLabel",
+          "#projX_A", "#projX_B", "#projY_A", "#projY_B",
+          "#anchorA", "#anchorB"
+        ], {
+          opacity: 0,
+          duration: 0.3,
+          overwrite: "auto"
+        });
+        
+        gsap.to(["#t1 .legend-glyph", ".eq-m"], { scale: 1, duration: 0.2 });
+      }
+
+      function startInputHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (inputTimeline) inputTimeline.kill();
+        
+        gsap.to(["#t0 .legend-glyph", ".eq-x"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        const dot = document.getElementById("xDot");
+        if (dot) {
+          gsap.set(dot, { opacity: 0 });
+        }
+        
+        inputAnimState.progress = 0;
+        inputTimeline = gsap.timeline({ repeat: -1 });
+        
+        inputTimeline.to(dot, { opacity: 1, duration: 0.2 }, 0);
+        
+        inputTimeline.to(inputAnimState, {
+          progress: 1,
+          duration: 1.8,
+          ease: "power1.inOut",
+          onUpdate: () => {
+            const cx = LINE.x1 + inputAnimState.progress * (LINE.x2 - LINE.x1);
+            const cy = LINE.y1 + inputAnimState.progress * (LINE.y2 - LINE.y1);
+            dot.setAttribute("cx", cx.toFixed(2));
+            dot.setAttribute("cy", cy.toFixed(2));
+          }
+        }, 0);
+        
+        inputTimeline.to(dot, { opacity: 0, duration: 0.2 }, 1.6);
+        inputTimeline.to({}, { duration: 0.3 });
+      }
+
+      function stopInputHighlight() {
+        if (inputTimeline) inputTimeline.kill();
+        
+        const dot = document.getElementById("xDot");
+        if (dot) {
+          gsap.to(dot, { opacity: 0, duration: 0.2 });
+        }
+        
+        gsap.to(["#t0 .legend-glyph", ".eq-x"], { scale: 1, duration: 0.2 });
+      }
+
+      function startBiasHighlight() {
+        if (!lineDrawn) drawLineOnClick();
+        
+        if (biasTimeline) biasTimeline.kill();
+        
+        gsap.to(["#t2 .legend-glyph", ".eq-b"], { scale: 1.2, duration: 0.2, ease: "power2.out" });
+        
+        const line = document.getElementById("interceptLine");
+        const label = document.getElementById("interceptLabel");
+        
+        biasTimeline = gsap.timeline();
+        
+        biasTimeline.to(line, {
+          opacity: 1,
+          strokeWidth: 3,
+          duration: 0.3,
+          ease: "power2.out"
+        }, 0);
+        
+        biasTimeline.to(label, {
+          opacity: 1,
+          scale: 1.5,
+          transformOrigin: "center",
+          duration: 0.3,
+          ease: "back.out(2)"
+        }, 0);
+        
+        biasTimeline.to(label, {
+          scale: 1.1,
+          duration: 0.4,
+          ease: "power2.inOut"
+        });
+        
+        biasTimeline.to(line, {
+          strokeWidth: 2,
+          duration: 0.4,
+          ease: "power2.inOut"
+        }, "<");
+      }
+
+      function stopBiasHighlight() {
+        if (biasTimeline) biasTimeline.kill();
+        
+        const line = document.getElementById("interceptLine");
+        const label = document.getElementById("interceptLabel");
+        
+        gsap.to(line, {
+          opacity: 0,
+          strokeWidth: 1.5,
+          duration: 0.3
+        });
+        
+        gsap.to(label, {
+          opacity: 0,
+          scale: 1,
+          duration: 0.3
+        });
+        
+        gsap.to(["#t2 .legend-glyph", ".eq-b"], { scale: 1, duration: 0.2 });
+      }
+
+      function dialerXToM(clientX) {
+        const track = document.getElementById("dialerTrack");
+        const rect = track.getBoundingClientRect();
+        const t = (clientX - rect.left) / rect.width;
+        const tc = Math.max(0, Math.min(1, t));
+        return M_MIN + tc * (M_MAX - M_MIN);
+      }
+
+      function initDialer() {
+        const track = document.getElementById("dialerTrack");
+        const knob = document.getElementById("dialerKnob");
+        if (!track || !knob) return;
+
+        syncDialerKnob();
+
+        let dragging = false;
+        const onPointerMove = (ev) => {
+          if (!dragging) return;
+          ev.preventDefault();
+          setM(dialerXToM(ev.clientX));
+        };
+        const onPointerUp = (ev) => {
+          if (!dragging) return;
+          dragging = false;
+          knob.classList.remove("dragging");
+          try {
+            track.releasePointerCapture(ev.pointerId);
+          } catch (_) {}
+          document.removeEventListener("pointermove", onPointerMove);
+          document.removeEventListener("pointerup", onPointerUp);
+        };
+        const onPointerDown = (ev) => {
+          ev.preventDefault();
+          dragging = true;
+          knob.classList.add("dragging");
+          try {
+            track.setPointerCapture(ev.pointerId);
+          } catch (_) {}
+          setM(dialerXToM(ev.clientX));
+          document.addEventListener("pointermove", onPointerMove);
+          document.addEventListener("pointerup", onPointerUp);
+        };
+        track.addEventListener("pointerdown", onPointerDown);
+
+        const dialer = document.getElementById("dialer");
+        if (dialer) {
+          dialer.addEventListener("keydown", (ev) => {
+            let delta = 0;
+            if (ev.key === "ArrowLeft" || ev.key === "ArrowDown")
+              delta = -M_STEP;
+            if (ev.key === "ArrowRight" || ev.key === "ArrowUp") delta = M_STEP;
+            if (ev.key === "PageDown") delta = -10 * M_STEP;
+            if (ev.key === "PageUp") delta = 10 * M_STEP;
+            if (ev.key === "Home") {
+              ev.preventDefault();
+              return setM(M_MIN);
+            }
+            if (ev.key === "End") {
+              ev.preventDefault();
+              return setM(M_MAX);
+            }
+            if (delta !== 0) {
+              ev.preventDefault();
+              setM(STATE.m + delta);
+            }
+          });
+        }
+
+        window.addEventListener("resize", syncDialerKnob);
+      }
+      document.addEventListener("DOMContentLoaded", initDialer);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const t0 = document.getElementById("t0");
+        const t1 = document.getElementById("t1");
+        const t2 = document.getElementById("t2");
+        if (t0) t0.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('input'); });
+        if (t1) t1.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('weight'); });
+        if (t2) t2.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('bias'); });
+        
+        const eqX = document.querySelector(".eq-x");
+        const eqM = document.querySelector(".eq-m");
+        const eqB = document.querySelector(".eq-b");
+        if (eqX) eqX.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('input'); });
+        if (eqM) eqM.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('weight'); });
+        if (eqB) eqB.addEventListener("click", (e) => { e.stopPropagation(); selectConcept('bias'); });
+        
+        document.addEventListener("click", (e) => {
+          if (e.target.closest('#dialer, .dialer, #t0, #t1, #t2, .eq-x, .eq-m, .eq-b')) return;
+          deselectAll();
+        });
+      });
+
+      window.addEventListener("load", startEntrance);
+    </script>
+  </body>
+</html>

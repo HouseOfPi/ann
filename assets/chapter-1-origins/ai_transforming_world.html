@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Is Transforming the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #000000;
+    --fg: #f0ece4;
+    --c1: #5fe8ec; /* Blue - Software */
+    --c2: #4ee0a0; /* Green - Healthcare */
+    --c3: #a78bfa; /* Purple - Transportation */
+    --rule: color-mix(in srgb, var(--fg) 14%, transparent);
+    --card-bg: color-mix(in srgb, var(--fg) 3%, transparent);
+    --card-border: color-mix(in srgb, var(--fg) 10%, transparent);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    transition: background 0.5s, color 0.5s;
+  }
+
+  .stage {
+    height: 100%;
+    width: 100%;
+    padding: 32px 50px 40px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ---- Editorial Header ---- */
+  .header {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .page-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--eyebrow-accent, var(--c1));
+  }
+
+  .main-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4.6vw, 60px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .main-title em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+     Modern editorial card grid
+     ────────────────────────────────────────────────────────────── */
+  .cols {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    min-height: 0;
+    opacity: 0;
+  }
+
+  .col {
+    --accent: var(--c1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+  }
+  .col:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--card-border));
+    box-shadow:
+      0 24px 60px -28px color-mix(in srgb, var(--accent) 40%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent) inset;
+  }
+
+  /* Accent strip across the top edge */
+  .col::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 0%, transparent),
+      var(--accent) 50%,
+      color-mix(in srgb, var(--accent) 0%, transparent));
+    opacity: 0.85;
+    z-index: 2;
+  }
+
+  /* ── Hero image area ─────────────────────────────────────────── */
+  .col-hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+  .col-hero img,
+  .col-hero video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.2s cubic-bezier(.2,.7,.2,1);
+  }
+  .col:hover .col-hero img,
+  .col:hover .col-hero video { transform: scale(1.04); }
+
+  /* Dark gradient at bottom of hero for legibility */
+  .col-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      transparent 45%,
+      color-mix(in srgb, #000 30%, transparent) 90%,
+      color-mix(in srgb, #000 55%, transparent) 100%);
+    pointer-events: none;
+  }
+
+  /* Number chip — top-left of hero */
+  .col-num {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px 6px 8px;
+    background: color-mix(in srgb, #000 55%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in srgb, #fff 16%, transparent);
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .col-num::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px 1px var(--accent);
+  }
+
+  /* Stat chip — bottom-right floating over hero */
+  .stat-chip {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 12px;
+    background: color-mix(in srgb, #000 70%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  .stat-chip .stat-val {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-chip .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    max-width: 130px;
+    line-height: 1.3;
+  }
+
+  /* ── Card body ───────────────────────────────────────────────── */
+  .col-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 28px;
+    min-height: 0;
+  }
+
+  .col-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .col-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+    width: 22px;
+    height: 22px;
+  }
+  .col-icon i, .col-icon svg { width: 100%; height: 100%; stroke-width: 2.5px; display: block; }
+
+  .col-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    text-transform: none;
+    line-height: 1.1;
+  }
+
+  /* ── Feature list ─────────────────────────────────────────────── */
+  .features-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .feature-item {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+    align-items: start;
+    border-bottom: none;
+  }
+  .feature-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .feature-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin-top: 1px;
+    width: 16px;
+    height: 16px;
+  }
+  .feature-item-icon i, .feature-item-icon svg { width: 100%; height: 100%; stroke-width: 2.5px; display: block; }
+
+  .feature-item-text strong {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.005em;
+    margin-bottom: 4px;
+  }
+
+  .feature-item-text p {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--fg) 55%, transparent);
+  }
+
+  /* ── Theme accents ───────────────────────────────────────────── */
+  .col.sw { --accent: #2563eb; }
+  .col.hc { --accent: #10b981; }
+  .col.tr { --accent: #8b5cf6; }
+
+  /* In light palettes, deepen accents slightly for legibility */
+  .light-mode .col.sw { --accent: #1d4ed8; }
+  .light-mode .col.hc { --accent: #047857; }
+  .light-mode .col.tr { --accent: #6d28d9; }
+
+  @media (max-width: 1100px) {
+    .cols { grid-template-columns: 1fr; gap: 18px; overflow-y: auto; }
+    .col-hero { aspect-ratio: 21 / 9; }
+  }
+
+  .feature-bullet { background: var(--accent); }
+
+  /* ---- Footer ---- */
+  .footer {
+    flex-shrink: 0;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 1024px) {
+    .cols { grid-template-columns: 1fr; overflow-y: auto; }
+    .stage { padding: 40px 40px; }
+  }
+</style>
+<link rel="stylesheet" href="../shared/page-title.css">
+<script defer src="../shared/page-title.js"></script>
+</head>
+<body class="palette-midnight">
+  <div class="stage">
+    <page-title id="header" eyebrow="Today" title="AI is Transforming the <em>World</em>"></page-title>
+
+    <div class="cols" id="cols">
+      <!-- Software Engineering -->
+      <section class="col sw">
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="coding_full.png">
+            <source src="videos/AI Present/Software.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">01 · Engineering</span>
+          <div class="stat-chip">
+            <span class="stat-val">30–45%</span>
+            <span class="stat-label">of new code written by AI</span>
+          </div>
+        </div>
+
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="server"></i></div>
+            <h2 class="col-name">Systems Engineering</h2>
+          </div>
+
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="code"></i></div>
+              <div class="feature-item-text">
+                <strong>Code Generation</strong>
+                <p>Accelerates software development by suggesting logic blocks and reducing repetitive coding tasks.</p>
+              </div>
+            </div>
+
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="shield-check"></i></div>
+              <div class="feature-item-text">
+                <strong>Quality Assurance</strong>
+                <p>Identifies potential flaws and suggests fixes early across both codebases and hardware circuitry.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="bot"></i></div>
+              <div class="feature-item-text">
+                <strong>Robotics</strong>
+                <p>Powers intelligent automation, enabling machines to adapt and solve complex physical problems.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Healthcare -->
+      <section class="col hc">
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="dna_full.png">
+            <source src="videos/AI Present/DNA.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">02 · Healthcare</span>
+          <div class="stat-chip">
+            <span class="stat-val">20–40%</span>
+            <span class="stat-label">gain in diagnostic accuracy</span>
+          </div>
+        </div>
+
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="stethoscope"></i></div>
+            <h2 class="col-name">Medical Care</h2>
+          </div>
+
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="dna"></i></div>
+              <div class="feature-item-text">
+                <strong>Genetics</strong>
+                <p>Analyzes vast genetic data to identify disease risks and discover drug targets.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="scan-eye"></i></div>
+              <div class="feature-item-text">
+                <strong>Radiology</strong>
+                <p>Detects abnormalities faster and with higher accuracy than manual review.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="microscope"></i></div>
+              <div class="feature-item-text">
+                <strong>Drug discovery</strong>
+                <p>Accelerates molecule testing, cutting clinical trial timelines by years.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="image"></i></div>
+              <div class="feature-item-text">
+                <strong>Imaging</strong>
+                <p>Reads X-rays, MRIs, and scans at scale to surface findings clinicians can act on.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transportation -->
+      <section class="col tr">
+        <div class="col-hero">
+          <video class="hero-video" muted loop playsinline preload="metadata" poster="autonomous_full.png">
+            <source src="videos/AI Present/autonomous_car.mp4" type="video/mp4">
+          </video>
+          <span class="col-num">03 · Mobility</span>
+          <div class="stat-chip">
+            <span class="stat-val">1.2M</span>
+            <span class="stat-label">lives saved per year, projected</span>
+          </div>
+        </div>
+
+        <div class="col-body">
+          <div class="col-title-row">
+            <div class="col-icon"><i data-lucide="car"></i></div>
+            <h2 class="col-name">Transportation</h2>
+          </div>
+
+          <div class="features-side">
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="eye"></i></div>
+              <div class="feature-item-text">
+                <strong>Perception</strong>
+                <p>Senses the environment through radar, camera, and lidar input.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="trending-up"></i></div>
+              <div class="feature-item-text">
+                <strong>Prediction</strong>
+                <p>Anticipates trajectories and speeds of surrounding objects in real time.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="map-pin"></i></div>
+              <div class="feature-item-text">
+                <strong>Planning</strong>
+                <p>Chooses an optimal route and navigation path for maximum efficiency.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-item-icon"><i data-lucide="cpu"></i></div>
+              <div class="feature-item-text">
+                <strong>Control</strong>
+                <p>Executes steering, braking, and acceleration to keep passengers safe.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', eyebrow:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', eyebrow:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', eyebrow:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', eyebrow:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', eyebrow:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', eyebrow:'#5fe8ec' },
+    };
+
+    function applyPalette(p) {
+      document.documentElement.style.setProperty('--bg', p.bg);
+      document.documentElement.style.setProperty('--fg', p.fg);
+      document.documentElement.style.setProperty('--c1', p.c1);
+      
+      document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
+      document.documentElement.style.setProperty('--c2', p.c2);
+      document.documentElement.style.setProperty('--c3', p.c3);
+      document.body.classList.toggle('light-mode', p.light);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+      }
+      if (e.data.type === 'RESTART_ANIMATION') {
+        startEntrance();
+        // Reset all hero videos to their first frame; they only play on hover.
+        document.querySelectorAll('.hero-video').forEach(v => {
+          try { v.pause(); v.currentTime = 0; } catch (_) {}
+        });
+      }
+      if (e.data.type === 'PAUSE_MEDIA') {
+        document.querySelectorAll('.hero-video').forEach(v => {
+          try { v.pause(); } catch (_) {}
+        });
+      }
+    });
+
+    // Play hero videos on card hover, pause smoothly on leave.
+    document.querySelectorAll('.col').forEach(card => {
+      const vid = card.querySelector('.hero-video');
+      if (!vid) return;
+      card.addEventListener('mouseenter', () => {
+        gsap.killTweensOf(vid);
+        vid.playbackRate = 1;
+        vid.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        // Smoothly decelerate to a stop instead of an abrupt freeze/jump
+        gsap.to(vid, {
+          playbackRate: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          onComplete: () => {
+            try { 
+              vid.pause(); 
+              vid.playbackRate = 1; // reset for next play
+            } catch (_) {}
+          }
+        });
+      });
+    });
+
+    function startEntrance() {
+      try {
+        const EASE = "power3.out";
+
+        gsap.set("#header", { opacity: 0, y: 14 });
+        gsap.set(".page-eyebrow", { opacity: 0, y: 6 });
+        gsap.set(".main-title", { opacity: 0, y: 10 });
+        gsap.set("#cols", { opacity: 1 });
+        gsap.set(".col", { opacity: 0, y: 22 });
+        gsap.set(".col-hero img, .col-hero video", { scale: 1.08 });
+        gsap.set(".col-num, .stat-chip", { opacity: 0, y: 6 });
+        gsap.set(".col-title-row", { opacity: 0, y: 8 });
+        gsap.set(".feature-item", { opacity: 0, y: 10 });
+
+        const tl = gsap.timeline({ defaults: { ease: EASE, duration: 0.7 } });
+
+        tl.to("#header",       { opacity: 1, y: 0 }, 0)
+          .to(".page-eyebrow", { opacity: 1, y: 0, duration: 0.55 }, 0.05)
+          .to(".main-title",   { opacity: 1, y: 0, duration: 0.75 }, 0.12);
+
+        tl.to(".col", { opacity: 1, y: 0, duration: 0.85, stagger: 0.16 }, 0.35);
+
+        const cards = gsap.utils.toArray(".col");
+        cards.forEach((card, i) => {
+          const t = 0.35 + i * 0.16 + 0.12;
+          tl.to(card.querySelector(".col-hero img, .col-hero video"),
+                { scale: 1, duration: 1.6, ease: "power2.out" }, t)
+            .to(card.querySelectorAll(".col-num, .stat-chip"),
+                { opacity: 1, y: 0, duration: 0.55, stagger: 0.06 }, t + 0.15)
+            .to(card.querySelector(".col-title-row"),
+                { opacity: 1, y: 0, duration: 0.55 }, t + 0.22)
+            .to(card.querySelectorAll(".feature-item"),
+                { opacity: 1, y: 0, duration: 0.5, stagger: 0.07 }, t + 0.3);
+        });
+      } catch (err) {
+        console.error("GSAP Error:", err);
+        gsap.set(["#header", ".page-eyebrow", ".main-title", "#cols", ".col",
+                  ".col-hero img, .col-hero video", ".col-num", ".stat-chip", ".col-title-row",
+                  ".feature-item"],
+                 { opacity: 1, y: 0, scale: 1 });
+      }
+    }
+
+    window.addEventListener('load', () => {
+      // Initial theme - start with Midnight to match global app state and prevent flashing
+      const initialPalette = PALETTE_MAP['Midnight'];
+      applyPalette(initialPalette);
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      startEntrance();
+    });
+  </script>
+</body>
+</html>

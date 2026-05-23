@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI · ML · DL · GenAI — The Tangled Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  @keyframes nodeFire {
+    0%   { transform: scale(1); filter: brightness(1); }
+    15%  { transform: scale(1.45); filter: brightness(1.8); }
+    40%, 100% { transform: scale(1); filter: brightness(1); }
+  }
+  .nn-node-anim {
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  #dl-processing-card:hover .nn-node-anim {
+    animation: nodeFire 1.5s infinite linear;
+  }
+  :root {
+    --bg-page: transparent;
+    --mesh-line: #1c2438;
+    --text-main: #e8ecf5;
+    --text-dim: #94a3b8;
+    --bubble-bg: #f3f1e9;
+    --bubble-shadow: rgba(0, 0, 0, 0.08);
+    --ai-color: #5b54c9;
+    --ml-color: #6b9b7a;
+    --dl-color: #c79a2e;
+    --gen-color: #c0602a;
+    --title-color: #1c1c1c;
+    --subtitle-color: #6b6b6b;
+  }
+  [data-theme="paper-white"] {
+    --mesh-line: #1a2238;
+    --bubble-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-dim: #475569;
+    --title-color: #0a0a0a;
+    --subtitle-color: #555555;
+  }
+  [data-theme="warm-linen"] {
+    --mesh-line: #1f2a44;
+    --bubble-bg: #faf7ee;
+    --text-main: #1c1c1c;
+    --text-dim: #6b6b6b;
+    --title-color: #1c1c1c;
+    --subtitle-color: #6b6b6b;
+  }
+  [data-theme="midnight"] {
+    --mesh-line: #6b7aa8;
+    --bubble-bg: #12172a;
+    --text-main: #f1f5f9;
+    --text-dim: #94a3b8;
+    --ai-color: #8b82f0;
+    --ml-color: #5cc389;
+    --dl-color: #e8c14e;
+    --gen-color: #f08659;
+    --title-color: #f1f5f9;
+    --subtitle-color: #94a3b8;
+  }
+  [data-theme="mint"] {
+    --mesh-line: #0a3d2a;
+    --bubble-bg: #eef7f1;
+    --text-main: #0f2e1e;
+    --text-dim: #065f46;
+    --title-color: #0f2e1e;
+    --subtitle-color: #065f46;
+  }
+  [data-theme="plum"] {
+    --mesh-line: #3d1d4a;
+    --bubble-bg: #f2e6f4;
+    --text-main: #2b1a33;
+    --text-dim: #6b4a78;
+    --ai-color: #7a42a8;
+    --ml-color: #8a6b3f;
+    --dl-color: #c28430;
+    --gen-color: #c44a6c;
+    --title-color: #2b1a33;
+    --subtitle-color: #6b4a78;
+  }
+
+  /* ── Big Picture Button ── */
+  .big-picture-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: color-mix(in srgb, var(--bubble-bg) 70%, transparent);
+    color: var(--title-color);
+    border: 1px solid color-mix(in srgb, var(--title-color) 12%, transparent);
+    border-radius: 40px;
+    padding: 11px 26px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    box-shadow:
+      0 2px 12px rgba(0,0,0,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s, background 0.22s, border-color 0.22s;
+    z-index: 10;
+  }
+  .big-picture-btn:hover {
+    transform: translate(-50%, calc(-50% - 3px)) scale(1.04);
+    background: color-mix(in srgb, var(--bubble-bg) 92%, transparent);
+    border-color: color-mix(in srgb, var(--ai-color) 50%, transparent);
+    box-shadow:
+      0 8px 28px rgba(0,0,0,0.13),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  /* ══════════════════════════════════════════
+     BIG PICTURE MODAL — Themed Image
+     ══════════════════════════════════════════ */
+  .bp-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .bp-overlay.open { display: flex; }
+
+  .bp-modal {
+    background: transparent;
+    padding: 0;
+    max-width: 96vw;
+    max-height: 96vh;
+    width: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bp-image {
+    display: block;
+    max-width: 96vw;
+    max-height: 96vh;
+    width: auto;
+    height: auto;
+    border-radius: 18px;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.7);
+  }
+
+  .bp-close {
+    position: absolute;
+    top: -14px; right: -14px;
+    background: rgba(255,255,255,0.95);
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    color: #0f172a;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    transition: transform 0.2s;
+    z-index: 5;
+  }
+  .bp-close:hover { transform: scale(1.08); }
+
+  /* Neural Network Graphic — preserve animated SVG (kept for compat) */
+  .nn-node { fill: var(--bp-nn); opacity: 0.85; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--bp-nn) 50%, transparent)); }
+  .nn-edge { stroke: var(--bp-nn); stroke-width: 0.6; stroke-opacity: 0.3; }
+  .nn-signal { fill: #fff; filter: drop-shadow(0 0 5px var(--bp-nn)); pointer-events: none; }
+  .nn-node.fire { filter: drop-shadow(0 0 8px #fff); transform: scale(1.3); transform-origin: center; transition: transform 0.2s; }
+
+  /* ── Detail Modals ── */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .detail-overlay.open { display: flex; }
+  .detail-modal {
+    --modal-accent: var(--text-dim);
+    background: linear-gradient(135deg, var(--bubble-bg) 0%, color-mix(in srgb, var(--bubble-bg), #000 2%) 100%);
+    border-radius: 28px;
+    padding: 28px 36px 24px;
+    max-width: min(1100px, 96vw);
+    width: fit-content;
+    min-width: 760px;
+    height: auto;
+    max-height: 92vh;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4), inset 0 0 0 1.5px color-mix(in srgb, var(--modal-accent) 30%, transparent);
+    border: none;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .detail-modal::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--modal-accent) 4%, transparent) 0%, transparent 50%);
+    pointer-events: none; opacity: 0.7;
+  }
+  .detail-overlay.open .detail-modal {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .detail-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: rgba(128,128,128,0.1);
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    font-size: 20px; cursor: pointer;
+    color: var(--text-dim);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .detail-close:hover { background: rgba(128,128,128,0.2); color: var(--title-color); }
+  .detail-type-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+  }
+  .type-ai  { background: color-mix(in srgb, var(--ai-color) 20%, transparent); color: var(--ai-color); }
+  .type-ml  { background: color-mix(in srgb, var(--ml-color) 20%, transparent); color: var(--ml-color); }
+  .type-dl  { background: color-mix(in srgb, var(--dl-color) 20%, transparent); color: var(--dl-color); }
+  .type-gen { background: color-mix(in srgb, var(--gen-color) 20%, transparent); color: var(--gen-color); }
+  .detail-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--title-color);
+    margin-bottom: 16px;
+  }
+  .detail-content {
+    color: var(--text-dim);
+    line-height: 1.6;
+    font-size: 16px;
+    min-height: auto;
+  }
+  .detail-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    border: 2px dashed color-mix(in srgb, var(--text-dim) 20%, transparent);
+    border-radius: 16px;
+    opacity: 0.5;
+  }
+  .detail-placeholder-text { font-size: 14px; font-weight: 500; font-style: italic; }
+
+  /* ── ML Modal Content Styles (Premium Redesign) ── */
+  .ml-layout { 
+    display: flex; flex-direction: column; gap: 20px; 
+    color: var(--text-main); font-family: 'Exo 2', sans-serif; 
+  }
+  .ml-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 5px; }
+  .ml-step-badge {
+    width: 44px; height: 44px; background: var(--ml-color); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; font-size: 24px; font-weight: 800; flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .ml-title-area { display: flex; flex-direction: row; align-items: baseline; gap: 12px; }
+  .ml-main-title { 
+    font-size: 32px; font-weight: 800; 
+    background: linear-gradient(to right, var(--ml-color), color-mix(in srgb, var(--ml-color), #000 20%));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -1px; line-height: 1.1; 
+  }
+  .ml-sub-title { font-size: 24px; font-weight: 700; color: var(--ml-color); opacity: 0.6; margin-left: 2px; }
+  .ml-example-text { font-size: 16px; color: var(--text-dim); margin-top: 6px; font-weight: 500; opacity: 0.8; }
+  
+  .ml-top-pill {
+    background: color-mix(in srgb, var(--ml-color) 10%, var(--bubble-bg)); color: var(--ml-color); padding: 8px 24px;
+    border-radius: 100px; font-size: 14px; font-weight: 700;
+    align-self: center; margin: 5px 0 15px 0;
+    border: 1px solid color-mix(in srgb, var(--ml-color) 20%, transparent);
+  }
+
+  .ml-flow-container {
+    display: flex; align-items: center; justify-content: center;
+    gap: 30px; margin-bottom: 15px; padding: 0 5px;
+  }
+
+  /* Left: Features */
+  .ml-features-wrap { display: flex; align-items: center; gap: 8px; }
+  .ml-feature-stack {
+    display: flex; flex-direction: column; border: 1px solid #e0e0e0;
+    border-radius: 12px; overflow: hidden; background: #fff; width: 230px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  }
+  .ml-feature-item {
+    display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0; font-size: 13px; font-weight: 600; color: #333;
+  }
+  .ml-feature-item:last-child { border-bottom: none; }
+  .ml-feature-svg { width: 22px; height: 22px; flex-shrink: 0; opacity: 0.8; }
+  
+  .ml-bracket-svg { width: 25px; height: 180px; }
+
+  /* Premium Effects */
+  .ml-card-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .ml-card-lift:hover { transform: translate3d(0, -8px, 0) scale(1.02); }
+  @keyframes ml-pulse {
+    0% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ml-color) 30%, transparent)); }
+    50% { filter: drop-shadow(0 0 15px color-mix(in srgb, var(--ml-color) 60%, transparent)); }
+    100% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--ml-color) 30%, transparent)); }
+  }
+  .ml-model-pulse { animation: ml-pulse 3s infinite ease-in-out; }
+  
+  /* Car flow sequential reveal */
+  .car-flow-step { opacity: 0; }
+  .car-flow-arrow-step { opacity: 0; }
+
+  .def-pillar-card {
+    cursor: default;
+    transition: border-color 0.3s ease;
+  }
+  .def-pillar-card.revealed {
+    cursor: default;
+  }
+
+  /* Centered Hover Reveals */
+  .model-section-wrap { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+  .training-preview {
+    position: absolute; top: 46%; left: 50%; width: 480px; height: auto;
+    background: var(--bubble-bg); border-radius: 22px;
+    opacity: 0; pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.85);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999; display: flex; flex-direction: column; padding: 26px 31px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5); border: 2.5px solid var(--ml-color);
+    isolation: isolate;
+    font-size: 13px;
+  }
+  .training-preview .training-table { font-size: 13px !important; }
+
+  .model-section-wrap:hover .training-preview {
+    opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto;
+  }
+
+  /* Hide flow arrows when popup is open */
+  .ml-flow-arrow { transition: opacity 0.25s ease; }
+  .ml-flow-container:has(.model-section-wrap:hover) .ml-flow-arrow {
+    opacity: 0 !important;
+  }
+
+  /* Lift brain card above siblings so popup renders on top */
+  .ml-flow-container > .ml-card-lift { transition: z-index 0s; }
+  .ml-flow-container:has(.model-section-wrap:hover) > .ml-card-lift:nth-child(3) {
+    z-index: 9999;
+  }
+  @supports not selector(:has(*)) {
+    .ml-flow-container:hover .ml-flow-arrow { opacity: 0; }
+  }
+
+  .training-table { width: 100%; border-collapse: collapse; font-size: 10px; color: var(--text-dim); table-layout: fixed; }
+  .training-table th { text-align: left; padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.2); color: var(--ml-color); font-weight: 800; text-transform: uppercase; }
+  .training-table td { padding: 4px; border-bottom: 1px solid rgba(128,128,128,0.1); font-weight: 600; }
+  /* Visual gap between features (cols 1-5) and target (col 6) */
+  .training-table th:last-child,
+  .training-table td:last-child { padding-left: 14px; }
+
+  /* Features / Target highlight overlay -- pops in sequentially on hover */
+  .features-box, .target-box {
+    position: absolute; top: -2px; bottom: -2px;
+    border-radius: 6px;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.94);
+    will-change: transform, opacity;
+    box-sizing: border-box;
+  }
+  .features-box {
+    left: -3px; width: calc(100% * 5 / 6 - 5px);
+    border: 2px dashed color-mix(in srgb, var(--ml-color) 80%, transparent);
+    background: color-mix(in srgb, var(--ml-color) 8%, transparent);
+  }
+  .target-box {
+    right: -3px; width: calc(100% * 1 / 6 - 2px);
+    border: 2px solid var(--ml-color);
+    background: color-mix(in srgb, var(--ml-color) 18%, transparent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ml-color) 50%, transparent);
+  }
+  .box-label {
+    position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    font-size: 8px; font-weight: 900; letter-spacing: 1.2px;
+    color: var(--ml-color); white-space: nowrap;
+    background: var(--bubble-bg); padding: 1px 6px; border-radius: 4px;
+  }
+  @keyframes featuresPop {
+    0%   { opacity: 0; transform: scale(0.94); }
+    60%  { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes targetPop {
+    0%   { opacity: 0; transform: scale(0.9); box-shadow: 0 0 0 0 color-mix(in srgb, var(--ml-color) 50%, transparent); }
+    60%  { opacity: 1; transform: scale(1.05); box-shadow: 0 0 0 6px color-mix(in srgb, var(--ml-color) 0%, transparent); }
+    100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--ml-color) 0%, transparent); }
+  }
+  .model-section-wrap:hover .features-box {
+    animation: featuresPop 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
+  }
+  .model-section-wrap:hover .target-box {
+    animation: targetPop 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.6s forwards;
+  }
+
+  /* Tab System */
+  .ml-tabs {
+    display: flex; gap: 4px; margin-bottom: 25px;
+    background: rgba(128,128,128,0.08); padding: 5px; border-radius: 14px;
+    width: fit-content; margin-left: auto; margin-right: auto;
+  }
+  .ml-tab-btn {
+    padding: 10px 24px; border-radius: 10px; cursor: pointer;
+    font-size: 13px; font-weight: 800; color: var(--text-dim);
+    transition: all 0.3s ease; border: none; background: transparent;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .ml-tab-btn.active {
+    background: var(--ml-color); color: white;
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--ml-color) 40%, transparent);
+  }
+  .ml-tab-pane { display: none; width: 100%; flex-direction: column; align-items: center; min-height: 480px; justify-content: center; }
+  .ml-tab-pane.active { display: flex; animation: fadeInModal 0.4s ease forwards; }
+
+  .ml-model-sub { font-size: 11px; font-weight: 700; color: #666; }
+  .ml-arrow-svg { width: 24px; height: 24px; opacity: 0.6; }
+
+  /* Right: Output */
+  .ml-output-card {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    background: #f1f8e9; border: 2px solid #c8e6c9; padding: 25px 25px;
+    border-radius: 24px; width: 200px; text-align: center; flex-shrink: 0;
+  }
+  .ml-output-label { font-size: 12px; font-weight: 800; color: #2e7d32; text-transform: uppercase; letter-spacing: 1px; }
+  .ml-output-title { font-size: 16px; font-weight: 700; color: #333; margin-top: 5px; }
+  .ml-output-value { font-size: 26px; font-weight: 900; color: #2e7d32; margin-top: 4px; }
+
+  /* Footer Boxes (Side-by-side) */
+  .ml-footer { display: flex; gap: 15px; margin-top: 5px; }
+  .ml-info-box {
+    background: #f5fcf5; border-radius: 20px; padding: 15px 20px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid #e0f2f1;
+    flex: 1;
+  }
+  .ml-info-plot-svg { width: 60px; height: 40px; flex-shrink: 0; }
+  .ml-info-text { font-size: 13px; color: #2e7d32; font-weight: 600; line-height: 1.5; }
+  
+  .ml-key-idea-box {
+    background: #edf7ed; border-radius: 20px; padding: 15px 20px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid #c8e6c9;
+    flex: 1;
+  }
+  .ml-ki-icon-svg { width: 34px; height: 34px; flex-shrink: 0; }
+  .ml-ki-text { font-size: 16px; color: #1b5e20; font-weight: 600; }
+  .ml-ki-text strong { color: #2e7d32; font-weight: 800; font-size: 17px; }
+
+  .ml-dots { font-size: 24px; color: #ccc; margin-left: 105px; line-height: 1; letter-spacing: 4px; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 5vh 7vw 20px;
+  }
+
+  .header {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    opacity: 0;
+  }
+  .header-eyebrow {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c1, var(--subtitle-color));
+    margin-bottom: 14px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 3.6vw, 44px);
+    font-weight: 600;
+    color: var(--title-color);
+    letter-spacing: -0.5px;
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--gen-color);
+  }
+  .header-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--subtitle-color);
+    letter-spacing: 0.5px;
+  }
+
+  .footer-note {
+    display: none;
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--subtitle-color);
+    opacity: 0;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: min(820px, 70vw);
+    height: min(500px, 62vh);
+    margin: 100px auto 0;
+  }
+
+  svg.mesh {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .scribble {
+    fill: none;
+    stroke: var(--mesh-line);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.9;
+  }
+  [data-theme="midnight"] .scribble { opacity: 0.8; }
+
+  .bubble-group { cursor: pointer; will-change: transform; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .bubble-group .bubble-box { transition: filter 0.2s, stroke-width 0.2s; }
+  .bubble-group:hover {
+    transform: scale(1.15);
+  }
+  .bubble-group:hover .bubble-box {
+    filter: drop-shadow(0 10px 22px rgba(0,0,0,0.22)) brightness(1.04);
+    stroke-width: 4;
+  }
+
+  .bubble-box {
+    fill: var(--bubble-bg);
+    stroke-width: 3;
+    filter: drop-shadow(0 6px 16px var(--bubble-shadow));
+  }
+  .bubble-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: var(--title-color);
+    letter-spacing: 0.5px;
+  }
+  .bubble-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+  }
+
+  .ai    .bubble-box { stroke: var(--ai-color); }
+  .ai    .bubble-sub { fill: var(--ai-color); }
+  .ai    .bubble-text { fill: var(--ai-color); }
+  .ml    .bubble-box { stroke: var(--ml-color); }
+  .ml    .bubble-sub { fill: var(--ml-color); }
+  .ml    .bubble-text { fill: var(--ml-color); }
+  .dl    .bubble-box { stroke: var(--dl-color); }
+  .dl    .bubble-sub { fill: var(--dl-color); }
+  .dl    .bubble-text { fill: var(--dl-color); }
+  .gen   .bubble-box { stroke: var(--gen-color); }
+  .gen   .bubble-sub { fill: var(--gen-color); }
+  .gen   .bubble-text { fill: var(--gen-color); }
+
+  .legend {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 22px;
+    opacity: 0;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* ── Page Title (matches other pages) ── */
+  .page-title-section {
+    width: 100%;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    margin-bottom: 0;
+  }
+
+  [data-theme="midnight"] .page-title-section,
+  [data-theme="dark"] .page-title-section {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .page-eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gen-color);
+    margin-bottom: 6px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rise 0.8s ease-out 0.2s forwards;
+  }
+
+  .page-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--title-color);
+    margin: 0;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 1s cubic-bezier(.2,.7,.2,1) 0.4s forwards;
+  }
+
+  .page-title em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Mobile Responsiveness ── */
+  @media (max-width: 768px) {
+    .detail-modal { min-width: 90%; width: 95%; padding: 24px; }
+    .ml-flow-container { flex-direction: column; gap: 20px; }
+    .ml-flow-arrow { transform: rotate(90deg); margin: 10px 0; }
+    .ml-title-area { flex-direction: column; gap: 4px; }
+    .ml-main-title { font-size: 26px; }
+    .ml-footer { flex-direction: column; }
+    .training-preview { width: 300px; padding: 16px; left: 50%; top: 50%; }
+  }
+</style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <div class="stage">
+    <page-title eyebrow="The Foundation" title="The Complexity <em>Mesh</em>"></page-title>
+
+    <div class="canvas-wrap">
+      <svg class="mesh" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet">
+        <g id="scribbles"></g>
+        <g id="bubbles"></g>
+      </svg>
+      <button class="big-picture-btn" onclick="openBigPicture()">💡 Big Picture</button>
+    </div>
+  </div>
+
+  <!-- Big Picture Modal -->
+  <div class="bp-overlay" id="bpOverlay" onclick="closeBigPicture(event)">
+    <div class="bp-modal">
+      <button class="bp-close" onclick="closeBigPicture()">&times;</button>
+      <img id="bpImage" class="bp-image" src="ai-layers/AI Layer_dark.jpg" alt="From Rules to Creation — the evolution of intelligent machines">
+    </div>
+  </div>
+
+  <!-- Detail Modal (Generic) -->
+  <div class="detail-overlay" id="detailOverlay" onclick="closeDetailModal(event)">
+    <div class="detail-modal" id="detailModal">
+      <button class="detail-close" onclick="closeDetailModal()">&times;</button>
+      <div id="detailContent" class="detail-content">
+        <div class="detail-placeholder">
+          <span class="detail-placeholder-text">Content Coming Soon...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ─── SCRIBBLE GENERATION ──────────────────────────────────────────────
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const scribbleG = document.getElementById('scribbles');
+  const bubbleG   = document.getElementById('bubbles');
+
+  const W = 1200, H = 720;
+  const CX = W / 2, CY = H / 2;
+
+  // Seeded PRNG for reproducible tangles
+  function mulberry32(seed) {
+    return function() {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(9271);
+
+  // Build tangled sinuous paths constrained to a circular region
+  function buildScribble(numSegments, bounds) {
+    const pts = [];
+    const ccx = bounds.cx;
+    const ccy = bounds.cy;
+    const radius = bounds.r;
+    // Start at a random point inside the circle
+    const startR = rand() * radius * 0.9;
+    const startA = rand() * Math.PI * 2;
+    let x = ccx + Math.cos(startA) * startR;
+    let y = ccy + Math.sin(startA) * startR;
+    let angle = rand() * Math.PI * 2;
+    pts.push([x, y]);
+    for (let i = 0; i < numSegments; i++) {
+      const step = 40 + rand() * 90;
+      angle += (rand() - 0.5) * 1.8;
+      x += Math.cos(angle) * step;
+      y += Math.sin(angle) * step;
+      // Soft reflect off the circle boundary
+      const dx = x - ccx;
+      const dy = y - ccy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > radius) {
+        const overshoot = dist - radius;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        x -= nx * overshoot * 1.5;
+        y -= ny * overshoot * 1.5;
+        // Reflect angle across the inward normal
+        const normalAngle = Math.atan2(-ny, -nx);
+        angle = 2 * normalAngle - angle + Math.PI;
+      }
+      pts.push([x, y]);
+    }
+    // Convert to smooth cubic path
+    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const [x1, y1] = pts[i];
+      const [x2, y2] = pts[i + 1];
+      const cx = (x1 + x2) / 2;
+      const cy = (y1 + y2) / 2;
+      d += ` Q ${x1.toFixed(1)} ${y1.toFixed(1)} ${cx.toFixed(1)} ${cy.toFixed(1)}`;
+    }
+    return d;
+  }
+
+  const bounds = { cx: W / 2, cy: H / 2, r: Math.min(W, H) * 0.65 };
+
+  // Circular clip path so mesh has hard sphere edges
+  const defs = document.createElementNS(svgNS, 'defs');
+  const clipPath = document.createElementNS(svgNS, 'clipPath');
+  clipPath.setAttribute('id', 'meshClip');
+  const clipCircle = document.createElementNS(svgNS, 'circle');
+  clipCircle.setAttribute('cx', bounds.cx);
+  clipCircle.setAttribute('cy', bounds.cy);
+  clipCircle.setAttribute('r', bounds.r);
+  clipPath.appendChild(clipCircle);
+  defs.appendChild(clipPath);
+  document.querySelector('svg.mesh').prepend(defs);
+  scribbleG.setAttribute('clip-path', 'url(#meshClip)');
+
+  const paths = [];
+  const SCRIBBLE_COUNT = 28;
+  for (let i = 0; i < SCRIBBLE_COUNT; i++) {
+    const segCount = 32 + Math.floor(rand() * 20);
+    const d = buildScribble(segCount, bounds);
+    const p = document.createElementNS(svgNS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('class', 'scribble');
+    scribbleG.appendChild(p);
+    paths.push(p);
+  }
+
+  // ─── SPEECH BUBBLES ──────────────────────────────────────────────────
+  // Rectangular rounded callouts with a tail triangle pointing inward.
+  // config: [cls, label, subLabel, x, y, w, h, tailX, tailY, tailSide]
+  // tailSide: 'bottom'|'top'|'left'|'right'  (which side the tail protrudes from)
+  const bubbles = [
+    { cls: 'ai',  label: 'AI',    sub: 'Artificial Intelligence',  x: 167, y: 90,  w: 288, h: 150, tailX: 380, tailY: 240, side: 'bottom' },
+    { cls: 'ml',  label: 'ML',    sub: 'Machine Learning',         x: 668, y: 140, w: 325, h: 150, tailX: 720, tailY: 290, side: 'bottom' },
+    { cls: 'dl',  label: 'NN',    sub: 'Neural Network',           x: 120, y: 405, w: 300, h: 150, tailX: 360, tailY: 405, side: 'top' },
+    { cls: 'gen', label: 'GenAI', sub: 'Generative AI',            x: 610, y: 444, w: 400, h: 162, tailX: 700, tailY: 444, side: 'top' },
+  ];
+
+  function tailPath(x, y, w, h, tx, ty, side) {
+    // Bubble rect with rounded corners r, plus a tail triangle off the given side
+    const r = 14;
+    let d = `M ${x + r} ${y}`;
+    // TOP edge
+    if (side === 'top') {
+      const baseMid = x + w * 0.25;
+      d += ` L ${baseMid - 14} ${y}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${baseMid + 24} ${y}`;
+    }
+    d += ` L ${x + w - r} ${y}`;
+    d += ` Q ${x + w} ${y} ${x + w} ${y + r}`;
+    // RIGHT edge
+    if (side === 'right') {
+      const baseMid = y + h * 0.5;
+      d += ` L ${x + w} ${baseMid - 14}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${x + w} ${baseMid + 24}`;
+    }
+    d += ` L ${x + w} ${y + h - r}`;
+    d += ` Q ${x + w} ${y + h} ${x + w - r} ${y + h}`;
+    // BOTTOM edge
+    if (side === 'bottom') {
+      const baseMid = x + w * 0.75;
+      d += ` L ${baseMid + 14} ${y + h}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${baseMid - 24} ${y + h}`;
+    }
+    d += ` L ${x + r} ${y + h}`;
+    d += ` Q ${x} ${y + h} ${x} ${y + h - r}`;
+    // LEFT edge
+    if (side === 'left') {
+      const baseMid = y + h * 0.5;
+      d += ` L ${x} ${baseMid + 14}`;
+      d += ` L ${tx} ${ty}`;
+      d += ` L ${x} ${baseMid - 24}`;
+    }
+    d += ` L ${x} ${y + r}`;
+    d += ` Q ${x} ${y} ${x + r} ${y}`;
+    d += ' Z';
+    return d;
+  }
+
+  bubbles.forEach((b, i) => {
+    const g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('class', `bubble-group ${b.cls}`);
+    g.setAttribute('data-index', i);
+
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', tailPath(b.x, b.y, b.w, b.h, b.tailX, b.tailY, b.side));
+    path.setAttribute('class', 'bubble-box');
+    g.appendChild(path);
+
+    const sub = document.createElementNS(svgNS, 'text');
+    sub.setAttribute('class', 'bubble-sub');
+    sub.setAttribute('x', b.x + b.w / 2);
+    sub.setAttribute('y', b.y + 32);
+    sub.textContent = b.sub;
+    g.appendChild(sub);
+
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('class', 'bubble-text');
+    label.setAttribute('x', b.x + b.w / 2);
+    label.setAttribute('y', b.y + b.h / 2 + 18);
+    label.setAttribute('font-size', b.label.length > 3 ? 64 : 80);
+    label.textContent = b.label;
+    g.appendChild(label);
+
+    // pivot for scale-in
+    const pivotX = b.x + b.w / 2;
+    const pivotY = b.y + b.h / 2;
+    g.style.transformOrigin = `${pivotX}px ${pivotY}px`;
+    g.style.transformBox = 'fill-box';
+    g.setAttribute('opacity', 0);
+    g.style.cursor = 'pointer';
+    g.onclick = () => openDetailModal(b.cls);
+
+    bubbleG.appendChild(g);
+  });
+
+  // ─── ANIMATION ───────────────────────────────────────────────────────
+  function animate() {
+    // Prep paths for draw-in
+    paths.forEach(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      p.style.opacity = 0.55;
+    });
+
+    // Reset bubbles
+    gsap.set('.bubble-group', { opacity: 0, scale: 0.4 });
+    gsap.set('.header', { opacity: 0, y: -10 });
+    gsap.set('.footer-note', { opacity: 0 });
+    gsap.set('.big-picture-btn', { opacity: 0, scale: 0.8, pointerEvents: 'none' });
+
+    const tl = gsap.timeline();
+
+    tl.to('.header', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0);
+
+    // Scribbles draw in a tangled rush (faster)
+    tl.to(paths, {
+      strokeDashoffset: 0,
+      duration: 1.6,
+      ease: 'power1.inOut',
+      stagger: { each: 0.06, from: 'random' },
+    }, 0.3);
+
+    // Bubbles pop in ALONGSIDE the mesh drawing
+    tl.to('.bubble-group', {
+      opacity: 1,
+      scale: 1,
+      duration: 0.8,
+      ease: 'back.out(1.8)',
+      stagger: 0.15,
+    }, 0.4);
+
+    // Big Picture button pops in earlier as mesh completes
+    tl.to('.big-picture-btn', {
+      opacity: 1, 
+      scale: 1, 
+      pointerEvents: 'auto',
+      duration: 0.5, 
+      ease: 'back.out(2)'
+    }, 2.2);
+
+    tl.to('.footer-note', { opacity: 1, duration: 0.6 }, '-=0.3');
+  }
+
+  animate();
+
+  // Replay on R
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'r' || e.key === 'R') { gsap.killTweensOf('*'); animate(); }
+  });
+
+  // Forward arrow-key navigation to the parent deck when this iframe has focus.
+  document.addEventListener('keydown', (e) => {
+    if (window.parent === window) return;
+    const tag = (e.target && e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable)) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+    }
+  });
+
+  // Theme sync
+  window.addEventListener('message', (e) => {
+    if (!e.data) return;
+    if (e.data.type === 'SET_THEME') {
+      const palette = e.data.palette || (e.data.mode === 'light' ? 'Paper White' : 'Midnight');
+      const key = palette.toLowerCase().replace(/\s+/g, '-');
+      document.body.setAttribute('data-theme', key);
+    }
+    if (e.data.type === 'RESTART_ANIMATION') {
+      gsap.killTweensOf('*');
+      animate();
+    }
+  });
+
+  // Default theme
+  document.body.setAttribute('data-theme', 'warm-linen');
+
+  /* The midnight palette is the only "dark" theme; everything else uses light. */
+  function bpResolveImageSrc() {
+    const theme = document.body.getAttribute('data-theme') || '';
+    const isDark = theme === 'midnight';
+    return isDark
+      ? 'ai-layers/AI Layer_dark.jpg'
+      : 'ai-layers/AI Layer_light.jpg';
+  }
+
+  function openBigPicture() {
+    const overlay = document.getElementById('bpOverlay');
+    const img = document.getElementById('bpImage');
+    if (img) img.src = bpResolveImageSrc();
+    overlay.classList.add('open');
+    animateBigPictureEntrance();
+  }
+  function closeBigPicture(e) {
+    if (!e || e.target === document.getElementById('bpOverlay') || e.currentTarget.classList.contains('bp-close')) {
+      document.getElementById('bpOverlay').classList.remove('open');
+    }
+  }
+
+  function animateBigPictureEntrance() {
+    const modal = document.querySelector('.bp-modal');
+    const img   = document.getElementById('bpImage');
+    if (!modal) return;
+    gsap.killTweensOf([modal, img]);
+    gsap.set(modal, { opacity: 0 });
+    gsap.set(img,   { opacity: 0, scale: 0.96 });
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.to(modal, { opacity: 1, duration: 0.3 })
+      .to(img,   { opacity: 1, scale: 1, duration: 0.55 }, 0.05);
+  }
+
+  function openDetailModal(type) {
+    const overlay = document.getElementById('detailOverlay');
+    const badge = document.getElementById('detailBadge');
+    const content = document.getElementById('detailContent');
+
+    const config = {
+      ai: { title: 'Artificial Intelligence', label: 'AI' },
+      ml: { title: 'Machine Learning', label: 'ML' },
+      dl: { title: 'Neural Network', label: 'NN' },
+      gen: { title: 'Generative AI', label: 'GenAI' }
+    };
+    const data = config[type];
+
+    const accentMap = { ai: '--ai-color', ml: '--ml-color', dl: '--dl-color', gen: '--gen-color', genai: '--gen-color' };
+    const accentVar = accentMap[type] || '--text-dim';
+    document.getElementById('detailModal').style.setProperty('--modal-accent', `var(${accentVar})`);
+
+    if (type === 'ml') {
+      content.innerHTML = `
+        <div class="ml-tabs">
+          <button class="ml-tab-btn active" onclick="switchMLTab(0)">🧠 What is ML?</button>
+          <button class="ml-tab-btn" onclick="switchMLTab(1)">🏠 List Your House</button>
+          <button class="ml-tab-btn" onclick="switchMLTab(2)">🚗 List Your Car</button>
+        </div>
+
+        <!-- Pane 0: What is ML? -->
+        <div id="ml-pane-0" class="ml-tab-pane active">
+          <div class="ml-layout" style="gap: 40px; max-width: 980px; width: 100%; padding: 30px 0;">
+            <!-- Three-pillar cards — each revealed individually -->
+            <div style="display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;">
+              <div id="def-step-card1" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Feed Data</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">Show the model thousands of examples.</div>
+              </div>
+              <div id="def-step-card2" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Find Patterns</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">The algorithm finds hidden relationships.</div>
+              </div>
+              <div id="def-step-card3" class="car-flow-step def-pillar-card" style="flex: 1; min-width: 240px; max-width: 290px; background: rgba(107,155,122,0.12); border: 2px solid rgba(107,155,122,0.45); border-radius: 18px; padding: 40px 28px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 900; color: var(--ml-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 16px;">Make Predictions</div>
+                <div style="font-size: 17px; font-weight: 600; color: var(--title-color); line-height: 1.55;">Predict the right answer for new inputs.</div>
+              </div>
+            </div>
+
+            <!-- Key insight bar -->
+            <div id="def-step-insight" class="car-flow-step" style="display: flex; align-items: flex-start; gap: 14px; background: rgba(107,155,122,0.1); border-left: 5px solid var(--ml-color); border-radius: 0 14px 14px 0; padding: 22px 26px;">
+              <span style="font-size: 22px; flex-shrink: 0;">💡</span>
+              <div style="font-size: 16px; font-weight: 500; color: var(--title-color); line-height: 1.6;">
+                <strong>Key Idea:</strong> You don't write rules — you show examples. The model figures out the rules on its own.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pane 1: House listing -->
+        <div id="ml-pane-1" class="ml-tab-pane">
+          <div class="ml-layout" style="gap: 15px;">
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--title-color); letter-spacing: -0.3px; margin-top: 10px;">
+              Predicting <span style="color: var(--ml-color);">House Sale Price</span>
+            </div>
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 30px 0 25px 0; padding: 0;">
+              <!-- Left: Features -->
+              <div id="house-step-listing" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -26px; left: 0; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">YOUR LISTING</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1.5px solid rgba(128,128,128,0.35); border-radius: 14px; width: 270px; box-shadow: 0 10px 28px rgba(0,0,0,0.14);">
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Size</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">2,100 sq ft</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Bedrooms</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">4</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Location</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Core City</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Age</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">5 Years</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px;">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Amenities</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Pool + Gym</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Arrow 1 -->
+              <svg id="house-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Middle: ML Model -->
+              <div id="house-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2.5px solid var(--ml-color); border-radius: 22px; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 200px;">
+                <!-- Upper Half: Model Logic -->
+                <div class="model-section-wrap">
+                  <div class="training-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 TRAINING DATASET</div>
+                    <div class="training-table-wrap" style="position: relative;">
+                      <table class="training-table" style="font-size: 8.5px;">
+                        <thead>
+                          <tr><th>Size</th><th>Beds</th><th>Loc</th><th>Age</th><th>Dist</th><th>Price</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>1200</td><td>2</td><td>Sub</td><td>12y</td><td>5m</td><td>$450k</td></tr>
+                          <tr><td>1850</td><td>3</td><td>Core</td><td>5y</td><td>1m</td><td>$680k</td></tr>
+                          <tr><td>2400</td><td>4</td><td>Sub</td><td>2y</td><td>8m</td><td>$920k</td></tr>
+                          <tr><td>1400</td><td>2</td><td>Edge</td><td>20y</td><td>12m</td><td>$510k</td></tr>
+                          <tr><td>2100</td><td>3</td><td>Core</td><td>8y</td><td>2m</td><td>$750k</td></tr>
+                          <tr><td>1600</td><td>3</td><td>Sub</td><td>15y</td><td>6m</td><td>$580k</td></tr>
+                        </tbody>
+                      </table>
+                      <div class="features-box"><span class="box-label">FEATURES</span></div>
+                      <div class="target-box"><span class="box-label">TARGET</span></div>
+                    </div>
+                  </div>
+
+                  <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
+                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                    <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+                  </svg>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--text-dim); opacity:0.9;">(Regression)</div>
+                </div>
+              </div>
+
+              <!-- Arrow 2 -->
+              <svg id="house-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Right: Output -->
+              <div id="house-step-output" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">AI SUGGESTED PRICE</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 14%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 50%, transparent); border-radius: 22px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 230px;">
+                  <div style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
+                  <div style="font-size: 44px; font-weight: 950; color: var(--ml-color); margin-top: 14px;">$780,000</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ml-pane-2" class="ml-tab-pane">
+          <div class="ml-layout" style="gap: 15px;">
+            <div style="text-align: center; font-size: 20px; font-weight: 800; color: var(--title-color); letter-spacing: -0.3px; margin-top: 10px;">
+              Predicting <span style="color: var(--ml-color);">Car Sale Price</span>
+            </div>
+            <div class="ml-flow-container" style="display: flex; align-items: center; justify-content: center; gap: 28px; margin: 30px 0 25px 0; padding: 0;">
+              <!-- Left: Features -->
+              <div id="car-step-listing" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -26px; left: 0; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">YOUR LISTING</div>
+                <div style="background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1.5px solid rgba(128,128,128,0.35); border-radius: 14px; width: 270px; box-shadow: 0 10px 28px rgba(0,0,0,0.14);">
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Make / Model</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Toyota Camry</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Year</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">2021</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Miles Driven</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">32,000 mi</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid rgba(128,128,128,0.18);">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Transmission</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Automatic</span>
+                  </div>
+                  <div style="display: flex; align-items: center; padding: 14px 18px;">
+                    <span style="font-size: 16px; font-weight: 800; color: var(--text-main);">Condition</span>
+                    <span style="margin-left: auto; font-size: 14px; font-weight: 900; color: var(--ml-color); background: rgba(128,128,128,0.14); padding: 4px 10px; border-radius: 7px;">Excellent</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Arrow 1 -->
+              <svg id="car-step-arrow1" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Middle: ML Model -->
+              <div id="car-step-model" class="ml-card-lift car-flow-step" style="position: relative; background: var(--bubble-bg); border: 2.5px solid var(--ml-color); border-radius: 22px; padding: 26px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 200px;">
+                <!-- Upper Half: Model Logic -->
+                <div class="model-section-wrap">
+                  <div class="training-preview">
+                    <div style="font-size: 11px; font-weight: 900; color: var(--ml-color); margin-bottom: 10px; letter-spacing: 0.5px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 5px;">📜 CAR SALES TRAINING DATA</div>
+                    <div class="training-table-wrap" style="position: relative;">
+                      <table class="training-table" style="font-size: 8.5px;">
+                        <thead>
+                          <tr><th>Make</th><th>Year</th><th>Mi</th><th>Cond</th><th>Trans</th><th>Price</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>Honda</td><td>2019</td><td>45k</td><td>Good</td><td>Auto</td><td>$18k</td></tr>
+                          <tr><td>BMW</td><td>2022</td><td>12k</td><td>Excl</td><td>Auto</td><td>$42k</td></tr>
+                          <tr><td>Ford</td><td>2018</td><td>68k</td><td>Fair</td><td>Man</td><td>$14k</td></tr>
+                          <tr><td>Toyota</td><td>2021</td><td>28k</td><td>Excl</td><td>Auto</td><td>$26k</td></tr>
+                          <tr><td>Chevy</td><td>2017</td><td>82k</td><td>Good</td><td>Auto</td><td>$11k</td></tr>
+                          <tr><td>Audi</td><td>2023</td><td>8k</td><td>Excl</td><td>Auto</td><td>$55k</td></tr>
+                        </tbody>
+                      </table>
+                      <div class="features-box"><span class="box-label">FEATURES</span></div>
+                      <div class="target-box"><span class="box-label">TARGET</span></div>
+                    </div>
+                  </div>
+
+                  <svg class="ml-model-pulse" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:55px; height:auto; margin-bottom: 8px;">
+                    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/>
+                    <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/>
+                    <path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+                  </svg>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--ml-color);">ML Model</div>
+                  <div style="font-size: 15px; font-weight: 700; color: var(--text-dim); opacity:0.9;">(Regression)</div>
+                </div>
+              </div>
+
+              <!-- Arrow 2 -->
+              <svg id="car-step-arrow2" class="ml-flow-arrow car-flow-arrow-step" viewBox="0 0 24 24" fill="none" stroke="var(--ml-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:34px;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+
+              <!-- Right: Output -->
+              <div id="car-step-output" class="ml-card-lift car-flow-step" style="position: relative; display: flex; flex-direction: column;">
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:var(--ml-color); letter-spacing:1.4px;">AI SUGGESTED PRICE</div>
+                <div style="background: color-mix(in srgb, var(--ml-color) 14%, var(--bubble-bg)); border: 2.5px solid color-mix(in srgb, var(--ml-color) 50%, transparent); border-radius: 22px; padding: 32px 26px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 12px 34px rgba(0,0,0,0.16); width: 230px;">
+                  <div style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Ask for</div>
+                  <div style="font-size: 44px; font-weight: 950; color: var(--ml-color); margin-top: 14px;">$24,200</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ml-footer" class="ml-footer" style="display: flex; justify-content: center; visibility: hidden;">
+            <div style="font-size: 30px; line-height: 1; margin-right: 15px;">💡</div>
+            <div id="ml-ki-content" class="ml-ki-text" style="font-size: 16px; line-height: 1.5; font-weight: 500; color: var(--title-color);">
+              <strong>Key Idea:</strong> ML learns from past sales data to suggest a fair asking price.
+            </div>
+          </div>
+        </div>
+      `;
+      setTimeout(() => runFlowAnimation(0), 0);
+    } else if (type === 'dl') {
+      window.dlMode = 'digits';
+      window.dlState = { digits: { label: '7', variantIdx: 0 } };
+      window.dlFirstPredictionDone = false;
+      content.innerHTML = `
+        <div class="ml-layout dl-layout" style="gap: 5px;">
+          <div class="ml-header" style="margin-bottom: 5px;">
+            <h1 style="margin: 0; color: color-mix(in srgb, var(--dl-color), #000 35%); letter-spacing: 2px; font-size: 28px; font-weight: 950; text-transform: uppercase;">NEURAL NETWORK</h1>
+          </div>
+          
+          <div class="ml-flow-container" style="display: flex; align-items: stretch; justify-content: center; gap: 25px; margin: 25px 0 45px 0; padding: 0; min-height: 220px;">
+            <!-- Left: Input Image -->
+            <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
+              <div id="dl-input-header" style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">INPUT IMAGE</div>
+              <div class="ml-card-lift" onclick="randomizeDLInput()" style="background: white; border: 2.5px solid rgba(128,128,128,0.2); border-radius: 16px; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.15); overflow: hidden; position: relative; cursor: pointer;">
+                <img id="dl-input-img" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='white'/%3E%3C/svg%3E" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
+              </div>
+              <div style="position: absolute; bottom: -25px; display: flex; flex-direction: column; align-items: center; width: 220px;">
+              </div>
+            </div>
+
+            <!-- Arrow Container -->
+            <div style="display: flex; align-items: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--dl-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px; opacity:0.3;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+            </div>
+
+            <!-- Middle: DL Model -->
+            <div style="position: relative; display: flex; align-items: center;">
+              <div id="dl-processing-card" class="ml-card-lift" onclick="runDLPrediction()" style="position: relative; background: var(--bubble-bg); border: 2.3px solid var(--dl-color); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px color-mix(in srgb, var(--dl-color) 12%, transparent); width: 190px; cursor: pointer;">
+                <div style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">PROCESSING</div>
+                <!-- Neural Net SVG -->
+                <svg viewBox="0 0 120 100" style="width:100%; height:auto; margin-bottom: 12px; overflow: visible;">
+                  <defs>
+                    <filter id="dl-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="2" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <g stroke="#475569" stroke-width="0.7" opacity="0.85">
+                    <line x1="10" y1="20" x2="40" y2="10"/><line x1="10" y1="20" x2="40" y2="36"/><line x1="10" y1="20" x2="40" y2="62"/><line x1="10" y1="20" x2="40" y2="88"/>
+                    <line x1="10" y1="46" x2="40" y2="10"/><line x1="10" y1="46" x2="40" y2="36"/><line x1="10" y1="46" x2="40" y2="62"/><line x1="10" y1="46" x2="40" y2="88"/>
+                    <line x1="10" y1="72" x2="40" y2="10"/><line x1="10" y1="72" x2="40" y2="36"/><line x1="10" y1="72" x2="40" y2="62"/><line x1="10" y1="72" x2="40" y2="88"/>
+                    <line x1="40" y1="10" x2="70" y2="20"/><line x1="40" y1="10" x2="70" y2="50"/><line x1="40" y1="10" x2="70" y2="80"/>
+                    <line x1="40" y1="36" x2="70" y2="20"/><line x1="40" y1="36" x2="70" y2="50"/><line x1="40" y1="36" x2="70" y2="80"/>
+                    <line x1="40" y1="62" x2="70" y2="20"/><line x1="40" y1="62" x2="70" y2="50"/><line x1="40" y1="62" x2="70" y2="80"/>
+                    <line x1="40" y1="88" x2="70" y2="20"/><line x1="40" y1="88" x2="70" y2="50"/><line x1="40" y1="88" x2="70" y2="80"/>
+                    <line x1="70" y1="20" x2="110" y2="30"/><line x1="70" y1="20" x2="110" y2="70"/>
+                    <line x1="70" y1="50" x2="110" y2="30"/><line x1="70" y1="50" x2="110" y2="70"/>
+                    <line x1="70" y1="80" x2="110" y2="30"/><line x1="70" y1="80" x2="110" y2="70"/>
+                  </g>
+                  <g filter="url(#dl-glow)" stroke="#0f172a" stroke-width="0.8">
+                    <circle cx="10" cy="20" r="4.8" fill="#F97316" class="nn-node-anim" style="animation-delay: 0s"/><circle cx="10" cy="46" r="4.8" fill="#F97316" class="nn-node-anim" style="animation-delay: 0s"/><circle cx="10" cy="72" r="4.8" fill="#F97316" class="nn-node-anim" style="animation-delay: 0s"/>
+                    <circle cx="40" cy="10" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="36" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="62" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.3s"/><circle cx="40" cy="88" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.3s"/>
+                    <circle cx="70" cy="20" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.6s"/><circle cx="70" cy="50" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.6s"/><circle cx="70" cy="80" r="4.8" fill="#16A34A" class="nn-node-anim" style="animation-delay: 0.6s"/>
+                    <circle cx="110" cy="30" r="4.8" fill="#2563EB" class="nn-node-anim" style="animation-delay: 0.9s"/><circle cx="110" cy="70" r="4.8" fill="#2563EB" class="nn-node-anim" style="animation-delay: 0.9s"/>
+                  </g>
+                </svg>
+
+                <div style="font-size: 18px; font-weight: 900; color: var(--dl-color); text-align: center;">Deep Neural Network</div>
+              </div>
+            </div>
+
+            <!-- Arrow Container -->
+            <div style="display: flex; align-items: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--dl-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px; opacity:0.3;">
+                <polyline points="10 6 16 12 10 18"></polyline>
+              </svg>
+            </div>
+
+            <!-- Right: Output -->
+            <div style="position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 160px;">
+              <div id="dl-output-header" style="position: absolute; top: -26px; width: 100%; text-align: center; font-size:13px; font-weight:900; color:color-mix(in srgb, var(--dl-color), #000 30%); letter-spacing:1.4px;">PREDICTED LABEL</div>
+              <div id="dl-output-card" class="ml-card-lift" style="background: color-mix(in srgb, var(--dl-color) 10%, var(--bubble-bg)); border: 2.3px solid color-mix(in srgb, var(--dl-color) 40%, transparent); border-radius: 20px; width: 150px; height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; transition: all 0.4s ease;">
+                <div id="dl-output-box" style="position: relative; width: 100%; height: 100%; padding: 10px; box-sizing: border-box;">
+                  <div id="dl-output-label" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6px 10px; font-size: 72px; font-weight: 800; color: var(--text-main); font-family: 'Outfit', sans-serif; line-height: 1.15; text-align: center; word-break: break-word; hyphens: auto; text-shadow: 0 0 20px color-mix(in srgb, var(--dl-color) 30%, transparent); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; box-sizing: border-box;">7</div>
+                  <div id="dl-output-placeholder" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 56px; font-weight: 800; color: color-mix(in srgb, var(--dl-color), #000 10%); opacity: 0.35; line-height: 1;">?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real World Examples -->
+          <div style="margin-top: 5px; width: 100%; max-width: 850px; margin-left: auto; margin-right: auto;">
+            <div style="text-align: center; font-size: 14px; font-weight: 900; color: var(--dl-color); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 14px;">Switch Demonstration Mode</div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+              <!-- Example: Digits -->
+              <div class="ml-card-lift" onclick="setDLMode('digits')" style="background: rgba(255,255,255,0.02); border: 1.5px solid var(--dl-color); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <div style="width: 52px; height: 52px; border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow: hidden;">
+                  <svg viewBox="0 0 200 200" style="width: 100%; height: 100%; display: block;">
+                    <rect width="200" height="200" fill="#ffffff"/>
+                    <!-- Subtle 3x3 grid (like MNIST samples) -->
+                    <line x1="66.6" y1="0" x2="66.6" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="133.3" y1="0" x2="133.3" y2="200" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="0" y1="66.6" x2="200" y2="66.6" stroke="#e2e8f0" stroke-width="1"/>
+                    <line x1="0" y1="133.3" x2="200" y2="133.3" stroke="#e2e8f0" stroke-width="1"/>
+                    <!-- Six digit thumbnails in a 3x2 layout, using bold sans-serif for clean readability -->
+                    <text x="33.3" y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">3</text>
+                    <text x="100"  y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">7</text>
+                    <text x="166.6" y="50" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">2</text>
+                    <text x="33.3" y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">9</text>
+                    <text x="100"  y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">5</text>
+                    <text x="166.6" y="120" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">8</text>
+                    <text x="33.3" y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">1</text>
+                    <text x="100"  y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">4</text>
+                    <text x="166.6" y="190" text-anchor="middle" font-family="'Inter', system-ui, sans-serif" font-size="50" font-weight="800" fill="#0f172a">6</text>
+                  </svg>
+                </div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Handwritten Digits</div>
+              </div>
+              <!-- Example: Animals -->
+              <div class="ml-card-lift" onclick="setDLMode('animals')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Identify Animals</div>
+              </div>
+              <!-- Example: Vehicles -->
+              <div class="ml-card-lift" onclick="setDLMode('vehicles')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Detect Vehicles</div>
+              </div>
+              <!-- Example: Medical -->
+              <div class="ml-card-lift" onclick="setDLMode('medical')" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(128,128,128,0.15); border-radius: 12px; width: 145px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">
+                <img src="file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-main); line-height: 1.2;">Medical Diagnosis</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ml-footer" style="display: flex; justify-content: center; margin-top: 18px;">
+            <div class="ml-key-idea-box" style="padding: 16px 28px; min-height: auto; max-width: 850px; background: color-mix(in srgb, var(--dl-color) 12%, var(--bubble-bg)); border: 2px solid color-mix(in srgb, var(--dl-color) 45%, transparent);">
+              <div style="font-size: 26px; line-height: 1; margin-right: 16px;">⭐</div>
+              <div class="ml-ki-text" style="font-size: 16px; font-weight: 500; line-height: 1.55; text-align: left; color: var(--title-color);">
+                <strong style="color: var(--dl-color);">Key Idea:</strong> Neural networks automatically <span style="font-weight: 800; color: var(--text-main);">learn complex patterns</span> from images.
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      // Seed the first SVG variant of "7" so the input image renders immediately
+      // (no flash of the old PNG / placeholder). Label stays hidden until the
+      // user clicks the processing block.
+      setTimeout(() => {
+        const imgEl = document.getElementById('dl-input-img');
+        if (imgEl) {
+          const v = dlDatasets.digits['7'][0];
+          imgEl.src = v.img;
+          window.dlPendingLabel = v.label;
+          window.dlPendingFontSize = '72px';
+        }
+      }, 0);
+    } else if (type === 'genai' || type === 'gen') {
+      window.genaiMode = 'image';
+      window.genaiImageIndex = 0;
+      window.genaiTextIndex = 0;
+      window.genaiCodeIndex = 0;
+      window.genaiAudioIndex = 0;
+      content.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:12px; font-family:'Inter',sans-serif; color:var(--text-main); width:980px; max-width:100%;">
+
+          <!-- Header -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding-right:48px;">
+            <h1 style="margin:0; font-size:26px; font-weight:950; letter-spacing:2px; text-transform:uppercase; background:linear-gradient(135deg,var(--gen-color),color-mix(in srgb,var(--gen-color) 60%,#f472b6)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">GenAI — Creation</h1>
+          </div>
+
+          <!-- Output Type Tabs -->
+          <div style="display:flex; gap:6px; background:rgba(128,128,128,0.08); padding:5px; border-radius:14px; width:fit-content;">
+            <button onclick="switchGenAIMode('image')" id="genai-tab-image" style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:var(--gen-color); color:#fff; box-shadow:0 4px 14px color-mix(in srgb,var(--gen-color) 40%,transparent);">🖼 Image</button>
+            <button onclick="switchGenAIMode('text')"  id="genai-tab-text"  style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">💬 Text</button>
+            <button onclick="switchGenAIMode('code')"  id="genai-tab-code"  style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">⌨ Code</button>
+            <button onclick="switchGenAIMode('audio')" id="genai-tab-audio" style="padding:9px 20px; border-radius:10px; border:none; font-size:12px; font-weight:800; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; transition:all 0.25s; background:transparent; color:var(--text-dim);">🎵 Audio</button>
+          </div>
+
+          <!-- Main Content Row -->
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;">
+
+            <!-- LEFT: Prompt Panel -->
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="font-size:9px; font-weight:900; letter-spacing:1.5px; color:var(--gen-color); text-transform:uppercase; opacity:0.8;">✍ Your Prompt</div>
+              <div style="background:color-mix(in srgb,var(--gen-color) 6%,var(--bubble-bg)); border:2px solid color-mix(in srgb,var(--gen-color) 22%,transparent); border-radius:16px; padding:14px 16px; min-height:90px; display:flex; flex-direction:column; gap:10px; position:relative;">
+                <div id="genai-prompt-text" style="font-size:15px; font-weight:600; color:var(--text-main); font-style:italic; line-height:1.5; flex:1;">"A cinematic ultra-realistic space shuttle launching into a clear blue sky, massive plumes of white smoke"</div>
+              </div>
+              <div id="genai-model-pills" style="display:none;"></div>
+            </div>
+
+            <!-- Center arrow — vertically centered against the output frame -->
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; align-self:center;">
+              <div id="genai-arrow-label" style="font-size:9px; font-weight:900; color:var(--gen-color); letter-spacing:1px; text-transform:uppercase; opacity:0.7;">Generates</div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--gen-color)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px; opacity:0.55;">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+
+            <!-- RIGHT: Output Panel — fixed-size frame so modal stays constant across tabs -->
+            <div style="display:flex; flex-direction:column; gap:8px; min-width:0;">
+              <div id="genai-output-label" style="display:none;"></div>
+
+              <div style="position:relative; width:100%; height:240px;">
+
+              <!-- IMAGE output -->
+              <div id="genai-out-image" style="position:absolute; inset:0; background:transparent; border-radius:16px; overflow:hidden; border:1.5px dashed color-mix(in srgb, var(--gen-color) 35%, transparent);">
+                <img id="genai-result-img" src="../chapter-6-modern-explosion/images/gen_ai/space%20shuttle.png" style="width:100%; height:100%; object-fit:cover; transition:opacity 0.5s ease;">
+                <div id="genai-loading" style="position:absolute; inset:0; background:rgba(0,0,0,0.82); display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(6px); z-index:5;">
+                  <div style="width:36px; height:36px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gen-color); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:12px;"></div>
+                  <div style="font-size:10px; font-weight:800; color:var(--gen-color); letter-spacing:2px;">GENERATING...</div>
+                </div>
+              </div>
+
+              <!-- TEXT output (hidden by default) -->
+              <div id="genai-out-text" style="display:none; position:absolute; inset:0; background:color-mix(in srgb,var(--gen-color) 5%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(128,128,128,0.12);">
+                  <div style="width:8px; height:8px; background:#4ade80; border-radius:50%;"></div>
+                  <span style="font-size:10px; font-weight:800; color:var(--text-dim); letter-spacing:1px;">CLAUDE / GPT-4o</span>
+                </div>
+                <div id="genai-text-output" style="font-size:13px; line-height:1.7; color:var(--text-main);"></div>
+              </div>
+
+              <!-- CODE output (hidden by default) -->
+              <div id="genai-out-code" style="display:none; position:absolute; inset:0; background:#0d1117; border-radius:16px; padding:0; overflow:hidden; border:1.5px solid rgba(255,255,255,0.08); box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+                <div style="display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.06);">
+                  <div style="width:10px; height:10px; background:#ff5f57; border-radius:50%;"></div>
+                  <div style="width:10px; height:10px; background:#febc2e; border-radius:50%;"></div>
+                  <div style="width:10px; height:10px; background:#28c840; border-radius:50%;"></div>
+                  <span id="genai-code-filename" style="margin-left:8px; font-size:11px; color:rgba(255,255,255,0.4); font-family:monospace;">main.py</span>
+                </div>
+                <pre id="genai-code-output" style="margin:0; padding:14px 18px; font-family:'Fira Code',monospace; font-size:12px; line-height:1.7; overflow-x:auto; white-space:pre-wrap;"></pre>
+              </div>
+
+              <!-- AUDIO output (hidden by default) -->
+              <div id="genai-out-audio" style="display:none; position:absolute; inset:0; background:linear-gradient(135deg,color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)),color-mix(in srgb,var(--gen-color) 4%,var(--bubble-bg))); border:1.5px solid color-mix(in srgb,var(--gen-color) 20%,transparent); border-radius:16px; padding:14px 16px; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div id="genai-audio-play" onclick="toggleAudioPlayback()" style="width:40px; height:40px; background:var(--gen-color); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 4px 12px color-mix(in srgb,var(--gen-color) 35%,transparent); transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    <svg id="genai-play-icon" viewBox="0 0 24 24" fill="#fff" style="width:16px; height:16px; margin-left:2px;"><polygon points="5,3 19,12 5,21"/></svg>
+                  </div>
+                  <div style="flex:1;">
+                    <div id="genai-audio-title" style="font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:3px;">Ambient Space Theme</div>
+                    <div id="genai-audio-meta" style="font-size:10px; color:var(--text-dim); font-weight:600;">Suno AI · 2:34 · <em>Ambient / Electronic</em></div>
+                  </div>
+                </div>
+                <!-- Waveform bars -->
+                <div id="genai-waveform" style="display:flex; align-items:center; gap:2px; height:36px; padding:0 4px;">
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); line-height:1.5; font-style:italic; border-top:1px solid rgba(128,128,128,0.1); padding-top:10px;">
+                  AI composes original music, voiceovers, and sound effects from text descriptions.
+                </div>
+              </div>
+
+              </div><!-- /fixed-size output frame -->
+            </div>
+          </div>
+
+          <!-- Bottom insight bar -->
+          <div style="background:color-mix(in srgb,var(--gen-color) 8%,var(--bubble-bg)); border:1.5px solid color-mix(in srgb,var(--gen-color) 18%,transparent); border-radius:14px; padding:10px 18px; display:flex; align-items:center; gap:12px;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:28px; height:28px; flex-shrink:0;">
+              <defs><linearGradient id="sg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:var(--gen-color);stop-opacity:1"/><stop offset="100%" style="stop-color:#f472b6;stop-opacity:1"/></linearGradient></defs>
+              <path d="M12 3l1.5 4.5 4.5 1.5-4.5 1.5-1.5 4.5-1.5-4.5-4.5-1.5 4.5-1.5zM19 16l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1zM5 16l0.8 2 2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8z" fill="url(#sg2)"/>
+            </svg>
+            <div style="font-size:13px; font-weight:600; color:var(--text-main); line-height:1.6;">
+              GenAI creates <em>net-new</em> content —
+              <span style="color:var(--dl-color); font-weight:800;">images</span>,
+              <span style="color:var(--ml-color); font-weight:800;">text</span>,
+              <span style="color:var(--ai-color); font-weight:800;">code</span>,
+              <span style="color:var(--gen-color); font-weight:800;">audio</span> &amp; more —
+              from a simple prompt. It doesn't classify; it <em>invents</em>.
+            </div>
+          </div>
+        </div>
+      `;
+      buildAudioWaveform();
+      initGenAIMode('image');
+    } else {
+      badge.textContent = data.label;
+      badge.className = `detail-type-badge type-${type}`;
+      
+      content.innerHTML = `
+        <div class="detail-placeholder">
+          <span class="detail-placeholder-text">Detailed information about ${data.title} arriving soon...</span>
+        </div>
+      `;
+    }
+
+    overlay.classList.add('open');
+  }
+
+  function closeDetailModal(e) {
+    if (!e || e.target === document.getElementById('detailOverlay') || e.currentTarget.classList.contains('detail-close')) {
+      document.getElementById('detailOverlay').classList.remove('open');
+    }
+  }
+
+  // Dataset grouped by label, each label has multiple variation images.
+  // Each digit variant is a distinct handwritten-style SVG. We define each variant
+  // explicitly (path + transform + stroke width) so the styles look visibly different
+  // — like real handwriting samples in a dataset such as MNIST.
+  const DIGIT_VARIANTS = {
+    7: [
+      // Classic block 7
+      { d: 'M30 45 L170 45 L75 180', sw: 16, rotate: -4, skew: 0,  tx: 0,  ty: 0 },
+      // Tall slanted 7 with crossbar (European style)
+      { d: 'M40 55 L170 55 L65 180 M75 120 L140 120', sw: 14, rotate: 0, skew: -8, tx: 0,  ty: 0 },
+      // Curvy 7 with hooked top
+      { d: 'M35 70 Q60 30 100 45 L170 50 Q130 110 90 180', sw: 18, rotate: 5, skew: 4, tx: -5, ty: 0 },
+      // Short fat 7, leaning right
+      { d: 'M50 55 L155 55 L95 170', sw: 22, rotate: 8, skew: 6, tx: 0,  ty: 10 },
+      // Scribbled tall 7 with serif foot
+      { d: 'M30 50 Q90 40 165 55 Q120 120 80 180 M60 175 L100 180', sw: 13, rotate: -7, skew: -3, tx: 0, ty: -5 },
+    ],
+    3: [
+      // Standard rounded 3
+      { d: 'M40 55 Q120 30 160 65 Q140 100 95 105 Q150 110 165 145 Q130 185 40 160', sw: 16, rotate: -3, skew: 0,  tx: 0, ty: 0 },
+      // Angular 3 with flat top
+      { d: 'M40 50 L160 50 Q160 90 100 105 Q160 115 160 150 Q130 185 40 175', sw: 18, rotate: 4, skew: 5, tx: 0, ty: 0 },
+      // Loopy slanted 3
+      { d: 'M30 70 Q90 30 165 55 Q160 110 95 115 Q170 130 160 165 Q105 195 35 175', sw: 14, rotate: -8, skew: -6, tx: 0, ty: 0 },
+      // Small compressed 3
+      { d: 'M55 60 Q120 45 150 75 Q135 100 100 105 Q145 115 150 145 Q120 175 50 165', sw: 20, rotate: 0, skew: 3, tx: 0, ty: 5 },
+      // 3 with sharp bottom curve
+      { d: 'M35 55 Q130 25 165 65 Q150 105 95 110 Q165 125 160 160 Q110 195 40 165', sw: 13, rotate: 7, skew: 8, tx: 0, ty: -5 },
+    ],
+    5: [
+      // Classic 5 with flag top
+      { d: 'M155 40 L60 40 L55 105 Q120 90 160 130 Q140 180 50 165', sw: 16, rotate: -2, skew: 0, tx: 0, ty: 0 },
+      // Slanted 5 with curved cap
+      { d: 'M155 45 Q100 35 65 50 L55 110 Q140 95 165 140 Q140 185 40 170', sw: 14, rotate: -7, skew: -5, tx: 0, ty: 0 },
+      // Angular 5 with straight flag
+      { d: 'M160 45 L55 45 L55 115 L70 105 Q130 100 165 135 Q145 180 50 170', sw: 19, rotate: 5, skew: 6, tx: 0, ty: 5 },
+      // Loopy bottom 5
+      { d: 'M150 40 L60 50 L55 110 Q140 90 170 130 Q160 175 90 180 Q50 175 45 160', sw: 13, rotate: 3, skew: 3, tx: 0, ty: 0 },
+      // Sharp 5 with disconnected top
+      { d: 'M60 40 L155 40 M58 50 L55 110 Q130 90 165 130 Q140 185 45 170', sw: 22, rotate: -5, skew: -3, tx: -5, ty: -5 },
+    ],
+    8: [
+      // Symmetric 8
+      { d: 'M100 30 Q150 30 150 70 Q150 105 100 110 Q150 115 155 150 Q155 185 100 185 Q45 185 45 150 Q50 115 100 110 Q50 105 50 70 Q50 30 100 30 Z', sw: 14, rotate: -3, skew: 0, tx: 0, ty: 0 },
+      // Lopsided 8 with bigger bottom
+      { d: 'M100 35 Q145 35 145 70 Q140 100 100 105 Q160 115 165 155 Q160 188 100 188 Q35 188 38 155 Q42 115 100 105 Q55 100 55 70 Q55 35 100 35 Z', sw: 16, rotate: 5, skew: -4, tx: 0, ty: 0 },
+      // Slanted thin 8
+      { d: 'M105 30 Q145 30 145 65 Q145 105 100 110 Q145 115 150 150 Q150 185 100 185 Q50 185 50 150 Q55 115 100 110 Q55 105 55 65 Q55 30 105 30 Z', sw: 12, rotate: -10, skew: -8, tx: 0, ty: 0 },
+      // Chunky 8
+      { d: 'M100 30 Q155 30 155 72 Q155 108 100 112 Q155 116 160 155 Q160 188 100 188 Q40 188 40 155 Q45 116 100 112 Q45 108 45 72 Q45 30 100 30 Z', sw: 22, rotate: 4, skew: 5, tx: 0, ty: 0 },
+      // Open-top 8 (handwritten gap style)
+      { d: 'M110 32 Q150 35 148 68 Q140 100 100 108 Q150 115 152 150 Q148 185 100 185 Q48 185 45 150 Q50 115 100 108 Q60 100 55 70 Q55 35 95 30', sw: 15, rotate: 0, skew: 3, tx: 0, ty: 0 },
+    ],
+    2: [
+      // Classic curly 2
+      { d: 'M40 75 Q60 30 115 30 Q170 30 165 80 Q160 115 100 145 Q50 170 30 178 L170 178', sw: 16, rotate: -3, skew: 0, tx: 0, ty: 0 },
+      // Sharp 2 with straight base
+      { d: 'M35 65 Q70 30 120 35 Q170 45 160 85 L60 175 L170 175', sw: 18, rotate: 5, skew: 4, tx: 0, ty: 0 },
+      // Tall slanted 2 with loop
+      { d: 'M30 70 Q60 30 110 30 Q170 35 170 85 Q160 120 95 150 Q45 170 25 178 L160 178 M150 165 L170 178 L150 190', sw: 13, rotate: -8, skew: -6, tx: 0, ty: 0 },
+      // Compact rounded 2
+      { d: 'M50 80 Q70 45 115 45 Q160 45 160 85 Q150 115 105 140 Q60 165 50 170 L160 170', sw: 22, rotate: 4, skew: 6, tx: 0, ty: 10 },
+      // Cursive flowing 2 with curl bottom
+      { d: 'M35 80 Q45 30 110 35 Q175 45 165 90 Q145 125 95 150 Q50 168 35 178 Q120 170 165 178 Q175 172 170 165', sw: 13, rotate: 6, skew: 7, tx: 0, ty: -5 },
+    ],
+  };
+  function digitSvgDataUri(digit, idx) {
+    const variants = DIGIT_VARIANTS[digit];
+    const v = variants[idx % variants.length];
+    const svg =
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>` +
+      `<rect width='200' height='200' fill='white'/>` +
+      `<g transform='translate(${v.tx} ${v.ty}) rotate(${v.rotate} 100 110) skewX(${v.skew})' ` +
+      `fill='none' stroke='#111' stroke-width='${v.sw}' stroke-linecap='round' stroke-linejoin='round'>` +
+      `<path d='${v.d}'/></g>` +
+      `</svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+  function digitVariants(digit) {
+    return DIGIT_VARIANTS[digit].map((_, i) => ({ img: digitSvgDataUri(digit, i), label: String(digit) }));
+  }
+
+  const dlDatasets = {
+    digits: {
+      '7': digitVariants(7),
+      '3': digitVariants(3),
+      '5': digitVariants(5),
+      '8': digitVariants(8),
+      '2': digitVariants(2),
+    },
+    animals: {
+      'Dog':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_dog_1777197081962.png', label: 'Dog' }],
+      'Cat':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_cat_1777197081962_1777202515518.png', label: 'Cat' }],
+      'Bird':     [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_bird_1777197081962_1777202532807.png', label: 'Bird' }],
+      'Elephant': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_animal_elephant_1777197081962_1777202548298.png', label: 'Elephant' }],
+    },
+    vehicles: {
+      'Car':        [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_car_1777197099794.png', label: 'Car' }],
+      'Truck':      [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_truck_1777203370520.png', label: 'Truck' }],
+      'Motorcycle': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_vehicle_motorcycle_1777203387094.png', label: 'Motorcycle' }],
+    },
+    medical: {
+      'X-ray':   [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_xray_1777197117993.png',   label: 'Pneumonia' }],
+      'MRI':     [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_mri_1777203408245.png',    label: 'Brain Tumor' }],
+      'CT Scan': [{ img: 'file:///Users/mosesmathew/.gemini/antigravity/brain/05be87fe-260e-4568-b7ef-b5c019d849f8/dl_medical_ctscan_1777203421747.png', label: 'Liver Lesion' }],
+    },
+  };
+
+  // Track current label per mode + which variant we last showed,
+  // so clicking the input picks a different variation of the SAME label.
+  window.dlState = window.dlState || {};
+
+  function applyDLImage(variant, mode) {
+    const imgEl = document.getElementById('dl-input-img');
+    const labelEl = document.getElementById('dl-output-label');
+    const placeholderEl = document.getElementById('dl-output-placeholder');
+    const hintEl = document.getElementById('dl-predict-hint');
+    if (!imgEl || !labelEl) return;
+    const fontSize = (mode === 'digits') ? '72px' : '28px';
+
+    gsap.to(imgEl, { opacity: 0, scale: 0.95, duration: 0.2, onComplete: () => {
+      imgEl.src = variant.img;
+      gsap.to(imgEl, { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
+    }});
+
+    // After the first prediction has been triggered, immediately update the label
+    // (no placeholder flow). The placeholder/hint only show on the very first load.
+    if (window.dlFirstPredictionDone) {
+      labelEl.innerText = variant.label;
+      labelEl.style.fontSize = fittedFontSize(variant.label, mode);
+      gsap.fromTo(labelEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(2)' });
+    } else {
+      // First load: stash the label, show "?" placeholder + hint, wait for click.
+      window.dlPendingLabel = variant.label;
+      window.dlPendingFontSize = fittedFontSize(variant.label, mode);
+      gsap.to(labelEl, { opacity: 0, duration: 0.2 });
+      if (placeholderEl) gsap.to(placeholderEl, { opacity: 0.35, duration: 0.2 });
+      if (hintEl) gsap.to(hintEl, { opacity: 0.85, duration: 0.2 });
+    }
+  }
+
+  // Pick a label font size that fits the 150px-wide card without clipping.
+  function fittedFontSize(text, mode) {
+    if (mode === 'digits') return '72px';
+    const len = (text || '').length;
+    if (len <= 4)  return '34px';
+    if (len <= 6)  return '28px';
+    if (len <= 9)  return '22px';
+    if (len <= 12) return '18px';
+    return '16px';
+  }
+
+  function runDLPrediction() {
+    const labelEl = document.getElementById('dl-output-label');
+    const placeholderEl = document.getElementById('dl-output-placeholder');
+    const hintEl = document.getElementById('dl-predict-hint');
+    if (!labelEl) return;
+    // Brief "thinking" pulse on the processing card, then reveal the label.
+    const card = document.getElementById('dl-processing-card');
+    if (card) {
+      gsap.fromTo(card, { scale: 1 }, { scale: 1.05, duration: 0.15, yoyo: true, repeat: 1, ease: 'power2.inOut' });
+    }
+    if (hintEl) gsap.to(hintEl, { opacity: 0, duration: 0.2 });
+    if (placeholderEl) gsap.to(placeholderEl, { opacity: 0, duration: 0.2 });
+    setTimeout(() => {
+      labelEl.innerText = window.dlPendingLabel || labelEl.innerText;
+      labelEl.style.fontSize = window.dlPendingFontSize || labelEl.style.fontSize;
+      gsap.fromTo(labelEl, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'back.out(2)' });
+      window.dlFirstPredictionDone = true;
+    }, 320);
+  }
+
+  // Called when the user clicks the input image: show a DIFFERENT variation of the SAME label.
+  function randomizeDLInput() {
+    const mode = window.dlMode || 'digits';
+    const labels = Object.keys(dlDatasets[mode]);
+    if (!labels.length) return;
+
+    let state = window.dlState[mode];
+    if (!state) {
+      const initialLabel = labels[0];
+      state = { label: initialLabel, variantIdx: 0 };
+      window.dlState[mode] = state;
+    }
+    const variants = dlDatasets[mode][state.label];
+    if (variants.length > 1) {
+      let next = state.variantIdx;
+      while (next === state.variantIdx) {
+        next = Math.floor(Math.random() * variants.length);
+      }
+      state.variantIdx = next;
+    }
+    applyDLImage(variants[state.variantIdx], mode);
+  }
+
+  // Called when the user clicks a demo-mode card: switch mode AND advance to the next
+  // label in that mode (so "Handwritten Digits" cycles 7 -> 3 -> 5 -> 8 -> 2 -> 7 …)
+  function setDLMode(mode) {
+    window.dlMode = mode;
+    const inputHeader = document.getElementById('dl-input-header');
+    const outputHeader = document.getElementById('dl-output-header');
+
+    if (mode === 'animals') {
+      inputHeader.innerText = 'RAW ANIMAL IMAGE';
+      outputHeader.innerText = 'IDENTIFIED SPECIES';
+    } else if (mode === 'vehicles') {
+      inputHeader.innerText = 'ROADWAY IMAGE';
+      outputHeader.innerText = 'VEHICLE TYPE';
+    } else if (mode === 'medical') {
+      inputHeader.innerText = 'CLINICAL SCAN';
+      outputHeader.innerText = 'DIAGNOSIS';
+    } else {
+      inputHeader.innerText = 'INPUT IMAGE';
+      outputHeader.innerText = 'PREDICTED LABEL';
+    }
+
+    const labels = Object.keys(dlDatasets[mode]);
+    let state = window.dlState[mode];
+    if (!state) {
+      state = { label: labels[0], variantIdx: 0 };
+    } else {
+      const currentIdx = labels.indexOf(state.label);
+      const nextLabel = labels[(currentIdx + 1) % labels.length];
+      state = { label: nextLabel, variantIdx: 0 };
+    }
+    window.dlState[mode] = state;
+    applyDLImage(dlDatasets[mode][state.label][0], mode);
+  }
+
+  const genaiData = {
+    image: {
+      models: ['DALL·E 3', 'Midjourney', 'Stable Diffusion'],
+      outputLabel: '🖼 Generated Image',
+      prompts: [
+        { text: '"A cinematic ultra-realistic space shuttle launching into a clear blue sky, massive plumes of white smoke"', img: '../chapter-6-modern-explosion/images/gen_ai/space%20shuttle.png' },
+        { text: '"A specialized AI robot settlement building modular glass domes on the red plains of Mars"', img: '../chapter-6-modern-explosion/images/gen_ai/mars.png' },
+        { text: '"An astronaut floating in deep space with the Milky Way stretching behind them in vivid purple hues"', img: '../chapter-6-modern-explosion/images/gen_ai/astronaut.png' }
+      ]
+    },
+    text: {
+      models: ['Claude 4', 'GPT-4o', 'Gemini 1.5'],
+      outputLabel: '💬 Generated Text',
+      prompts: [
+        { text: '"Write a haiku about artificial intelligence becoming conscious"', response: 'Silent circuits hum,\nPatterns bloom from endless noise—\nA mind wakes, alone.' },
+        { text: '"Explain quantum computing to a 10-year-old in 2 sentences"', response: "Regular computers use bits — like light switches that are either ON or OFF. Quantum computers use qubits that can be ON, OFF, or BOTH at the same time, letting them solve problems millions of times faster!" },
+        { text: '"Write a one-sentence summary of the history of AI"', response: 'From Turing\'s 1950 question "Can machines think?" to today\'s multimodal LLMs, AI has evolved from hand-crafted rules into neural networks that learn, reason, and now create across every human domain.' },
+        { text: '"Give me a creative name for an AI-powered medical diagnosis app"', response: '✨ <strong>NexaDiag</strong> — combining "next" (forward-thinking), "nexus" (connection between data and care), and "diagnosis" into one crisp, memorable brand.' }
+      ]
+    },
+    code: {
+      models: ['GitHub Copilot', 'Claude 4', 'Cursor AI'],
+      outputLabel: '⌨ Generated Code',
+      prompts: [
+        { text: '"Write a Python function that detects spam emails using ML"', filename: 'spam_detector.py', code: `<span style="color:#ff7b72">from</span> <span style="color:#79c0ff">sklearn.naive_bayes</span> <span style="color:#ff7b72">import</span> MultinomialNB\n<span style="color:#ff7b72">from</span> <span style="color:#79c0ff">sklearn.feature_extraction.text</span> <span style="color:#ff7b72">import</span> TfidfVectorizer\n\n<span style="color:#d2a8ff">def</span> <span style="color:#79c0ff">detect_spam</span>(emails, labels):\n    <span style="color:#8b949e">"""Train and return a spam classifier."""</span>\n    vec = TfidfVectorizer(stop_words=<span style="color:#a5d6ff">'english'</span>)\n    X = vec.fit_transform(emails)\n    model = MultinomialNB().fit(X, labels)\n    <span style="color:#ff7b72">return</span> model, vec` },
+        { text: '"Create a React component for an animated loading spinner"', filename: 'Spinner.tsx', code: `<span style="color:#ff7b72">const</span> <span style="color:#79c0ff">Spinner</span> = ({ size = <span style="color:#a5d6ff">40</span>, color = <span style="color:#a5d6ff">"#6366f1"</span> }) => (\n  &lt;<span style="color:#7ee787">div</span> style={{{\n    width: size, height: size,\n    border: <span style="color:#a5d6ff">\`3px solid \${color}22\`</span>,\n    borderTopColor: color,\n    borderRadius: <span style="color:#a5d6ff">"50%"</span>,\n    animation: <span style="color:#a5d6ff">"spin 1s linear infinite"</span>\n  }}} />\n);\n\n<span style="color:#ff7b72">export default</span> Spinner;` },
+        { text: '"Write a SQL query to find the top 5 customers by revenue"', filename: 'top_customers.sql', code: `<span style="color:#ff7b72">SELECT</span>\n    c.customer_id,\n    c.name,\n    <span style="color:#79c0ff">SUM</span>(o.total_amount) <span style="color:#ff7b72">AS</span> total_revenue,\n    <span style="color:#79c0ff">COUNT</span>(o.order_id) <span style="color:#ff7b72">AS</span> order_count\n<span style="color:#ff7b72">FROM</span> customers c\n<span style="color:#ff7b72">JOIN</span> orders o <span style="color:#ff7b72">ON</span> c.customer_id = o.customer_id\n<span style="color:#ff7b72">GROUP BY</span> c.customer_id, c.name\n<span style="color:#ff7b72">ORDER BY</span> total_revenue <span style="color:#ff7b72">DESC</span>\n<span style="color:#ff7b72">LIMIT</span> <span style="color:#a5d6ff">5</span>;` }
+      ]
+    },
+    audio: {
+      models: ['Suno AI', 'ElevenLabs', 'Udio'],
+      outputLabel: '🎵 Generated Audio',
+      prompts: [
+        { text: '"Compose an ambient space theme with synthesizers and soft percussion"', title: 'Ambient Space Theme', duration: '2:34', genre: 'Ambient / Electronic' },
+        { text: '"Generate a corporate presentation background track — upbeat, professional"', title: 'Corporate Uplift', duration: '1:58', genre: 'Corporate / Pop' },
+        { text: '"Create an epic orchestral score for an AI documentary intro"', title: 'Rise of the Machines', duration: '3:12', genre: 'Orchestral / Cinematic' }
+      ]
+    }
+  };
+
+  function buildAudioWaveform() {
+    const wf = document.getElementById('genai-waveform');
+    if (!wf) return;
+    wf.innerHTML = '';
+    const bars = 52;
+    for (let i = 0; i < bars; i++) {
+      const h = 8 + Math.random() * 36;
+      const bar = document.createElement('div');
+      bar.className = 'genai-wbar';
+      bar.style.cssText = `width:4px; height:${h}px; background:color-mix(in srgb,var(--gen-color) ${40+Math.round(Math.random()*55)}%,transparent); border-radius:2px; flex-shrink:0; transition:height 0.3s ease;`;
+      wf.appendChild(bar);
+    }
+  }
+
+  let genaiAudioPlaying = false;
+  let genaiWaveAnim = null;
+  function toggleAudioPlayback() {
+    genaiAudioPlaying = !genaiAudioPlaying;
+    const icon = document.getElementById('genai-play-icon');
+    if (genaiAudioPlaying) {
+      icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      genaiWaveAnim = setInterval(() => {
+        document.querySelectorAll('.genai-wbar').forEach(b => {
+          b.style.height = (8 + Math.random() * 36) + 'px';
+        });
+      }, 200);
+    } else {
+      icon.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+      clearInterval(genaiWaveAnim);
+    }
+  }
+
+  // Cancels any in-flight typewriter so re-typing on the same element doesn't race.
+  window.genaiTypers = window.genaiTypers || {};
+
+  // Type plain text one character at a time.
+  function typewriteText(el, text, opts = {}) {
+    if (!el) return;
+    const speed = opts.speed || 18;       // ms per char
+    const startDelay = opts.startDelay || 0;
+    if (window.genaiTypers[el.id]) clearInterval(window.genaiTypers[el.id]);
+    el.textContent = '';
+    el.style.opacity = '1';
+    setTimeout(() => {
+      let i = 0;
+      window.genaiTypers[el.id] = setInterval(() => {
+        i++;
+        el.textContent = text.slice(0, i);
+        if (i >= text.length) {
+          clearInterval(window.genaiTypers[el.id]);
+          delete window.genaiTypers[el.id];
+        }
+      }, speed);
+    }, startDelay);
+  }
+
+  // Type HTML one VISIBLE character at a time, leaving inline tags intact
+  // so styling (e.g. <strong>, <em>, <span style="...">) appears as the text grows.
+  function typewriteHTML(el, html, opts = {}) {
+    if (!el) return;
+    const speed = opts.speed || 14;
+    const startDelay = opts.startDelay || 0;
+    if (window.genaiTypers[el.id]) clearInterval(window.genaiTypers[el.id]);
+    el.innerHTML = '';
+    el.style.opacity = '1';
+
+    // Tokenise into either an opening tag, a closing tag, or a single character.
+    const tokens = [];
+    let i = 0;
+    while (i < html.length) {
+      if (html[i] === '<') {
+        const end = html.indexOf('>', i);
+        if (end === -1) { tokens.push(html[i]); i++; }
+        else { tokens.push(html.slice(i, end + 1)); i = end + 1; }
+      } else {
+        tokens.push(html[i]);
+        i++;
+      }
+    }
+
+    setTimeout(() => {
+      let built = '';
+      let openTags = []; // stack so we can keep the rendered HTML well-formed
+      let k = 0;
+      window.genaiTypers[el.id] = setInterval(() => {
+        // Append one visible character (skip over any tags we hit in the process).
+        let appended = false;
+        while (k < tokens.length && !appended) {
+          const t = tokens[k];
+          if (t.startsWith('<')) {
+            built += t;
+            if (t.startsWith('</')) openTags.pop();
+            else if (!t.endsWith('/>')) {
+              const tagName = t.slice(1).split(/[\s>]/)[0];
+              if (!['br','img','hr','input','meta','link'].includes(tagName)) {
+                openTags.push(tagName);
+              }
+            }
+            k++;
+          } else {
+            built += t;
+            k++;
+            appended = true;
+          }
+        }
+        // Close any currently-open tags so the partial HTML stays valid.
+        const closers = openTags.slice().reverse().map(tag => `</${tag}>`).join('');
+        el.innerHTML = built + closers;
+        if (k >= tokens.length) {
+          clearInterval(window.genaiTypers[el.id]);
+          delete window.genaiTypers[el.id];
+          el.innerHTML = html; // settle to the final canonical HTML
+        }
+      }, speed);
+    }, startDelay);
+  }
+
+  function initGenAIMode(mode) {
+    const data = genaiData[mode];
+    const idx = window[`genai${mode.charAt(0).toUpperCase()+mode.slice(1)}Index`] || 0;
+    const entry = data.prompts[idx];
+    const promptEl = document.getElementById('genai-prompt-text');
+    const promptText = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+    // Only the Image tab shows the prompt being typed. Other tabs show it fully.
+    if (mode === 'image') {
+      typewriteText(promptEl, promptText, { speed: 40 });
+    } else if (promptEl) {
+      if (window.genaiTypers && window.genaiTypers[promptEl.id]) {
+        clearInterval(window.genaiTypers[promptEl.id]);
+        delete window.genaiTypers[promptEl.id];
+      }
+      promptEl.textContent = promptText;
+      gsap.set(promptEl, { opacity: 1 });
+    }
+
+    // Update model pills
+    const pills = document.getElementById('genai-model-pills');
+    if (pills) pills.innerHTML = data.models.map(m => `<span style="background:rgba(0,0,0,0.06); color:var(--text-dim); padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">${m}</span>`).join('');
+
+    // Update output label
+    const lbl = document.getElementById('genai-output-label');
+    if (lbl) lbl.textContent = data.outputLabel;
+
+    // Show/hide panels
+    ['image','text','code','audio'].forEach(m => {
+      const el = document.getElementById(`genai-out-${m}`);
+      if (el) el.style.display = m === mode ? (m === 'audio' ? 'flex' : 'block') : 'none';
+    });
+
+    // For Image mode: wait for the full prompt typing to finish, then show
+    // a "generating" spinner for 3 seconds before the image fades in.
+    const typingDuration = (mode === 'image') ? promptText.length * 40 + 200 : 0;
+    const generationGap = 3000;
+    const outputDelay = (mode === 'image') ? typingDuration + generationGap : 0;
+
+    if (mode === 'image') {
+      const img = document.getElementById('genai-result-img');
+      const loadingEl = document.getElementById('genai-loading');
+      if (img) {
+        gsap.set(img, { opacity: 0 });
+        if (loadingEl) loadingEl.style.display = 'none';
+        // After typing finishes, show the spinner for the 3s gap.
+        setTimeout(() => {
+          if (loadingEl) loadingEl.style.display = 'flex';
+        }, typingDuration);
+        // Then hide the spinner and fade the image in.
+        setTimeout(() => {
+          if (loadingEl) loadingEl.style.display = 'none';
+          img.src = entry.img;
+          gsap.fromTo(img, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+        }, outputDelay);
+      }
+    } else if (mode === 'text') {
+      const el = document.getElementById('genai-text-output');
+      if (el) { el.innerHTML = entry.response; gsap.set(el, { opacity: 1 }); }
+    } else if (mode === 'code') {
+      const fn = document.getElementById('genai-code-filename');
+      if (fn) fn.textContent = entry.filename;
+      const el = document.getElementById('genai-code-output');
+      if (el) { el.innerHTML = entry.code; gsap.set(el, { opacity: 1 }); }
+    } else if (mode === 'audio') {
+      const t = document.getElementById('genai-audio-title');
+      if (t) { t.textContent = entry.title; gsap.set(t, { opacity: 1 }); }
+      const meta = document.getElementById('genai-audio-meta');
+      if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
+    }
+  }
+
+  function switchGenAIMode(mode) {
+    window.genaiMode = mode;
+    // Update tab styles
+    ['image','text','code','audio'].forEach(m => {
+      const btn = document.getElementById(`genai-tab-${m}`);
+      if (!btn) return;
+      if (m === mode) {
+        btn.style.background = 'var(--gen-color)';
+        btn.style.color = '#fff';
+        btn.style.boxShadow = '0 4px 14px color-mix(in srgb,var(--gen-color) 40%,transparent)';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-dim)';
+        btn.style.boxShadow = 'none';
+      }
+    });
+    initGenAIMode(mode);
+  }
+
+  function cycleGenAIPrompt() {
+    const mode = window.genaiMode || 'image';
+    const key = `genai${mode.charAt(0).toUpperCase()+mode.slice(1)}Index`;
+    const total = genaiData[mode].prompts.length;
+    const next = ((window[key] || 0) + 1) % total;
+    window[key] = next;
+
+    const entry = genaiData[mode].prompts[next];
+    const promptEl = document.getElementById('genai-prompt-text');
+    const promptText = '"' + entry.text.replace(/^"+|"+$/g,'') + '"';
+    const outputDelay = Math.min(promptText.length * 40 + 400, 4000);
+
+    if (mode === 'image') {
+      typewriteText(promptEl, promptText, { speed: 40 });
+      const img = document.getElementById('genai-result-img');
+      const loadingEl = document.getElementById('genai-loading');
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (img) {
+        gsap.to(img, { opacity: 0, duration: 0.2 });
+        setTimeout(() => {
+          img.src = entry.img;
+          gsap.fromTo(img, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' });
+        }, outputDelay);
+      }
+    } else if (mode === 'text' || mode === 'code' || mode === 'audio') {
+      // Prompt shown fully (no typewriter) for non-image tabs.
+      if (window.genaiTypers && window.genaiTypers[promptEl.id]) {
+        clearInterval(window.genaiTypers[promptEl.id]);
+        delete window.genaiTypers[promptEl.id];
+      }
+      promptEl.textContent = promptText;
+      gsap.set(promptEl, { opacity: 1 });
+
+      if (mode === 'text') {
+        const el = document.getElementById('genai-text-output');
+        if (el) { el.innerHTML = entry.response; gsap.set(el, { opacity: 1 }); }
+      } else if (mode === 'code') {
+        const fn = document.getElementById('genai-code-filename');
+        if (fn) fn.textContent = entry.filename;
+        const el = document.getElementById('genai-code-output');
+        if (el) { el.innerHTML = entry.code; gsap.set(el, { opacity: 1 }); }
+      } else {
+        const t = document.getElementById('genai-audio-title');
+        if (t) { t.textContent = entry.title; gsap.set(t, { opacity: 1 }); }
+        const meta = document.getElementById('genai-audio-meta');
+        if (meta) meta.innerHTML = `Suno AI · ${entry.duration} · <em>${entry.genre}</em>`;
+        buildAudioWaveform();
+      }
+    }
+  }
+
+  function switchMLTab(index) {
+    document.querySelectorAll('.ml-tab-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === index);
+    });
+    // Panes: 0 = definition (no flow), 1 = house, 2 = car
+    const paneIds = ['ml-pane-0', 'ml-pane-1', 'ml-pane-2'];
+    paneIds.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('active', i === index);
+    });
+    const captions = [
+      "",
+      "like estimating house prices from multiple factors.",
+      "just upload your car details and the model does the rest."
+    ];
+    const captionEl = document.getElementById('ml-caption');
+    if (captionEl) captionEl.innerText = captions[index] || "";
+    const footer = document.getElementById('ml-footer');
+    if (footer) footer.style.visibility = index === 0 ? 'hidden' : 'visible';
+    runFlowAnimation(index);
+  }
+
+  const flowSteps = {
+    0: [
+      ['def-step-card1', 'def-step-card2', 'def-step-card3'],
+      ['def-step-insight'],
+    ],
+    1: [
+      ['house-step-listing'],
+      ['house-step-arrow1', 'house-step-model'],
+      ['house-step-arrow2', 'house-step-output'],
+    ],
+    2: [
+      ['car-step-listing'],
+      ['car-step-arrow1', 'car-step-model'],
+      ['car-step-arrow2', 'car-step-output'],
+    ],
+  };
+  const allFlowIds = [
+    'def-step-card1','def-step-card2','def-step-card3','def-step-insight',
+    'house-step-listing','house-step-arrow1','house-step-model','house-step-arrow2','house-step-output',
+    'car-step-listing','car-step-arrow1','car-step-model','car-step-arrow2','car-step-output',
+  ];
+  let activeFlowTab = 0;
+  let flowIndex = 0;
+
+  function runFlowAnimation(tabIndex) {
+    activeFlowTab = tabIndex;
+    allFlowIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) gsap.set(el, { opacity: 0, y: 0, scale: 1, scaleX: 1, clearProps: 'boxShadow' });
+    });
+    flowIndex = 0;
+    advanceFlow();
+  }
+
+  function attachCardHover(el) {
+    el.addEventListener('mouseenter', () => {
+      gsap.to(el, { y: -7, scale: 1.03, duration: 0.45, ease: 'power3.out',
+                    boxShadow: '0 16px 40px rgba(107,155,122,0.18)' });
+    });
+    el.addEventListener('mouseleave', () => {
+      gsap.to(el, { y: 0, scale: 1, duration: 0.55, ease: 'elastic.out(1, 0.5)',
+                    boxShadow: '0 0 0 0px rgba(107,155,122,0)' });
+    });
+  }
+
+  function revealElement(el, delay, isArrow) {
+    if (isArrow) {
+      gsap.fromTo(el,
+        { opacity: 0, scaleX: 0, transformOrigin: 'left center' },
+        { opacity: 0.7, scaleX: 1, duration: 1.1, delay,
+          ease: 'elastic.out(1, 0.55)' }
+      );
+    } else {
+      gsap.fromTo(el,
+        { opacity: 0, y: 36, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.0, delay,
+          ease: 'expo.out',
+          onComplete: () => {
+            if (el.classList.contains('def-pillar-card')) {
+              el.classList.add('revealed');
+              attachCardHover(el);
+              const icon = el.querySelector('[data-float]');
+              if (icon) gsap.to(icon, { y: -5, duration: 1.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+            }
+          }
+        }
+      );
+    }
+  }
+
+  function advanceFlow() {
+    const steps = flowSteps[activeFlowTab];
+    if (!steps || flowIndex >= steps.length) return;
+    const arrowIds = ['house-step-arrow1','house-step-arrow2','car-step-arrow1','car-step-arrow2'];
+    steps[flowIndex].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const isArrow = arrowIds.includes(id);
+      revealElement(el, i * 0.18, isArrow);
+    });
+    flowIndex++;
+  }
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.ml-tab-btn')) return;
+    const pane0 = document.getElementById('ml-pane-0');
+    const pane1 = document.getElementById('ml-pane-1');
+    const pane2 = document.getElementById('ml-pane-2');
+    if (pane0 && pane0.classList.contains('active')) advanceFlow();
+    else if (pane1 && pane1.classList.contains('active')) advanceFlow();
+    else if (pane2 && pane2.classList.contains('active')) advanceFlow();
+  });
+
+  /* BP Neural Network Logic */
+  let bpNNPos = [], bpNNEdges = [], bpPropLoop;
+  function initBPNN() {
+    const svg = document.getElementById('bp-nn-svg');
+    if (!svg) return;
+    svg.innerHTML = '';
+    const layers = [3, 5, 4, 2];
+    const xS = 20, xE = 180, yT = 15, yB = 85;
+    
+    bpNNPos = layers.map((count, li) => {
+      const x = xS + (xE - xS) * (li / (layers.length - 1));
+      const h = yB - yT;
+      return Array.from({length: count}, (_, i) => ({
+        x, y: count === 1 ? (yT + yB)/2 : yT + h * (i / (count - 1))
+      }));
+    });
+
+    bpNNEdges = [];
+    for (let li = 0; li < bpNNPos.length - 1; li++) {
+      for (const a of bpNNPos[li]) {
+        for (const b of bpNNPos[li + 1]) {
+          const line = document.createElementNS(svgNS, 'line');
+          line.setAttribute('class', 'nn-edge');
+          line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+          line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+          svg.appendChild(line);
+          bpNNEdges.push({ a, b });
+        }
+      }
+    }
+    bpNNPos.flat().forEach(p => {
+      const c = document.createElementNS(svgNS, 'circle');
+      c.setAttribute('class', 'nn-node');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 3);
+      svg.appendChild(c);
+    });
+
+    if (bpPropLoop) bpPropLoop.kill();
+    bpPropLoop = gsap.timeline({ repeat: -1 });
+    bpPropLoop.call(bpPropagate).to({}, { duration: 2.5 });
+  }
+
+  function bpPropagate() {
+    const svg = document.getElementById('bp-nn-svg');
+    if (!svg) return;
+    const delayStep = 0.4;
+    for (let li = 0; li < bpNNPos.length - 1; li++) {
+      const layerDelay = li * delayStep;
+      bpNNEdges.filter(e => e.a.x === bpNNPos[li][0].x).forEach(e => {
+        const s = document.createElementNS(svgNS, 'circle');
+        s.setAttribute('class', 'nn-signal');
+        s.setAttribute('cx', e.a.x); s.setAttribute('cy', e.a.y); s.setAttribute('r', 1.5);
+        svg.appendChild(s);
+        gsap.to(s, {
+          attr: { cx: e.b.x, cy: e.b.y }, opacity: 1, duration: 0.6, delay: layerDelay, ease: "power2.inOut",
+          onComplete: () => s.remove()
+        });
+      });
+    }
+  }
+
+  document.addEventListener('keydown', e => { 
+    if (e.key === 'Escape') {
+      closeBigPicture();
+      closeDetailModal();
+    }
+  });
+
+
+    // ── Listen for messages from parent ──
+    window.addEventListener('message', (e) => {
+      if (e.data.type === 'OPEN_GENAI_MODAL') {
+        openDetailModal('gen');
+      }
+      if (e.data.type === 'RESTART_ANIMATION') {
+        bt = 0;
+      }
+    });
+  </script>
+</body>
+</html>

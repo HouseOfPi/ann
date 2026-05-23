@@ -1,0 +1,22 @@
+assets/bus.png
+assets/truck.png
+assets/scooter.png
+assets/darthmouth.png
+assets/minsky.png
+assets/single neuron/check.png
+assets/single neuron/check8.png
+assets/single neuron/check9.png
+assets/single neuron/01-check7.png
+assets/single neuron/check10.png
+assets/single neuron/check2.png
+assets/single neuron/check3.png
+assets/single neuron/02-check7.png
+assets/single neuron/check6.png
+assets/single neuron/check4.png
+assets/single neuron/check5.png
+assets/ann animation/bias9.png
+assets/ann animation/check.png
+assets/ann animation/02-bio2.png
+assets/ann animation/01-bio_t11.png
+assets/ann animation/01-bio_t13.png
+assets/ann animation/01-bias_check.png

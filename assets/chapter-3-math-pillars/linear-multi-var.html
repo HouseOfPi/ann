@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Variables Linear Equation | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    :root {
+      --c1: #5fe8ec;
+      --c2: #4ee0a0;
+      --c3: #a78bfa;
+      --bg: #000000;
+      --fg: #eef2f8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 50px 32px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .header {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .page-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--eyebrow-accent, var(--c1));
+    }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 56px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      color: var(--fg);
+    }
+    .main-title em { font-style: italic; }
+
+    .body-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 36px;
+      align-items: center;
+      padding-top: 22px;
+    }
+
+    .left-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .equation-block {
+      opacity: 0;
+      transform: translateX(-20px);
+      padding: 14px 18px;
+      border-radius: 18px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      box-shadow: 0 10px 30px -5px color-mix(in srgb, var(--bg) 40%, transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .equation-block .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: -0.02em;
+    }
+
+    .equation-block .card-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+    }
+
+    .equation {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(22px, 2.6vw, 30px);
+      letter-spacing: 0.04em;
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+    .equation .var { color: var(--fg); font-weight: 700; }
+    .equation .op  { color: var(--fg); }
+    .equation .w1  { color: var(--c1); font-weight: 700; }
+    .equation .w2  { color: var(--c2); font-weight: 700; }
+    .equation .b   { color: var(--c3); font-weight: 700; }
+
+    .equation-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      letter-spacing: 0.05em;
+    }
+
+    .eq-video-wrap {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .pt {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 14px;
+      align-items: start;
+      opacity: 0;
+      transform: translateX(-20px);
+      position: relative;
+    }
+
+    .pt-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--c1);
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c1) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c1) 22%, transparent);
+    }
+
+    .pt-body {
+      padding-top: 4px;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 7%, transparent);
+      padding-bottom: 10px;
+    }
+
+    .pt:last-child .pt-body { border-bottom: none; padding-bottom: 0; }
+
+    .pt-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(13px, 1.3vw, 15px);
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 3px;
+      letter-spacing: -0.005em;
+    }
+
+    .pt-desc {
+      font-size: clamp(11.5px, 1.05vw, 13px);
+      color: color-mix(in srgb, var(--fg) 62%, transparent);
+      line-height: 1.55;
+    }
+
+    .pt-desc strong { color: var(--c1); font-weight: 600; }
+
+    /* Right: 3D plane visual */
+    .visual-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      opacity: 0;
+      transform: translateX(20%);
+    }
+
+    .graph-wrap {
+      width: 100%;
+      max-width: 620px;
+      aspect-ratio: 4 / 3;
+      border-radius: 20px;
+      overflow: hidden;
+      border: none;
+      background: var(--bg);
+      transition: background 0.5s;
+    }
+
+    .graph-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .point-3d-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      fill: var(--c1);
+      font-weight: 700;
+    }
+
+    .caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* ── Weight dialer panel (live w₁ / w₂ control) ────────────────── */
+    .weights-panel {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--fg) 4%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 4px 16px -6px color-mix(in srgb, var(--bg) 40%, transparent);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .weights-panel.shown { opacity: 1; transform: translateY(0); }
+    .weights-panel[hidden] { display: none; }
+
+    .wd-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wd-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--c1);
+      flex-shrink: 0;
+      min-width: 96px;
+    }
+    .wd-val {
+      color: var(--fg);
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .wd-track {
+      position: relative;
+      flex: 1;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      touch-action: none;
+    }
+    .wd-rail {
+      position: absolute;
+      left: 0; right: 0;
+      height: 4px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--fg) 14%, transparent);
+    }
+    /* Range is 0..+1, so there's no signed midpoint tick to draw. */
+    .wd-zero { display: none; }
+    .wd-fill {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      border-radius: 2px;
+      background: var(--c1);
+      transition: background 0.4s;
+      pointer-events: none;
+    }
+    .wd-knob {
+      position: absolute;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--c1);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--c1) 25%, transparent),
+                  0 4px 14px -2px color-mix(in srgb, var(--c1) 60%, transparent);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.4s;
+      will-change: left;
+    }
+    .wd-knob:hover { transform: translate(-50%, -50%) scale(1.12); }
+    .wd-knob.dragging {
+      transform: translate(-50%, -50%) scale(1.18);
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--c1) 30%, transparent),
+                  0 6px 20px -2px color-mix(in srgb, var(--c1) 75%, transparent);
+    }
+    .wd-bounds {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: color-mix(in srgb, var(--fg) 40%, transparent);
+      flex-shrink: 0;
+      min-width: 56px;
+      text-align: right;
+    }
+
+    @media (max-width: 800px) {
+      body { padding: 20px 20px 24px; }
+      .body-layout { grid-template-columns: 1fr; gap: 22px; }
+      .graph-wrap { max-width: 360px; }
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Linear Algebra" title="Multiple <em>Variables</em>"></page-title>
+
+  <div class="body-layout">
+    <div class="left-col">
+      <div class="equation-block" id="eqBlock">
+        <div class="card-title">Bivariate Equation</div>
+        <div class="card-desc">
+          When we add a second independent variable (<em>x₂</em>), our equation expands to include a second weight.
+        </div>
+        <div class="eq-video-wrap" id="eqVideoWrap">
+          <video id="eqVideo" autoplay muted playsinline style="display:block;width:100%;">
+            <source id="eqVideoSrc" src="equation-animation/bivariate-equation-dark.mp4" type="video/mp4">
+
+          </video>
+        </div>
+      </div>
+
+      <div class="points">
+        <div class="pt" id="pt0">
+          <span class="pt-num">01</span>
+          <div class="pt-body">
+            <div class="pt-title">Each input gets its own weight</div>
+            <div class="pt-desc">Every <em>xᵢ</em> is multiplied by its weight <strong>wᵢ</strong>. The weight decides how much that input matters.</div>
+          </div>
+        </div>
+
+        <div class="pt" id="pt1">
+          <span class="pt-num">02</span>
+          <div class="pt-body">
+            <div class="pt-title">A line becomes a plane</div>
+            <div class="pt-desc">With two inputs, the graph is a flat <strong>plane</strong> in 3D. With many inputs, a flat <strong>hyperplane</strong> in higher dimensions.</div>
+          </div>
+        </div>
+
+        <div class="pt" id="pt2">
+          <span class="pt-num">03</span>
+          <div class="pt-body">
+            <div class="pt-title">Weight magnitude = influence</div>
+            <div class="pt-desc">A <strong>bigger wᵢ</strong> means xᵢ has a bigger effect on y. A weight of <strong>zero</strong> means that input has no effect on the outcome.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="visual-col" id="visual">
+      <div class="graph-wrap">
+        <iframe src="two-d-linear-plot/Linear Equation 3D Plot.html"></iframe>
+      </div>
+
+      <!-- Slider panel for w₁ / w₂. Hidden until the iframe finishes its
+           buildup animation and posts TIMELINE_DONE. -->
+      <div class="weights-panel" id="weightsPanel" hidden>
+        <div class="wd-row" data-w="1">
+          <span class="wd-label">w₁ =<span class="wd-val" id="w1Val">0.45</span></span>
+          <div class="wd-track" id="w1Track" tabindex="0" role="slider"
+               aria-label="weight 1" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.45">
+            <div class="wd-rail"></div>
+            <div class="wd-zero"></div>
+            <div class="wd-fill" id="w1Fill"></div>
+            <div class="wd-knob" id="w1Knob"></div>
+          </div>
+          <span class="wd-bounds">0 … +1</span>
+        </div>
+        <div class="wd-row" data-w="2">
+          <span class="wd-label">w₂ =<span class="wd-val" id="w2Val">0.35</span></span>
+          <div class="wd-track" id="w2Track" tabindex="0" role="slider"
+               aria-label="weight 2" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.35">
+            <div class="wd-rail"></div>
+            <div class="wd-zero"></div>
+            <div class="wd-fill" id="w2Fill"></div>
+            <div class="wd-knob" id="w2Knob"></div>
+          </div>
+          <span class="wd-bounds">0 … +1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PALETTE_MAP = {
+      'Warm Linen':  { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#0e7490', c2:'#e27b5e', c3:'#6d28d9', video:'light', eyebrow:'#c25d42' },
+      'Green Linen': { bg:'#f4f1ea', fg:'#1a1815', light:true,  c1:'#15803d', c2:'#15803d', c3:'#6d28d9', video:'light', eyebrow:'#2e8b57' },
+      'Paper White': { bg:'#ffffff', fg:'#111111', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#6d28d9', video:'light', eyebrow:'#d0465a' },
+      'Midnight':    { bg:'#000000', fg:'#f0ece4', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark', eyebrow:'#f59e0b' },
+      'Navy Lime':   { bg:'#0a1428', fg:'#f1f5fb', light:false, c1:'#5fb8e6', c2:'#5fb8e6', c3:'#a78bfa', eyebrow:'#a3e635' },
+      'Mint':        { bg:'#f0f7f4', fg:'#0f2820', light:true,  c1:'#0e7490', c2:'#166534', c3:'#6d28d9', video:'light', eyebrow:'#0e9488' },
+      'Plum':        { bg:'#f5f0f7', fg:'#200f28', light:true,  c1:'#0e7490', c2:'#15803d', c3:'#7c3aed', video:'light', eyebrow:'#7c3aed' },
+      'Deep Navy':   { bg:'#0a1428', fg:'#eef2f8', light:false, c1:'#5fe8ec', c2:'#4ee0a0', c3:'#a78bfa', video:'dark', eyebrow:'#5fe8ec' },
+    };
+
+    function applyPalette(p) {
+      document.body.style.setProperty('--bg', p.bg);
+      document.body.style.setProperty('--fg', p.fg);
+      document.body.classList.toggle('light', p.light);
+      document.body.style.setProperty('--c1', p.c1);
+      document.documentElement.style.setProperty('--eyebrow-accent', p.eyebrow || p.c1);
+      document.body.style.setProperty('--c2', p.c2);
+      document.body.style.setProperty('--c3', p.c3);
+    }
+
+    window.addEventListener('message', (e) => {
+      if (!e.data) return;
+      if (e.data.type === 'SET_THEME') {
+        const p = PALETTE_MAP[e.data.palette] || (e.data.mode === 'light' ? PALETTE_MAP['Warm Linen'] : PALETTE_MAP['Deep Navy']);
+        applyPalette(p);
+        const src = document.getElementById('eqVideoSrc');
+        const vid = document.getElementById('eqVideo');
+        if (src && vid && p.video) {
+          src.src = `equation-animation/bivariate-equation-${p.video}.mp4`;
+          vid.load();
+          vid.play().catch(() => {});
+        }
+      }
+      if (e.data.type === 'RESTART_ANIMATION') startEntrance();
+      // Iframe finished its buildup — reveal the slider panel seeded with
+      // whatever final values the timeline produced.
+      if (e.data.type === 'TIMELINE_DONE') {
+        const { w1, w2 } = e.data;
+        if (typeof w1 === 'number') WSTATE.w1 = w1;
+        if (typeof w2 === 'number') WSTATE.w2 = w2;
+        syncWeightUi();
+        showWeightsPanel();
+      }
+    });
+
+    function startEntrance() {
+      // Iframe is about to restart its buildup — hide the slider panel until
+      // it posts TIMELINE_DONE again. Safe to call before the panel exists.
+      if (typeof hideWeightsPanel === 'function') hideWeightsPanel();
+
+      gsap.set("#header", { opacity: 0, y: 20 });
+      gsap.set("#eqBlock", { opacity: 0, x: -20 });
+      gsap.set(".eq-video-wrap", { opacity: 0, y: 10 });
+      gsap.set(".pt", { opacity: 0, x: -20 });
+      gsap.set("#visual", { opacity: 0 });
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.to("#header", { opacity: 1, y: 0, duration: 0.7 });
+      tl.to("#eqBlock", { opacity: 1, x: 0, duration: 0.55 }, "-=0.3");
+      tl.to(".eq-video-wrap", { opacity: 1, y: 0, duration: 0.5 }, "-=0.2");
+      tl.to(".pt", { opacity: 1, x: 0, stagger: 0.13, duration: 0.5, ease: "back.out(1.4)" }, "-=0.2");
+      tl.to("#visual", { opacity: 1, duration: 0.7 }, "-=0.4");
+
+      const video = document.getElementById('eqVideo');
+      if (video) { video.currentTime = 0; video.load(); video.play().catch(() => {}); }
+
+      const iframe = document.querySelector('.graph-wrap iframe');
+      if (iframe) {
+        const restartIframe = () => {
+          try { iframe.contentWindow.postMessage({ type: 'RESTART_ANIMATION' }, '*'); } catch (e) {}
+        };
+        if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+          restartIframe();
+        } else {
+          iframe.addEventListener('load', restartIframe);
+        }
+      }
+
+    }
+
+    // ── Weight dialer (slide-side) ────────────────────────────────
+    const W_MIN = 0, W_MAX = 1, W_STEP = 0.05;
+    const WSTATE = { w1: 0.45, w2: 0.35 };
+
+    function clampW(v) {
+      const stepped = Math.round(v / W_STEP) * W_STEP;
+      return Math.max(W_MIN, Math.min(W_MAX, stepped));
+    }
+
+    function postWeights() {
+      const iframe = document.querySelector('.graph-wrap iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({
+          type: 'SET_WEIGHTS', w1: WSTATE.w1, w2: WSTATE.w2,
+        }, '*');
+      }
+    }
+
+    function syncWeightUi() {
+      const fmt = (v) => (Math.round(v * 100) / 100).toFixed(2);
+      ['1', '2'].forEach((n) => {
+        const v = WSTATE[`w${n}`];
+        const t  = (v - W_MIN) / (W_MAX - W_MIN);
+        const t0 = (0 - W_MIN) / (W_MAX - W_MIN);
+        const lo = Math.min(t, t0), hi = Math.max(t, t0);
+        const knob  = document.getElementById(`w${n}Knob`);
+        const fill  = document.getElementById(`w${n}Fill`);
+        const val   = document.getElementById(`w${n}Val`);
+        const track = document.getElementById(`w${n}Track`);
+        if (knob)  knob.style.left = `${t * 100}%`;
+        if (fill) {
+          fill.style.left  = `${lo * 100}%`;
+          fill.style.width = `${(hi - lo) * 100}%`;
+        }
+        if (val)   val.textContent = fmt(v);
+        if (track) track.setAttribute('aria-valuenow', v.toFixed(2));
+      });
+    }
+
+    function setWeight(n, v) {
+      const next = clampW(v);
+      if (Math.abs(next - WSTATE[`w${n}`]) < 1e-9) {
+        syncWeightUi();
+        return;
+      }
+      WSTATE[`w${n}`] = next;
+      syncWeightUi();
+      postWeights();
+    }
+
+    function showWeightsPanel() {
+      const panel = document.getElementById('weightsPanel');
+      if (!panel) return;
+      panel.hidden = false;
+      // wait one frame so the transition can run from the hidden state
+      requestAnimationFrame(() => panel.classList.add('shown'));
+    }
+
+    function hideWeightsPanel() {
+      const panel = document.getElementById('weightsPanel');
+      if (!panel) return;
+      panel.classList.remove('shown');
+      panel.hidden = true;
+      // Reset to defaults so the next reveal starts clean.
+      WSTATE.w1 = 0.45; WSTATE.w2 = 0.35;
+      syncWeightUi();
+    }
+
+    function initWeightDialers() {
+      ['1', '2'].forEach((n) => {
+        const track = document.getElementById(`w${n}Track`);
+        const knob  = document.getElementById(`w${n}Knob`);
+        if (!track || !knob) return;
+
+        const xToVal = (clientX) => {
+          const r = track.getBoundingClientRect();
+          const t = (clientX - r.left) / r.width;
+          const tc = Math.max(0, Math.min(1, t));
+          return W_MIN + tc * (W_MAX - W_MIN);
+        };
+
+        let dragging = false;
+        const onMove = (ev) => {
+          if (!dragging) return;
+          ev.preventDefault();
+          setWeight(n, xToVal(ev.clientX));
+        };
+        const onUp = (ev) => {
+          if (!dragging) return;
+          dragging = false;
+          knob.classList.remove('dragging');
+          try { track.releasePointerCapture(ev.pointerId); } catch (_) {}
+          document.removeEventListener('pointermove', onMove);
+          document.removeEventListener('pointerup', onUp);
+        };
+        track.addEventListener('pointerdown', (ev) => {
+          ev.preventDefault();
+          dragging = true;
+          knob.classList.add('dragging');
+          try { track.setPointerCapture(ev.pointerId); } catch (_) {}
+          setWeight(n, xToVal(ev.clientX));
+          document.addEventListener('pointermove', onMove);
+          document.addEventListener('pointerup', onUp);
+        });
+
+        track.addEventListener('keydown', (ev) => {
+          let d = 0;
+          if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') d = -W_STEP;
+          if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp')  d =  W_STEP;
+          if (ev.key === 'PageDown') d = -10 * W_STEP;
+          if (ev.key === 'PageUp')   d =  10 * W_STEP;
+          if (ev.key === 'Home') { ev.preventDefault(); return setWeight(n, W_MIN); }
+          if (ev.key === 'End')  { ev.preventDefault(); return setWeight(n, W_MAX); }
+          if (d !== 0) { ev.preventDefault(); setWeight(n, WSTATE[`w${n}`] + d); }
+        });
+      });
+
+      window.addEventListener('resize', syncWeightUi);
+      syncWeightUi();
+    }
+
+    document.addEventListener('DOMContentLoaded', initWeightDialers);
+
+    window.addEventListener('load', startEntrance);
+  </script>
+</body>
+</html>
