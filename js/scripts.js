@@ -2151,14 +2151,14 @@
         { id: 'slideFive', enabled: true },
         { id: 'slideSingleNeuron', enabled: true },
         { id: 'slideBlankANN', enabled: true },
-        { id: 'slideSeven', enabled: true },
         { id: 'slideModelParams', enabled: true },
+        { id: 'slideSeven', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideRobotFootball', enabled: true },
         { id: 'slideFour', enabled: false }
       ];
 
-      let slideState = JSON.parse(localStorage.getItem('ann_slide_state_v2')) || DEFAULT_SLIDE_STATE;
+      let slideState = JSON.parse(localStorage.getItem('ann_slide_state_v3')) || DEFAULT_SLIDE_STATE;
       let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive'));
       if (hideInactive === null) hideInactive = true;
 
@@ -2178,7 +2178,7 @@
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
       // Save aligned state to localStorage on load so updates are persisted immediately
-      localStorage.setItem('ann_slide_state_v2', JSON.stringify(slideState));
+      localStorage.setItem('ann_slide_state_v3', JSON.stringify(slideState));
 
       // Dynamically hide/show sidebar accordion lessons based on enabled slides
       function updateSidebarLessons() {
