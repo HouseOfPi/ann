@@ -314,6 +314,69 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
   .lp-ribbon { height: 100vh; border-radius: 0; }
   .lp-body { padding: 40px 20px; }
 }
+/* ── Neuron Modal ── */
+#neuron-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#neuron-modal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+#neuron-modal-content {
+  width: 90vw;
+  height: 90vh;
+  background: var(--sb-bg);
+  border-radius: 16px;
+  border: 1px solid var(--sb-border);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#neuron-modal.show #neuron-modal-content {
+  transform: scale(1);
+}
+#neuron-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 2010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+#neuron-modal-close:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+.app.light #neuron-modal-close {
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+.app.light #neuron-modal-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
 </style>
 </head>
 <body>
@@ -382,7 +445,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Number Classification</span><div class="t-track" id="mnist-toggle" onclick="toggleDemo('mnist')"><div class="t-thumb"></div></div></div>
 
 
-        <div class="toggle-row" style="margin-top:8px"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
+        <div class="toggle-row" style="margin-top:8px"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
         <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Loop Animation</span><div class="t-track on" id="loop-toggle" onclick="toggleLoop()"><div class="t-thumb"></div></div></div>
 
         <div class="sl-row" style="margin-top:16px"><span class="sl-lbl">Speed</span>
@@ -422,6 +485,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
   <!-- ══ MAIN AREA ══ -->
   <div class="main-area">
     <div class="grid-bg"></div>
+    <button id="global-play-btn" style="position:absolute; bottom:24px; left:24px; z-index:100; display:none; width:80px; height:32px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:Inter,sans-serif; letter-spacing:.02em; transition:all .2s; border:1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.3);" onmouseenter="this.style.background='#2563eb';" onmouseleave="this.style.background='#3b82f6';" onclick="toggleDynamic()">Play</button>
     <svg id="nn-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     <div id="stats-panel" style="display:none"></div>
   </div>
@@ -491,7 +555,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
     <div class="lp-section-lbl">Animation</div>
     <div class="lp-row"><span class="lp-tgl-lbl">Vehicle Classification</span><div class="t-track" id="veh-toggle2" onclick="toggleDemo('vehicle')"><div class="t-thumb"></div></div></div>
     <div class="lp-row"><span class="lp-tgl-lbl">Number Classification</span><div class="t-track" id="mnist-toggle2" onclick="toggleDemo('mnist')"><div class="t-thumb"></div></div></div>
-    <div class="lp-row"><span class="lp-tgl-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle2" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
+    <div class="lp-row"><span class="lp-tgl-lbl">Dynamic Flow</span><div class="t-track" id="dyn-toggle2" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
     <div class="lp-row"><span class="lp-tgl-lbl">Loop Animation</span><div class="t-track on" id="loop-toggle2" onclick="toggleLoop()"><div class="t-thumb"></div></div></div>
 
     <div class="lp-row" style="margin-top:6px">
@@ -510,6 +574,14 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 
     </div><!-- /lp-body -->
   </div><!-- /ctrl-panel -->
+
+  <!-- Modal for single neuron animation -->
+  <div id="neuron-modal">
+    <div id="neuron-modal-content">
+      <button id="neuron-modal-close" onclick="hideNeuronModal()">&times;</button>
+      <iframe id="neuron-modal-iframe" src="" allowtransparency="true" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -593,7 +665,7 @@ function makeImgDrawSVG(imgUrl, accent){
 const VEHICLE_DATA = [
   {
     id:'car', label:'Car', emoji:'🚗', color:'#3b82f6',
-    imgUrl:'car.png',
+    imgUrl:'../chapter-5-training/car.png',
     pixels:[.05,.55,.60,.05, .70,.85,.85,.72, .88,.92,.90,.88, .60,.20,.20,.62],
     R:[.05,.20,.22,.05, .22,.30,.30,.24, .28,.32,.30,.28, .18,.08,.08,.20],
     G:[.05,.42,.48,.05, .55,.70,.70,.58, .72,.78,.74,.72, .50,.15,.15,.52],
@@ -603,7 +675,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'truck', label:'Truck', emoji:'🚚', color:'#f59e0b',
-    imgUrl:'truck.png',
+    imgUrl:'../chapter-5-training/truck.png',
     pixels:[.90,.90,.50,.10, .92,.95,.80,.85, .92,.95,.88,.88, .65,.65,.22,.65],
     R:[.96,.96,.58,.12, .98,.99,.90,.92, .98,.99,.94,.94, .72,.72,.28,.72],
     G:[.72,.72,.38,.08, .75,.78,.62,.68, .75,.78,.70,.70, .50,.50,.18,.50],
@@ -613,7 +685,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'motorcycle', label:'Bike', emoji:'🏍️', color:'#10b981',
-    imgUrl:'motorcycle.png',
+    imgUrl:'../chapter-5-training/motorcycle.png',
     pixels:[.00,.30,.30,.00, .10,.88,.88,.10, .15,.60,.60,.15, .50,.15,.15,.50],
     R:[.00,.05,.05,.00, .05,.12,.12,.05, .06,.10,.10,.06, .08,.05,.05,.08],
     G:[.00,.42,.42,.00, .14,.95,.95,.14, .20,.78,.78,.20, .62,.20,.20,.62],
@@ -623,7 +695,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'bus', label:'Bus', emoji:'🚌', color:'#ec4899',
-    imgUrl:'bus.png',
+    imgUrl:'../chapter-5-training/bus.png',
     pixels:[.88,.88,.88,.88, .92,.75,.75,.92, .92,.80,.80,.92, .68,.20,.20,.68],
     R:[.96,.96,.96,.96, .99,.85,.85,.99, .99,.90,.90,.99, .78,.28,.28,.78],
     G:[.12,.12,.12,.12, .14,.10,.10,.14, .14,.12,.12,.14, .10,.05,.05,.10],
@@ -633,7 +705,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'ambulance', label:'Ambulance', emoji:'🚑', color:'#ef4444',
-    imgUrl:'ambulance.png',
+    imgUrl:'../chapter-5-training/ambulance.png',
     pixels:[.95,.95,.95,.95, .98,.60,.60,.98, .90,.85,.85,.90, .55,.30,.30,.55],
     R:[.98,.98,.98,.98, .99,.75,.75,.99, .95,.90,.90,.95, .70,.40,.40,.70],
     G:[.95,.95,.95,.95, .98,.50,.50,.98, .88,.82,.82,.88, .48,.25,.25,.48],
@@ -643,7 +715,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'bicycle', label:'Bicycle', emoji:'🚲', color:'#06b6d4',
-    imgUrl:'bicycle.png',
+    imgUrl:'../chapter-5-training/bicycle.png',
     pixels:[.00,.10,.10,.00, .05,.45,.45,.05, .30,.70,.70,.30, .55,.20,.20,.55],
     R:[.00,.08,.08,.00, .04,.35,.35,.04, .22,.55,.55,.22, .42,.15,.15,.42],
     G:[.00,.12,.12,.00, .06,.50,.50,.06, .35,.72,.72,.35, .58,.22,.22,.58],
@@ -653,7 +725,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'scooter', label:'Scooter', emoji:'🛵', color:'#8b5cf6',
-    imgUrl:'scooter.png',
+    imgUrl:'../chapter-5-training/scooter.png',
     pixels:[.00,.20,.20,.00, .15,.72,.72,.15, .25,.58,.58,.25, .48,.12,.12,.48],
     R:[.00,.18,.18,.00, .12,.65,.65,.12, .20,.50,.50,.20, .40,.10,.10,.40],
     G:[.00,.22,.22,.00, .16,.75,.75,.16, .28,.60,.60,.28, .50,.14,.14,.50],
@@ -663,7 +735,7 @@ const VEHICLE_DATA = [
   },
   {
     id:'suv', label:'SUV', emoji:'🚙', color:'#14b8a6',
-    imgUrl:'suv.png',
+    imgUrl:'../chapter-5-training/suv.png',
     pixels:[.10,.60,.62,.10, .75,.88,.88,.75, .85,.92,.92,.85, .62,.25,.25,.62],
     R:[.08,.48,.50,.08, .60,.72,.72,.60, .70,.78,.78,.70, .50,.18,.18,.50],
     G:[.12,.58,.60,.12, .72,.85,.85,.72, .82,.90,.90,.82, .60,.22,.22,.60],
@@ -705,7 +777,7 @@ function _line(S,x1,y1,x2,y2,stroke,sw){S.appendChild(_el('line',{x1,y1,x2,y2,st
 // ═══ Globals ══════════════════════════════════════════════════
 const SVG_NS='http://www.w3.org/2000/svg', XLINK='http://www.w3.org/1999/xlink';
 const SPEED_MAP=[1.6,1.1,.7,.45,.25];
-let lineMode='dynamic', weights={}, isDark=true, intensity=6;
+let lineMode='static', weights={}, isDark=true, intensity=6;
 let showLabels=true, loopAnim=true, entranceAnim=true, gradEdges=true, animStyle='dot';
 let flyAnimTl=null;
 function setStyle(s){
@@ -717,7 +789,7 @@ function setStyle(s){
   buildNetwork(true);
 }
 let rep='indefinite', fz='freeze', pc=0, particleSys=null;
-let demoMode=false, demoVehicleIdx=0, colorMode=false, mnistSize=16, vehSize=4, pixelMatrixView=false;
+let demoMode=false, demoVehicleIdx=0, colorMode=false, mnistSize=16, vehSize=10, pixelMatrixView=false;
 
 
 function el(tag,attrs){return _el(tag,attrs);}
@@ -1146,7 +1218,7 @@ function updateStats(layers,acts){
 
 // === Classification input panel ===============================
 function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
-  const CELL = demoType==='mnist' ? Math.max(6,Math.min(18,Math.floor(180/mnistSize))) : Math.max(12,Math.min(45,Math.floor(180/vehSize)));
+  const CELL = demoType==='mnist' ? Math.max(6,Math.min(18,Math.floor(180/mnistSize))) : Math.max(6,Math.min(45,Math.floor(180/vehSize)));
   const COLS = demoType==='mnist' ? mnistSize : vehSize, ROWS = demoType==='mnist' ? mnistSize : vehSize;
   const GRID_W=COLS*CELL, GRID_H=ROWS*CELL;
   const IMG_W = (demoType === 'mnist' ? 160 : 190);
@@ -1175,12 +1247,13 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
   const imgX = centerX - IMG_W/2;
   const gridX = centerX - GRID_W/2;
   
-  const totalStackH = IMG_H + 70 + GRID_H + 45; // img + gap + grid + button area
+  const hasGrid = demoType === 'mnist';
+  const totalStackH = hasGrid ? (IMG_H + 70 + GRID_H + 45) : (IMG_H + 45); // img + gap + grid + button area
   const startY = Math.max(55, nodeSpanCenter - totalStackH/2);
   
   const imgY = startY;
   const gridY = imgY + IMG_H + 70;
-  const flatX = centerX + stackWidth/2 + 55;
+  const flatX = centerX + stackWidth/2 + (hasGrid ? 55 : 30);
 
   const g=el('g',{class:'demo-panel-left'});
 
@@ -1188,6 +1261,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'}));
   const vGroup=el('g',{});
+  vGroup.style.cursor = 'pointer';
+  vGroup.onclick = toggleDynamic;
   if (demoType === 'mnist' && veh.samples) {
     const img = _el('image', {
       x: imgX, y: imgY, width: IMG_W, height: IMG_H,
@@ -1248,21 +1323,23 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
   }
 
   // Directional arrow between image and grid
-  const arrowGap = (gridY - (imgY + IMG_H));
-  const arrowLine = el('line', {
-    x1: centerX, y1: imgY + IMG_H + 12,
-    x2: centerX, y2: gridY - 14,
-    stroke: isDark ? 'rgba(99,102,241,0.4)' : 'rgba(79,70,229,0.3)',
-    'stroke-width': '2',
-    'marker-end': 'url(#arrowHead)',
-    'stroke-dasharray': '4 4'
-  });
-  g.appendChild(arrowLine);
+  if (hasGrid) {
+    const arrowGap = (gridY - (imgY + IMG_H));
+    const arrowLine = el('line', {
+      x1: centerX, y1: imgY + IMG_H + 12,
+      x2: centerX, y2: gridY - 14,
+      stroke: isDark ? 'rgba(99,102,241,0.4)' : 'rgba(79,70,229,0.3)',
+      'stroke-width': '2',
+      'marker-end': 'url(#arrowHead)',
+      'stroke-dasharray': '4 4'
+    });
+    g.appendChild(arrowLine);
+  }
 
-  const btnY=gridY+GRID_H+15;
+  const btnY = hasGrid ? gridY+GRID_H+15 : imgY+IMG_H+15;
   const fo=document.createElementNS(SVG_NS,'foreignObject');
-  fo.setAttribute('x',imgX); fo.setAttribute('y',btnY);
-  fo.setAttribute('width',IMG_W); fo.setAttribute('height',32);
+  fo.setAttribute('x',centerX - 75); fo.setAttribute('y',btnY);
+  fo.setAttribute('width',150); fo.setAttribute('height',32);
   
   const btnBox = document.createElement('div');
   btnBox.style.cssText = `display:flex; width:100%; height:100%`;
@@ -1273,8 +1350,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
     background:#334155; color:#fff; font-size:10.5px; font-weight:700;
     cursor:pointer; font-family:Inter,sans-serif; letter-spacing:.02em;
     transition:all .2s; border:1px solid rgba(255,255,255,0.1)`;
-  btn.onmouseenter=()=>{btn.style.background='#475569'; btn.style.transform='translateY(-1px)';};
-  btn.onmouseleave=()=>{btn.style.background='#334155'; btn.style.transform='none';};
+  btn.onmouseenter=()=>{btn.style.background='#475569';};
+  btn.onmouseleave=()=>{btn.style.background='#334155';};
   btn.onclick=()=>{
     if(demoType === 'mnist') {
       let nextIdx = demoVehicleIdx;
@@ -1288,13 +1365,34 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
     }
     buildNetwork(false);
   };
+  
+  const playBtn = document.createElement('button');
+  playBtn.textContent = lineMode === 'dynamic' ? 'Pause' : 'Play';
+  playBtn.style.cssText = `margin-left:6px; width:48px; height:28px; border-radius:7px; border:none;
+    background:#3b82f6; color:#fff; font-size:10.5px; font-weight:700;
+    cursor:pointer; font-family:Inter,sans-serif; letter-spacing:.02em;
+    transition:all .2s; border:1px solid rgba(255,255,255,0.1)`;
+  playBtn.onmouseenter=()=>{playBtn.style.background='#2563eb';};
+  playBtn.onmouseleave=()=>{playBtn.style.background='#3b82f6';};
+  playBtn.onclick=()=>{
+    toggleDynamic();
+  };
+
   btnBox.appendChild(btn);
+  btnBox.appendChild(playBtn);
   fo.appendChild(btnBox);
   g.appendChild(fo);
 
-  const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-12,'text-anchor':'middle','font-family':'Inter,sans-serif','font-size':'11','font-weight':'700',fill:veh.color});
+  if (hasGrid) {
+    const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-12,'text-anchor':'middle','font-family':'Inter,sans-serif','font-size':'11','font-weight':'700',fill:veh.color});
   gridLbl.textContent= demoType==='mnist'?`${mnistSize}×${mnistSize} (Digit)`:(colorMode?`${vehSize}×${vehSize}×3 (RGB)`:`${vehSize}×${vehSize} (Grayscale)`);
   g.appendChild(gridLbl);
+
+  if(demoType!=='mnist' && veh.drawSVG){
+    const shadowG = el('g',{'opacity':'0.2'});
+    veh.drawSVG(shadowG, gridX, gridY, GRID_W, GRID_H, isDark, colorMode);
+    g.appendChild(shadowG);
+  }
 
   const channels = colorMode ? 3 : 1;
   const channelColors = ['#ef4444','#10b981','#3b82f6'];
@@ -1309,7 +1407,11 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
             const src=veh.samples[veh.currentSample].pixels;
             v=src[r*COLS+cc]??0;
           } else {
-            v = colorMode ? (ch===0?veh.R[idx] : ch===1?veh.G[idx] : veh.B[idx]) : (veh.pixels[idx]??0);
+            const scale = vehSize / 4;
+            const origR = Math.floor(r / scale);
+            const origC = Math.floor(cc / scale);
+            const origIdx = origR * 4 + origC;
+            v = colorMode ? (ch===0?veh.R[origIdx] : ch===1?veh.G[origIdx] : veh.B[origIdx]) : (veh.pixels[origIdx]??0);
           }
           const grey=Math.round(v*255);
           const cx2=gridX+cc*CELL + offsetX, cy2=gridY+r*CELL + offsetY;
@@ -1336,25 +1438,26 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
           } else {
             // Numeric grid for Vehicle (similar to MNIST style)
             const tint = Math.round(v * 75);
-            let bgCol = isDark ? `rgb(${25+tint},${35+tint},${50+tint})` : `rgb(${245-tint},${250-tint},${255-tint})`;
+            let bgCol = isDark ? `rgba(${25+tint},${35+tint},${50+tint},0.65)` : `rgba(${245-tint},${250-tint},${255-tint},0.65)`;
             
             if(colorMode){
                const t2 = Math.round(v * 160);
-               if(ch===0) bgCol = isDark ? `rgb(${40+t2},12,12)` : `rgb(255,${235-t2},${235-t2})`;
-               else if(ch===1) bgCol = isDark ? `rgb(12,${40+t2},12)` : `rgb(${235-t2},255,${235-t2})`;
-               else bgCol = isDark ? `rgb(12,12,${40+t2})` : `rgb(${235-t2},${235-t2},255)`;
+               if(ch===0) bgCol = isDark ? `rgba(${40+t2},12,12,0.65)` : `rgba(255,${235-t2},${235-t2},0.65)`;
+               else if(ch===1) bgCol = isDark ? `rgba(12,${40+t2},12,0.65)` : `rgba(${235-t2},255,${235-t2},0.65)`;
+               else bgCol = isDark ? `rgba(12,12,${40+t2},0.65)` : `rgba(${235-t2},${235-t2},255,0.65)`;
             }
 
-            const cellStroke = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-            g.appendChild(el('rect',{x:cx2,y:cy2,width:CELL-1,height:CELL-1,rx:4,
-              fill:bgCol,stroke:cellStroke,'stroke-width':'1'}));
+            const cellStroke = isDark ? 'rgba(51,65,85,0.3)' : 'rgba(203,213,225,0.4)';
+            g.appendChild(el('rect',{x:cx2,y:cy2,width:CELL+0.6,height:CELL+0.6,
+              fill:bgCol,stroke:cellStroke,'stroke-width':'0.3'}));
 
             const bright = v > 0.45;
-            const tv=el('text',{x:cx2+CELL/2,y:cy2+CELL/2+5,'text-anchor':'middle',
-              'font-family':'JetBrains Mono,monospace','font-size':'11','font-weight':'800',
+            const fontSize = Math.max(6.5, Math.min(11, CELL * 0.45));
+            const tv=el('text',{x:cx2+CELL/2,y:cy2+CELL/2+fontSize*0.35,'text-anchor':'middle',
+              'font-family':'JetBrains Mono,monospace','font-size':fontSize.toFixed(1),'font-weight':'800',
               fill:bright ? (isDark?'#fcd34d':'#7c2d12') : (isDark?'rgba(148,163,184,0.6)':'rgba(100,116,139,0.5)')});
             
-            tv.textContent=v.toFixed(2);
+            tv.textContent = v < 0.001 ? '' : v.toFixed(2);
             g.appendChild(tv);
           }
         }
@@ -1374,6 +1477,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
       dur:tc+'s',repeatCount:rep,fill:fz}));
     g.appendChild(gs);
   }
+
+  } // end if(hasGrid)
 
   const flatLbl=el('text',{x:flatX+PILL_W/2,y:firstNodeY-14,'text-anchor':'middle',
     'font-family':'Inter,sans-serif','font-size':'9.5','font-weight':'700',
@@ -1405,11 +1510,12 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
 
   for(let ni=0;ni<dispN;ni++){
     const ch = colorMode ? Math.floor(ni/16) : 0; const r = Math.floor((ni%(COLS*ROWS))/COLS); const cc = (ni%(COLS*ROWS))%COLS; const offsetX = colorMode ? (ch - 2) * -12 : 0; const offsetY = colorMode ? (ch - 2) * -12 : 0;
-    const cellCX=gridX+cc*CELL+CELL/2 + offsetX;
-    const cellCY=gridY+r*CELL+CELL/2 + offsetY;
+    const cellCX = hasGrid ? gridX+cc*CELL+CELL/2 + offsetX : imgX+IMG_W;
+    const cellCY = hasGrid ? gridY+r*CELL+CELL/2 + offsetY : imgY+IMG_H*(ni/dispN);
+    const lineX1 = hasGrid ? gridX+GRID_W : imgX+IMG_W;
     const nd=pos[0][ni];
     svg.appendChild(el('line',{
-      x1:gridX+GRID_W,y1:cellCY,x2:flatX,y2:nd.y,
+      x1:lineX1,y1:cellCY,x2:flatX,y2:nd.y,
       stroke:isDark?'#1e3a5f':'#bfdbfe','stroke-width':'0.9',
       'stroke-dasharray':'3 3',opacity:'.3'}));
   }
@@ -1428,8 +1534,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
       const cc = (ni%16)%COLS;
       const offsetX = colorMode ? (ch-2)*-12 : 0;
       const offsetY = colorMode ? (ch-2)*-12 : 0;
-      const cellCX = gridX+cc*CELL+CELL/2+offsetX;
-      const cellCY = gridY+r2*CELL+CELL/2+offsetY;
+      const cellCX = hasGrid ? gridX+cc*CELL+CELL/2+offsetX : imgX+IMG_W;
+      const cellCY = hasGrid ? gridY+r2*CELL+CELL/2+offsetY : imgY+IMG_H*(ni/dispN);
       const nd = pos[0][ni];
       const destX = flatX+PILL_W/2;
       const destY = nd.y;
@@ -1672,24 +1778,27 @@ function drawSimplifiedPanel(svg, veh, pos, NODE_R, tc, tExt, centerOffset){
 
   // Place the panel left of the first input column, centered in the reserved PAD_X space
   const inputColX = pos[0][0].x;   // x of input column
-  const totalPanelW = IMG_W + 28 + GRID_W + 20; // image + gap + grid + margin
+  const totalPanelW = IMG_W + 20; // image + margin
   const panelLeft = Math.max(8, inputColX - totalPanelW - NODE_R - 50);
-  const imgY = Math.max(50, nodeSpanCenter - (Math.max(IMG_H, GRID_H) + 44)/2);
-  const gridX = panelLeft + IMG_W + 28;
-  const gridY = imgY;
+  const imgY = Math.max(50, nodeSpanCenter - (IMG_H + 44)/2);
 
   const g = el('g', {class:'simplified-panel'});
 
   // ── Vehicle image ──
+  const clickGroup = el('g', {});
+  clickGroup.style.cursor = 'pointer';
+  clickGroup.onclick = toggleDynamic;
+
   const imgBg = el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:12,
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'});
-  g.appendChild(imgBg);
+  clickGroup.appendChild(imgBg);
   if(veh.drawSVG){
     const vGroup = el('g',{});
     veh.drawSVG(vGroup, panelLeft, imgY, IMG_W, IMG_H, isDark, false);
-    g.appendChild(vGroup);
+    clickGroup.appendChild(vGroup);
   }
+  g.appendChild(clickGroup);
 
   // Scan-line animation on the image (dynamic mode)
   if(lineMode==='dynamic'){
@@ -1704,65 +1813,44 @@ function drawSimplifiedPanel(svg, veh, pos, NODE_R, tc, tExt, centerOffset){
     g.appendChild(sc);
   }
 
-  // ── Pixel grid label ──
-  const gridLbl = el('text',{x:gridX+GRID_W/2,y:gridY-10,'text-anchor':'middle',
-    'font-family':'Inter,sans-serif','font-size':'10','font-weight':'700',fill:veh.color});
-  gridLbl.textContent = `${vehSize}×${vehSize} (Grayscale)`;
-  g.appendChild(gridLbl);
 
-  // ── Pixel grid cells ──
-  for(let r=0;r<ROWS;r++){
-    for(let cc=0;cc<COLS;cc++){
-      const idx = r*COLS+cc;
-      const v = veh.pixels[idx] ?? 0;
-      const grey = Math.round(v*255);
-      const cx2 = gridX+cc*CELL, cy2 = gridY+r*CELL;
-      const cellStroke = isDark?'rgba(0,0,0,.6)':'rgba(226,232,240,.9)';
-      g.appendChild(el('rect',{x:cx2,y:cy2,width:CELL+0.5,height:CELL+0.5,
-        fill:`rgb(${grey},${grey},${grey})`,stroke:cellStroke,'stroke-width':'0.5'}));
-      const bright = v > 0.5;
-      const tv = el('text',{x:cx2+CELL/2,y:cy2+CELL/2+3.5,'text-anchor':'middle',
-        'font-family':'JetBrains Mono,monospace','font-size':'8','font-weight':'600',
-        fill:bright?'#0f172a':(isDark?'rgba(240,244,255,.9)':'rgba(240,244,255,.9)')});
-      tv.textContent = v.toFixed(2);
-      g.appendChild(tv);
-    }
-  }
-  g.appendChild(el('rect',{x:gridX,y:gridY,width:GRID_W,height:GRID_H,rx:4,
-    fill:'none',stroke:isDark?'#475569':'#94a3b8','stroke-width':'1.8'}));
-
-  // Grid scan animation
-  if(lineMode==='dynamic'){
-    const gs = el('rect',{x:gridX,y:gridY,width:GRID_W,height:2.5,rx:1,
-      fill:isDark?'#e2e8f0':'#64748b',opacity:'0','pointer-events':'none'});
-    gs.appendChild(smil('animate',{attributeName:'y',
-      values:[gridY-24,gridY-24,gridY+GRID_H-3,gridY+GRID_H-3].join(';'),
-      keyTimes:`0;${(tExt*0.1)/tc};${(tExt*0.6)/tc};${(tExt*0.65)/tc}`,
-      dur:tc+'s',repeatCount:rep,fill:fz}));
-    gs.appendChild(smil('animate',{attributeName:'opacity',
-      values:'0;.8;.8;0',
-      keyTimes:`0;${(tExt*0.1)/tc};${(tExt*0.6)/tc};${(tExt*0.65)/tc}`,
-      dur:tc+'s',repeatCount:rep,fill:fz}));
-    g.appendChild(gs);
-  }
 
   // ── Next Vehicle button ──
   const btnY = imgY + IMG_H + 10;
   const fo = document.createElementNS(SVG_NS,'foreignObject');
   fo.setAttribute('x', panelLeft); fo.setAttribute('y', btnY);
   fo.setAttribute('width', IMG_W); fo.setAttribute('height', 28);
+  
+  const btnBox = document.createElement('div');
+  btnBox.style.cssText = `display:flex; width:100%; height:100%`;
+
   const btn = document.createElement('button');
   btn.textContent = 'Next Vehicle';
-  btn.style.cssText = `width:100%;height:28px;border-radius:7px;border:none;
-    background:#3b82f6;color:#fff;font-size:11px;font-weight:700;
-    cursor:pointer;font-family:Inter,sans-serif;letter-spacing:.03em;transition:background .2s`;
-  btn.onmouseenter=()=>{btn.style.background='#2563eb';};
-  btn.onmouseleave=()=>{btn.style.background='#3b82f6';};
+  btn.style.cssText = `flex:1; height:28px; border-radius:7px; border:none;
+    background:#334155;color:#fff;font-size:10.5px;font-weight:700;
+    cursor:pointer;font-family:Inter,sans-serif;letter-spacing:.02em;transition:all .2s; border:1px solid rgba(255,255,255,0.1)`;
+  btn.onmouseenter=()=>{btn.style.background='#475569';};
+  btn.onmouseleave=()=>{btn.style.background='#334155';};
   btn.onclick=()=>{
     demoVehicleIdx=(demoVehicleIdx+1)%activeData.length;
     buildNetwork(false);
   };
-  fo.appendChild(btn); g.appendChild(fo);
+
+  const playBtn = document.createElement('button');
+  playBtn.textContent = lineMode === 'dynamic' ? 'Pause' : 'Play';
+  playBtn.style.cssText = `margin-left:6px; width:48px; height:28px; border-radius:7px; border:none;
+    background:#3b82f6; color:#fff; font-size:10.5px; font-weight:700;
+    cursor:pointer; font-family:Inter,sans-serif; letter-spacing:.02em;
+    transition:all .2s; border:1px solid rgba(255,255,255,0.1)`;
+  playBtn.onmouseenter=()=>{playBtn.style.background='#2563eb';};
+  playBtn.onmouseleave=()=>{playBtn.style.background='#3b82f6';};
+  playBtn.onclick=()=>{
+    toggleDynamic();
+  };
+
+  btnBox.appendChild(btn);
+  btnBox.appendChild(playBtn);
+  fo.appendChild(btnBox); g.appendChild(fo);
 
   svg.appendChild(g);
 
@@ -1964,6 +2052,12 @@ function buildNetwork(keepWeights=false){
 
   if(demoMode) drawVehiclePanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc,nInput,tExt,centerOffset);
 
+  const globalPlayBtn = document.getElementById('global-play-btn');
+  if (globalPlayBtn) {
+    globalPlayBtn.style.display = demoMode ? 'none' : 'block';
+    globalPlayBtn.textContent = lineMode === 'dynamic' ? 'Pause' : 'Play';
+  }
+
   const tip=document.getElementById('wt-tip');
   const arrivals=[{arriveAt: tExt + nSeg*layerDur}];
   const lc=lineColor(), visWt={};
@@ -1985,7 +2079,7 @@ function buildNetwork(keepWeights=false){
         edgeG.appendChild(hit);
       }
     }
-    visWt[li]=(showLabels&&lineMode==='dynamic'&&!autoHideLabels)?drawWeightLabels(labelsLayer,li,pos):new Set();
+    visWt[li]=(showLabels&&!autoHideLabels)?drawWeightLabels(labelsLayer,li,pos):new Set();
   }
   svg.appendChild(edgeG);
 
@@ -2125,6 +2219,9 @@ function buildNetwork(keepWeights=false){
           gsap.to(outer,{attr:{r,'stroke-width':2},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
           if(core.tagName==='circle') gsap.to(core,{attr:{r:r*.44},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
         });
+        if (li > 0 && li < layers.length - 1) {
+          hn.addEventListener('click', showNeuronModal);
+        }
         svg.appendChild(hn);
   if(li===0&&lineMode==='dynamic') addFlash(svg,x,y,col,r,0,layerDur*.4,tc);
       }
@@ -2207,6 +2304,22 @@ window.addEventListener('message', (e) => {
   }
 });
 
+function showNeuronModal() {
+  const modal = document.getElementById('neuron-modal');
+  const iframe = document.getElementById('neuron-modal-iframe');
+  iframe.src = 'ann animation/index.html?modal=true';
+  modal.classList.add('show');
+}
+
+function hideNeuronModal() {
+  const modal = document.getElementById('neuron-modal');
+  modal.classList.remove('show');
+  setTimeout(() => {
+    const iframe = document.getElementById('neuron-modal-iframe');
+    iframe.src = '';
+  }, 300);
+}
+
 function toggleLeftPanel(ev){
   if(ev) ev.stopPropagation();
   const panel = document.querySelector('.ctrl-panel');
@@ -2221,7 +2334,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-document.addEventListener('dblclick', togglePause);
+
 </script>
 </body>
 </html>
