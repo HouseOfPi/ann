@@ -2123,7 +2123,9 @@
         'slideNine': 'The Journey',
         'slideFive': 'Bio-Inspiration',
         'slideSingleNeuron': 'Single Neuron',
+        'slideBlankANN': 'Blank (pre-ANN)',
         'slideSeven': 'ANN Architecture',
+        'slideModelParams': 'Model Parameters',
         'slideEight': 'Training Analogy',
         'slideRobotFootball': 'Training Demo',
         'slideFour': 'The Convergence'
@@ -2148,7 +2150,9 @@
         { id: 'slideNine', enabled: true },
         { id: 'slideFive', enabled: true },
         { id: 'slideSingleNeuron', enabled: true },
+        { id: 'slideBlankANN', enabled: true },
         { id: 'slideSeven', enabled: true },
+        { id: 'slideModelParams', enabled: true },
         { id: 'slideEight', enabled: true },
         { id: 'slideRobotFootball', enabled: true },
         { id: 'slideFour', enabled: false }
@@ -2200,7 +2204,7 @@
       // Activate default slide on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideSeven');
+        const idx = activeSlides.findIndex(el => el.id === 'slideModelParams');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -2880,6 +2884,21 @@
 
       // Attach listener to menu toggle
       document.getElementById("menuToggle").addEventListener("click", toggleSettings);
+
+      // Respond to iframes requesting the current theme on load
+      window.addEventListener("message", function(e) {
+        if (!e.data || e.data.type !== "GET_THEME") return;
+        const activePalBtn = document.querySelector(".palette-row.active");
+        if (!activePalBtn) return;
+        const palKey = activePalBtn.dataset.palette;
+        const p = PALETTES[palKey];
+        if (!p || !e.source) return;
+        e.source.postMessage({
+          type: "SET_THEME",
+          mode: p.light ? "light" : "dark",
+          palette: p.iframeName,
+        }, "*");
+      });
 
 
 

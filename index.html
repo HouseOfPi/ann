@@ -298,6 +298,10 @@
               <span class="lesson-dot"></span>
               <span class="lesson-name">Single Neuron Interaction</span>
             </div>
+            <div class="course-lesson" onclick="goToSlide('slideBlankANN')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Blank (pre-ANN)</span>
+            </div>
             <div class="course-lesson" onclick="goToSlide('slideSeven')">
               <span class="lesson-dot"></span>
               <span class="lesson-name">ANN Architecture</span>
@@ -690,6 +694,17 @@
       </section>
 
 
+      <!-- SLIDE: PARAMETERS TITLE -->
+      <section class="slide-blank" id="slideBlankANN" style="width:100%;height:100vh;background:var(--bg);overflow:hidden;">
+        <iframe
+          src="assets/chapter-4-biological-roots/parameters.html"
+          title="What Do Parameters Mean in AI?"
+          class="premium-iframe"
+          allowtransparency="true"
+          style="width:100%;height:100%;border:none;"
+        ></iframe>
+      </section>
+
       <!-- SLIDE 05: ANN ARCHITECTURE -->
       <section class="slide-seven" id="slideSeven">
         <iframe
@@ -698,6 +713,55 @@
           title="ANN Architecture Visualizer"
           allowtransparency="true"
         ></iframe>
+      </section>
+
+      <!-- SLIDE: MODEL PARAMETERS SHOWCASE -->
+      <section class="slide-why-ml" id="slideModelParams" style="background:var(--bg); display:flex; align-items:center; justify-content:center; padding:48px 32px;">
+        <div style="width:100%; max-width:1180px;">
+
+          <!-- Header: 2-column editorial layout -->
+          <div style="display:grid; grid-template-columns:1fr auto; gap:40px; align-items:end; padding-bottom:32px; margin-bottom:36px; border-bottom:1px solid var(--s2-border,rgba(255,255,255,0.1));">
+            <div>
+              <div style="display:inline-flex; align-items:center; gap:10px; font-size:12px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--accent-main); margin-bottom:14px;">
+                <span style="display:inline-block; width:28px; height:1px; background:var(--accent-main);"></span>
+                Model Scale · 2025
+              </div>
+              <h2 style="font-family:var(--font-heading); font-size:clamp(34px,5vw,64px); font-weight:700; color:var(--text-main); margin:0; line-height:1.02; letter-spacing:-.02em;">
+                How Big Are <em style="font-style:italic; color:var(--accent-main); font-weight:500;">These Models?</em>
+              </h2>
+            </div>
+            <div style="text-align:right; max-width:280px; padding-bottom:6px;">
+              <p style="font-size:14px; line-height:1.55; color:var(--text-dim); margin:0;">
+                Parameters are the learned weights and biases inside a neural network. More parameters generally mean more capacity to learn.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cards list -->
+          <div id="mp-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+          <!-- Footer legend -->
+          <div style="margin-top:32px; padding-top:20px; border-top:1px solid var(--s2-border,rgba(255,255,255,0.08)); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; gap:24px; font-size:12px; color:var(--text-dim);">
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:99px; background:#34d399;"></span>
+                Open-source
+              </span>
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                <span style="width:8px; height:8px; border-radius:99px; background:rgba(148,163,184,0.5);"></span>
+                Proprietary
+              </span>
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace; color:var(--text-dim);">~</span>
+                Estimated
+              </span>
+            </div>
+            <div style="font-size:11px; color:var(--text-dim); letter-spacing:.1em; text-transform:uppercase; opacity:.6;">
+              B = billion · T = trillion
+            </div>
+          </div>
+
+        </div>
       </section>
 
       <!-- SLIDE 06: SINGLE NEURON INTERACTIVE -->
@@ -1143,5 +1207,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     <script src="js/scripts.js"></script>
+    <script>
+    (function() {
+      // [name, creator, params label, params in B (for scale bar), open-source, estimated]
+      const MODELS = [
+        ['GPT-5',       'OpenAI',   '1 T',   1000, false, true ],
+        ['Gemini 2.5',  'Google',   '1 T',   1000, false, true ],
+        ['DeepSeek-V3', 'DeepSeek', '671 B', 671,  true,  false],
+        ['Gemma 4',     'Google',   '27 B',  27,   true,  false],
+        ['Qwen3',       'Alibaba',  '0.6 B', 0.6,  true,  false],
+      ];
+
+      const MAX_B = 1000; // upper bound = 1T
+
+      function render() {
+        const list = document.getElementById('mp-list');
+        if (!list) return;
+
+        // Log-scale for visual readability — small models still get visible bars
+        const logMin = Math.log10(0.1);
+        const logMax = Math.log10(MAX_B);
+        const pct = (b) => Math.max(4, Math.min(100, ((Math.log10(b) - logMin) / (logMax - logMin)) * 100));
+
+        list.innerHTML = MODELS.map(([name, creator, params, b, isOpen, est], i) => {
+          const w = pct(b);
+          const dotColor = isOpen ? '#34d399' : 'rgba(148,163,184,0.55)';
+          const barColor = isOpen ? '#34d399' : 'var(--accent-main)';
+          return `
+            <div class="mp-card" style="
+              display:grid;
+              grid-template-columns:48px 1fr 220px 200px;
+              gap:24px;
+              align-items:center;
+              padding:22px 28px;
+              border:1px solid var(--s2-border,rgba(255,255,255,0.08));
+              border-radius:14px;
+              background:var(--s2-bg,rgba(255,255,255,0.02));
+              transition:border-color .25s ease, transform .25s ease;
+            "
+            onmouseover="this.style.borderColor='var(--accent-main)';this.style.transform='translateX(4px)';"
+            onmouseout="this.style.borderColor='var(--s2-border,rgba(255,255,255,0.08))';this.style.transform='';"
+            >
+              <!-- Rank number -->
+              <div style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; color:var(--text-dim); letter-spacing:.08em; opacity:.55;">
+                ${String(i + 1).padStart(2, '0')}
+              </div>
+
+              <!-- Name + creator -->
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+                  <span style="width:8px; height:8px; border-radius:99px; background:${dotColor}; box-shadow:0 0 0 3px ${isOpen ? 'rgba(52,211,153,0.12)' : 'rgba(148,163,184,0.1)'};"></span>
+                  <span style="font-family:var(--font-heading); font-size:clamp(20px,2.2vw,28px); font-weight:700; color:var(--text-main); letter-spacing:-.01em; line-height:1;">${name}</span>
+                </div>
+                <div style="font-size:13px; color:var(--text-dim); margin-left:18px; letter-spacing:.01em;">${creator}</div>
+              </div>
+
+              <!-- Scale bar -->
+              <div>
+                <div style="height:4px; background:rgba(128,128,128,0.12); border-radius:99px; overflow:hidden; position:relative;">
+                  <div style="height:100%; width:${w}%; background:${barColor}; border-radius:99px; opacity:.85;"></div>
+                </div>
+              </div>
+
+              <!-- Parameter count -->
+              <div style="text-align:right;">
+                <div style="font-family:'JetBrains Mono',monospace; font-size:clamp(22px,2.6vw,34px); font-weight:700; color:var(--text-main); letter-spacing:-.02em; line-height:1; font-variant-numeric:tabular-nums;">
+                  ${est ? '<span style=\'color:var(--text-dim); font-weight:400; opacity:.6;\'>~</span>' : ''}${params}
+                </div>
+                <div style="font-size:11px; color:var(--text-dim); letter-spacing:.12em; text-transform:uppercase; margin-top:6px; font-weight:600;">
+                  ${isOpen ? 'Open-weights' : 'Proprietary'}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+      else render();
+    })();
+    </script>
   </body>
 </html>
