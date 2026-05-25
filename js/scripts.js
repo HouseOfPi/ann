@@ -3355,8 +3355,8 @@
       // Init dynamic nav components
       updateNavigationButtons();
       
-      // Default to Machine Learning Models title slide during development
-      const defaultSlideId = 'slideMLModelsTitle';
+      // Default to Simple Linear Regression slide during development
+      const defaultSlideId = 'slideSimpleLinearRegression';
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;

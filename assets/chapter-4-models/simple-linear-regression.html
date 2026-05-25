@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Linear Regression | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=STIX+Two+Math&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #000000;
+      --fg: #eef2f8;
+      --accent: #c97a4a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 50px 40px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Machine Learning Models" title="Simple <em>Linear</em> Regression"></page-title>
+
+  <div class="body">
+    <!-- Content will go here -->
+  </div>
+
+  <script>
+    // Theme alignment logic
+    const PALETTE_SETS = {
+      'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#e27b5e' },
+      'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#2e8b57' },
+      'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#d0465a' },
+      'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b' },
+      'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635' },
+    };
+
+    function applyPalette(name) {
+      const set = PALETTE_SETS[name] || PALETTE_SETS['Navy Lime'];
+      const root = document.documentElement;
+      root.style.setProperty('--bg', set.bg);
+      root.style.setProperty('--fg', set.fg);
+      root.style.setProperty('--accent', set.accent);
+    }
+
+    window.addEventListener('message', (e) => {
+      const data = e.data || {};
+      if (data.type !== 'SET_THEME') return;
+      const name = data.palette || (data.mode === 'dark' ? 'Navy Lime' : 'Warm Linen');
+      applyPalette(name);
+    });
+  </script>
+</body>
+</html>
