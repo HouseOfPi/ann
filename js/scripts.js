@@ -3357,7 +3357,7 @@
       
       // Default to Machine Learning Models title slide during development
       const defaultSlideId = 'slideMLModelsTitle';
-      const defaultIdx = activeSlides.findIndex(s => s.id === defaultSlideId);
+      const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;
       }
