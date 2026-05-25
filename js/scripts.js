@@ -3355,6 +3355,13 @@
       // Init dynamic nav components
       updateNavigationButtons();
       
+      // Default to Machine Learning Models title slide during development
+      const defaultSlideId = 'slideMLModelsTitle';
+      const defaultIdx = activeSlides.findIndex(s => s.id === defaultSlideId);
+      if (defaultIdx !== -1) {
+        currentSlideIdx = defaultIdx;
+      }
+
       // Mark active lesson on load (and auto-open its parent section)
       syncSlider(currentSlideIdx);
 
