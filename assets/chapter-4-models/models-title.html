@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Machine Learning Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Defaults — overridden at runtime by SET_THEME from the parent deck. */
+    --bg: #0a1428;
+    --fg: #f1f5fb;
+    --accent: #a3e635;
+    --accent-2: #5fb8e6;
+    --rule: rgba(241, 245, 251, 0.14);
+    --muted: rgba(241, 245, 251, 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  .stage {
+    height: 100%;
+    width: 100%;
+    padding: 6vh 7vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeDown 1s ease-out 0.1s forwards;
+  }
+
+  .chapter-num {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .chapter-label {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    text-transform: none;
+  }
+
+  .chapter-label em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    gap: 28px;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: rise 1s ease-out 0.5s forwards;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(72px, 11vw, 184px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: rise 1.2s cubic-bezier(.2,.7,.2,1) 0.75s forwards;
+  }
+
+  .title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <div class="stage">
+    <page-title eyebrow="Chapter 04" title="Machine Learning <em>Models</em>"></page-title>
+
+    <div class="center">
+      <div class="eyebrow">The Architecture</div>
+      <h1 class="title">How AI <em>Thinks</em></h1>
+    </div>
+
+  </div>
+
+<script>
+  const PALETTE_SETS = {
+    'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#e27b5e', accent2: '#4a8bdd', rule: 'rgba(28,28,28,0.14)', muted: 'rgba(28,28,28,0.55)' },
+    'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#2e8b57', accent2: '#4a8bdd', rule: 'rgba(28,28,28,0.14)', muted: 'rgba(28,28,28,0.55)' },
+    'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#d0465a', accent2: '#0369a1', rule: 'rgba(17,17,17,0.12)', muted: 'rgba(17,17,17,0.55)' },
+    'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b', accent2: '#5fb8e6', rule: 'rgba(240,236,228,0.14)', muted: 'rgba(240,236,228,0.55)' },
+    'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635', accent2: '#5fb8e6', rule: 'rgba(241,245,251,0.14)', muted: 'rgba(241,245,251,0.55)' },
+  };
+
+  function applyPalette(name) {
+    const set = PALETTE_SETS[name] || PALETTE_SETS['Navy Lime'];
+    const root = document.documentElement;
+    root.style.setProperty('--bg', set.bg);
+    root.style.setProperty('--fg', set.fg);
+    root.style.setProperty('--accent', set.accent);
+    root.style.setProperty('--accent-2', set.accent2);
+    root.style.setProperty('--rule', set.rule);
+    root.style.setProperty('--muted', set.muted);
+  }
+
+  window.addEventListener('message', (e) => {
+    const data = e.data || {};
+    if (data.type !== 'SET_THEME') return;
+    const name = data.palette
+      || (data.mode === 'dark' ? 'Navy Lime' : 'Warm Linen');
+    applyPalette(name);
+  });
+
+  // Forward arrow-key navigation to the parent deck when this iframe has focus.
+  document.addEventListener('keydown', (e) => {
+    if (window.parent === window) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+    }
+  });
+</script>
+</body>
+</html>
