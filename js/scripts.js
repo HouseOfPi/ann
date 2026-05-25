@@ -2117,7 +2117,7 @@
         'slideLinearSingleVar': 'Linear: Single Variable',
         'slideLinearMultiVar': 'Linear: Multiple Variables',
         'slideLinearNVar': 'Linear: n Variables',
-        'slideLinearAlgebra': 'Linear Algebra',
+// 'slideLinearAlgebra' entry removed
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2144,7 +2144,7 @@
         { id: 'slideLinearSingleVar', enabled: true },
         { id: 'slideLinearMultiVar', enabled: true },
         { id: 'slideLinearNVar', enabled: true },
-        { id: 'slideLinearAlgebra', enabled: true },
+
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
         { id: 'slideNine', enabled: true },
