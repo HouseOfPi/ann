@@ -13,106 +13,111 @@
       /* Redesigned Model parameters showcase - Side-by-Side Comparison Tables */
       .mp-tables-container {
         display: grid;
-        grid-template-columns: 1fr 1.15fr;
-        gap: 32px;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 16px;
         align-items: start;
       }
       @media (max-width: 992px) {
         .mp-tables-container {
           grid-template-columns: 1fr;
-          gap: 24px;
+          gap: 32px;
         }
       }
       .mp-table-card {
-        background: var(--s2-bg, rgba(255, 255, 255, 0.02));
-        border: 1px solid var(--s2-border, rgba(255, 255, 255, 0.08));
-        border-radius: 16px;
-        padding: 24px;
+        background: color-mix(in srgb, var(--bg) 95%, transparent);
+        border: 1px solid color-mix(in srgb, var(--text-main) 10%, transparent);
+        border-radius: 20px;
+        padding: 32px;
         display: flex;
         flex-direction: column;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 
+          0 20px 40px -10px rgba(0, 0, 0, 0.1),
+          inset 0 1px 1px color-mix(in srgb, var(--text-main) 15%, transparent);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .mp-table-card.closed-source {
-        border-top: 4px solid var(--accent-main);
+      .mp-table-card:hover {
+        box-shadow: 
+          0 30px 60px -15px rgba(0, 0, 0, 0.15),
+          inset 0 1px 1px color-mix(in srgb, var(--text-main) 20%, transparent);
       }
-      .mp-table-card.open-source {
-        border-top: 4px solid #10b981;
+      .mp-table-card.closed-source::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 4px;
+        background: linear-gradient(90deg, #d97757, #f59e0b);
+      }
+      .mp-table-card.open-source::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 4px;
+        background: linear-gradient(90deg, #10b981, #3b82f6);
       }
       .mp-table-card-title {
         font-family: var(--font-heading);
-        font-size: 13px;
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 800;
         color: var(--text-main);
-        letter-spacing: 0.8px;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
+        opacity: 0.9;
       }
-      .mp-badge {
-        font-size: 10px;
-        padding: 2px 8px;
-        border-radius: 99px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-      }
-      .closed-source .mp-badge {
-        background: rgba(var(--s2-gold-rgb), 0.12);
-        color: var(--accent-main);
-      }
-      .open-source .mp-badge {
-        background: rgba(16, 185, 129, 0.12);
-        color: #10b981;
-      }
-      
       .mp-table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         text-align: left;
       }
       .mp-table th {
         font-family: var(--font-heading);
         font-size: 11px;
         font-weight: 700;
-        color: var(--text-dim);
+        color: color-mix(in srgb, var(--text-main) 60%, transparent);
         text-transform: uppercase;
-        letter-spacing: 0.8px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid var(--s2-border, rgba(255, 255, 255, 0.08));
+        letter-spacing: 0.1em;
+        padding: 0 12px 16px 12px;
+        border-bottom: 1px solid color-mix(in srgb, var(--text-main) 10%, transparent);
       }
       .mp-table td {
-        padding: 16px 0;
-        border-bottom: 1px solid var(--s2-border, rgba(255, 255, 255, 0.04));
-        vertical-align: top;
+        padding: 16px 12px;
+        border-bottom: 1px solid color-mix(in srgb, var(--text-main) 5%, transparent);
+        vertical-align: middle;
+        transition: all 0.2s ease;
+      }
+      .mp-table tr {
         transition: background-color 0.2s ease;
+        border-radius: 8px;
+      }
+      .mp-table tr:hover {
+        background-color: color-mix(in srgb, var(--text-main) 4%, transparent);
       }
       .mp-table tr:hover td {
-        background-color: rgba(255, 255, 255, 0.015);
+        border-bottom-color: transparent;
       }
       .mp-table tr:last-child td {
         border-bottom: none;
-        padding-bottom: 0;
       }
       
       .mp-model-name {
         font-family: var(--font-heading);
-        font-size: 15px;
+        font-size: 16px;
         font-weight: 700;
         color: var(--text-main);
-        padding-right: 12px;
       }
       .mp-developer {
-        font-size: 13.5px;
-        color: var(--text-main);
+        font-size: 14px;
+        color: color-mix(in srgb, var(--text-main) 80%, transparent);
         font-weight: 500;
-        padding-right: 12px;
+      }
       }
       .mp-size-val {
         font-family: 'JetBrains Mono', monospace;
