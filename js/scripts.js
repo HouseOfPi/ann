@@ -2117,7 +2117,8 @@
         'slideLinearSingleVar': 'Linear: Single Variable',
         'slideLinearMultiVar': 'Linear: Multiple Variables',
         'slideLinearNVar': 'Linear: n Variables',
-// 'slideLinearAlgebra' entry removed
+        'slideMLModelsTitle': 'Ch. 4 — Title',
+        'slideSimpleLinearRegression': 'Simple Linear Regression',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2144,6 +2145,8 @@
         { id: 'slideLinearSingleVar', enabled: true },
         { id: 'slideLinearMultiVar', enabled: true },
         { id: 'slideLinearNVar', enabled: true },
+        { id: 'slideMLModelsTitle', enabled: true },
+        { id: 'slideSimpleLinearRegression', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -2158,7 +2161,7 @@
         { id: 'slideFour', enabled: false }
       ];
 
-      let slideState = JSON.parse(localStorage.getItem('ann_slide_state_v3')) || DEFAULT_SLIDE_STATE;
+      let slideState = JSON.parse(localStorage.getItem('ann_slide_state_v4')) || DEFAULT_SLIDE_STATE;
       let hideInactive = JSON.parse(localStorage.getItem('ann_hide_inactive'));
       if (hideInactive === null) hideInactive = true;
 
@@ -2178,7 +2181,7 @@
       slideState = slideState.filter(s => SLIDE_METADATA[s.id]);
 
       // Save aligned state to localStorage on load so updates are persisted immediately
-      localStorage.setItem('ann_slide_state_v3', JSON.stringify(slideState));
+      localStorage.setItem('ann_slide_state_v4', JSON.stringify(slideState));
 
       // Dynamically hide/show sidebar accordion lessons based on enabled slides
       function updateSidebarLessons() {
