@@ -101,15 +101,32 @@
       color: var(--accent);
       text-align: right;
     }
+    .table-container-outer {
+      position: relative;
+      width: 100%;
+    }
+    .scroll-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, color-mix(in srgb, var(--fg) 3.5%, var(--bg)), transparent);
+      pointer-events: none;
+      z-index: 5;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
     .table-container {
       height: 350px;
       overflow-y: auto;
       border-radius: 4px;
-      padding-right: 8px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .table-container::-webkit-scrollbar { width: 6px; }
-    .table-container::-webkit-scrollbar-track { background: transparent; }
-    .table-container::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--fg) 20%, transparent); border-radius: 10px; }
+    .table-container::-webkit-scrollbar {
+      display: none;
+    }
     
     .tab-header {
       display: flex;
@@ -212,8 +229,9 @@
       <!-- TAB: TABLE -->
       <div id="tabTable" class="tab-content active">
         <div class="table-wrapper">
-          <div class="table-container">
-            <table class="data-table" id="houseDataTable">
+          <div class="table-container-outer">
+            <div class="table-container">
+              <table class="data-table" id="houseDataTable">
               <thead>
                 <tr class="data-var-row">
                   <th>x</th>
@@ -257,6 +275,8 @@
                 <tr><td>41.7</td><td class="data-price-cell">423</td></tr>
               </tbody>
             </table>
+          </div>
+          <div class="scroll-fade"></div>
           </div>
           <button class="download-btn" onclick="downloadCSV()">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
