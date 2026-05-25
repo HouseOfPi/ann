@@ -423,58 +423,67 @@
           </div>
         </div>
 
-        <!-- Section 5: Biological Roots -->
+        <!-- Section 5: Archive -->
         <div class="accordion-item">
           <div class="accordion-header" onclick="toggleAccordion(this, event)">
             <span class="section-num">05</span>
             <div class="accordion-header-main">
-              <span class="section-eyebrow">Biology</span>
-              <span class="section-title">Biological Roots</span>
+              <span class="section-eyebrow">Legacy</span>
+              <span class="section-title">Archive</span>
             </div>
             <span class="chevron">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </div>
           <div class="accordion-content">
-            <div class="course-lesson" onclick="goToSlide('slideFive')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Biological Inspiration</span>
+            <!-- Sub-group: Biological Roots -->
+            <div class="lesson-subgroup">
+              <div class="subgroup-header" onclick="toggleSubGroup(this, event)">
+                <span class="lesson-dot"></span>
+                <span class="lesson-name">Biological Roots</span>
+                <span class="sub-chevron">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <div class="subgroup-content">
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideFive')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Biological Inspiration</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideSingleNeuron')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Single Neuron Interaction</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideBlankANN')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Blank (pre-ANN)</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideSeven')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">ANN Architecture</span>
+                </div>
+              </div>
             </div>
-            <div class="course-lesson" onclick="goToSlide('slideSingleNeuron')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Single Neuron Interaction</span>
-            </div>
-            <div class="course-lesson" onclick="goToSlide('slideBlankANN')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Blank (pre-ANN)</span>
-            </div>
-            <div class="course-lesson" onclick="goToSlide('slideSeven')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">ANN Architecture</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Section 6: Training & Power -->
-        <div class="accordion-item">
-          <div class="accordion-header" onclick="toggleAccordion(this, event)">
-            <span class="section-num">06</span>
-            <div class="accordion-header-main">
-              <span class="section-eyebrow">Training</span>
-              <span class="section-title">Training &amp; Power</span>
-            </div>
-            <span class="chevron">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </span>
-          </div>
-          <div class="accordion-content">
-            <div class="course-lesson" onclick="goToSlide('slideEight')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Learning Without Rules</span>
-            </div>
-            <div class="course-lesson" onclick="goToSlide('slideRobotFootball')">
-              <span class="lesson-dot"></span>
-              <span class="lesson-name">Robot Football Simulation</span>
+            <!-- Sub-group: Training & Power -->
+            <div class="lesson-subgroup">
+              <div class="subgroup-header" onclick="toggleSubGroup(this, event)">
+                <span class="lesson-dot"></span>
+                <span class="lesson-name">Training &amp; Power</span>
+                <span class="sub-chevron">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+              <div class="subgroup-content">
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideEight')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Learning Without Rules</span>
+                </div>
+                <div class="course-lesson sub-lesson" onclick="goToSlide('slideRobotFootball')">
+                  <span class="lesson-dot"></span>
+                  <span class="lesson-name">Robot Football Simulation</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
