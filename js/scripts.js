@@ -3360,6 +3360,15 @@
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;
+        
+        // Instantly swap the visible slide on load without animation
+        getActiveSlides().forEach(s => {
+          s.classList.remove('active-slide');
+          gsap.set(s, { visibility: "hidden", zIndex: 0, opacity: 0 });
+        });
+        const defaultSlide = getActiveSlides()[defaultIdx];
+        defaultSlide.classList.add('active-slide');
+        gsap.set(defaultSlide, { visibility: "visible", zIndex: 3, opacity: 1, scale: 1 });
       }
 
       // Mark active lesson on load (and auto-open its parent section)
