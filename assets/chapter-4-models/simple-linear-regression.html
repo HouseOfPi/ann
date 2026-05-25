@@ -149,7 +149,7 @@
 
   <div class="body">
     <div class="data-card" id="houseDataCard">
-      <div class="data-title">House <em>Prices</em> Dataset</div>
+      <div class="data-title">Ice Cream <em>Sales</em> Dataset</div>
       <table class="data-table" id="houseDataTable">
         <thead>
           <tr class="data-var-row">
@@ -157,30 +157,30 @@
             <th class="data-price-col">y</th>
           </tr>
           <tr>
-            <th>Size (sqft)</th>
-            <th class="data-price-col">Price</th>
+            <th>Temperature (°C)</th>
+            <th class="data-price-col">Sales</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>1,200</td>
-            <td class="data-price-cell">$450k</td>
+            <td>15.0</td>
+            <td class="data-price-cell">$210</td>
           </tr>
           <tr>
-            <td>1,850</td>
-            <td class="data-price-cell">$680k</td>
+            <td>20.0</td>
+            <td class="data-price-cell">$400</td>
           </tr>
           <tr>
-            <td>2,400</td>
-            <td class="data-price-cell">$920k</td>
+            <td>25.5</td>
+            <td class="data-price-cell">$550</td>
           </tr>
           <tr>
-            <td>1,400</td>
-            <td class="data-price-cell">$510k</td>
+            <td>30.0</td>
+            <td class="data-price-cell">$720</td>
           </tr>
           <tr>
-            <td>2,100</td>
-            <td class="data-price-cell">$750k</td>
+            <td>35.5</td>
+            <td class="data-price-cell">$890</td>
           </tr>
         </tbody>
       </table>
@@ -226,19 +226,19 @@
 
     function downloadCSV() {
       const rows = [
-        ["Size (sqft)", "Price ($)"],
-        [1200, 450000],
-        [1850, 680000],
-        [2400, 920000],
-        [1400, 510000],
-        [2100, 750000]
+        ["Temperature (°C)", "Sales ($)"],
+        [15.0, 210],
+        [20.0, 400],
+        [25.5, 550],
+        [30.0, 720],
+        [35.5, 890]
       ];
       let csvContent = "data:text/csv;charset=utf-8," 
           + rows.map(e => e.join(",")).join("\n");
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "house_prices.csv");
+      link.setAttribute("download", "ice_cream_sales.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
