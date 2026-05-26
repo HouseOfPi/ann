@@ -733,34 +733,30 @@
           plugins: {
             legend: { display: false },
             tooltip: {
-              backgroundColor: 'rgba(22, 27, 34, 0.85)',
+              mode: 'nearest',
+              intersect: true,
+              backgroundColor: '#161b22',
               borderColor: 'rgba(201, 122, 74, 0.4)',
               borderWidth: 1,
               cornerRadius: 10,
-              padding: 12,
-              titleColor: '#c97a4a',
-              titleFont: { family: 'Inter', size: 10.5, weight: 700 },
+              padding: {
+                top: 8,
+                bottom: 8,
+                left: 12,
+                right: 12
+              },
               bodyColor: '#eef2f8',
               bodyFont: { family: 'Inter', size: 13, weight: 500 },
               displayColors: false,
               callbacks: {
-                title: function(context) {
-                  if (context[0].datasetIndex === 1) {
-                    return 'UNCERTAIN PROJECTION';
-                  }
-                  return 'DATASET OBSERVED';
+                title: function() {
+                  return []; // No title
                 },
                 label: function(context) {
                   if (context.datasetIndex === 1) {
-                    return [
-                      `Temperature: 35°C`,
-                      `Sale: ${context.parsed.y} (Uncertain)`
-                    ];
+                    return `Temp: 35°C | Sale: ${context.parsed.y}`;
                   }
-                  return [
-                    `Temperature: ${context.parsed.x}°C`,
-                    `Sale: ${context.parsed.y}`
-                  ];
+                  return `Temp: ${context.parsed.x}°C | Sale: ${context.parsed.y}`;
                 }
               }
             }
@@ -822,6 +818,7 @@
       const rootStyles = getComputedStyle(document.documentElement);
       const fgColor = rootStyles.getPropertyValue('--fg').trim();
       const accentColor = rootStyles.getPropertyValue('--accent').trim();
+      const bgColor = rootStyles.getPropertyValue('--bg').trim();
 
       scatterChart.data.datasets[0].backgroundColor = colorMix(accentColor, 'transparent', 0.2);
       scatterChart.data.datasets[0].borderColor = accentColor;
@@ -836,10 +833,10 @@
       scatterChart.options.scales.x.grid.color = colorMix(fgColor, 'transparent', 0.85);
       scatterChart.options.scales.y.grid.color = colorMix(fgColor, 'transparent', 0.85);
 
-      // Update Tooltip dynamic style parameters
+      // Update Tooltip dynamic style parameters (opaque overlay solid colors)
       if (scatterChart.options.plugins && scatterChart.options.plugins.tooltip) {
         const tooltip = scatterChart.options.plugins.tooltip;
-        tooltip.backgroundColor = colorMix(fgColor, 'transparent', 0.90); // Translucent overlay matching current light/dark
+        tooltip.backgroundColor = interpolateColor(bgColor, fgColor, 0.08); // Solid opaque background
         tooltip.borderColor = colorMix(accentColor, 'transparent', 0.5);
         tooltip.titleColor = accentColor;
         tooltip.bodyColor = fgColor;
