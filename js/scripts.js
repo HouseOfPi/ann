@@ -2090,7 +2090,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 0;
+      let currentSlideIdx = 13; // Simple Linear Regression
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
@@ -3356,7 +3356,7 @@
       updateNavigationButtons();
       
       // Default to Machine Learning Models title slide during development
-      const defaultSlideId = 'slideMLModelsTitle';
+      const defaultSlideId = 'slideSimpleLinearRegression';
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;
