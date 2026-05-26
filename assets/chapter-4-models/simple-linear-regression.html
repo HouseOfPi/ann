@@ -754,12 +754,12 @@
                   if (context.datasetIndex === 1) {
                     return [
                       `Temperature: 35°C`,
-                      `Sales Estimate: ~${context.parsed.y} units`
+                      `Sale: ${context.parsed.y} (Uncertain)`
                     ];
                   }
                   return [
                     `Temperature: ${context.parsed.x}°C`,
-                    `Ice Creams Sold: ${context.parsed.y} units`
+                    `Sale: ${context.parsed.y}`
                   ];
                 }
               }
