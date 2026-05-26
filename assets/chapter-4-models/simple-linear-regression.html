@@ -228,72 +228,66 @@
     }
     .problem-statement {
       flex: 1;
-      max-width: 440px;
-      font-family: 'Inter', sans-serif;
+      max-width: 580px;
       position: relative;
-      background: color-mix(in srgb, var(--accent) 6%, var(--bg));
-      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      overflow: hidden;
+      padding: 40px;
       border-radius: 16px;
-      padding: 36px 40px;
-      line-height: 1.5;
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
       opacity: 0;
-      transform: translateY(16px);
-      transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       pointer-events: auto;
-      overflow: hidden;
-    }
-    .problem-statement::before {
-      content: '?';
-      position: absolute;
-      right: 28px;
-      top: 20px;
-      font-size: 96px;
-      font-weight: 800;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      color: var(--accent);
-      opacity: .07;
-      line-height: 1;
-      pointer-events: none;
-      user-select: none;
     }
     .problem-statement.visible {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(0);
       cursor: default;
     }
-    .problem-statement strong {
-      display: inline-flex;
+    .problem-label {
+      display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 12px;
       color: var(--accent);
+      font-family: 'Inter', sans-serif;
       font-weight: 700;
-      margin-bottom: 18px;
       text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 0.2em;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      margin-bottom: 24px;
     }
-    .problem-statement strong::before {
-      content: '';
-      display: inline-block;
-      width: 20px;
+    .problem-label .line {
+      width: 24px;
       height: 2px;
-      background: var(--accent);
-      border-radius: 99px;
+      background-color: var(--accent);
     }
-    .problem-statement .ps-body {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: clamp(22px, 2.4vw, 30px);
-      font-weight: 500;
+    .problem-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      line-height: 1.4;
       font-style: italic;
       color: var(--fg);
-      line-height: 1.45;
-      margin: 0;
+      position: relative;
+      z-index: 2;
     }
-    .problem-statement .ps-body em {
-      font-style: normal;
-      font-weight: 700;
+    .problem-text .highlight {
       color: var(--accent);
+      font-style: normal;
+    }
+    .problem-bg-mark {
+      position: absolute;
+      right: 20px;
+      bottom: -40px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 240px;
+      font-style: italic;
+      color: color-mix(in srgb, var(--accent) 5%, transparent);
+      line-height: 1;
+      user-select: none;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
@@ -381,8 +375,9 @@
       </div>
     </div>
     <div class="problem-statement" onclick="toggleProblemStatement()">
-      <strong>Problem Statement</strong>
-      <p class="ps-body">What will be the number of ice creams sold when the temperature is <em>35°C</em>?</p>
+      <div class="problem-label"><span class="line"></span> PROBLEM STATEMENT</div>
+      <div class="problem-text">What will be the number of ice creams sold when the temperature is <span class="highlight">35°C</span>?</div>
+      <div class="problem-bg-mark">?</div>
     </div>
   </div>
 
