@@ -562,9 +562,11 @@
       const isVisible = document.querySelector('.problem-statement').classList.contains('visible');
       if (!isVisible || !isTextFullyTyped) return; // Only allow after fully typed
 
-      showUncertainty = !showUncertainty;
+      if (showUncertainty) return; // Once activated, lock state (do not revert to line)
+
+      showUncertainty = true;
       if (scatterChart && scatterChart.data.datasets[1]) {
-        scatterChart.data.datasets[1].hidden = !showUncertainty;
+        scatterChart.data.datasets[1].hidden = false;
         scatterChart.update();
       }
     }
