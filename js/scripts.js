@@ -2090,7 +2090,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 13; // Simple Linear Regression
+      let currentSlideIdx = 14; // Best Fit Line
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
@@ -2119,6 +2119,7 @@
         'slideLinearNVar': 'Linear: n Variables',
         'slideMLModelsTitle': 'Ch. 4 — Title',
         'slideSimpleLinearRegression': 'Simple Linear Regression',
+        'slideBestFitLine': 'Best Fit Line',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2147,6 +2148,7 @@
         { id: 'slideLinearNVar', enabled: true },
         { id: 'slideMLModelsTitle', enabled: true },
         { id: 'slideSimpleLinearRegression', enabled: true },
+        { id: 'slideBestFitLine', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -2207,7 +2209,7 @@
       // Activate default slide on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideModelParams');
+        const idx = activeSlides.findIndex(el => el.id === 'slideBestFitLine');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -3356,7 +3358,7 @@
       updateNavigationButtons();
       
       // Default to Machine Learning Models title slide during development
-      const defaultSlideId = 'slideSimpleLinearRegression';
+      const defaultSlideId = 'slideBestFitLine';
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;

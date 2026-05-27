@@ -338,35 +338,32 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td>18.2</td><td class="data-price-cell">115</td></tr>
-                <tr><td>18.6</td><td class="data-price-cell">141</td></tr>
-                <tr><td>19.3</td><td class="data-price-cell">129</td></tr>
-                <tr><td>21.7</td><td class="data-price-cell">193</td></tr>
-                <tr><td>22.3</td><td class="data-price-cell">167</td></tr>
-                <tr><td>22.8</td><td class="data-price-cell">217</td></tr>
-                <tr><td>25.4</td><td class="data-price-cell">185</td></tr>
-                <tr><td>25.9</td><td class="data-price-cell">233</td></tr>
-                <tr><td>26.6</td><td class="data-price-cell">216</td></tr>
-                <tr><td>27.2</td><td class="data-price-cell">261</td></tr>
-                <tr><td>27.3</td><td class="data-price-cell">262</td></tr>
-                <tr><td>27.7</td><td class="data-price-cell">228</td></tr>
-                <tr><td>27.7</td><td class="data-price-cell">234</td></tr>
-                <tr><td>28.2</td><td class="data-price-cell">225</td></tr>
-                <tr><td>29.1</td><td class="data-price-cell">301</td></tr>
-                <tr><td>29.7</td><td class="data-price-cell">270</td></tr>
-                <tr><td>30.9</td><td class="data-price-cell">326</td></tr>
-                <tr><td>32.5</td><td class="data-price-cell">348</td></tr>
-                <tr><td>32.7</td><td class="data-price-cell">290</td></tr>
-                <tr><td>36.2</td><td class="data-price-cell">334</td></tr>
-                <tr><td>36.6</td><td class="data-price-cell">357</td></tr>
-                <tr><td>37</td><td class="data-price-cell">372</td></tr>
-                <tr><td>37.7</td><td class="data-price-cell">339</td></tr>
-                <tr><td>38.4</td><td class="data-price-cell">368</td></tr>
-                <tr><td>39.6</td><td class="data-price-cell">385</td></tr>
-                <tr><td>40.1</td><td class="data-price-cell">374</td></tr>
-                <tr><td>40.7</td><td class="data-price-cell">411</td></tr>
-                <tr><td>41.6</td><td class="data-price-cell">455</td></tr>
-                <tr><td>41.7</td><td class="data-price-cell">423</td></tr>
+                <tr><td>18.2</td><td class="data-price-cell">105</td></tr>
+                <tr><td>18.6</td><td class="data-price-cell">155</td></tr>
+                <tr><td>19.3</td><td class="data-price-cell">110</td></tr>
+                <tr><td>21.7</td><td class="data-price-cell">210</td></tr>
+                <tr><td>22.3</td><td class="data-price-cell">150</td></tr>
+                <tr><td>22.8</td><td class="data-price-cell">235</td></tr>
+                <tr><td>25.4</td><td class="data-price-cell">170</td></tr>
+                <tr><td>25.9</td><td class="data-price-cell">245</td></tr>
+                <tr><td>26.6</td><td class="data-price-cell">190</td></tr>
+                <tr><td>27.2</td><td class="data-price-cell">280</td></tr>
+                <tr><td>27.7</td><td class="data-price-cell">210</td></tr>
+                <tr><td>28.2</td><td class="data-price-cell">245</td></tr>
+                <tr><td>29.1</td><td class="data-price-cell">320</td></tr>
+                <tr><td>29.7</td><td class="data-price-cell">250</td></tr>
+                <tr><td>30.9</td><td class="data-price-cell">345</td></tr>
+                <tr><td>32.5</td><td class="data-price-cell">310</td></tr>
+                <tr><td>32.7</td><td class="data-price-cell">275</td></tr>
+                <tr><td>36.2</td><td class="data-price-cell">360</td></tr>
+                <tr><td>36.6</td><td class="data-price-cell">330</td></tr>
+                <tr><td>37</td><td class="data-price-cell">400</td></tr>
+                <tr><td>37.7</td><td class="data-price-cell">315</td></tr>
+                <tr><td>38.4</td><td class="data-price-cell">395</td></tr>
+                <tr><td>39.6</td><td class="data-price-cell">360</td></tr>
+                <tr><td>40.1</td><td class="data-price-cell">410</td></tr>
+                <tr><td>40.7</td><td class="data-price-cell">380</td></tr>
+                <tr><td>41.6</td><td class="data-price-cell">470</td></tr>
               </tbody>
             </table>
           </div>
@@ -588,9 +585,9 @@
 
     // Theme alignment logic
     const PALETTE_SETS = {
-      'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#e27b5e' },
-      'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#2e8b57' },
-      'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#d0465a' },
+      'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#b84c30' },
+      'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#166534' },
+      'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#c23348' },
       'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b' },
       'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635' },
     };
@@ -613,12 +610,12 @@
 
     // --- Chart.js Logic ---
     const rawData = [
-      [18.2, 115], [18.6, 141], [19.3, 129], [21.7, 193], [22.3, 167],
-      [22.8, 217], [25.4, 185], [25.9, 233], [26.6, 216], [27.2, 261],
-      [27.3, 262], [27.7, 228], [27.7, 234], [28.2, 225], [29.1, 301],
-      [29.7, 270], [30.9, 326], [32.5, 348], [32.7, 290],
-      [36.2, 334], [36.6, 357], [37, 372], [37.7, 339], [38.4, 368],
-      [39.6, 385], [40.1, 374], [40.7, 411], [41.6, 455], [41.7, 423]
+      [18.2, 105], [18.6, 155], [19.3, 110], [21.7, 210], [22.3, 150],
+      [22.8, 235], [25.4, 170], [25.9, 245], [26.6, 190], [27.2, 280],
+      [27.7, 210], [28.2, 245], [29.1, 320], [29.7, 250], [30.9, 345],
+      [32.5, 310], [32.7, 275], [36.2, 360], [36.6, 330], [37, 400],
+      [37.7, 315], [38.4, 395], [39.6, 360], [40.1, 410], [40.7, 380],
+      [41.6, 470]
     ];
     
     const chartData = rawData.map(p => ({ x: p[0], y: p[1] }));
@@ -850,12 +847,12 @@
     function downloadCSV() {
       const rows = [
         ["Temperature (°C)", "Ice Creams Sold"],
-        [18.2, 115], [18.6, 141], [19.3, 129], [21.7, 193], [22.3, 167],
-        [22.8, 217], [25.4, 185], [25.9, 233], [26.6, 216], [27.2, 261],
-        [27.3, 262], [27.7, 228], [27.7, 234], [28.2, 225], [29.1, 301],
-        [29.7, 270], [30.9, 326], [32.5, 348], [32.7, 290],
-        [36.2, 334], [36.6, 357], [37, 372], [37.7, 339], [38.4, 368],
-        [39.6, 385], [40.1, 374], [40.7, 411], [41.6, 455], [41.7, 423]
+        [18.2, 105], [18.6, 155], [19.3, 110], [21.7, 210], [22.3, 150],
+        [22.8, 235], [25.4, 170], [25.9, 245], [26.6, 190], [27.2, 280],
+        [27.7, 210], [28.2, 245], [29.1, 320], [29.7, 250], [30.9, 345],
+        [32.5, 310], [32.7, 275], [36.2, 360], [36.6, 330], [37, 400],
+        [37.7, 315], [38.4, 395], [39.6, 360], [40.1, 410], [40.7, 380],
+        [41.6, 470]
       ];
       let csvContent = "data:text/csv;charset=utf-8," 
           + rows.map(e => e.join(",")).join("\n");

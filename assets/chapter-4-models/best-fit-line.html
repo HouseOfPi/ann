@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Fit Line | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=STIX+Two+Math&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #000000;
+      --fg: #eef2f8;
+      --accent: #c97a4a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 50px 40px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      gap: 60px;
+      padding: 0 40px;
+    }
+
+    .controls-container {
+      width: 580px;
+      height: 540px;
+      padding: 24px;
+      border-radius: 20px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 20px 50px -25px color-mix(in srgb, var(--bg) 70%, transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      flex-shrink: 0;
+    }
+
+    .description {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+    }
+    .description strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .equation-box {
+      background: color-mix(in srgb, var(--fg) 2%, transparent);
+      border: 1px dashed color-mix(in srgb, var(--fg) 12%, transparent);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-size: 24px;
+      color: var(--fg);
+    }
+    .equation-box span.highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+    }
+    .slider-header span.val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 6px;
+      background: color-mix(in srgb, var(--fg) 12%, transparent);
+      border-radius: 3px;
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform 0.15s ease, background-color 0.15s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .loss-section {
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+    }
+    .loss-header {
+      display: flex;
+      align-items: center;
+    }
+    .loss-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+    }
+    .loss-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .loss-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 800;
+      transition: color 0.3s ease;
+    }
+    .loss-status {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .loss-good { color: #10b981; }
+    .loss-good-bg { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .loss-warn { color: #f59e0b; }
+    .loss-warn-bg { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+    .loss-bad { color: #ef4444; }
+    .loss-bad-bg { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: color-mix(in srgb, var(--fg) 80%, transparent);
+      user-select: none;
+    }
+    .checkbox-container input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .fit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .fit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 45%, transparent);
+      filter: brightness(1.08);
+    }
+    .fit-btn:active {
+      transform: translateY(0);
+    }
+    .fit-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .chart-container-outer {
+      width: 680px;
+      height: 540px;
+      border-radius: 20px;
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      box-shadow: 0 20px 50px -25px color-mix(in srgb, var(--bg) 70%, transparent);
+      padding: 24px 32px 32px;
+      position: relative;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Machine Learning Models" title="The Best Fit <em>Line</em>"></page-title>
+
+  <div class="body">
+    <div class="controls-container">
+
+      <div class="equation-box">
+        ŷ = <span class="highlight">w</span> · x + <span class="highlight">b</span>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Weight (w)</span>
+          <span id="val-w" class="val">7.61</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" id="slide-w" min="0" max="25" step="0.01" value="7.61" oninput="hasStarted=true; updateLine()">
+        </div>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span>Bias (b)</span>
+          <span id="val-b" class="val">-28.1</span>
+        </div>
+        <div class="slider-row">
+          <input type="range" id="slide-b" min="-200" max="100" step="0.1" value="-28.1" oninput="hasStarted=true; updateLine()">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <label class="checkbox-container">
+          <input type="checkbox" id="show-residuals" onchange="toggleResiduals()">
+          Show Error Residuals
+        </label>
+        <button class="fit-btn" onclick="animateToBestFit()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+          </svg>
+          Fit Line Automatically
+        </button>
+      </div>
+
+      <!-- MSE Formula and Value Display -->
+      <div style="margin-top: 36px; padding: 20px 24px; background: rgba(0,0,0,0.02); border: 1px dashed color-mix(in srgb, var(--fg) 15%, transparent); border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div style="font-family: 'Times New Roman', Times, serif; font-size: 20px; color: var(--fg); display: flex; align-items: center; gap: 8px;">
+          <span style="font-style: italic; font-weight: bold; font-family: 'Inter', sans-serif; font-size: 16px;">MSE</span> = 
+          <div style="display: flex; flex-direction: column; align-items: center; font-size: 14px; margin: 0 4px;">
+            <span style="border-bottom: 1px solid var(--fg); padding: 0 4px;">1</span>
+            <span style="font-style: italic;">N</span>
+          </div>
+          <span style="font-size: 28px; line-height: 1;">&sum;</span>
+          <span style="font-size: 18px;">( y<sub style="font-size: 11px; font-style: italic;">i</sub> &minus; &#375;<sub style="font-size: 11px; font-style: italic;">i</sub> )&sup2;</span>
+        </div>
+        <div style="font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: color-mix(in srgb, var(--fg) 60%, transparent); display: flex; align-items: center; gap: 8px;">
+          Value: 
+          <span id="mse-display-val" style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 800; color: color-mix(in srgb, var(--fg) 30%, transparent);">---</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container-outer" style="position: relative; margin-top: 15px;">
+      <div style="position: relative; flex: 1; min-height: 400px; width: 100%;">
+        <div style="position: absolute; top: -10px; left: 30px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;">
+          Ice Creams Sold
+        </div>
+        <div style="position: absolute; bottom: 5px; right: 15px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;">
+          Temperature (°C)
+        </div>
+        <canvas id="scatterChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const rawData = [
+      [18.2, 105], [18.6, 155], [21.7, 210], [22.3, 150],
+      [22.8, 235], [25.4, 170], [27.2, 280], [27.7, 210],
+      [28.2, 245], [29.1, 320], [29.7, 250], [30.9, 345],
+      [32.5, 310], [32.7, 275], [36.2, 360], [36.6, 330],
+      [37.7, 315], [38.4, 395], [40.1, 410], [40.7, 380],
+      [41.6, 470]
+    ];
+
+    const chartPoints = rawData.map(p => ({ x: p[0], y: p[1] }));
+    const bestFitW = 12.11;
+    const bestFitB = -86.00;
+    let scatterChart;
+    let hasStarted = false;
+    let showResiduals = false;
+    let currentW = 7.61;
+    let currentB = -28.1;
+    let selectedPointIndex = -1;
+
+    // Custom plugin to draw vertical residual/error lines
+    const residualsPlugin = {
+      id: 'residualsPlugin',
+      afterDatasetsDraw: (chart) => {
+        const ctx = chart.ctx;
+        const xAxis = chart.scales.x;
+        const yAxis = chart.scales.y;
+        if (!xAxis || !yAxis) return;
+
+        ctx.save();
+        
+        if (showResiduals) {
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 1.2;
+          ctx.setLineDash([3, 3]);
+
+          rawData.forEach((pt, idx) => {
+            if (idx === selectedPointIndex) return; // skip selected
+            const x = pt[0];
+            const y = pt[1];
+            const yHat = currentW * x + currentB;
+
+            const xPixel = xAxis.getPixelForValue(x);
+            const yPixelActual = yAxis.getPixelForValue(y);
+            const yPixelPred = yAxis.getPixelForValue(yHat);
+
+            ctx.beginPath();
+            ctx.moveTo(xPixel, yPixelActual);
+            ctx.lineTo(xPixel, yPixelPred);
+            ctx.stroke();
+          });
+        }
+
+        // Draw selected point details
+        if (selectedPointIndex >= 0) {
+            const pt = rawData[selectedPointIndex];
+            const x = pt[0];
+            const y = pt[1];
+            const yHat = currentW * x + currentB;
+            
+            const xPixel = xAxis.getPixelForValue(x);
+            const yPixelActual = yAxis.getPixelForValue(y);
+            const yPixelPred = yAxis.getPixelForValue(yHat);
+            const yAxisRightEdge = xAxis.left; // x coordinate of the y-axis
+
+            // Draw thicker error line for selected point
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(xPixel, yPixelActual);
+            ctx.lineTo(xPixel, yPixelPred);
+            ctx.stroke();
+            
+            // Draw horizontal dashed line for actual y
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(xPixel, yPixelActual);
+            ctx.lineTo(yAxisRightEdge, yPixelActual);
+            ctx.stroke();
+            
+            // Draw horizontal dashed line for predicted y
+            ctx.strokeStyle = '#6b7280';
+            ctx.beginPath();
+            ctx.moveTo(xPixel, yPixelPred);
+            ctx.lineTo(yAxisRightEdge, yPixelPred);
+            ctx.stroke();
+            
+            // Add y_i label
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = "italic bold 17px 'Inter', sans-serif";
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText("y\u1D62", yAxisRightEdge - 8, yPixelActual);
+            
+            // Add y_hat_i label
+            ctx.fillStyle = '#6b7280';
+            ctx.fillText("\u0177\u1D62", yAxisRightEdge - 8, yPixelPred);
+            
+            // Add diff text explicitly next to the error line
+            ctx.fillStyle = '#ef4444';
+            ctx.font = "italic bold 17px 'Inter', sans-serif";
+            ctx.textAlign = 'left';
+            const diffText = "e\u1D62";
+            const midY = (yPixelActual + yPixelPred) / 2;
+            ctx.fillText(diffText, xPixel + 8, midY);
+        }
+
+        ctx.restore();
+      }
+    };
+
+    function getLineDataPoints(w, b) {
+      if (!hasStarted) return [];
+      // Draw line from x = 15 to x = 45
+      return [
+        { x: 15, y: w * 15 + b },
+        { x: 45, y: w * 45 + b }
+      ];
+    }
+
+    function calculateLoss(w, b) {
+      let sumSqErr = 0;
+      rawData.forEach(pt => {
+        const x = pt[0];
+        const y = pt[1];
+        const yHat = w * x + b;
+        const err = y - yHat;
+        sumSqErr += err * err;
+      });
+      return sumSqErr / rawData.length;
+    }
+
+    function updateLine() {
+      currentW = parseFloat(document.getElementById('slide-w').value);
+      currentB = parseFloat(document.getElementById('slide-b').value);
+
+      // Update UI displays
+      document.getElementById('val-w').textContent = currentW.toFixed(2);
+      document.getElementById('val-b').textContent = currentB.toFixed(1);
+
+      if (!hasStarted) return;
+      
+      // Update Line in chart
+      if (scatterChart) {
+        scatterChart.data.datasets[1].data = getLineDataPoints(currentW, currentB);
+        scatterChart.update('none'); // Update without full entry animation
+      }
+
+      // Compute and display loss
+      const loss = calculateLoss(currentW, currentB);
+      const roundedLoss = Math.round(loss).toLocaleString();
+      
+      // Style badge based on distance to optimal loss (1268.86)
+      const diff = loss - 1268.86;
+      let lossColor = '';
+      if (diff < 60) {
+        lossColor = '#10b981';
+      } else if (diff < 1000) {
+        lossColor = '#f59e0b';
+      } else {
+        lossColor = '#ef4444';
+      }
+      
+      const mseDisplayValEl = document.getElementById('mse-display-val');
+      if (mseDisplayValEl) {
+        mseDisplayValEl.textContent = roundedLoss;
+        mseDisplayValEl.style.color = lossColor;
+      }
+    }
+
+    function toggleResiduals() {
+      showResiduals = document.getElementById('show-residuals').checked;
+      if (scatterChart) {
+        scatterChart.update('none');
+      }
+    }
+
+    let animInterval = null;
+    function animateToBestFit() {
+      hasStarted = true;
+      if (animInterval) clearInterval(animInterval);
+
+      const startW = currentW;
+      const startB = currentB;
+      const steps = 40;
+      let step = 0;
+
+      animInterval = setInterval(() => {
+        step++;
+        const t = step / steps;
+        
+        // Easing: easeInOutQuad
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+        const w = startW + (bestFitW - startW) * ease;
+        const b = startB + (bestFitB - startB) * ease;
+
+        document.getElementById('slide-w').value = w;
+        document.getElementById('slide-b').value = b;
+
+        updateLine();
+
+        if (step >= steps) {
+          clearInterval(animInterval);
+          animInterval = null;
+        }
+      }, 20);
+    }
+
+    function initChart() {
+      const canvas = document.getElementById('scatterChart');
+      const ctx = canvas.getContext('2d');
+      const rootStyles = getComputedStyle(document.documentElement);
+      const fgColor = rootStyles.getPropertyValue('--fg').trim() || '#eef2f8';
+      const accentColor = rootStyles.getPropertyValue('--accent').trim() || '#c97a4a';
+
+      scatterChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Ice Cream Sales',
+              data: chartPoints,
+              backgroundColor: accentColor,
+              borderColor: accentColor,
+              pointRadius: 5.5,
+              pointHoverRadius: 8.5,
+              pointBackgroundColor: colorMix(accentColor, 'transparent', 0.2),
+              zIndex: 3
+            },
+            {
+              label: 'Regression Line',
+              data: getLineDataPoints(currentW, currentB),
+              type: 'line',
+              borderColor: accentColor,
+              borderWidth: 3,
+              fill: false,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              showLine: true,
+              zIndex: 2
+            }
+          ]
+        },
+        options: {
+          layout: { padding: { left: 30, top: 20, bottom: 20, right: 10 } },
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 1000, easing: 'easeOutQuart' },
+          onClick: (event, elements) => {
+            if (!hasStarted) {
+              hasStarted = true;
+              updateLine();
+              return;
+            }
+            
+            if (elements.length > 0) {
+              const datasetIndex = elements[0].datasetIndex;
+              if (datasetIndex === 0) {
+                const index = elements[0].index;
+                selectedPointIndex = (selectedPointIndex === index) ? -1 : index;
+                scatterChart.update('none');
+              }
+            } else {
+              selectedPointIndex = -1;
+              scatterChart.update('none');
+            }
+          },
+          onHover: (event, elements) => {
+            if (event.native && event.native.target) {
+                event.native.target.style.cursor = (elements.length > 0 && elements[0].datasetIndex === 0) ? 'pointer' : 'default';
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              min: 15,
+              max: 45,
+              title: { display: false, text: 'Temperature (°C)', color: fgColor, font: { family: 'Inter', size: 15, weight: 600 } },
+              ticks: { display: false, stepSize: 5, color: fgColor, font: { family: 'Inter', size: 12.5, weight: 500 } },
+              grid: { color: colorMix(fgColor, 'transparent', 0.85), borderDash: [2, 2] }
+            },
+            y: {
+              min: 50,
+              max: 500,
+              title: { display: false, text: 'Ice Creams Sold', color: fgColor, font: { family: 'Inter', size: 15, weight: 600 } },
+              ticks: { display: false, stepSize: 50, color: fgColor, font: { family: 'Inter', size: 12.5, weight: 500 } },
+              grid: { color: colorMix(fgColor, 'transparent', 0.85), borderDash: [2, 2] }
+            }
+          }
+        },
+        plugins: [residualsPlugin]
+      });
+
+      updateLine();
+    }
+
+    // Helper to simulate CSS color-mix for ChartJS
+    function colorMix(hex, ignored, alpha) {
+      if(hex.startsWith('#')) {
+         const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+         return `rgba(${r},${g},${b},${1-alpha})`;
+      }
+      return hex;
+    }
+
+    function parseHex(hex) {
+      const cleanHex = hex.trim();
+      if (cleanHex.startsWith('#')) {
+        if (cleanHex.length === 4) {
+          const r = parseInt(cleanHex[1] + cleanHex[1], 16);
+          const g = parseInt(cleanHex[2] + cleanHex[2], 16);
+          const b = parseInt(cleanHex[3] + cleanHex[3], 16);
+          return { r, g, b };
+        } else {
+          const r = parseInt(cleanHex.slice(1, 3), 16);
+          const g = parseInt(cleanHex.slice(3, 5), 16);
+          const b = parseInt(cleanHex.slice(5, 7), 16);
+          return { r, g, b };
+        }
+      }
+      return { r: 238, g: 242, b: 248 };
+    }
+
+    function interpolateColor(color1Hex, color2Hex, factor) {
+      const c1 = parseHex(color1Hex);
+      const c2 = parseHex(color2Hex);
+      const r = Math.round(c1.r + (c2.r - c1.r) * factor);
+      const g = Math.round(c1.g + (c2.g - c1.g) * factor);
+      const b = Math.round(c1.b + (c2.b - c1.b) * factor);
+      return `rgb(${r},${g},${b})`;
+    }
+
+    function updateChartColors() {
+      if (!scatterChart) return;
+      const rootStyles = getComputedStyle(document.documentElement);
+      const fgColor = rootStyles.getPropertyValue('--fg').trim();
+      const accentColor = rootStyles.getPropertyValue('--accent').trim();
+      const bgColor = rootStyles.getPropertyValue('--bg').trim();
+
+      scatterChart.data.datasets[0].backgroundColor = colorMix(accentColor, 'transparent', 0.2);
+      scatterChart.data.datasets[0].borderColor = accentColor;
+      scatterChart.data.datasets[1].borderColor = accentColor;
+      
+      scatterChart.options.scales.x.title.color = fgColor;
+      scatterChart.options.scales.y.title.color = fgColor;
+      scatterChart.options.scales.x.ticks.color = fgColor;
+      scatterChart.options.scales.y.ticks.color = fgColor;
+      scatterChart.options.scales.x.grid.color = colorMix(fgColor, 'transparent', 0.85);
+      scatterChart.options.scales.y.grid.color = colorMix(fgColor, 'transparent', 0.85);
+
+      if (scatterChart.options.plugins && scatterChart.options.plugins.tooltip) {
+        const tooltip = scatterChart.options.plugins.tooltip;
+        tooltip.backgroundColor = interpolateColor(bgColor, fgColor, 0.08);
+        tooltip.borderColor = colorMix(accentColor, 'transparent', 0.5);
+        tooltip.titleColor = accentColor;
+        tooltip.bodyColor = fgColor;
+      }
+
+      scatterChart.update();
+    }
+
+    window.addEventListener('DOMContentLoaded', initChart);
+
+    // Theme alignment logic
+    const PALETTE_SETS = {
+      'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#b84c30' },
+      'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#166534' },
+      'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#c23348' },
+      'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b' },
+      'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635' },
+    };
+
+    function applyPalette(name) {
+      const set = PALETTE_SETS[name] || PALETTE_SETS['Navy Lime'];
+      const root = document.documentElement;
+      root.style.setProperty('--bg', set.bg);
+      root.style.setProperty('--fg', set.fg);
+      root.style.setProperty('--accent', set.accent);
+      setTimeout(updateChartColors, 50);
+    }
+
+    window.addEventListener('message', (e) => {
+      const data = e.data || {};
+      if (data.type !== 'SET_THEME') return;
+      const name = data.palette || (data.mode === 'dark' ? 'Navy Lime' : 'Warm Linen');
+      applyPalette(name);
+    });
+
+  </script>
+</body>
+</html>
