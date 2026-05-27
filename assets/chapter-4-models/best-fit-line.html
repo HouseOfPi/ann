@@ -241,6 +241,83 @@
       display: flex;
       flex-direction: column;
     }
+
+    /* MSE value card (inner) */
+    .mse-value-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 96px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1.5px solid color-mix(in srgb, var(--fg) 15%, transparent);
+      background: var(--bg);
+      user-select: none;
+    }
+    .mse-value-card .mse-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 78%, transparent);
+    }
+
+    /* Clickable axis labels — kept as plain text */
+    .axis-label {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Wrapper holds the trigger overlay + card. Card is always laid out;
+       its visibility is toggled by opacity only. */
+    .mse-loss-wrapper {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      min-height: 88px;
+    }
+    /* Invisible double-click trigger overlay — always present, full area */
+    .mse-trigger {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: transparent;
+    }
+    /* Card transitions */
+    .mse-loss-card {
+      transition: opacity 0.35s ease, transform 0.35s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      transform-origin: center;
+    }
+    .mse-loss-wrapper.is-collapsed .mse-loss-card {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+      pointer-events: none;
+    }
+    .mse-loss-wrapper:not(.is-collapsed) .mse-loss-card {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .mse-loss-wrapper:not(.is-collapsed):hover .mse-loss-card {
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent) !important;
+    }
+    .mse-loss-card.is-highlighted {
+      transform: scale(1.06);
+      border-color: color-mix(in srgb, var(--accent) 75%, transparent) !important;
+      box-shadow:
+        0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent),
+        0 18px 45px -12px color-mix(in srgb, var(--accent) 55%, transparent);
+      z-index: 5;
+      position: relative;
+    }
+    .mse-loss-card.is-highlighted #mse-display-val {
+      animation: msePulse 1.4s ease-in-out infinite;
+    }
+    @keyframes msePulse {
+      0%, 100% { text-shadow: 0 0 0 transparent; }
+      50% { text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 80%, transparent); }
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -259,20 +336,20 @@
       <div class="slider-group">
         <div class="slider-header">
           <span>Weight (w)</span>
-          <span id="val-w" class="val">7.61</span>
+          <span id="val-w" class="val">8.32</span>
         </div>
         <div class="slider-row">
-          <input type="range" id="slide-w" min="0" max="25" step="0.01" value="7.61" oninput="hasStarted=true; updateLine()">
+          <input type="range" id="slide-w" min="0" max="25" step="0.01" value="8.32" oninput="hasStarted=true; updateLine()">
         </div>
       </div>
 
       <div class="slider-group">
         <div class="slider-header">
           <span>Bias (b)</span>
-          <span id="val-b" class="val">-28.1</span>
+          <span id="val-b" class="val">9.8</span>
         </div>
         <div class="slider-row">
-          <input type="range" id="slide-b" min="-200" max="100" step="0.1" value="-28.1" oninput="hasStarted=true; updateLine()">
+          <input type="range" id="slide-b" min="-200" max="100" step="0.1" value="9.8" oninput="hasStarted=true; updateLine()">
         </div>
       </div>
 
@@ -281,42 +358,65 @@
           <input type="checkbox" id="show-residuals" onchange="toggleResiduals()">
           Show Error Residuals
         </label>
-        <button class="fit-btn" onclick="animateToBestFit()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-          </svg>
-          Fit Line Automatically
-        </button>
       </div>
 
-      <!-- MSE Formula and Value Display -->
-      <div style="margin-top: 36px; padding: 20px 24px; background: rgba(0,0,0,0.02); border: 1px dashed color-mix(in srgb, var(--fg) 15%, transparent); border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
-        <div style="font-family: 'Times New Roman', Times, serif; font-size: 20px; color: var(--fg); display: flex; align-items: center; gap: 8px;">
-          <span style="font-style: italic; font-weight: bold; font-family: 'Inter', sans-serif; font-size: 16px;">MSE</span> = 
-          <div style="display: flex; flex-direction: column; align-items: center; font-size: 14px; margin: 0 4px;">
-            <span style="border-bottom: 1px solid var(--fg); padding: 0 4px;">1</span>
-            <span style="font-style: italic;">N</span>
+      <!-- MSE Formula and Value Display (wrapper handles collapsed/expanded) -->
+      <div id="mse-loss-wrapper" class="mse-loss-wrapper is-collapsed" title="Double-click to reveal Loss Function" style="margin-top: 28px;">
+        <!-- Invisible trigger area (double-click to reveal) -->
+        <div class="mse-trigger" aria-hidden="true"></div>
+
+        <!-- Expanded loss card -->
+      <div id="mse-loss-card" class="mse-loss-card" style="border-radius: 16px; border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); background: color-mix(in srgb, var(--accent) 5%, transparent);">
+        <!-- Header bar -->
+        <div style="padding: 9px 20px; background: color-mix(in srgb, var(--accent) 12%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); border-radius: 15px 15px 0 0; display: flex; align-items: center; gap: 8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--accent); flex-shrink:0;">
+            <path d="M3 3h18M3 9h18M3 15h10M3 21h6"/>
+          </svg>
+          <span style="font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);">Loss Function</span>
+        </div>
+        <!-- Body -->
+        <div style="padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+          <!-- Formula -->
+          <div style="display: flex; align-items: center; gap: 10px; font-family: 'STIX Two Math', 'Cormorant Garamond', serif; font-size: 22px; color: var(--fg);">
+            <span style="font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: var(--accent); white-space: nowrap;">Mean Square Error</span>
+            <span style="color: color-mix(in srgb, var(--fg) 50%, transparent); font-size: 18px;">=</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <!-- 1/N fraction -->
+              <div style="display: inline-flex; flex-direction: column; align-items: center; font-size: 13px; line-height: 1.2; font-family: 'Inter', sans-serif;">
+                <span style="border-bottom: 1.5px solid color-mix(in srgb, var(--fg) 70%, transparent); padding: 0 5px; font-weight: 600;">1</span>
+                <span style="padding: 0 5px; font-style: italic; color: color-mix(in srgb, var(--fg) 70%, transparent);">N</span>
+              </div>
+              <!-- Sigma -->
+              <span style="font-size: 30px; line-height: 1; color: color-mix(in srgb, var(--fg) 80%, transparent); margin: 0 2px;">&sum;</span>
+              <!-- Term -->
+              <span style="font-size: 19px; color: var(--fg);">
+                ( y<sub style="font-size: 11px; font-style: italic; color: color-mix(in srgb, var(--fg) 70%, transparent);">i</sub>
+                <span style="color: color-mix(in srgb, var(--fg) 50%, transparent); font-size: 16px;">&minus;</span>
+                &#375;<sub style="font-size: 11px; font-style: italic; color: color-mix(in srgb, var(--fg) 70%, transparent);">i</sub> )<sup style="font-size: 13px;">2</sup>
+              </span>
+            </div>
           </div>
-          <span style="font-size: 28px; line-height: 1;">&sum;</span>
-          <span style="font-size: 18px;">( y<sub style="font-size: 11px; font-style: italic;">i</sub> &minus; &#375;<sub style="font-size: 11px; font-style: italic;">i</sub> )&sup2;</span>
+          <!-- Divider -->
+          <div style="width: 1px; height: 44px; background: color-mix(in srgb, var(--accent) 25%, transparent); flex-shrink: 0;"></div>
+          <!-- Value -->
+          <div class="mse-value-card">
+            <span class="mse-label">Current</span>
+            <span id="mse-display-val" style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--fg); letter-spacing: -0.02em; transition: color 0.4s;">---</span>
+          </div>
         </div>
-        <div style="font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: color-mix(in srgb, var(--fg) 60%, transparent); display: flex; align-items: center; gap: 8px;">
-          Value: 
-          <span id="mse-display-val" style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 800; color: color-mix(in srgb, var(--fg) 30%, transparent);">---</span>
-        </div>
+      </div>
       </div>
     </div>
 
-    <div class="chart-container-outer" style="position: relative; margin-top: 15px;">
+    <div class="chart-container-outer" style="position: relative; margin-top: 15px; padding-top: 32px;">
       <div style="position: relative; flex: 1; min-height: 400px; width: 100%;">
-        <div style="position: absolute; top: -10px; left: 30px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;">
+        <div id="y-axis-label" class="axis-label" style="position: absolute; top: -16px; left: 30px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;" title="Click to toggle axis values">
           Ice Creams Sold
         </div>
-        <div style="position: absolute; bottom: 5px; right: 15px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;">
+        <div id="x-axis-label" class="axis-label" style="position: absolute; bottom: 5px; right: 15px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--fg); z-index: 10;" title="Click to toggle axis values">
           Temperature (°C)
         </div>
-        <canvas id="scatterChart"></canvas>
+        <canvas id="scatterChart" style="cursor: pointer;"></canvas>
       </div>
     </div>
   </div>
@@ -337,11 +437,13 @@
     let scatterChart;
     let hasStarted = false;
     let showResiduals = false;
-    let currentW = 7.61;
-    let currentB = -28.1;
+    let currentW = 8.32;
+    let currentB = 9.8;
     let selectedPointIndex = -1;
 
     // Custom plugin to draw vertical residual/error lines
+    let showCrossAt35 = false;
+
     const residualsPlugin = {
       id: 'residualsPlugin',
       afterDatasetsDraw: (chart) => {
@@ -351,6 +453,45 @@
         if (!xAxis || !yAxis) return;
 
         ctx.save();
+
+        // Green dot marker on the regression line at x = 35
+        if (showCrossAt35 && hasStarted) {
+          const x35 = 35;
+          const yOnLine = currentW * x35 + currentB;
+          const px = xAxis.getPixelForValue(x35);
+          const py = yAxis.getPixelForValue(yOnLine);
+          const radius = 8;
+
+          // Dotted guide lines from the green dot down to x-axis and left to y-axis
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([5, 5]);
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px, yAxis.bottom);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(xAxis.left, py);
+          ctx.stroke();
+
+          ctx.setLineDash([]);
+
+          // White halo for legibility against the line
+          ctx.beginPath();
+          ctx.arc(px, py, radius + 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+
+          // Green dot
+          ctx.beginPath();
+          ctx.arc(px, py, radius, 0, Math.PI * 2);
+          ctx.fillStyle = '#10b981';
+          ctx.fill();
+          ctx.strokeStyle = '#047857';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
         
         if (showResiduals) {
           ctx.strokeStyle = '#ef4444';
@@ -475,7 +616,7 @@
       // Compute and display loss
       const loss = calculateLoss(currentW, currentB);
       const roundedLoss = Math.round(loss).toLocaleString();
-      
+
       // Style badge based on distance to optimal loss (1268.86)
       const diff = loss - 1268.86;
       let lossColor = '';
@@ -486,7 +627,7 @@
       } else {
         lossColor = '#ef4444';
       }
-      
+
       const mseDisplayValEl = document.getElementById('mse-display-val');
       if (mseDisplayValEl) {
         mseDisplayValEl.textContent = roundedLoss;
@@ -579,7 +720,7 @@
               updateLine();
               return;
             }
-            
+
             if (elements.length > 0) {
               const datasetIndex = elements[0].datasetIndex;
               if (datasetIndex === 0) {
@@ -691,6 +832,63 @@
     }
 
     window.addEventListener('DOMContentLoaded', initChart);
+
+    // MSE value card — click to toggle highlight
+    // Chart — double-click to auto-fit
+    window.addEventListener('DOMContentLoaded', () => {
+      const wrapper = document.getElementById('mse-loss-wrapper');
+      if (wrapper) {
+        wrapper.addEventListener('dblclick', () => {
+          wrapper.classList.toggle('is-collapsed');
+        });
+      }
+      const canvas = document.getElementById('scatterChart');
+      if (canvas) {
+        canvas.addEventListener('dblclick', () => {
+          if (typeof animateToBestFit === 'function') animateToBestFit();
+        });
+
+        // Native click — detect tap on the "35" x-axis tick label.
+        // Uses click position relative to the chart canvas; matches X=35
+        // pixel and a generous band below the chart area.
+        canvas.addEventListener('click', (e) => {
+          if (!scatterChart) return;
+          const xAxis = scatterChart.scales.x;
+          const yAxis = scatterChart.scales.y;
+          if (!xAxis || !yAxis) return;
+          const rect = canvas.getBoundingClientRect();
+          const localX = e.clientX - rect.left;
+          const localY = e.clientY - rect.top;
+          const x35Px = xAxis.getPixelForValue(35);
+          // Tick label band: from just above x-axis bottom edge to end of canvas
+          const tickBandTop = yAxis.bottom - 2;
+          const tickBandBottom = rect.height;
+          const inTickBand = localY >= tickBandTop && localY <= tickBandBottom;
+          const nearX35 = Math.abs(localX - x35Px) < 24;
+          if (inTickBand && nearX35) {
+            showCrossAt35 = !showCrossAt35;
+            scatterChart.update('none');
+          }
+        });
+      }
+
+      // Axis labels — click toggles BOTH axis tick values together
+      const toggleBothAxisTicks = () => {
+        if (!scatterChart) return;
+        const xScale = scatterChart.options.scales.x;
+        const yScale = scatterChart.options.scales.y;
+        if (!xScale || !yScale) return;
+        const currentlyVisible = xScale.ticks && xScale.ticks.display !== false;
+        const next = !currentlyVisible;
+        xScale.ticks = { ...(xScale.ticks || {}), display: next };
+        yScale.ticks = { ...(yScale.ticks || {}), display: next };
+        scatterChart.update('none');
+      };
+      const xLabel = document.getElementById('x-axis-label');
+      const yLabel = document.getElementById('y-axis-label');
+      if (xLabel) xLabel.addEventListener('click', toggleBothAxisTicks);
+      if (yLabel) yLabel.addEventListener('click', toggleBothAxisTicks);
+    });
 
     // Theme alignment logic
     const PALETTE_SETS = {

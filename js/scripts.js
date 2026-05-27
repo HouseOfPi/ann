@@ -2120,6 +2120,7 @@
         'slideMLModelsTitle': 'Ch. 4 — Title',
         'slideSimpleLinearRegression': 'Simple Linear Regression',
         'slideBestFitLine': 'Best Fit Line',
+        'slidePythonImplementation': 'Python Implementation',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2149,6 +2150,7 @@
         { id: 'slideMLModelsTitle', enabled: true },
         { id: 'slideSimpleLinearRegression', enabled: true },
         { id: 'slideBestFitLine', enabled: true },
+        { id: 'slidePythonImplementation', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
