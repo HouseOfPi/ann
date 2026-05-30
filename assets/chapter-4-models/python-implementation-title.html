@@ -1286,6 +1286,41 @@ body.predict-mode .predict-result > .val { display: none; }
 .card {
   will-change: opacity, transform, filter;
 }
+
+/* ── Code Tooltip ── */
+.code-tooltip {
+  position: fixed;
+  display: none;
+  width: 594px;
+  max-width: 95vw;
+  box-sizing: border-box;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+  z-index: 9999;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  transform: scale(0.96);
+  opacity: 0;
+}
+.code-tooltip img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+.code-tooltip.active {
+  display: block;
+  transform: scale(1);
+  opacity: 1;
+}
+body.light .code-tooltip {
+  background: rgba(248, 246, 240, 0.98);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+}
 </style>
 <link rel="stylesheet" href="../shared/page-title.css">
 <script defer src="../shared/page-title.js"></script>
@@ -1309,9 +1344,9 @@ body.predict-mode .predict-result > .val { display: none; }
         </div>
         <div class="card-divider"></div>
         <div class="bullets">
-          <div class="bullet"><i data-lucide="import"></i><span>Import your dataset from various sources</span></div>
+          <div class="bullet" id="import-dataset-bullet"><i data-lucide="import"></i><span>Import your dataset from various sources</span></div>
           <div class="bullet"><i data-lucide="eraser"></i><span>Clean & fix data inconsistencies</span></div>
-          <div class="bullet"><i data-lucide="split"></i><span>Split into training & test sets</span></div>
+          <div class="bullet" id="split-data-bullet"><i data-lucide="split"></i><span>Split into training & test sets</span></div>
         </div>
       </div>
     </div>
@@ -1331,9 +1366,9 @@ body.predict-mode .predict-result > .val { display: none; }
         </div>
         <div class="card-divider"></div>
         <div class="bullets">
-          <div class="bullet"><i data-lucide="pencil-ruler"></i><span>Select model architecture</span></div>
-          <div class="bullet"><i data-lucide="zap"></i><span>Train on the patterns in data</span></div>
-          <div class="bullet"><i data-lucide="eye"></i><span>Predict on new, unseen features</span></div>
+          <div class="bullet" id="select-model-bullet"><i data-lucide="pencil-ruler"></i><span>Select model architecture</span></div>
+          <div class="bullet" id="train-model-bullet"><i data-lucide="zap"></i><span>Train on the patterns in data</span></div>
+          <div class="bullet" id="predict-model-bullet"><i data-lucide="eye"></i><span>Predict on new, unseen features</span></div>
         </div>
       </div>
     </div>
@@ -1353,8 +1388,8 @@ body.predict-mode .predict-result > .val { display: none; }
         </div>
         <div class="card-divider"></div>
         <div class="bullets">
-          <div class="bullet"><i data-lucide="check-circle"></i><span>Verify accuracy on test set</span></div>
-          <div class="bullet"><i data-lucide="bar-chart-3"></i><span>Compare against actual labels</span></div>
+          <div class="bullet" id="verify-accuracy-bullet"><i data-lucide="check-circle"></i><span>Verify accuracy on test set</span></div>
+          <div class="bullet" id="compare-labels-bullet"><i data-lucide="bar-chart-3"></i><span>Compare against actual labels</span></div>
           <div class="bullet"><i data-lucide="refresh-cw"></i><span>Tune & iterate if needed</span></div>
         </div>
       </div>
@@ -1362,7 +1397,30 @@ body.predict-mode .predict-result > .val { display: none; }
   </div>
 </div>
 
+<!-- Hover Code Tooltip Markup -->
+<div id="code-tooltip" class="code-tooltip">
+  <img src="images/data_prep.png" alt="Data Prep Code Snippet">
+</div>
 
+<!-- Hover Split Tooltip Markup -->
+<div id="split-tooltip" class="code-tooltip">
+  <img src="images/data_split.png" alt="Split Data Code Snippet">
+</div>
+
+<!-- Hover Model Selection & Training Tooltip Markup -->
+<div id="model-training-tooltip" class="code-tooltip">
+  <img src="images/modal_selection_training.png" alt="Model Selection & Training Code Snippet">
+</div>
+
+<!-- Hover Predict Tooltip Markup -->
+<div id="predict-tooltip" class="code-tooltip">
+  <img src="images/prediction.png" alt="Prediction Code Snippet">
+</div>
+
+<!-- Hover Evaluate Tooltip Markup -->
+<div id="evaluate-tooltip" class="code-tooltip">
+  <img src="images/evaluate.png" alt="Evaluation Code Snippet">
+</div>
 
 <script>
 if (window.lucide) lucide.createIcons();
@@ -1447,6 +1505,68 @@ document.querySelectorAll('.bullet').forEach(bullet => {
     }
   });
 });
+
+// Generic Tooltip Positioning function with dual overflow safety
+function positionGenericTooltip(bullet, tooltip) {
+  const rect = bullet.getBoundingClientRect();
+  const tooltipWidth = 594; // Lock to exact layout width of the tooltip
+  const tooltipHeight = tooltip.offsetHeight || 300;
+  
+  let left = rect.right + 20;
+  let top = rect.top - 40;
+
+  // Horizontal boundary safety
+  if (left + tooltipWidth > window.innerWidth) {
+    const leftOption = rect.left - tooltipWidth - 20;
+    if (leftOption >= 80) { // Set a safe minimum left margin of 80px to prevent clipping
+      left = leftOption;
+    } else {
+      // Center horizontally on narrow viewports with a safety margin of 50px
+      left = Math.max(50, (window.innerWidth - tooltipWidth) / 2);
+    }
+  }
+
+  // Vertical boundary safety
+  if (top + tooltipHeight > window.innerHeight) {
+    top = window.innerHeight - tooltipHeight - 20;
+  }
+  if (top < 20) {
+    top = 20;
+  }
+
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+}
+
+// Helper to set up hover logic on a bullet to show a tooltip
+function setupHoverTooltip(bulletId, tooltipId) {
+  const bullet = document.getElementById(bulletId);
+  const tooltip = document.getElementById(tooltipId);
+
+  if (bullet && tooltip) {
+    bullet.addEventListener('mouseenter', () => {
+      tooltip.classList.add('active');
+      positionGenericTooltip(bullet, tooltip);
+    });
+
+    bullet.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('active');
+    });
+
+    bullet.addEventListener('mousemove', () => {
+      positionGenericTooltip(bullet, tooltip);
+    });
+  }
+}
+
+// Bind hover tooltips
+setupHoverTooltip('import-dataset-bullet', 'code-tooltip');
+setupHoverTooltip('split-data-bullet', 'split-tooltip');
+setupHoverTooltip('select-model-bullet', 'model-training-tooltip');
+setupHoverTooltip('train-model-bullet', 'model-training-tooltip');
+setupHoverTooltip('predict-model-bullet', 'predict-tooltip');
+setupHoverTooltip('verify-accuracy-bullet', 'evaluate-tooltip');
+setupHoverTooltip('compare-labels-bullet', 'evaluate-tooltip');
 </script>
 
 </body>
