@@ -1512,21 +1512,49 @@ function positionGenericTooltip(bullet, tooltip) {
   const tooltipWidth = 594; // Lock to exact layout width of the tooltip
   const tooltipHeight = tooltip.offsetHeight || 300;
   
-  let left = rect.right + 20;
-  let top = rect.top - 40;
-
-  // Horizontal boundary safety
-  if (left + tooltipWidth > window.innerWidth) {
-    const leftOption = rect.left - tooltipWidth - 20;
-    if (leftOption >= 80) { // Set a safe minimum left margin of 80px to prevent clipping
-      left = leftOption;
-    } else {
-      // Center horizontally on narrow viewports with a safety margin of 50px
-      left = Math.max(50, (window.innerWidth - tooltipWidth) / 2);
+  const card = bullet.closest('.card');
+  const cardRect = card ? card.getBoundingClientRect() : rect;
+  
+  let left;
+  
+  if (card && card.id === 'card1') {
+    // Hovering Card 1 -> Place tooltip on the right of Card 1
+    left = cardRect.right + 20;
+    // If it overflows the right edge of the screen, keep it as far right as possible
+    if (left + tooltipWidth > window.innerWidth) {
+      left = Math.max(20, window.innerWidth - tooltipWidth - 20);
+    }
+  } else if (card && card.id === 'card3') {
+    // Hovering Card 3 -> Place tooltip on the left of Card 3
+    left = cardRect.left - tooltipWidth - 20;
+    // If it overflows the left edge of the screen, keep it at 20px
+    if (left < 20) {
+      left = 20;
+    }
+  } else {
+    // Hovering Card 2 -> We prefer placing it on the LEFT to cover Card 1 (already read)
+    left = cardRect.left - tooltipWidth - 20;
+    
+    // If it goes off-screen on the left (left < 20):
+    if (left < 20) {
+      // Let's see if it fits on the right of Card 2 (overlapping Card 3):
+      if (cardRect.right + 20 + tooltipWidth <= window.innerWidth - 20) {
+        left = cardRect.right + 20;
+      } else {
+        // If it doesn't fit on either side, place it on the side that has more space:
+        const leftSpace = cardRect.left - 20;
+        const rightSpace = window.innerWidth - cardRect.right - 20;
+        if (leftSpace >= rightSpace) {
+          left = 20; // Flush with left edge, minimal overlap with Card 2
+        } else {
+          left = window.innerWidth - tooltipWidth - 20; // Flush with right edge
+        }
+      }
     }
   }
 
   // Vertical boundary safety
+  let top = rect.top - 40;
   if (top + tooltipHeight > window.innerHeight) {
     top = window.innerHeight - tooltipHeight - 20;
   }
