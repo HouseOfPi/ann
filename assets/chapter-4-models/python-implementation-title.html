@@ -1465,6 +1465,42 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+function setBulletState(bullet, isCompleted) {
+  if (!bullet) return;
+  const originalIcon = bullet.dataset.originalIcon || 'circle';
+  
+  if (isCompleted) {
+    bullet.classList.add('is-completed');
+    const svg = bullet.querySelector('svg');
+    if (svg) {
+      const newIcon = document.createElement('i');
+      newIcon.setAttribute('data-lucide', 'check-circle-2'); // Solid checkmark
+      svg.replaceWith(newIcon);
+      lucide.createIcons({ root: bullet });
+      
+      const newSvg = bullet.querySelector('svg');
+      if (newSvg) newSvg.style.color = '#10b981'; // Emerald green
+    }
+    bullet.style.opacity = '0.5';
+    const span = bullet.querySelector('span');
+    if (span) span.style.textDecoration = 'line-through';
+    bullet.style.background = 'transparent';
+  } else {
+    bullet.classList.remove('is-completed');
+    const svg = bullet.querySelector('svg');
+    if (svg) {
+      const newIcon = document.createElement('i');
+      newIcon.setAttribute('data-lucide', originalIcon);
+      svg.replaceWith(newIcon);
+      lucide.createIcons({ root: bullet });
+    }
+    bullet.style.opacity = '1';
+    const span = bullet.querySelector('span');
+    if (span) span.style.textDecoration = 'none';
+    bullet.style.background = ''; // restore hover effect
+  }
+}
+
 document.querySelectorAll('.bullet').forEach(bullet => {
   bullet.style.cursor = 'pointer';
   // Store the original icon name by inspecting the SVG classes
@@ -1479,29 +1515,25 @@ document.querySelectorAll('.bullet').forEach(bullet => {
   }
 
   bullet.addEventListener('click', function() {
-    this.classList.toggle('is-completed');
+    const isCompleted = !this.classList.contains('is-completed');
     
-    if (this.classList.contains('is-completed')) {
-      const newIcon = document.createElement('i');
-      newIcon.setAttribute('data-lucide', 'check-circle-2'); // A nice solid checkmark
-      this.querySelector('svg').replaceWith(newIcon);
-      lucide.createIcons({ root: this });
-      
-      const newSvg = this.querySelector('svg');
-      newSvg.style.color = '#10b981'; // Emerald green
-      
-      this.style.opacity = '0.5';
-      this.querySelector('span').style.textDecoration = 'line-through';
-      this.style.background = 'transparent';
-    } else {
-      const newIcon = document.createElement('i');
-      newIcon.setAttribute('data-lucide', this.dataset.originalIcon || 'circle');
-      this.querySelector('svg').replaceWith(newIcon);
-      lucide.createIcons({ root: this });
-      
-      this.style.opacity = '1';
-      this.querySelector('span').style.textDecoration = 'none';
-      this.style.background = ''; // restore hover effect if any
+    // Group 1: Select model and Train model
+    if (this.id === 'select-model-bullet' || this.id === 'train-model-bullet') {
+      const b1 = document.getElementById('select-model-bullet');
+      const b2 = document.getElementById('train-model-bullet');
+      setBulletState(b1, isCompleted);
+      setBulletState(b2, isCompleted);
+    }
+    // Group 2: Verify accuracy and Compare labels
+    else if (this.id === 'verify-accuracy-bullet' || this.id === 'compare-labels-bullet') {
+      const b1 = document.getElementById('verify-accuracy-bullet');
+      const b2 = document.getElementById('compare-labels-bullet');
+      setBulletState(b1, isCompleted);
+      setBulletState(b2, isCompleted);
+    }
+    // Default: individual bullet
+    else {
+      setBulletState(this, isCompleted);
     }
   });
 });
