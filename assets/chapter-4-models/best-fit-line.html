@@ -318,6 +318,33 @@
       0%, 100% { text-shadow: 0 0 0 transparent; }
       50% { text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 80%, transparent); }
     }
+
+    /* Formula overlay style with premium zoom/fade entrance animation */
+    .formula-overlay {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      color: var(--accent);
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -70%) scale(0.6);
+      transition: opacity 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.5s;
+      text-shadow: 0 4px 12px color-mix(in srgb, var(--bg) 40%, transparent);
+    }
+    .formula-overlay.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .formula-overlay sub {
+      font-size: 15px;
+      font-style: italic;
+      color: color-mix(in srgb, var(--accent) 75%, var(--fg));
+    }
+    .formula-overlay sup {
+      font-size: 17px;
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -410,6 +437,7 @@
           Temperature (°C)
         </div>
         <canvas id="scatterChart" style="cursor: pointer;"></canvas>
+        <div id="formula-overlay" class="formula-overlay">(y<sub>i</sub> &minus; ŷ<sub>i</sub>)<sup>2</sup></div>
       </div>
     </div>
   </div>
@@ -580,16 +608,18 @@
             ctx.fillText(diffText, xPixel + 8, midY);
         }
 
-        // Draw (yi - y_hat_i)^2 at top center of plot if showErrorFormula is true
-        if (showErrorFormula) {
-          ctx.fillStyle = '#3b82f6';
-          ctx.font = "bold 16px 'Inter', sans-serif";
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          const formula = "(y\u1D62 - \u0177\u1D62)\u00B2"; 
-          const centerX = (xAxis.left + xAxis.right) / 2;
-          const centerY = yAxis.top - 16;
-          ctx.fillText(formula, centerX, centerY);
+        // Update DOM overlay for (yi - y_hat_i)^2 at top center of plot
+        const overlay = document.getElementById('formula-overlay');
+        if (overlay) {
+          if (showErrorFormula) {
+            const centerX = (xAxis.left + xAxis.right) / 2;
+            const centerY = yAxis.top - 16;
+            overlay.style.left = `${centerX}px`;
+            overlay.style.top = `${centerY}px`;
+            overlay.classList.add('show');
+          } else {
+            overlay.classList.remove('show');
+          }
         }
 
         ctx.restore();
