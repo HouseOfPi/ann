@@ -2823,7 +2823,7 @@
       // Back-compat shim: old setMode calls route to the nearest palette
       const _origSetMode = typeof setMode === "function" ? setMode : null;
       window.setMode = function (mode) {
-        if (mode === "light" || mode === "custom") setPalette("warm-linen");
+        if (mode === "light" || mode === "custom") setPalette("paper-white");
         else setPalette("midnight");
       };
 
