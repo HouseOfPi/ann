@@ -528,6 +528,20 @@
             ctx.moveTo(xPixel, yPixelActual);
             ctx.lineTo(xPixel, yPixelPred);
             ctx.stroke();
+
+            // Draw a blue cross 'X' at the predicted point on the regression line
+            const crossSize = 7;
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(xPixel - crossSize, yPixelPred - crossSize);
+            ctx.lineTo(xPixel + crossSize, yPixelPred + crossSize);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(xPixel - crossSize, yPixelPred + crossSize);
+            ctx.lineTo(xPixel + crossSize, yPixelPred - crossSize);
+            ctx.stroke();
             
             // Draw horizontal dashed line for actual y
             ctx.strokeStyle = '#3b82f6';
