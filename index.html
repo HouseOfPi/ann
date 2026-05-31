@@ -134,7 +134,13 @@
         line-height: 1.45;
         display: block;
       }
-      #menuToggle, #navRibbon {
+      #menuToggle {
+        display: none !important;
+      }
+      body.show-hamburger #menuToggle {
+        display: flex !important;
+      }
+      #navRibbon {
         display: none !important;
       }
     </style>
@@ -1482,6 +1488,41 @@
     <script src="js/scripts.js"></script>
     <script>
       // Model Scale comparison tables are rendered statically in HTML
+      
+      // Double click on left side to toggle hamburger visibility
+      function handleDblClick(e) {
+        if (e.clientX < 150) {
+          document.body.classList.toggle("show-hamburger");
+        }
+      }
+      
+      document.addEventListener("dblclick", handleDblClick);
+      
+      // Listen to double clicks inside iframes
+      function attachDblClickListeners() {
+        document.querySelectorAll("iframe").forEach(iframe => {
+          const setupIframe = () => {
+            try {
+              if (iframe.contentDocument) {
+                iframe.contentDocument.removeEventListener("dblclick", handleDblClick);
+                iframe.contentDocument.addEventListener("dblclick", handleDblClick);
+              }
+            } catch (err) {
+              // Ignore cross-origin warnings if any
+            }
+          };
+          
+          if (iframe.contentDocument && iframe.contentDocument.readyState === "complete") {
+            setupIframe();
+          }
+          iframe.addEventListener("load", setupIframe);
+        });
+      }
+      
+      // Attach listeners
+      window.addEventListener("load", attachDblClickListeners);
+      attachDblClickListeners();
+      setInterval(attachDblClickListeners, 2000); // Keep listeners fresh across iframe changes
     </script>
   </body>
 </html>
