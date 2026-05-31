@@ -717,10 +717,7 @@
                   return []; // No title
                 },
                 label: function(context) {
-                  if (context.datasetIndex === 1) {
-                    return `Temp: 35°C | Sale: ${context.parsed.y}`;
-                  }
-                  return `Temp: ${context.parsed.x}°C | Sale: ${context.parsed.y}`;
+                  return `Sale: ${context.parsed.y}`;
                 }
               }
             }
