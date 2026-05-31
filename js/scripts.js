@@ -2121,6 +2121,7 @@
         'slideSimpleLinearRegression': 'Simple Linear Regression',
         'slideBestFitLine': 'Best Fit Line',
         'slidePythonImplementation': 'Python Implementation',
+        'slidePythonImplementationWorkflow': 'Implementation Workflow',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2151,6 +2152,7 @@
         { id: 'slideSimpleLinearRegression', enabled: true },
         { id: 'slideBestFitLine', enabled: true },
         { id: 'slidePythonImplementation', enabled: true },
+        { id: 'slidePythonImplementationWorkflow', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
