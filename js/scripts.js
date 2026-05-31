@@ -2831,9 +2831,9 @@
       (function () {
         // One-time migration to ensure everyone gets the new default "paper-white" instead of legacy caches
         try {
-          if (!localStorage.getItem("ann_default_paper_white_v1")) {
+          if (!localStorage.getItem("ann_default_paper_white_v2")) {
             localStorage.setItem("ann_palette", "paper-white");
-            localStorage.setItem("ann_default_paper_white_v1", "true");
+            localStorage.setItem("ann_default_paper_white_v2", "true");
           }
         } catch (e) {}
 
