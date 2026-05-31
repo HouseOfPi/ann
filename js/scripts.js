@@ -2827,17 +2827,17 @@
         else setPalette("midnight");
       };
 
-      // Load saved palette from localStorage, defaulting to "midnight" (dark theme)
+      // Load saved palette from localStorage, defaulting to "paper-white" (light theme)
       (function () {
-        // One-time migration to ensure everyone gets the new default "midnight" instead of legacy "warm-linen" cache
+        // One-time migration to ensure everyone gets the new default "paper-white" instead of legacy caches
         try {
-          if (!localStorage.getItem("ann_default_midnight_v2")) {
-            localStorage.setItem("ann_palette", "midnight");
-            localStorage.setItem("ann_default_midnight_v2", "true");
+          if (!localStorage.getItem("ann_default_paper_white_v1")) {
+            localStorage.setItem("ann_palette", "paper-white");
+            localStorage.setItem("ann_default_paper_white_v1", "true");
           }
         } catch (e) {}
 
-        const savedPalette = localStorage.getItem("ann_palette") || "midnight";
+        const savedPalette = localStorage.getItem("ann_palette") || "paper-white";
         setPalette(savedPalette);
         updateDropdownDisplays();
       })();
