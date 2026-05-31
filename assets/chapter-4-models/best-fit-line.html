@@ -422,8 +422,47 @@
     // 0=hidden, 1=term (yi−ŷi)^2, 2=Σ term, 3=1/n Σ term, 4=+ "Mean Squared Error" label
     let formulaState = 0;
 
+    let isSlidingLine = false;
+    let slidingTimeout = null;
+
     const residualsPlugin = {
       id: 'residualsPlugin',
+      beforeDatasetsDraw: (chart) => {
+        if (!hasStarted) return;
+        const ctx = chart.ctx;
+        const xAxis = chart.scales.x;
+        const yAxis = chart.scales.y;
+        if (!xAxis || !yAxis) return;
+
+        ctx.save();
+        if (isSlidingLine) {
+          const xStart = xAxis.getPixelForValue(15);
+          const yStart = yAxis.getPixelForValue(currentW * 15 + currentB);
+          const xEnd = xAxis.getPixelForValue(45);
+          const yEnd = yAxis.getPixelForValue(currentW * 45 + currentB);
+
+          const rootStyles = getComputedStyle(document.documentElement);
+          const accentColor = rootStyles.getPropertyValue('--accent').trim() || '#c97a4a';
+
+          // Outer wide soft glow
+          ctx.strokeStyle = colorMix(accentColor, 'transparent', 0.85); // 15% opacity
+          ctx.lineWidth = 18;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(xStart, yStart);
+          ctx.lineTo(xEnd, yEnd);
+          ctx.stroke();
+
+          // Inner stronger glow
+          ctx.strokeStyle = colorMix(accentColor, 'transparent', 0.65); // 35% opacity
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.moveTo(xStart, yStart);
+          ctx.lineTo(xEnd, yEnd);
+          ctx.stroke();
+        }
+        ctx.restore();
+      },
       afterDatasetsDraw: (chart) => {
         const ctx = chart.ctx;
         const xAxis = chart.scales.x;
@@ -688,11 +727,24 @@
       document.getElementById('val-w').textContent = currentW.toFixed(2);
       document.getElementById('val-b').textContent = currentB.toFixed(1);
 
+      if (hasStarted) {
+        isSlidingLine = true;
+        if (slidingTimeout) clearTimeout(slidingTimeout);
+        slidingTimeout = setTimeout(() => {
+          isSlidingLine = false;
+          if (scatterChart) {
+            scatterChart.data.datasets[1].borderWidth = 3;
+            scatterChart.update('none');
+          }
+        }, 150);
+      }
+
       if (!hasStarted) return;
 
       // Update Line in chart
       if (scatterChart) {
         scatterChart.data.datasets[1].data = getLineDataPoints(currentW, currentB);
+        scatterChart.data.datasets[1].borderWidth = 5.5; // Thicker line while active
         scatterChart.update('none'); // Update without full entry animation
       }
     }
