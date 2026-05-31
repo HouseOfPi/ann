@@ -108,9 +108,21 @@
       appearance: none;
       flex: 1;
       height: 6px;
-      background: color-mix(in srgb, var(--fg) 12%, transparent);
+      background: linear-gradient(to right, 
+        var(--accent) 0%, 
+        var(--accent) var(--pct, 0%), 
+        color-mix(in srgb, var(--fg) 12%, transparent) var(--pct, 0%), 
+        color-mix(in srgb, var(--fg) 12%, transparent) 100%
+      );
       border-radius: 3px;
       outline: none;
+      transition: box-shadow 0.2s ease;
+    }
+    input[type=range]:hover {
+      box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 15%, transparent);
+    }
+    input[type=range]:active {
+      box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent);
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
@@ -120,10 +132,17 @@
       background: var(--accent);
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: transform 0.15s ease, background-color 0.15s;
+      transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.15s, box-shadow 0.15s;
     }
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.2);
+      background-color: color-mix(in srgb, var(--accent) 90%, #ffffff);
+      box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 30%, rgba(0,0,0,0.3));
+    }
+    input[type=range]::-webkit-slider-thumb:active {
+      transform: scale(1.35);
+      background-color: color-mix(in srgb, var(--accent) 75%, #ffffff);
+      box-shadow: 0 2px 14px color-mix(in srgb, var(--accent) 60%, rgba(0,0,0,0.3));
     }
 
     .loss-section {
@@ -422,47 +441,8 @@
     // 0=hidden, 1=term (yi−ŷi)^2, 2=Σ term, 3=1/n Σ term, 4=+ "Mean Squared Error" label
     let formulaState = 0;
 
-    let isSlidingLine = false;
-    let slidingTimeout = null;
-
     const residualsPlugin = {
       id: 'residualsPlugin',
-      beforeDatasetsDraw: (chart) => {
-        if (!hasStarted) return;
-        const ctx = chart.ctx;
-        const xAxis = chart.scales.x;
-        const yAxis = chart.scales.y;
-        if (!xAxis || !yAxis) return;
-
-        ctx.save();
-        if (isSlidingLine) {
-          const xStart = xAxis.getPixelForValue(15);
-          const yStart = yAxis.getPixelForValue(currentW * 15 + currentB);
-          const xEnd = xAxis.getPixelForValue(45);
-          const yEnd = yAxis.getPixelForValue(currentW * 45 + currentB);
-
-          const rootStyles = getComputedStyle(document.documentElement);
-          const accentColor = rootStyles.getPropertyValue('--accent').trim() || '#c97a4a';
-
-          // Outer wide soft glow
-          ctx.strokeStyle = colorMix(accentColor, 'transparent', 0.85); // 15% opacity
-          ctx.lineWidth = 18;
-          ctx.lineCap = 'round';
-          ctx.beginPath();
-          ctx.moveTo(xStart, yStart);
-          ctx.lineTo(xEnd, yEnd);
-          ctx.stroke();
-
-          // Inner stronger glow
-          ctx.strokeStyle = colorMix(accentColor, 'transparent', 0.65); // 35% opacity
-          ctx.lineWidth = 10;
-          ctx.beginPath();
-          ctx.moveTo(xStart, yStart);
-          ctx.lineTo(xEnd, yEnd);
-          ctx.stroke();
-        }
-        ctx.restore();
-      },
       afterDatasetsDraw: (chart) => {
         const ctx = chart.ctx;
         const xAxis = chart.scales.x;
@@ -719,32 +699,34 @@
       ];
     }
 
+    function updateSliderTrack(el) {
+      if (!el) return;
+      const min = parseFloat(el.min || 0);
+      const max = parseFloat(el.max || 100);
+      const val = parseFloat(el.value);
+      const pct = ((val - min) / (max - min)) * 100;
+      el.style.setProperty('--pct', `${pct}%`);
+    }
+
     function updateLine() {
-      currentW = parseFloat(document.getElementById('slide-w').value);
-      currentB = parseFloat(document.getElementById('slide-b').value);
+      const slideW = document.getElementById('slide-w');
+      const slideB = document.getElementById('slide-b');
+      currentW = parseFloat(slideW.value);
+      currentB = parseFloat(slideB.value);
+
+      // Update track fill progress
+      updateSliderTrack(slideW);
+      updateSliderTrack(slideB);
 
       // Update UI displays
       document.getElementById('val-w').textContent = currentW.toFixed(2);
       document.getElementById('val-b').textContent = currentB.toFixed(1);
-
-      if (hasStarted) {
-        isSlidingLine = true;
-        if (slidingTimeout) clearTimeout(slidingTimeout);
-        slidingTimeout = setTimeout(() => {
-          isSlidingLine = false;
-          if (scatterChart) {
-            scatterChart.data.datasets[1].borderWidth = 3;
-            scatterChart.update('none');
-          }
-        }, 150);
-      }
 
       if (!hasStarted) return;
 
       // Update Line in chart
       if (scatterChart) {
         scatterChart.data.datasets[1].data = getLineDataPoints(currentW, currentB);
-        scatterChart.data.datasets[1].borderWidth = 5.5; // Thicker line while active
         scatterChart.update('none'); // Update without full entry animation
       }
     }
