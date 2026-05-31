@@ -319,31 +319,66 @@
       50% { text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 80%, transparent); }
     }
 
-    /* Formula overlay style with premium zoom/fade entrance animation */
+    /* Formula overlay — clean squared-error annotation */
     .formula-overlay {
       position: absolute;
-      font-family: 'Inter', sans-serif;
-      font-weight: 800;
-      font-size: 26px;
+      font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
+      font-size: 24px;
       color: var(--accent);
       z-index: 100;
       pointer-events: none;
       opacity: 0;
-      transform: translate(-50%, -70%) scale(0.6);
-      transition: opacity 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.5s;
-      text-shadow: 0 4px 12px color-mix(in srgb, var(--bg) 40%, transparent);
+      transform: translate(-50%, -60%);
+      transition: opacity 0.35s ease, transform 0.35s ease, color 0.5s;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--bg) 75%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      white-space: nowrap;
     }
     .formula-overlay.show {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translate(-50%, -50%);
     }
     .formula-overlay sub {
       font-size: 15px;
       font-style: italic;
-      color: color-mix(in srgb, var(--accent) 75%, var(--fg));
+      color: color-mix(in srgb, var(--accent) 70%, var(--fg));
     }
     .formula-overlay sup {
-      font-size: 17px;
+      font-size: 16px;
+      top: -0.6em;
+    }
+    /* Show one variant at a time based on overlay state */
+    .formula-overlay .fo-mse { display: none; align-items: center; gap: 8px; }
+    .formula-overlay.state-term .fo-term { display: inline; }
+    .formula-overlay.state-term .fo-mse  { display: none; }
+    /* sum (Σ term) and mse (1/n Σ term) both show the .fo-mse block */
+    .formula-overlay.state-sum > .fo-term,
+    .formula-overlay.state-mse > .fo-term { display: none; }
+    .formula-overlay.state-sum .fo-mse,
+    .formula-overlay.state-mse .fo-mse { display: inline-flex; }
+    /* hide the 1/n fraction until the final MSE state */
+    .formula-overlay.state-sum .fo-frac { display: none; }
+    /* 1/n fraction */
+    .formula-overlay .fo-frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 20px;
+      line-height: 1.1;
+      vertical-align: middle;
+    }
+    .formula-overlay .fo-num {
+      border-bottom: 1.5px solid color-mix(in srgb, var(--accent) 60%, transparent);
+      padding: 0 6px;
+    }
+    .formula-overlay .fo-den { padding: 0 6px; }
+    .formula-overlay .fo-sigma {
+      font-size: 30px;
+      line-height: 1;
     }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
@@ -437,7 +472,16 @@
           Temperature (°C)
         </div>
         <canvas id="scatterChart" style="cursor: pointer;"></canvas>
-        <div id="formula-overlay" class="formula-overlay">(y<sub>i</sub> &minus; ŷ<sub>i</sub>)<sup>2</sup></div>
+        <div id="formula-overlay" class="formula-overlay">
+          <!-- Single squared-error term -->
+          <span class="fo-term">( y<sub>i</sub> &minus; ŷ<sub>i</sub> )<sup>2</sup></span>
+          <!-- Full MSE: 1/n Σ (yi − ŷi)^2 -->
+          <span class="fo-mse">
+            <span class="fo-frac"><span class="fo-num">1</span><span class="fo-den">n</span></span>
+            <span class="fo-sigma">&sum;</span>
+            <span class="fo-term">( y<sub>i</sub> &minus; ŷ<sub>i</sub> )<sup>2</sup></span>
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -464,7 +508,8 @@
 
     // Custom plugin to draw vertical residual/error lines
     let showCrossAt35 = false;
-    let showErrorFormula = false;
+    // 0 = hidden, 1 = term (yi − ŷi)^2, 2 = Σ term, 3 = 1/n Σ term (full MSE)
+    let formulaState = 0;
 
     const residualsPlugin = {
       id: 'residualsPlugin',
@@ -608,14 +653,17 @@
             ctx.fillText(diffText, xPixel + 8, midY);
         }
 
-        // Update DOM overlay for (yi - y_hat_i)^2 at top center of plot
+        // Update DOM overlay (squared-error term / full MSE) at top center of plot
         const overlay = document.getElementById('formula-overlay');
         if (overlay) {
-          if (showErrorFormula) {
+          overlay.classList.remove('state-term', 'state-sum', 'state-mse');
+          if (formulaState > 0) {
             const centerX = (xAxis.left + xAxis.right) / 2;
-            const centerY = yAxis.top - 16;
+            const centerY = yAxis.top - 24;
             overlay.style.left = `${centerX}px`;
             overlay.style.top = `${centerY}px`;
+            const stateClass = { 1: 'state-term', 2: 'state-sum', 3: 'state-mse' }[formulaState];
+            overlay.classList.add(stateClass);
             overlay.classList.add('show');
           } else {
             overlay.classList.remove('show');
@@ -910,9 +958,9 @@
           const localX = e.clientX - rect.left;
           const localY = e.clientY - rect.top;
 
-          // Check if top-left corner is clicked
+          // Top-left corner click — cycle: off → term → Σ term → 1/n Σ term → off
           if (localX < xAxis.left && localY < yAxis.top) {
-            showErrorFormula = !showErrorFormula;
+            formulaState = (formulaState + 1) % 4;
             scatterChart.update('none');
             return;
           }
