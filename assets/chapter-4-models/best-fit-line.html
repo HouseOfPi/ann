@@ -438,6 +438,8 @@
     let showCrossAt35 = false;
     // Hover state for the green dot (shows sales value)
     let hoverGreenDot = false;
+    // Hover state for the blue cross on the line
+    let hoverBlueCross = false;
     // 0=hidden, 1=term (yi−ŷi)^2, 2=Σ term, 3=1/n Σ term, 4=+ "Mean Squared Error" label
     let formulaState = 0;
 
@@ -573,9 +575,9 @@
             ctx.stroke();
 
             // Draw a blue cross 'X' at the predicted point on the regression line
-            const crossSize = 7;
+            const crossSize = hoverBlueCross ? 10.5 : 7;
             ctx.strokeStyle = '#3b82f6';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = hoverBlueCross ? 4.5 : 3;
             ctx.beginPath();
             ctx.moveTo(xPixel - crossSize, yPixelPred - crossSize);
             ctx.lineTo(xPixel + crossSize, yPixelPred + crossSize);
@@ -969,31 +971,64 @@
           }
         });
 
-        // Hover over the green dot (at x=35 on the line) → show sales value
+        // Hover over the green dot (at x=35 on the line) or the blue cross (when selected)
         canvas.addEventListener('mousemove', (e) => {
-          if (!scatterChart || !showCrossAt35 || !hasStarted) {
-            if (hoverGreenDot) { hoverGreenDot = false; scatterChart && scatterChart.update('none'); }
-            return;
-          }
+          if (!scatterChart) return;
           const xAxis = scatterChart.scales.x;
           const yAxis = scatterChart.scales.y;
           if (!xAxis || !yAxis) return;
           const rect = canvas.getBoundingClientRect();
           const localX = e.clientX - rect.left;
           const localY = e.clientY - rect.top;
-          const px = xAxis.getPixelForValue(35);
-          const py = yAxis.getPixelForValue(currentW * 35 + currentB);
-          const dist = Math.hypot(localX - px, localY - py);
-          const isOver = dist <= 14;
-          if (isOver !== hoverGreenDot) {
-            hoverGreenDot = isOver;
-            canvas.style.cursor = isOver ? 'pointer' : 'default';
+
+          let isOverGreenDot = false;
+          let isOverBlueCross = false;
+
+          // 1. Check Green Dot hover
+          if (showCrossAt35 && hasStarted) {
+            const px = xAxis.getPixelForValue(35);
+            const py = yAxis.getPixelForValue(currentW * 35 + currentB);
+            const dist = Math.hypot(localX - px, localY - py);
+            isOverGreenDot = dist <= 14;
+          }
+
+          // 2. Check Blue Cross hover
+          if (selectedPointIndex >= 0) {
+            const pt = rawData[selectedPointIndex];
+            const x = pt[0];
+            const yHat = currentW * x + currentB;
+            const px = xAxis.getPixelForValue(x);
+            const py = yAxis.getPixelForValue(yHat);
+            const dist = Math.hypot(localX - px, localY - py);
+            isOverBlueCross = dist <= 14;
+          }
+
+          let stateChanged = false;
+
+          if (isOverGreenDot !== hoverGreenDot) {
+            hoverGreenDot = isOverGreenDot;
+            stateChanged = true;
+          }
+
+          if (isOverBlueCross !== hoverBlueCross) {
+            hoverBlueCross = isOverBlueCross;
+            stateChanged = true;
+          }
+
+          if (stateChanged) {
+            canvas.style.cursor = (hoverGreenDot || hoverBlueCross) ? 'pointer' : 'default';
             scatterChart.update('none');
           }
         });
 
         canvas.addEventListener('mouseleave', () => {
-          if (hoverGreenDot) { hoverGreenDot = false; scatterChart && scatterChart.update('none'); }
+          let stateChanged = false;
+          if (hoverGreenDot) { hoverGreenDot = false; stateChanged = true; }
+          if (hoverBlueCross) { hoverBlueCross = false; stateChanged = true; }
+          if (stateChanged && scatterChart) {
+            canvas.style.cursor = 'default';
+            scatterChart.update('none');
+          }
         });
       }
 
