@@ -436,6 +436,7 @@
 
     // Custom plugin to draw vertical residual/error lines
     let showCrossAt35 = false;
+    let showErrorFormula = false;
 
     const residualsPlugin = {
       id: 'residualsPlugin',
@@ -577,6 +578,18 @@
             const diffText = "e\u1D62";
             const midY = (yPixelActual + yPixelPred) / 2;
             ctx.fillText(diffText, xPixel + 8, midY);
+        }
+
+        // Draw (yi - y_hat_i)^2 at top center of plot if showErrorFormula is true
+        if (showErrorFormula) {
+          ctx.fillStyle = '#3b82f6';
+          ctx.font = "bold 16px 'Inter', sans-serif";
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          const formula = "(y\u1D62 - \u0177\u1D62)\u00B2"; 
+          const centerX = (xAxis.left + xAxis.right) / 2;
+          const centerY = yAxis.top - 18;
+          ctx.fillText(formula, centerX, centerY);
         }
 
         ctx.restore();
@@ -866,6 +879,14 @@
           const rect = canvas.getBoundingClientRect();
           const localX = e.clientX - rect.left;
           const localY = e.clientY - rect.top;
+
+          // Check if top-left corner is clicked
+          if (localX < xAxis.left && localY < yAxis.top) {
+            showErrorFormula = !showErrorFormula;
+            scatterChart.update('none');
+            return;
+          }
+
           const x35Px = xAxis.getPixelForValue(35);
           // Tick label band: from just above x-axis bottom edge to end of canvas
           const tickBandTop = yAxis.bottom - 2;
