@@ -588,7 +588,7 @@
           ctx.textBaseline = 'middle';
           const formula = "(y\u1D62 - \u0177\u1D62)\u00B2"; 
           const centerX = (xAxis.left + xAxis.right) / 2;
-          const centerY = yAxis.top - 18;
+          const centerY = yAxis.top - 16;
           ctx.fillText(formula, centerX, centerY);
         }
 
@@ -730,7 +730,7 @@
           ]
         },
         options: {
-          layout: { padding: { left: 30, top: 20, bottom: 20, right: 10 } },
+          layout: { padding: { left: 30, top: 32, bottom: 20, right: 10 } },
           responsive: true,
           maintainAspectRatio: false,
           animation: { duration: 1000, easing: 'easeOutQuart' },
