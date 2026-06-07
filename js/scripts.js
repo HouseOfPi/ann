@@ -2123,6 +2123,7 @@
         'slidePythonImplementation': 'Python Implementation',
         'slidePythonImplementationWorkflow': 'Implementation Workflow',
         'slideMultipleLinearRegression': 'Multiple Linear Regression',
+        'slideMLREquation': 'MLR Equation',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2155,6 +2156,7 @@
         { id: 'slidePythonImplementation', enabled: true },
         { id: 'slidePythonImplementationWorkflow', enabled: true },
         { id: 'slideMultipleLinearRegression', enabled: true },
+        { id: 'slideMLREquation', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
