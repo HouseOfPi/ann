@@ -2217,7 +2217,7 @@
       // Activate default slide on load
       {
         const activeSlides = getActiveSlides();
-        const idx = activeSlides.findIndex(el => el.id === 'slideBestFitLine');
+        const idx = activeSlides.findIndex(el => el.id === 'slideMLREquation');
         currentSlideIdx = idx >= 0 ? idx : 0;
         const el = activeSlides[currentSlideIdx];
         if (el) {
@@ -3366,7 +3366,7 @@
       updateNavigationButtons();
       
       // Default to Machine Learning Models title slide during development
-      const defaultSlideId = 'slideMultipleLinearRegression';
+      const defaultSlideId = 'slideMLREquation';
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;
