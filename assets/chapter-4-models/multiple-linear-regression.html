@@ -67,11 +67,38 @@
       font-weight: 500;
       line-height: 1.2;
       color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
     .dataset-title em {
       font-style: italic;
       color: var(--accent);
       font-weight: 500;
+    }
+    .dl-btn {
+      background: color-mix(in srgb, var(--fg) 5%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+      color: color-mix(in srgb, var(--fg) 70%, transparent);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .dl-btn:hover {
+      background: color-mix(in srgb, var(--fg) 10%, transparent);
+      color: var(--fg);
+      border-color: color-mix(in srgb, var(--fg) 20%, transparent);
+    }
+    .dl-btn svg {
+      width: 12px; height: 12px;
+      fill: currentColor;
     }
 
     /* ── Table ── */
@@ -508,8 +535,14 @@
       flex-direction: row;
       gap: 24px;
       width: 100%;
-      padding: 18px 24px 28px;
+      height: 100%;
       position: relative;
+    }
+    .nonlinear-main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
     .nonlinear-canvas-container {
       flex: 1;
@@ -587,11 +620,16 @@
   <div class="body">
     <div class="dataset-card">
       <div class="card-header">
-        <div class="dataset-title">Housing <em>Prices</em></div>
+        <div class="dataset-title">
+          Housing <em>Prices</em>
+          <button class="dl-btn" onclick="downloadCSV()" title="Download CSV dataset">
+            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            CSV
+          </button>
+        </div>
         <div class="card-tabs">
           <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">Dataset Table</button>
           <button class="card-tab" data-tab="scatter" onclick="switchCardTab('scatter')">Scatter Plot</button>
-          <button class="card-tab" data-tab="nonlinear" onclick="switchCardTab('nonlinear')">Non-Linear</button>
         </div>
       </div>
 
@@ -633,8 +671,9 @@
           <button class="scatter-subtab" onclick="switchScatterFeature(3)">Age (x₄)</button>
           <button class="scatter-subtab" onclick="switchScatterFeature(4)">Crime Rating (x₅)</button>
           <button class="scatter-subtab" onclick="switchScatterFeature(5)">LotSize (x₆)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(6)">Non-Linear</button>
         </div>
-        <div class="scatter-canvas-container">
+        <div class="scatter-canvas-container" id="scatterPlotArea">
           <canvas id="scatterCanvas"></canvas>
           <div class="scatter-tooltip" id="scatterTooltip">
             <div class="tt-title">Property Details</div>
@@ -648,34 +687,36 @@
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Non-Linear View -->
-      <div class="nonlinear-outer">
-        <div class="nonlinear-canvas-container">
-          <canvas id="nonlinearCanvas"></canvas>
-          <div class="scatter-tooltip" id="nonlinearTooltip">
-            <div class="tt-title">Non-Linear Data</div>
-            <div class="tt-row">
-              <span id="nlXLabel">Distance to Metro:</span>
-              <span class="tt-val" id="nlXVal">0 km</span>
-            </div>
-            <div class="tt-row">
-              <span>Price (y):</span>
-              <span class="tt-val" id="nlYVal">$0</span>
+        <!-- Non-Linear View -->
+        <div class="nonlinear-outer" id="nonlinearPlotArea">
+          <div class="nonlinear-main-area">
+            <div class="nonlinear-canvas-container">
+              <canvas id="nonlinearCanvas"></canvas>
+              <div class="scatter-tooltip" id="nonlinearTooltip">
+                <div class="tt-title">Customer Profile</div>
+                <div class="tt-row">
+                  <span id="nlXLabel">Age:</span>
+                  <span class="tt-val" id="nlXVal">0 yrs</span>
+                </div>
+                <div class="tt-row">
+                  <span id="nlYLabel">Income:</span>
+                  <span class="tt-val" id="nlYVal">$0</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="nonlinear-explanation-card">
-          <div class="nl-exp-label"><span class="nl-exp-line"></span> Concept</div>
-          <div class="nl-exp-title">Why Linear Regression <span class="nl-exp-highlight">fails</span> here</div>
-          <div class="nl-exp-desc">
-            <p>
-              When a parameter (like distance to a transit hub or a house's age) has a curved or exponential relationship with price, a straight best-fit line is no longer mathematically valid.
-            </p>
-            <p>
-              In these cases, we do not follow a linear regression model. Instead, other models (like <strong>Polynomial Regression</strong>, <strong>Decision Trees</strong>, or <strong>Neural Networks</strong>) are selected based on the non-linear trend.
-            </p>
+          <div class="nonlinear-explanation-card">
+            <div class="nl-exp-label"><span class="nl-exp-line"></span> Concept</div>
+            <div class="nl-exp-title">Why Linear Regression <span class="nl-exp-highlight">fails</span> here</div>
+            <div class="nl-exp-desc">
+              <p>
+                Linear regression is designed to predict continuous numerical values (like prices). It cannot be used directly to classify categorical outcomes (like whether a customer buys a product or not).
+              </p>
+              <p>
+                Additionally, the relationship here is non-linear—buyers are clustered in the high-age, high-income region. A straight linear boundary is mathematically incapable of cleanly separating these groups.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -758,17 +799,34 @@
       DATA.push([price, bedrooms, bathrooms, sqft, year, garage, lot, zip, crime, school]);
     }
 
+    // Introduce corrupted/dirty data
+    DATA[12][3] = -500;        // Negative SquareFeet
+    DATA[25][2] = "N/A";       // Missing Bathrooms
+    DATA[45][0] = 9999999999;  // Extreme outlier Price
+    DATA[60][6] = null;        // Missing LotSize
+    DATA[80][4] = 2050;        // Future YearBuilt (Age < 0)
+    DATA[90][1] = null;        // Missing Bedrooms
+
+    const safeNum = (val, dec=0) => {
+      if (val === null || val === undefined || val === 'N/A' || Number.isNaN(val)) return `<span style="color: #ef4444; font-weight: bold;">${val === null ? 'null' : val}</span>`;
+      return Number(val).toLocaleString(undefined, {minimumFractionDigits: dec, maximumFractionDigits: dec});
+    };
+
     const tbody = document.getElementById('tableBody');
     DATA.forEach((row, i) => {
       const tr = document.createElement('tr');
+      const age = (row[4] === null || row[4] === 'N/A') ? row[4] : (new Date().getFullYear() - row[4]);
+      const ageStr = (typeof age === 'number' && age < 0) ? `<span style="color: #ef4444; font-weight: bold;">${age}</span>` : safeNum(age);
+      const sqftStr = (typeof row[3] === 'number' && row[3] < 0) ? `<span style="color: #ef4444; font-weight: bold;">${row[3]}</span>` : safeNum(row[3]);
+      
       tr.innerHTML = `
-        <td>${row[3].toLocaleString()}</td>
-        <td>${row[1]}</td>
-        <td>${row[2].toFixed(1)}</td>
-        <td>${new Date().getFullYear() - row[4]}</td>
-        <td>${row[8]}</td>
-        <td>${row[6].toFixed(2)}</td>
-        <td class="col-y">${row[0].toLocaleString()}</td>
+        <td>${sqftStr}</td>
+        <td>${safeNum(row[1])}</td>
+        <td>${safeNum(row[2], 1)}</td>
+        <td>${ageStr}</td>
+        <td>${safeNum(row[8])}</td>
+        <td>${safeNum(row[6], 2)}</td>
+        <td class="col-y">${safeNum(row[0])}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -792,9 +850,11 @@
       if (d.type !== 'SET_THEME') return;
       applyPalette(d.palette || (d.mode === 'dark' ? 'Navy Lime' : 'Warm Linen'));
       if (currentCardTab === 'scatter') {
-        drawScatterPlot();
-      } else if (currentCardTab === 'nonlinear') {
-        drawNonLinearPlot();
+        if (currentFeatureIdx === 6) {
+          drawNonLinearPlot();
+        } else {
+          drawScatterPlot();
+        }
       }
     });
 
@@ -851,15 +911,17 @@
       // Show/hide sections
       const tableOuter = document.querySelector('.table-outer');
       const scatterOuter = document.querySelector('.scatter-outer');
-      const nonlinearOuter = document.querySelector('.nonlinear-outer');
 
       tableOuter.style.display = tab === 'table' ? 'block' : 'none';
       scatterOuter.style.display = tab === 'scatter' ? 'flex' : 'none';
-      nonlinearOuter.style.display = tab === 'nonlinear' ? 'flex' : 'none';
 
       // Force observer triggers to refresh sizes on display changes
-      if (tab === 'nonlinear') {
-        drawNonLinearPlot();
+      if (tab === 'scatter') {
+        if (currentFeatureIdx === 6) {
+          drawNonLinearPlot();
+        } else {
+          drawScatterPlot();
+        }
       }
     }
 
@@ -868,9 +930,23 @@
       document.querySelectorAll('.scatter-subtab').forEach((btn, idx) => {
         btn.classList.toggle('active', idx === index);
       });
-      // Hide tooltip on switch
+      // Hide tooltips on switch
       hideTooltip();
-      drawScatterPlot();
+      const nlTooltip = document.getElementById('nonlinearTooltip');
+      if (nlTooltip) nlTooltip.classList.remove('visible');
+
+      const scatterArea = document.getElementById('scatterPlotArea');
+      const nonlinearArea = document.getElementById('nonlinearPlotArea');
+
+      if (index === 6) {
+        scatterArea.style.display = 'none';
+        nonlinearArea.style.display = 'flex';
+        drawNonLinearPlot();
+      } else {
+        scatterArea.style.display = 'block';
+        nonlinearArea.style.display = 'none';
+        drawScatterPlot();
+      }
     }
 
     // Canvas management
@@ -882,7 +958,7 @@
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const { width, height } = entry.contentRect;
-        if (width === 0 || height === 0) return;
+        if (width === 0 || height === 0) continue;
         
         const target = entry.target;
         const targetCanvas = target.querySelector('canvas');
@@ -899,9 +975,9 @@
         targetCtx.resetTransform();
         targetCtx.scale(dpr, dpr);
         
-        if (targetCanvas.id === 'scatterCanvas' && currentCardTab === 'scatter') {
+        if (targetCanvas.id === 'scatterCanvas' && currentCardTab === 'scatter' && currentFeatureIdx !== 6) {
           drawScatterPlot();
-        } else if (targetCanvas.id === 'nonlinearCanvas' && currentCardTab === 'nonlinear') {
+        } else if (targetCanvas.id === 'nonlinearCanvas' && currentCardTab === 'scatter' && currentFeatureIdx === 6) {
           drawNonLinearPlot();
         }
       }
@@ -937,7 +1013,7 @@
           ? (new Date().getFullYear() - row[activeFeature.idx])
           : row[activeFeature.idx];
         return { x: xVal, y: yVal };
-      });
+      }).filter(p => typeof p.x === 'number' && typeof p.y === 'number' && !isNaN(p.x) && !isNaN(p.y));
 
       // ── Calculate Bounds with 8% padding ──
       const xVals = points.map(p => p.x);
@@ -1134,7 +1210,7 @@
           ? (new Date().getFullYear() - row[activeFeature.idx])
           : row[activeFeature.idx];
         return { x: xVal, y: yVal, index: idx };
-      });
+      }).filter(p => typeof p.x === 'number' && typeof p.y === 'number' && !isNaN(p.x) && !isNaN(p.y));
 
       // Layout margins
       const padLeft = 70;
@@ -1209,19 +1285,30 @@
     }
 
     // ── Non-Linear Tab Logic ──
-    const NON_LINEAR_DATA = [];
-    let nlSeed = 123;
-    function nlRandom() {
-      const x = Math.sin(nlSeed++) * 10000;
+
+    // Generate 2D classification points (Age vs Income)
+    const CLASSIFICATION_DATA = [];
+    let classSeed = 456;
+    function classRandom() {
+      const x = Math.sin(classSeed++) * 10000;
       return x - Math.floor(x);
     }
-    // Generate exponential decay points (Distance to metro vs Price)
-    for (let i = 0; i < 100; i++) {
-      const xVal = nlRandom() * 15; // 0 to 15 km
-      const basePrice = 750000 * Math.exp(-0.16 * xVal) + 180000;
-      const noise = (nlRandom() - 0.5) * 120000;
-      const yVal = Math.max(100000, Math.min(1000000, basePrice + noise));
-      NON_LINEAR_DATA.push({ x: xVal, y: yVal, index: i });
+    for (let i = 0; i < 70; i++) {
+      const age = 18 + classRandom() * 45;      // Age range: 18 - 63
+      const income = 10 + classRandom() * 90;   // Income range: 10 - 100
+      // Classification split boundary in mind (Age = 35, Income = 60)
+      // Blue if Age > 35 and Income > 60, else Red
+      const isBlue = (age > 35 && income > 60);
+      CLASSIFICATION_DATA.push({ x: age, y: income, label: isBlue ? 'blue' : 'red', index: i });
+    }
+
+    function getClassificationColors() {
+      const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      const isDark = (bg === '#000000' || bg === '#0a1428');
+      return {
+        red: isDark ? '#f87171' : '#dc2626',
+        blue: isDark ? '#38bdf8' : '#2563eb'
+      };
     }
 
     const nlCanvas = document.getElementById('nonlinearCanvas');
@@ -1239,11 +1326,11 @@
 
       ctxNL.clearRect(0, 0, width, height);
 
-      // Bounds with paddings
-      const minX = -1;
-      const maxX = 16;
-      const minY = 50000;
-      const maxY = 1050000;
+      // Bounds with paddings for Age (x) vs Income (y)
+      const minX = 15;
+      const maxX = 65;
+      const minY = 0;
+      const maxY = 110;
 
       // Layout margins
       const padLeft = 70;
@@ -1261,7 +1348,7 @@
       const accentColor = style.getPropertyValue('--accent').trim() || '#c97a4a';
       const fgColor = style.getPropertyValue('--fg').trim() || '#eef2f8';
 
-      // Gridlines & Ticks (Y Axis - Price)
+      // Gridlines & Ticks (Y Axis - Income $20k to $100k)
       ctxNL.lineWidth = 1;
       ctxNL.strokeStyle = colorMixWithAlpha(fgColor, 0.05);
       ctxNL.fillStyle = colorMixWithAlpha(fgColor, 0.55);
@@ -1269,27 +1356,27 @@
       ctxNL.textAlign = 'right';
       ctxNL.textBaseline = 'middle';
 
-      for (let i = 0; i <= 4; i++) {
-        const yVal = minY + (maxY - minY) * (i / 4);
+      for (let i = 0; i <= 5; i++) {
+        const yVal = 0 + 20 * i;
         const cy = mapY(yVal);
         ctxNL.beginPath();
         ctxNL.moveTo(padLeft, cy);
         ctxNL.lineTo(width - padRight, cy);
         ctxNL.stroke();
-        ctxNL.fillText(formatValue(yVal, { idx: 0 }), padLeft - 10, cy);
+        ctxNL.fillText('$' + yVal + 'k', padLeft - 10, cy);
       }
 
-      // Gridlines & Ticks (X Axis - Distance)
+      // Gridlines & Ticks (X Axis - Age 20 to 60)
       ctxNL.textAlign = 'center';
       ctxNL.textBaseline = 'top';
-      for (let i = 0; i <= 4; i++) {
-        const xVal = 0 + (15 - 0) * (i / 4);
+      for (let i = 2; i <= 6; i++) {
+        const xVal = i * 10;
         const cx = mapX(xVal);
         ctxNL.beginPath();
         ctxNL.moveTo(cx, padTop);
         ctxNL.lineTo(cx, height - padBottom);
         ctxNL.stroke();
-        ctxNL.fillText(xVal.toFixed(1) + ' km', cx, height - padBottom + 10);
+        ctxNL.fillText(xVal + ' yrs', cx, height - padBottom + 10);
       }
 
       // Axis borders
@@ -1300,23 +1387,6 @@
       ctxNL.lineTo(padLeft, height - padBottom);
       ctxNL.lineTo(width - padRight, height - padBottom);
       ctxNL.stroke();
-
-      // Draw Curved Trend Line (decaying exponential)
-      ctxNL.save();
-      ctxNL.shadowBlur = 10;
-      ctxNL.shadowColor = accentColor;
-      ctxNL.strokeStyle = accentColor;
-      ctxNL.lineWidth = 2.5;
-      ctxNL.beginPath();
-      for (let xv = 0; xv <= 15; xv += 0.2) {
-        const yv = 750000 * Math.exp(-0.16 * xv) + 180000;
-        const cx = mapX(xv);
-        const cy = mapY(yv);
-        if (xv === 0) ctxNL.moveTo(cx, cy);
-        else ctxNL.lineTo(cx, cy);
-      }
-      ctxNL.stroke();
-      ctxNL.restore();
 
       // Draw Crosshair if hovering
       if (nlHoveredPoint) {
@@ -1333,7 +1403,9 @@
       }
 
       // Draw Points
-      NON_LINEAR_DATA.forEach((p, idx) => {
+      const classColors = getClassificationColors();
+
+      CLASSIFICATION_DATA.forEach((p, idx) => {
         const cx = mapX(p.x);
         const cy = mapY(p.y);
         const isHovered = nlHoveredPoint && nlHoveredPoint.index === idx;
@@ -1341,20 +1413,21 @@
         ctxNL.beginPath();
         ctxNL.arc(cx, cy, isHovered ? 6.5 : 4.5, 0, Math.PI * 2);
 
+        const pointColor = p.label === 'blue' ? classColors.blue : classColors.red;
         if (isHovered) {
           ctxNL.fillStyle = '#ffffff';
-          ctxNL.strokeStyle = accentColor;
+          ctxNL.strokeStyle = pointColor;
           ctxNL.lineWidth = 3;
           ctxNL.fill();
           ctxNL.stroke();
 
           ctxNL.beginPath();
           ctxNL.arc(cx, cy, 11, 0, Math.PI * 2);
-          ctxNL.fillStyle = colorMixWithAlpha(accentColor, 0.25);
+          ctxNL.fillStyle = colorMixWithAlpha(pointColor, 0.25);
           ctxNL.fill();
         } else {
-          ctxNL.fillStyle = colorMixWithAlpha(accentColor, 0.35);
-          ctxNL.strokeStyle = accentColor;
+          ctxNL.fillStyle = colorMixWithAlpha(pointColor, 0.35);
+          ctxNL.strokeStyle = pointColor;
           ctxNL.lineWidth = 1.2;
           ctxNL.fill();
           ctxNL.stroke();
@@ -1363,7 +1436,7 @@
     }
 
     nlCanvas.addEventListener('mousemove', (e) => {
-      if (currentCardTab !== 'nonlinear') return;
+      if (currentCardTab !== 'scatter' || currentFeatureIdx !== 6) return;
 
       const rect = nlCanvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
@@ -1378,10 +1451,10 @@
       const plotWidth = rect.width - padLeft - padRight;
       const plotHeight = rect.height - padTop - padBottom;
 
-      const minX = -1;
-      const maxX = 16;
-      const minY = 50000;
-      const maxY = 1050000;
+      const minX = 15;
+      const maxX = 65;
+      const minY = 0;
+      const maxY = 110;
 
       const mapX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotWidth;
       const mapY = (y) => padTop + plotHeight - ((y - minY) / (maxY - minY)) * plotHeight;
@@ -1389,7 +1462,7 @@
       let nearestPoint = null;
       let minDist = 18; // hover bounds in px
 
-      NON_LINEAR_DATA.forEach(p => {
+      CLASSIFICATION_DATA.forEach(p => {
         const cx = mapX(p.x);
         const cy = mapY(p.y);
         const dist = Math.hypot(cx - mouseX, cy - mouseY);
@@ -1402,10 +1475,21 @@
       const nlTooltip = document.getElementById('nonlinearTooltip');
       if (nearestPoint) {
         nlHoveredPoint = nearestPoint;
-        nlTooltip.querySelector('.tt-title').innerText = `Metro Distance (Row ${nearestPoint.index + 1})`;
-        nlTooltip.querySelector('#nlXLabel').innerText = 'Distance to Metro:';
-        nlTooltip.querySelector('#nlXVal').innerText = nearestPoint.x.toFixed(2) + ' km';
-        nlTooltip.querySelector('#nlYVal').innerText = formatValue(nearestPoint.y, { idx: 0 });
+        nlTooltip.querySelector('.tt-title').innerText = `Profile (Row ${nearestPoint.index + 1})`;
+        nlTooltip.querySelector('#nlXLabel').innerText = 'Age:';
+        nlTooltip.querySelector('#nlXVal').innerText = Math.round(nearestPoint.x) + ' yrs';
+        nlTooltip.querySelector('#nlYLabel').innerText = 'Income:';
+        nlTooltip.querySelector('#nlYVal').innerText = '$' + Math.round(nearestPoint.y) + 'k';
+        
+        // Status row
+        let statusRow = nlTooltip.querySelector('.tt-row-status');
+        const classColors = getClassificationColors();
+        if (!statusRow) {
+          statusRow = document.createElement('div');
+          statusRow.className = 'tt-row tt-row-status';
+          nlTooltip.appendChild(statusRow);
+        }
+        statusRow.innerHTML = `<span>Status:</span><span class="tt-val" id="nlStatusVal" style="color: ${nearestPoint.label === 'blue' ? classColors.blue : classColors.red}">${nearestPoint.label === 'blue' ? 'Buyer' : 'Non-Buyer'}</span>`;
         
         nlTooltip.style.left = (nearestPoint.canvasX + 16) + 'px';
         nlTooltip.style.top = (nearestPoint.canvasY - 20) + 'px';
@@ -1426,6 +1510,20 @@
       nlTooltip.classList.remove('visible');
       drawNonLinearPlot();
     });
+
+    function downloadCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,Price,Bedrooms,Bathrooms,SquareFeet,YearBuilt,Garage,LotSize,ZipCode,CrimeRating,SchoolRating\n";
+      DATA.forEach(row => {
+        csvContent += row.join(",") + "\n";
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "housing_prices.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>
