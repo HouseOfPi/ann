@@ -622,13 +622,8 @@
         // Position overlay (only geometry — classes are set by updateFormulaOverlay)
         const overlay = document.getElementById('formula-overlay');
         if (overlay && formulaState > 0) {
-<<<<<<< HEAD
-          const axisWidth = xAxis.right - xAxis.left;
-          const centerX = (xAxis.left + xAxis.right) / 2 + axisWidth * 0.1;
-=======
           const chartWidth = xAxis.right - xAxis.left;
           const centerX = (xAxis.left + xAxis.right) / 2 + chartWidth * 0.08;
->>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
           const centerY = yAxis.top - 24;
           overlay.style.left = `${centerX}px`;
           overlay.style.top = `${centerY}px`;
@@ -649,12 +644,6 @@
       const mse   = overlay.querySelector('.fo-mse');
       const frac  = overlay.querySelector('.fo-frac');
       const label = overlay.querySelector('.fo-label');
-<<<<<<< HEAD
-
-      // Cancel any running transitions on elements to prevent conflicts
-      gsap.killTweensOf([term, mse, frac, label]);
-      gsap.set([term, mse, frac, label], { clearProps: "all" });
-=======
       const DUR   = 0.42;
       const EASE  = 'power2.inOut';
 
@@ -662,7 +651,6 @@
       if (_overlayTl) _overlayTl.kill();
       gsap.killTweensOf([overlay, term, mse, frac, label]);
       _overlayTl = gsap.timeline();
->>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
 
       if (formulaState === 0) {
         _overlayTl.to(overlay, { opacity: 0, duration: 0.28, ease: 'power2.in',
@@ -674,36 +662,6 @@
       // Show chip on first appearance only
       if (!overlay.classList.contains('show')) {
         overlay.classList.add('show');
-<<<<<<< HEAD
-        gsap.fromTo(overlay, { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.4)' });
-      } else {
-        gsap.to(overlay, { opacity: 1, scale: 1, duration: 0.2 });
-      }
-
-      if (formulaState === 1) {
-        // Show bare squared-error term, hide MSE block and label
-        gsap.set(mse, { display: 'none' });
-        gsap.set(term, { display: 'inline-block', opacity: 1, y: 0 });
-        gsap.set(label, { display: 'none' });
-      } else if (formulaState === 2) {
-        // Show Sum (y_i - ŷ_i)^2 (hide 1/n fraction and label)
-        gsap.set(term, { display: 'none' });
-        gsap.set(mse, { display: 'inline-flex', opacity: 1, y: 0 });
-        gsap.set(frac, { display: 'none' });
-        gsap.set(label, { display: 'none' });
-      } else if (formulaState === 3) {
-        // Show 1/n Sum (y_i - ŷ_i)^2 (hide label)
-        gsap.set(term, { display: 'none' });
-        gsap.set(mse, { display: 'inline-flex', opacity: 1, y: 0 });
-        gsap.set(frac, { display: 'inline-flex', opacity: 1, width: 'auto', marginRight: 0 });
-        gsap.set(label, { display: 'none' });
-      } else if (formulaState === 4) {
-        // Show label + 1/n Sum (y_i - ŷ_i)^2
-        gsap.set(term, { display: 'none' });
-        gsap.set(mse, { display: 'inline-flex', opacity: 1, y: 0 });
-        gsap.set(frac, { display: 'inline-flex', opacity: 1, width: 'auto', marginRight: 0 });
-        gsap.set(label, { display: 'block', opacity: 1, height: 'auto', marginBottom: 4 });
-=======
         gsap.set(overlay, { opacity: 0 });
         _overlayTl.to(overlay, { opacity: 1, duration: 0.32, ease: 'power2.out' });
       }
@@ -748,7 +706,6 @@
         _overlayTl
           .to(label, { height: labelH, opacity: 1, duration: DUR, ease: 'power2.out',
                        onComplete: () => gsap.set(label, { height: 'auto' }) });
->>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
       }
     }
 
