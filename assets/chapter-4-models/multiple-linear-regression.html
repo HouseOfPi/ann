@@ -500,6 +500,83 @@
       font-weight: 700;
       color: var(--accent);
     }
+
+    /* ── Non-Linear layout ── */
+    .nonlinear-outer {
+      display: none;
+      flex: 1;
+      flex-direction: row;
+      gap: 24px;
+      width: 100%;
+      padding: 18px 24px 28px;
+      position: relative;
+    }
+    .nonlinear-canvas-container {
+      flex: 1;
+      position: relative;
+      background: color-mix(in srgb, var(--fg) 1%, transparent);
+      border-radius: 14px;
+      border: 1px dashed color-mix(in srgb, var(--fg) 8%, transparent);
+      overflow: hidden;
+    }
+    .nonlinear-canvas-container canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .nonlinear-explanation-card {
+      width: 320px;
+      border-radius: 14px;
+      border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+      background: color-mix(in srgb, var(--accent) 3%, transparent);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .nl-exp-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+    }
+    .nl-exp-line {
+      width: 12px;
+      height: 2px;
+      background: var(--accent);
+    }
+    .nl-exp-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--fg);
+    }
+    .nl-exp-highlight {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 600;
+    }
+    .nl-exp-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -514,6 +591,7 @@
         <div class="card-tabs">
           <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">Dataset Table</button>
           <button class="card-tab" data-tab="scatter" onclick="switchCardTab('scatter')">Scatter Plot</button>
+          <button class="card-tab" data-tab="nonlinear" onclick="switchCardTab('nonlinear')">Non-Linear</button>
         </div>
       </div>
 
@@ -568,6 +646,36 @@
               <span>Price (y):</span>
               <span class="tt-val" id="ttYVal">$0</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Non-Linear View -->
+      <div class="nonlinear-outer">
+        <div class="nonlinear-canvas-container">
+          <canvas id="nonlinearCanvas"></canvas>
+          <div class="scatter-tooltip" id="nonlinearTooltip">
+            <div class="tt-title">Non-Linear Data</div>
+            <div class="tt-row">
+              <span id="nlXLabel">Distance to Metro:</span>
+              <span class="tt-val" id="nlXVal">0 km</span>
+            </div>
+            <div class="tt-row">
+              <span>Price (y):</span>
+              <span class="tt-val" id="nlYVal">$0</span>
+            </div>
+          </div>
+        </div>
+        <div class="nonlinear-explanation-card">
+          <div class="nl-exp-label"><span class="nl-exp-line"></span> Concept</div>
+          <div class="nl-exp-title">Why Linear Regression <span class="nl-exp-highlight">fails</span> here</div>
+          <div class="nl-exp-desc">
+            <p>
+              When a parameter (like distance to a transit hub or a house's age) has a curved or exponential relationship with price, a straight best-fit line is no longer mathematically valid.
+            </p>
+            <p>
+              In these cases, we do not follow a linear regression model. Instead, other models (like <strong>Polynomial Regression</strong>, <strong>Decision Trees</strong>, or <strong>Neural Networks</strong>) are selected based on the non-linear trend.
+            </p>
           </div>
         </div>
       </div>
@@ -685,6 +793,8 @@
       applyPalette(d.palette || (d.mode === 'dark' ? 'Navy Lime' : 'Warm Linen'));
       if (currentCardTab === 'scatter') {
         drawScatterPlot();
+      } else if (currentCardTab === 'nonlinear') {
+        drawNonLinearPlot();
       }
     });
 
@@ -741,13 +851,15 @@
       // Show/hide sections
       const tableOuter = document.querySelector('.table-outer');
       const scatterOuter = document.querySelector('.scatter-outer');
+      const nonlinearOuter = document.querySelector('.nonlinear-outer');
 
-      if (tab === 'table') {
-        tableOuter.style.display = 'block';
-        scatterOuter.style.display = 'none';
-      } else {
-        tableOuter.style.display = 'none';
-        scatterOuter.style.display = 'flex';
+      tableOuter.style.display = tab === 'table' ? 'block' : 'none';
+      scatterOuter.style.display = tab === 'scatter' ? 'flex' : 'none';
+      nonlinearOuter.style.display = tab === 'nonlinear' ? 'flex' : 'none';
+
+      // Force observer triggers to refresh sizes on display changes
+      if (tab === 'nonlinear') {
+        drawNonLinearPlot();
       }
     }
 
@@ -772,18 +884,25 @@
         const { width, height } = entry.contentRect;
         if (width === 0 || height === 0) return;
         
+        const target = entry.target;
+        const targetCanvas = target.querySelector('canvas');
+        if (!targetCanvas) continue;
+        
         const dpr = window.devicePixelRatio || 1;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
+        targetCanvas.width = width * dpr;
+        targetCanvas.height = height * dpr;
         
-        canvas.style.width = width + 'px';
-        canvas.style.height = height + 'px';
+        targetCanvas.style.width = width + 'px';
+        targetCanvas.style.height = height + 'px';
         
-        ctx.resetTransform();
-        ctx.scale(dpr, dpr);
+        const targetCtx = targetCanvas.getContext('2d');
+        targetCtx.resetTransform();
+        targetCtx.scale(dpr, dpr);
         
-        if (currentCardTab === 'scatter') {
+        if (targetCanvas.id === 'scatterCanvas' && currentCardTab === 'scatter') {
           drawScatterPlot();
+        } else if (targetCanvas.id === 'nonlinearCanvas' && currentCardTab === 'nonlinear') {
+          drawNonLinearPlot();
         }
       }
     });
@@ -1088,6 +1207,225 @@
     function hideTooltip() {
       tooltip.classList.remove('visible');
     }
+
+    // ── Non-Linear Tab Logic ──
+    const NON_LINEAR_DATA = [];
+    let nlSeed = 123;
+    function nlRandom() {
+      const x = Math.sin(nlSeed++) * 10000;
+      return x - Math.floor(x);
+    }
+    // Generate exponential decay points (Distance to metro vs Price)
+    for (let i = 0; i < 100; i++) {
+      const xVal = nlRandom() * 15; // 0 to 15 km
+      const basePrice = 750000 * Math.exp(-0.16 * xVal) + 180000;
+      const noise = (nlRandom() - 0.5) * 120000;
+      const yVal = Math.max(100000, Math.min(1000000, basePrice + noise));
+      NON_LINEAR_DATA.push({ x: xVal, y: yVal, index: i });
+    }
+
+    const nlCanvas = document.getElementById('nonlinearCanvas');
+    resizeObserver.observe(nlCanvas.parentElement);
+
+    let nlHoveredPoint = null;
+
+    function drawNonLinearPlot() {
+      if (!nlCanvas || !nlCanvas.width || !nlCanvas.height) return;
+      const ctxNL = nlCanvas.getContext('2d');
+
+      const rect = nlCanvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctxNL.clearRect(0, 0, width, height);
+
+      // Bounds with paddings
+      const minX = -1;
+      const maxX = 16;
+      const minY = 50000;
+      const maxY = 1050000;
+
+      // Layout margins
+      const padLeft = 70;
+      const padRight = 30;
+      const padTop = 40;
+      const padBottom = 60;
+
+      const plotWidth = width - padLeft - padRight;
+      const plotHeight = height - padTop - padBottom;
+
+      const mapX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotWidth;
+      const mapY = (y) => padTop + plotHeight - ((y - minY) / (maxY - minY)) * plotHeight;
+
+      const style = getComputedStyle(document.documentElement);
+      const accentColor = style.getPropertyValue('--accent').trim() || '#c97a4a';
+      const fgColor = style.getPropertyValue('--fg').trim() || '#eef2f8';
+
+      // Gridlines & Ticks (Y Axis - Price)
+      ctxNL.lineWidth = 1;
+      ctxNL.strokeStyle = colorMixWithAlpha(fgColor, 0.05);
+      ctxNL.fillStyle = colorMixWithAlpha(fgColor, 0.55);
+      ctxNL.font = '500 10px "JetBrains Mono", monospace';
+      ctxNL.textAlign = 'right';
+      ctxNL.textBaseline = 'middle';
+
+      for (let i = 0; i <= 4; i++) {
+        const yVal = minY + (maxY - minY) * (i / 4);
+        const cy = mapY(yVal);
+        ctxNL.beginPath();
+        ctxNL.moveTo(padLeft, cy);
+        ctxNL.lineTo(width - padRight, cy);
+        ctxNL.stroke();
+        ctxNL.fillText(formatValue(yVal, { idx: 0 }), padLeft - 10, cy);
+      }
+
+      // Gridlines & Ticks (X Axis - Distance)
+      ctxNL.textAlign = 'center';
+      ctxNL.textBaseline = 'top';
+      for (let i = 0; i <= 4; i++) {
+        const xVal = 0 + (15 - 0) * (i / 4);
+        const cx = mapX(xVal);
+        ctxNL.beginPath();
+        ctxNL.moveTo(cx, padTop);
+        ctxNL.lineTo(cx, height - padBottom);
+        ctxNL.stroke();
+        ctxNL.fillText(xVal.toFixed(1) + ' km', cx, height - padBottom + 10);
+      }
+
+      // Axis borders
+      ctxNL.strokeStyle = colorMixWithAlpha(fgColor, 0.15);
+      ctxNL.lineWidth = 1;
+      ctxNL.beginPath();
+      ctxNL.moveTo(padLeft, padTop);
+      ctxNL.lineTo(padLeft, height - padBottom);
+      ctxNL.lineTo(width - padRight, height - padBottom);
+      ctxNL.stroke();
+
+      // Draw Curved Trend Line (decaying exponential)
+      ctxNL.save();
+      ctxNL.shadowBlur = 10;
+      ctxNL.shadowColor = accentColor;
+      ctxNL.strokeStyle = accentColor;
+      ctxNL.lineWidth = 2.5;
+      ctxNL.beginPath();
+      for (let xv = 0; xv <= 15; xv += 0.2) {
+        const yv = 750000 * Math.exp(-0.16 * xv) + 180000;
+        const cx = mapX(xv);
+        const cy = mapY(yv);
+        if (xv === 0) ctxNL.moveTo(cx, cy);
+        else ctxNL.lineTo(cx, cy);
+      }
+      ctxNL.stroke();
+      ctxNL.restore();
+
+      // Draw Crosshair if hovering
+      if (nlHoveredPoint) {
+        ctxNL.strokeStyle = colorMixWithAlpha(fgColor, 0.15);
+        ctxNL.lineWidth = 1;
+        ctxNL.setLineDash([4, 4]);
+        ctxNL.beginPath();
+        ctxNL.moveTo(padLeft, nlHoveredPoint.canvasY);
+        ctxNL.lineTo(nlHoveredPoint.canvasX, nlHoveredPoint.canvasY);
+        ctxNL.moveTo(nlHoveredPoint.canvasX, height - padBottom);
+        ctxNL.lineTo(nlHoveredPoint.canvasX, nlHoveredPoint.canvasY);
+        ctxNL.stroke();
+        ctxNL.setLineDash([]);
+      }
+
+      // Draw Points
+      NON_LINEAR_DATA.forEach((p, idx) => {
+        const cx = mapX(p.x);
+        const cy = mapY(p.y);
+        const isHovered = nlHoveredPoint && nlHoveredPoint.index === idx;
+
+        ctxNL.beginPath();
+        ctxNL.arc(cx, cy, isHovered ? 6.5 : 4.5, 0, Math.PI * 2);
+
+        if (isHovered) {
+          ctxNL.fillStyle = '#ffffff';
+          ctxNL.strokeStyle = accentColor;
+          ctxNL.lineWidth = 3;
+          ctxNL.fill();
+          ctxNL.stroke();
+
+          ctxNL.beginPath();
+          ctxNL.arc(cx, cy, 11, 0, Math.PI * 2);
+          ctxNL.fillStyle = colorMixWithAlpha(accentColor, 0.25);
+          ctxNL.fill();
+        } else {
+          ctxNL.fillStyle = colorMixWithAlpha(accentColor, 0.35);
+          ctxNL.strokeStyle = accentColor;
+          ctxNL.lineWidth = 1.2;
+          ctxNL.fill();
+          ctxNL.stroke();
+        }
+      });
+    }
+
+    nlCanvas.addEventListener('mousemove', (e) => {
+      if (currentCardTab !== 'nonlinear') return;
+
+      const rect = nlCanvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Layout margins
+      const padLeft = 70;
+      const padRight = 30;
+      const padTop = 40;
+      const padBottom = 60;
+      
+      const plotWidth = rect.width - padLeft - padRight;
+      const plotHeight = rect.height - padTop - padBottom;
+
+      const minX = -1;
+      const maxX = 16;
+      const minY = 50000;
+      const maxY = 1050000;
+
+      const mapX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotWidth;
+      const mapY = (y) => padTop + plotHeight - ((y - minY) / (maxY - minY)) * plotHeight;
+
+      let nearestPoint = null;
+      let minDist = 18; // hover bounds in px
+
+      NON_LINEAR_DATA.forEach(p => {
+        const cx = mapX(p.x);
+        const cy = mapY(p.y);
+        const dist = Math.hypot(cx - mouseX, cy - mouseY);
+        if (dist < minDist) {
+          minDist = dist;
+          nearestPoint = { ...p, canvasX: cx, canvasY: cy };
+        }
+      });
+
+      const nlTooltip = document.getElementById('nonlinearTooltip');
+      if (nearestPoint) {
+        nlHoveredPoint = nearestPoint;
+        nlTooltip.querySelector('.tt-title').innerText = `Metro Distance (Row ${nearestPoint.index + 1})`;
+        nlTooltip.querySelector('#nlXLabel').innerText = 'Distance to Metro:';
+        nlTooltip.querySelector('#nlXVal').innerText = nearestPoint.x.toFixed(2) + ' km';
+        nlTooltip.querySelector('#nlYVal').innerText = formatValue(nearestPoint.y, { idx: 0 });
+        
+        nlTooltip.style.left = (nearestPoint.canvasX + 16) + 'px';
+        nlTooltip.style.top = (nearestPoint.canvasY - 20) + 'px';
+        nlTooltip.classList.add('visible');
+        nlCanvas.style.cursor = 'pointer';
+      } else {
+        nlHoveredPoint = null;
+        nlTooltip.classList.remove('visible');
+        nlCanvas.style.cursor = 'default';
+      }
+      
+      drawNonLinearPlot();
+    });
+
+    nlCanvas.addEventListener('mouseleave', () => {
+      nlHoveredPoint = null;
+      const nlTooltip = document.getElementById('nonlinearTooltip');
+      nlTooltip.classList.remove('visible');
+      drawNonLinearPlot();
+    });
   </script>
 </body>
 </html>
