@@ -409,9 +409,6 @@
 
       if (currentStep < maxSteps) {
         setStep(currentStep + 1);
-      } else {
-        // Proceed to next slide when presentation is clicked at the final step
-        window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
       }
     });
 
