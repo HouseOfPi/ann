@@ -61,37 +61,17 @@
       flex-shrink: 0;
       background: color-mix(in srgb, var(--fg) 2%, transparent);
     }
-    .dataset-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: color-mix(in srgb, var(--fg) 45%, transparent);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .dataset-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2vw, 25px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: var(--fg);
     }
-    .dataset-name::before {
-      content: '';
-      display: inline-block;
-      width: 3px;
-      height: 14px;
-      background: var(--accent);
-      border-radius: 2px;
-    }
-    .dataset-name span { color: var(--accent); }
-
-    .col-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 30%, transparent);
-      background: color-mix(in srgb, var(--fg) 5%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-      padding: 3px 11px;
-      border-radius: 20px;
+    .dataset-title em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 500;
     }
 
     /* ── Table ── */
@@ -401,36 +381,28 @@
     /* ── Tab Switcher ── */
     .card-tabs {
       display: flex;
-      gap: 6px;
-      background: color-mix(in srgb, var(--fg) 5%, transparent);
-      padding: 3px;
-      border-radius: 10px;
-      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      gap: 16px;
+      align-items: center;
     }
     .card-tab {
       background: transparent;
       border: none;
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
       color: color-mix(in srgb, var(--fg) 50%, transparent);
-      padding: 5px 12px;
-      border-radius: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
       cursor: pointer;
+      border-radius: 8px;
       transition: all 0.2s ease;
     }
     .card-tab:hover {
       color: var(--fg);
+      background: color-mix(in srgb, var(--fg) 6%, transparent);
     }
     .card-tab.active {
-      background: color-mix(in srgb, var(--bg) 95%, #fff);
-      color: var(--fg);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
-    html[data-theme="Midnight"] .card-tab.active,
-    body.palette-midnight .card-tab.active {
-      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
     }
 
     /* ── Scatter plot layout ── */
@@ -538,12 +510,11 @@
   <div class="body">
     <div class="dataset-card">
       <div class="card-header">
-        <span class="dataset-name">Housing <span>Prices</span></span>
+        <div class="dataset-title">Housing <em>Prices</em></div>
         <div class="card-tabs">
-          <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">📋 Data Table</button>
-          <button class="card-tab" data-tab="scatter" onclick="switchCardTab('scatter')">📊 Scatter Plots</button>
+          <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">Dataset Table</button>
+          <button class="card-tab" data-tab="scatter" onclick="switchCardTab('scatter')">Scatter Plot</button>
         </div>
-        <span class="col-count">6 features · 1 target</span>
       </div>
 
       <div class="table-outer">
