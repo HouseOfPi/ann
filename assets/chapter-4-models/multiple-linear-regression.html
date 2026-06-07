@@ -397,6 +397,135 @@
       z-index: 1;
       pointer-events: none;
     }
+
+    /* ── Tab Switcher ── */
+    .card-tabs {
+      display: flex;
+      gap: 6px;
+      background: color-mix(in srgb, var(--fg) 5%, transparent);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+    }
+    .card-tab {
+      background: transparent;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: color-mix(in srgb, var(--fg) 50%, transparent);
+      padding: 5px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .card-tab:hover {
+      color: var(--fg);
+    }
+    .card-tab.active {
+      background: color-mix(in srgb, var(--bg) 95%, #fff);
+      color: var(--fg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    html[data-theme="Midnight"] .card-tab.active,
+    body.palette-midnight .card-tab.active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ── Scatter plot layout ── */
+    .scatter-outer {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      padding: 18px 24px 20px;
+      position: relative;
+    }
+    .scatter-subtabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .scatter-subtab {
+      background: color-mix(in srgb, var(--fg) 3%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .scatter-subtab:hover {
+      background: color-mix(in srgb, var(--fg) 6%, transparent);
+      color: var(--fg);
+    }
+    .scatter-subtab.active {
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .scatter-canvas-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: color-mix(in srgb, var(--fg) 1%, transparent);
+      border-radius: 14px;
+      border: 1px dashed color-mix(in srgb, var(--fg) 8%, transparent);
+    }
+    .scatter-canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .scatter-tooltip {
+      position: absolute;
+      z-index: 100;
+      background: color-mix(in srgb, var(--bg) 90%, #fff);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid color-mix(in srgb, var(--fg) 12%, transparent);
+      border-radius: 10px;
+      padding: 8px 12px;
+      box-shadow: 0 8px 20px -4px rgba(0,0,0,0.25);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      color: var(--fg);
+    }
+    .scatter-tooltip.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .scatter-tooltip .tt-title {
+      font-weight: 800;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      margin-bottom: 4px;
+    }
+    .scatter-tooltip .tt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 2px;
+    }
+    .scatter-tooltip .tt-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+    }
   </style>
   <link rel="stylesheet" href="../shared/page-title.css">
   <script defer src="../shared/page-title.js"></script>
@@ -408,6 +537,10 @@
     <div class="dataset-card">
       <div class="card-header">
         <span class="dataset-name">Housing <span>Prices</span></span>
+        <div class="card-tabs">
+          <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">📋 Data Table</button>
+          <button class="card-tab" data-tab="scatter" onclick="switchCardTab('scatter')">📊 Scatter Plots</button>
+        </div>
         <span class="col-count">6 features · 1 target</span>
       </div>
 
@@ -438,6 +571,32 @@
           </table>
         </div>
         <div class="scroll-fade"></div>
+      </div>
+
+      <!-- Scatter Plots View -->
+      <div class="scatter-outer">
+        <div class="scatter-subtabs">
+          <button class="scatter-subtab active" onclick="switchScatterFeature(0)">SquareFeet (x₁)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(1)">Bedrooms (x₂)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(2)">Bathrooms (x₃)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(3)">Age (x₄)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(4)">Crime Rating (x₅)</button>
+          <button class="scatter-subtab" onclick="switchScatterFeature(5)">LotSize (x₆)</button>
+        </div>
+        <div class="scatter-canvas-container">
+          <canvas id="scatterCanvas"></canvas>
+          <div class="scatter-tooltip" id="scatterTooltip">
+            <div class="tt-title">Property Details</div>
+            <div class="tt-row">
+              <span id="ttXLabel">Feature:</span>
+              <span class="tt-val" id="ttXVal">0</span>
+            </div>
+            <div class="tt-row">
+              <span>Price (y):</span>
+              <span class="tt-val" id="ttYVal">$0</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -551,6 +710,9 @@
       const d = e.data || {};
       if (d.type !== 'SET_THEME') return;
       applyPalette(d.palette || (d.mode === 'dark' ? 'Navy Lime' : 'Warm Linen'));
+      if (currentCardTab === 'scatter') {
+        drawScatterPlot();
+      }
     });
 
     function toggleProblemStatement() {
@@ -580,6 +742,353 @@
         if (c) c.classList.remove('column-hover');
       }
     });
+
+    // ── Card Tab and Scatter Plot Interactive Logic ──
+    let currentCardTab = 'table'; // 'table' | 'scatter'
+    let currentFeatureIdx = 0; // index in FEATURES array
+    let hoveredPoint = null;
+
+    const FEATURES = [
+      { name: 'SquareFeet', label: 'Square Feet (x₁)', idx: 3, unit: ' sq ft', isAge: false },
+      { name: 'Bedrooms', label: 'Bedrooms (x₂)', idx: 1, unit: '', isAge: false },
+      { name: 'Bathrooms', label: 'Bathrooms (x₃)', idx: 2, unit: '', isAge: false },
+      { name: 'Age', label: 'Age (x₄)', idx: 4, unit: ' yrs', isAge: true },
+      { name: 'CrimeRating', label: 'Crime Rating (x₅)', idx: 8, unit: '', isAge: false },
+      { name: 'LotSize', label: 'Lot Size (x₆)', idx: 6, unit: ' acres', isAge: false }
+    ];
+
+    function switchCardTab(tab) {
+      currentCardTab = tab;
+      
+      // Update header tabs active class
+      document.querySelectorAll('.card-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+
+      // Show/hide sections
+      const tableOuter = document.querySelector('.table-outer');
+      const scatterOuter = document.querySelector('.scatter-outer');
+
+      if (tab === 'table') {
+        tableOuter.style.display = 'block';
+        scatterOuter.style.display = 'none';
+      } else {
+        tableOuter.style.display = 'none';
+        scatterOuter.style.display = 'flex';
+        // Wait for container display to settle before reading rect size
+        requestAnimationFrame(() => {
+          resizeScatterCanvas();
+          drawScatterPlot();
+        });
+      }
+    }
+
+    function switchScatterFeature(index) {
+      currentFeatureIdx = index;
+      document.querySelectorAll('.scatter-subtab').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx === index);
+      });
+      // Hide tooltip on switch
+      hideTooltip();
+      drawScatterPlot();
+    }
+
+    // Canvas management
+    const canvas = document.getElementById('scatterCanvas');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('scatterTooltip');
+
+    function resizeScatterCanvas() {
+      const container = canvas.parentElement;
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+    }
+
+    window.addEventListener('resize', () => {
+      if (currentCardTab === 'scatter') {
+        resizeScatterCanvas();
+        drawScatterPlot();
+      }
+    });
+
+    function formatValue(val, feature) {
+      if (feature.idx === 0) { // Price
+        if (val >= 1000000) return '$' + (val / 1000000).toFixed(1) + 'M';
+        if (val >= 1000) return '$' + Math.round(val / 1000) + 'k';
+        return '$' + val;
+      }
+      if (feature.name === 'LotSize') return val.toFixed(2) + feature.unit;
+      if (feature.name === 'Bathrooms') return val.toFixed(1) + feature.unit;
+      return Math.round(val).toLocaleString() + feature.unit;
+    }
+
+    function drawScatterPlot() {
+      if (!canvas.width || !canvas.height) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const activeFeature = FEATURES[currentFeatureIdx];
+
+      // ── Gather Data Pairs ──
+      const points = DATA.map(row => {
+        const yVal = row[0]; // Price
+        const xVal = activeFeature.isAge
+          ? (new Date().getFullYear() - row[activeFeature.idx])
+          : row[activeFeature.idx];
+        return { x: xVal, y: yVal };
+      });
+
+      // ── Calculate Bounds with 8% padding ──
+      const xVals = points.map(p => p.x);
+      const yVals = points.map(p => p.y);
+
+      const xMin = Math.min(...xVals);
+      const xMax = Math.max(...xVals);
+      const yMin = Math.min(...yVals);
+      const yMax = Math.max(...yVals);
+
+      const xPad = (xMax - xMin) * 0.08 || 1;
+      const yPad = (yMax - yMin) * 0.08 || 1;
+
+      const minX = xMin - xPad;
+      const maxX = xMax + xPad;
+      const minY = Math.max(0, yMin - yPad);
+      const maxY = yMax + yPad;
+
+      // Layout margins
+      const padLeft = 70;
+      const padRight = 30;
+      const padTop = 40;
+      const padBottom = 50;
+
+      const plotWidth = width - padLeft - padRight;
+      const plotHeight = height - padTop - padBottom;
+
+      // Coordinate mapping functions
+      const mapX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotWidth;
+      const mapY = (y) => padTop + plotHeight - ((y - minY) / (maxY - minY)) * plotHeight;
+
+      // Get styles from CSS variables
+      const style = getComputedStyle(document.documentElement);
+      const accentColor = style.getPropertyValue('--accent').trim() || '#c97a4a';
+      const fgColor = style.getPropertyValue('--fg').trim() || '#eef2f8';
+
+      // ── Draw Gridlines & Axes ticks ──
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.05);
+      ctx.fillStyle = colorMixWithAlpha(fgColor, 0.5);
+      ctx.font = '500 10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      // Y Axis Ticks (Price) - 5 divisions
+      for (let i = 0; i <= 4; i++) {
+        const yVal = minY + (maxY - minY) * (i / 4);
+        const cy = mapY(yVal);
+        
+        // Draw gridline
+        ctx.beginPath();
+        ctx.moveTo(padLeft, cy);
+        ctx.lineTo(width - padRight, cy);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.55);
+        ctx.fillText(formatValue(yVal, { idx: 0 }), padLeft - 10, cy);
+      }
+
+      // X Axis Ticks - 5 divisions
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = 0; i <= 4; i++) {
+        const xVal = minX + (maxX - minX) * (i / 4);
+        const cx = mapX(xVal);
+
+        // Draw gridline
+        ctx.beginPath();
+        ctx.moveTo(cx, padTop);
+        ctx.lineTo(cx, height - padBottom);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.55);
+        ctx.fillText(formatValue(xVal, activeFeature), cx, height - padBottom + 10);
+      }
+
+      // Axis borders
+      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.15);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, padTop);
+      ctx.lineTo(padLeft, height - padBottom);
+      ctx.lineTo(width - padRight, height - padBottom);
+      ctx.stroke();
+
+
+
+      // ── Draw Crosshair if hovering ──
+      if (hoveredPoint) {
+        ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.15);
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        
+        ctx.beginPath();
+        // Horizontal line
+        ctx.moveTo(padLeft, hoveredPoint.canvasY);
+        ctx.lineTo(hoveredPoint.canvasX, hoveredPoint.canvasY);
+        // Vertical line
+        ctx.moveTo(hoveredPoint.canvasX, height - padBottom);
+        ctx.lineTo(hoveredPoint.canvasX, hoveredPoint.canvasY);
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset dash
+      }
+
+      // ── Draw Scatter Points ──
+      points.forEach((p, idx) => {
+        const cx = mapX(p.x);
+        const cy = mapY(p.y);
+        const isHovered = hoveredPoint && hoveredPoint.index === idx;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, isHovered ? 6.5 : 4.5, 0, Math.PI * 2);
+
+        if (isHovered) {
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = accentColor;
+          ctx.lineWidth = 3;
+          ctx.fill();
+          ctx.stroke();
+          
+          // Draw outer accent glow ring
+          ctx.beginPath();
+          ctx.arc(cx, cy, 11, 0, Math.PI * 2);
+          ctx.fillStyle = colorMixWithAlpha(accentColor, 0.25);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = colorMixWithAlpha(accentColor, 0.35);
+          ctx.strokeStyle = accentColor;
+          ctx.lineWidth = 1.2;
+          ctx.fill();
+          ctx.stroke();
+        }
+      });
+
+
+    }
+
+    // Helper to mix hex/rgba color with transparency
+    function colorMixWithAlpha(colorStr, alpha) {
+      const hex = colorStr.trim();
+      if (hex.startsWith('#')) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+      return hex;
+    }
+
+    // Mouse interactive events on canvas
+    canvas.addEventListener('mousemove', (e) => {
+      if (currentCardTab !== 'scatter') return;
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const activeFeature = FEATURES[currentFeatureIdx];
+      const points = DATA.map((row, idx) => {
+        const yVal = row[0];
+        const xVal = activeFeature.isAge
+          ? (new Date().getFullYear() - row[activeFeature.idx])
+          : row[activeFeature.idx];
+        return { x: xVal, y: yVal, index: idx };
+      });
+
+      // Layout margins
+      const padLeft = 70;
+      const padRight = 30;
+      const padTop = 40;
+      const padBottom = 50;
+      
+      const plotWidth = rect.width - padLeft - padRight;
+      const plotHeight = rect.height - padTop - padBottom;
+
+      const xVals = points.map(p => p.x);
+      const yVals = points.map(p => p.y);
+      const xMin = Math.min(...xVals);
+      const xMax = Math.max(...xVals);
+      const yMin = Math.min(...yVals);
+      const yMax = Math.max(...yVals);
+      const xPad = (xMax - xMin) * 0.08 || 1;
+      const yPad = (yMax - yMin) * 0.08 || 1;
+      const minX = xMin - xPad;
+      const maxX = xMax + xPad;
+      const minY = Math.max(0, yMin - yPad);
+      const maxY = yMax + yPad;
+
+      const mapX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotWidth;
+      const mapY = (y) => padTop + plotHeight - ((y - minY) / (maxY - minY)) * plotHeight;
+
+      let nearestPoint = null;
+      let minDist = 18; // hover bounds in px
+
+      points.forEach(p => {
+        const cx = mapX(p.x);
+        const cy = mapY(p.y);
+        const dist = Math.hypot(cx - mouseX, cy - mouseY);
+        if (dist < minDist) {
+          minDist = dist;
+          nearestPoint = { ...p, canvasX: cx, canvasY: cy };
+        }
+      });
+
+      if (nearestPoint) {
+        hoveredPoint = nearestPoint;
+        showTooltip(nearestPoint, activeFeature);
+        canvas.style.cursor = 'pointer';
+      } else {
+        hoveredPoint = null;
+        hideTooltip();
+        canvas.style.cursor = 'default';
+      }
+      
+      drawScatterPlot();
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      hoveredPoint = null;
+      hideTooltip();
+      drawScatterPlot();
+    });
+
+    function showTooltip(point, feature) {
+      tooltip.querySelector('.tt-title').innerText = `Property Details (Row ${point.index + 1})`;
+      tooltip.querySelector('#ttXLabel').innerText = feature.name + ':';
+      tooltip.querySelector('#ttXVal').innerText = formatValue(point.x, feature);
+      tooltip.querySelector('#ttYVal').innerText = formatValue(point.y, { idx: 0 });
+      
+      tooltip.style.left = (point.canvasX + 16) + 'px';
+      tooltip.style.top = (point.canvasY - 20) + 'px';
+      tooltip.classList.add('visible');
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
   </script>
 </body>
 </html>
