@@ -477,11 +477,15 @@
       background: color-mix(in srgb, var(--fg) 1%, transparent);
       border-radius: 14px;
       border: 1px dashed color-mix(in srgb, var(--fg) 8%, transparent);
+      overflow: hidden;
     }
     .scatter-canvas-container canvas {
-      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      display: block;
     }
     .scatter-tooltip {
       position: absolute;
@@ -773,11 +777,6 @@
       } else {
         tableOuter.style.display = 'none';
         scatterOuter.style.display = 'flex';
-        // Wait for container display to settle before reading rect size
-        requestAnimationFrame(() => {
-          resizeScatterCanvas();
-          drawScatterPlot();
-        });
       }
     }
 
@@ -796,27 +795,28 @@
     const ctx = canvas.getContext('2d');
     const tooltip = document.getElementById('scatterTooltip');
 
-    function resizeScatterCanvas() {
-      const container = canvas.parentElement;
-      const rect = container.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
-      
-      ctx.resetTransform();
-      ctx.scale(dpr, dpr);
-    }
-
-    window.addEventListener('resize', () => {
-      if (currentCardTab === 'scatter') {
-        resizeScatterCanvas();
-        drawScatterPlot();
+    // Resize observer to handle canvas resizing dynamically and robustly
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (width === 0 || height === 0) return;
+        
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+        
+        if (currentCardTab === 'scatter') {
+          drawScatterPlot();
+        }
       }
     });
+    resizeObserver.observe(canvas.parentElement);
 
     function formatValue(val, feature) {
       if (feature.idx === 0) { // Price
