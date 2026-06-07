@@ -936,7 +936,37 @@
       ctx.lineTo(width - padRight, height - padBottom);
       ctx.stroke();
 
+      // ── Calculate Linear Regression ──
+      let sumX = 0, sumY = 0;
+      points.forEach(p => { sumX += p.x; sumY += p.y; });
+      const n = points.length;
+      const meanX = sumX / n;
+      const meanY = sumY / n;
 
+      let num = 0, den = 0;
+      points.forEach(p => {
+        num += (p.x - meanX) * (p.y - meanY);
+        den += (p.x - meanX) * (p.x - meanX);
+      });
+      const mCoef = den === 0 ? 0 : num / den;
+      const cCoef = meanY - mCoef * meanX;
+
+      // Draw Trend Line (Best fit line)
+      const lineXStart = xMin;
+      const lineYStart = mCoef * lineXStart + cCoef;
+      const lineXEnd = xMax;
+      const lineYEnd = mCoef * lineXEnd + cCoef;
+
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = accentColor;
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(mapX(lineXStart), mapY(lineYStart));
+      ctx.lineTo(mapX(lineXEnd), mapY(lineYEnd));
+      ctx.stroke();
+      ctx.restore();
 
       // ── Draw Crosshair if hovering ──
       if (hoveredPoint) {
