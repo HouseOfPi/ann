@@ -2090,7 +2090,7 @@
       const presentationSections = document.querySelectorAll(
         "#sliderContainer > section"
       );
-      let currentSlideIdx = 14; // Best Fit Line
+      let currentSlideIdx = 14; // Multiple Linear Regression
       let isSlideAnimating = false;
       let activeSlideTimeline = null;
 
@@ -2122,6 +2122,7 @@
         'slideBestFitLine': 'Best Fit Line',
         'slidePythonImplementation': 'Python Implementation',
         'slidePythonImplementationWorkflow': 'Implementation Workflow',
+        'slideMultipleLinearRegression': 'Multiple Linear Regression',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2153,6 +2154,7 @@
         { id: 'slideBestFitLine', enabled: true },
         { id: 'slidePythonImplementation', enabled: true },
         { id: 'slidePythonImplementationWorkflow', enabled: true },
+        { id: 'slideMultipleLinearRegression', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -3362,7 +3364,7 @@
       updateNavigationButtons();
       
       // Default to Machine Learning Models title slide during development
-      const defaultSlideId = 'slideBestFitLine';
+      const defaultSlideId = 'slideMultipleLinearRegression';
       const defaultIdx = getActiveSlides().findIndex(s => s.id === defaultSlideId);
       if (defaultIdx !== -1) {
         currentSlideIdx = defaultIdx;

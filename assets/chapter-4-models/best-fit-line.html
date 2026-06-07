@@ -271,14 +271,17 @@
     /* Formula overlay — clean squared-error annotation */
     .formula-overlay {
       position: absolute;
+      transform: translate(-50%, -50%);
       font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
       font-size: 24px;
       color: var(--accent);
       z-index: 100;
       pointer-events: none;
       opacity: 0;
-      transform: translate(-50%, -60%);
-      transition: color 0.5s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
       padding: 6px 14px;
       border-radius: 8px;
       background: color-mix(in srgb, var(--bg) 75%, transparent);
@@ -286,15 +289,7 @@
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
       white-space: nowrap;
-    }
-    .formula-overlay.show {
-      transform: translate(-50%, -50%);
-    }
-    .formula-overlay {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
+      transition: color 0.5s;
     }
     /* GSAP owns all formula-overlay piece animations — no CSS transitions here */
     .formula-overlay .fo-label {
@@ -627,8 +622,13 @@
         // Position overlay (only geometry — classes are set by updateFormulaOverlay)
         const overlay = document.getElementById('formula-overlay');
         if (overlay && formulaState > 0) {
+<<<<<<< HEAD
           const axisWidth = xAxis.right - xAxis.left;
           const centerX = (xAxis.left + xAxis.right) / 2 + axisWidth * 0.1;
+=======
+          const chartWidth = xAxis.right - xAxis.left;
+          const centerX = (xAxis.left + xAxis.right) / 2 + chartWidth * 0.08;
+>>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
           const centerY = yAxis.top - 24;
           overlay.style.left = `${centerX}px`;
           overlay.style.top = `${centerY}px`;
@@ -638,6 +638,9 @@
       }
     };
 
+    // Kill any running overlay tweens before starting new ones
+    let _overlayTl = null;
+
     function updateFormulaOverlay() {
       const overlay = document.getElementById('formula-overlay');
       if (!overlay) return;
@@ -646,21 +649,32 @@
       const mse   = overlay.querySelector('.fo-mse');
       const frac  = overlay.querySelector('.fo-frac');
       const label = overlay.querySelector('.fo-label');
+<<<<<<< HEAD
 
       // Cancel any running transitions on elements to prevent conflicts
       gsap.killTweensOf([term, mse, frac, label]);
       gsap.set([term, mse, frac, label], { clearProps: "all" });
+=======
+      const DUR   = 0.42;
+      const EASE  = 'power2.inOut';
+
+      // Kill any in-flight tweens on these elements
+      if (_overlayTl) _overlayTl.kill();
+      gsap.killTweensOf([overlay, term, mse, frac, label]);
+      _overlayTl = gsap.timeline();
+>>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
 
       if (formulaState === 0) {
-        // Hide everything
-        gsap.to(overlay, { opacity: 0, scale: 0.88, duration: 0.3, ease: 'power2.in',
-          onComplete: () => overlay.classList.remove('show') });
+        _overlayTl.to(overlay, { opacity: 0, duration: 0.28, ease: 'power2.in',
+          onComplete: () => { overlay.classList.remove('show'); gsap.set(overlay, { clearProps: 'opacity' }); }
+        });
         return;
       }
 
-      // Ensure chip is visible
+      // Show chip on first appearance only
       if (!overlay.classList.contains('show')) {
         overlay.classList.add('show');
+<<<<<<< HEAD
         gsap.fromTo(overlay, { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.4)' });
       } else {
         gsap.to(overlay, { opacity: 1, scale: 1, duration: 0.2 });
@@ -689,6 +703,52 @@
         gsap.set(mse, { display: 'inline-flex', opacity: 1, y: 0 });
         gsap.set(frac, { display: 'inline-flex', opacity: 1, width: 'auto', marginRight: 0 });
         gsap.set(label, { display: 'block', opacity: 1, height: 'auto', marginBottom: 4 });
+=======
+        gsap.set(overlay, { opacity: 0 });
+        _overlayTl.to(overlay, { opacity: 1, duration: 0.32, ease: 'power2.out' });
+      }
+
+      if (formulaState === 1) {
+        // Only bare term visible — mse fully out of flow
+        gsap.set(mse,   { display: 'none', opacity: 0 });
+        gsap.set(label, { height: 0, opacity: 0, overflow: 'hidden' });
+        gsap.set(term,  { display: 'inline-block', opacity: 0, y: 8 });
+        _overlayTl.to(term, { opacity: 1, y: 0, duration: DUR, ease: EASE });
+
+      } else if (formulaState === 2) {
+        // Fade term out → set mse visible (no frac) → fade mse in
+        const fracW = frac.scrollWidth;
+        gsap.set(frac,  { width: 0, opacity: 0, overflow: 'hidden', display: 'inline-flex' });
+        gsap.set(mse,   { display: 'inline-flex', opacity: 0, y: 8 });
+        gsap.set(label, { height: 0, opacity: 0, overflow: 'hidden' });
+        _overlayTl
+          .to(term,  { opacity: 0, duration: 0.2, ease: 'power1.in',
+                       onComplete: () => gsap.set(term, { display: 'none' }) })
+          .to(mse,   { opacity: 1, y: 0, duration: DUR, ease: EASE }, '<0.05');
+
+      } else if (formulaState === 3) {
+        // Measure frac's natural width, then animate from 0 → that width
+        gsap.set(frac, { width: 'auto', opacity: 1 });
+        const fracW = frac.offsetWidth;
+        gsap.set(frac, { width: 0, opacity: 0, overflow: 'hidden', display: 'inline-flex' });
+        gsap.set(mse,   { display: 'inline-flex', opacity: 1, y: 0 });
+        gsap.set(term,  { display: 'none' });
+        gsap.set(label, { height: 0, opacity: 0, overflow: 'hidden' });
+        _overlayTl
+          .to(frac, { width: fracW, opacity: 1, duration: DUR, ease: 'power3.out' });
+
+      } else if (formulaState === 4) {
+        // Measure label's natural height, animate from 0 → that height
+        gsap.set(label, { height: 'auto', opacity: 1 });
+        const labelH = label.offsetHeight;
+        gsap.set(label, { height: 0, opacity: 0, overflow: 'hidden' });
+        gsap.set(mse,  { display: 'inline-flex', opacity: 1, y: 0 });
+        gsap.set(frac, { display: 'inline-flex', opacity: 1 });
+        gsap.set(term, { display: 'none' });
+        _overlayTl
+          .to(label, { height: labelH, opacity: 1, duration: DUR, ease: 'power2.out',
+                       onComplete: () => gsap.set(label, { height: 'auto' }) });
+>>>>>>> 3bedd5a (feat(mlr): add Multiple Linear Regression slide with usa_housing dataset)
       }
     }
 
