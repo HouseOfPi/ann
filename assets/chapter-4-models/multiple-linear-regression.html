@@ -23,7 +23,7 @@
       color: var(--fg);
       display: flex;
       flex-direction: column;
-      padding: 32px 50px 36px;
+      padding: 28px 44px 32px;
       transition: background 0.5s, color 0.5s;
     }
 
@@ -34,8 +34,8 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      gap: 60px;
-      padding: 0 40px;
+      gap: 48px;
+      padding: 0 0;
     }
 
     /* ── Dataset card ── */
@@ -45,10 +45,9 @@
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      border-radius: 24px;
+      border-radius: 20px;
       background: color-mix(in srgb, var(--fg) 3%, transparent);
       border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-      box-shadow: 0 20px 50px -25px color-mix(in srgb, var(--bg) 70%, transparent);
       overflow: hidden;
     }
 
@@ -57,30 +56,41 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 36px 16px;
+      padding: 14px 32px 13px;
       border-bottom: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
       flex-shrink: 0;
+      background: color-mix(in srgb, var(--fg) 2%, transparent);
     }
     .dataset-name {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      letter-spacing: 0.06em;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      letter-spacing: 0.05em;
+      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .dataset-name span {
-      color: var(--accent);
+    .dataset-name::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
     }
+    .dataset-name span { color: var(--accent); }
+
     .col-count {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 35%, transparent);
-      background: color-mix(in srgb, var(--fg) 6%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
-      padding: 4px 12px;
+      color: color-mix(in srgb, var(--fg) 30%, transparent);
+      background: color-mix(in srgb, var(--fg) 5%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      padding: 3px 11px;
       border-radius: 20px;
     }
 
@@ -103,8 +113,8 @@
     .scroll-fade {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 52px;
-      background: linear-gradient(to top, color-mix(in srgb, var(--bg) 90%, transparent), transparent);
+      height: 60px;
+      background: linear-gradient(to top, color-mix(in srgb, var(--bg) 95%, transparent), transparent);
       pointer-events: none;
       z-index: 10;
     }
@@ -112,59 +122,55 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 18px;
     }
 
     thead {
       position: sticky;
       top: 0;
       z-index: 5;
-      background: color-mix(in srgb, var(--fg) 4%, var(--bg));
+      background: color-mix(in srgb, var(--fg) 3.5%, var(--bg));
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
     }
 
     /* Variable row */
     thead tr.row-var th {
       font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 22px;
+      font-size: 17px;
       font-weight: 400;
       letter-spacing: 0;
-      text-transform: none;
-      color: color-mix(in srgb, var(--fg) 40%, transparent);
-      padding: 16px 20px 2px;
+      color: color-mix(in srgb, var(--fg) 32%, transparent);
+      padding: 14px 22px 2px;
       text-align: left;
     }
     thead tr.row-var th.col-y {
-      color: var(--accent);
-      font-weight: 500;
+      color: color-mix(in srgb, var(--accent) 75%, transparent);
       text-align: right;
     }
     thead tr.row-var th sub {
       font-style: italic;
-      font-size: 0.5em;
+      font-size: 0.55em;
       font-weight: 500;
-      color: color-mix(in srgb, var(--fg) 35%, transparent);
+      color: color-mix(in srgb, var(--fg) 28%, transparent);
       vertical-align: baseline;
       position: relative;
-      bottom: -0.25em;
+      bottom: -0.2em;
       padding-left: 1px;
     }
     thead tr.row-var th.col-y sub {
-      color: color-mix(in srgb, var(--accent) 70%, transparent);
+      color: color-mix(in srgb, var(--accent) 55%, transparent);
     }
 
     /* Column-name row */
     thead tr.row-name th {
       font-family: 'Inter', sans-serif;
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: none;
-      color: color-mix(in srgb, var(--fg) 65%, transparent);
+      letter-spacing: 0.01em;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
       text-align: left;
-      padding: 6px 20px 12px;
+      padding: 3px 22px 14px;
       white-space: nowrap;
-      border-bottom: none;
     }
     thead tr.row-name th.col-y {
       color: var(--accent);
@@ -174,18 +180,19 @@
 
     /* Body */
     tbody tr {
-      border-bottom: 1px solid color-mix(in srgb, var(--fg) 6%, transparent);
-      transition: background 0.12s ease;
+      border-bottom: 1px solid color-mix(in srgb, var(--fg) 5%, transparent);
+      transition: background 0.1s ease;
     }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+    tbody tr:nth-child(even) { background: color-mix(in srgb, var(--fg) 1.5%, transparent); }
+    tbody tr:hover { background: color-mix(in srgb, var(--accent) 7%, transparent) !important; }
 
     tbody td {
-      padding: 12px 20px;
+      padding: 10px 22px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 500;
-      color: color-mix(in srgb, var(--fg) 82%, transparent);
+      color: color-mix(in srgb, var(--fg) 78%, transparent);
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
       text-align: left;
@@ -194,34 +201,17 @@
     tbody td.col-y {
       font-weight: 700;
       color: var(--accent);
-      font-size: 17px;
+      font-size: 14.5px;
       text-align: right;
+      background: color-mix(in srgb, var(--accent) 4%, transparent);
     }
+    tbody tr:hover td.col-y { background: transparent; }
 
-    /* Row index column */
-    tbody td.row-idx {
-      color: color-mix(in srgb, var(--fg) 30%, transparent);
-      font-size: 14px;
-      font-weight: 500;
-      padding-right: 12px;
-      padding-left: 24px;
-      width: 40px;
-    }
-    thead tr.row-name th.row-idx { padding-left: 24px; padding-right: 12px; }
-    thead tr.row-var th.row-idx { padding-left: 24px; padding-right: 12px; }
+    table th:first-child, table td:first-child { padding-left: 32px !important; }
+    table th:last-child,  table td:last-child  { padding-right: 32px !important; }
 
-    table th:first-child, table td:first-child {
-      padding-left: 36px !important;
-    }
-    table th:last-child, table td:last-child {
-      padding-right: 36px !important;
-    }
-
-    /* Tooltip styling */
-    .has-tooltip {
-      position: relative;
-      cursor: help;
-    }
+    /* Tooltip */
+    .has-tooltip { position: relative; cursor: help; }
     .has-tooltip .tooltip {
       visibility: hidden;
       opacity: 0;
@@ -229,11 +219,11 @@
       background: color-mix(in srgb, var(--fg) 5%, color-mix(in srgb, var(--bg) 95%, transparent));
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid color-mix(in srgb, var(--fg) 15%, transparent);
-      color: color-mix(in srgb, var(--fg) 90%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+      color: color-mix(in srgb, var(--fg) 88%, transparent);
       text-align: left;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 11px 13px;
       position: absolute;
       z-index: 100;
       top: 100%;
@@ -244,52 +234,27 @@
       font-weight: 500;
       line-height: 1.45;
       white-space: normal;
-      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.4);
-      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 15px 35px -5px rgba(0,0,0,0.4);
+      transition: opacity 0.18s ease, transform 0.18s ease;
       pointer-events: none;
     }
     .has-tooltip .tooltip::after {
       content: "";
       position: absolute;
-      bottom: 100%;
-      left: 50%;
-      margin-left: -6px;
-      border-width: 6px;
-      border-style: solid;
-      border-color: transparent transparent color-mix(in srgb, var(--fg) 15%, transparent) transparent;
+      bottom: 100%; left: 50%; margin-left: -6px;
+      border-width: 6px; border-style: solid;
+      border-color: transparent transparent color-mix(in srgb, var(--fg) 14%, transparent) transparent;
     }
     .has-tooltip:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
+      visibility: visible; opacity: 1;
       transform: translateX(-50%) translateY(6px);
     }
 
-    /* Vertical separator lines */
-    thead tr.row-var th.row-idx,
-    thead tr.row-name th.row-idx,
-    tbody td.row-idx {
-      border-right: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
-    }
-    thead tr.row-var th.col-y,
-    thead tr.row-name th.col-y,
-    tbody td.col-y {
-      border-left: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
-    }
-
     /* Column hover highlights */
-    .column-hover {
-      background: color-mix(in srgb, var(--fg) 1.5%, transparent);
-    }
-    thead tr.row-var th.column-hover,
-    thead tr.row-name th.column-hover {
-      background: color-mix(in srgb, var(--fg) 3%, transparent);
-    }
-    tbody td.col-y.column-hover {
-      background: color-mix(in srgb, var(--accent) 3.5%, transparent);
-    }
-    thead th.col-y.column-hover {
-      background: color-mix(in srgb, var(--accent) 5%, transparent);
-    }
+    .column-hover { background: color-mix(in srgb, var(--fg) 2%, transparent); }
+    thead th.column-hover { background: color-mix(in srgb, var(--fg) 4%, transparent); }
+    tbody td.col-y.column-hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+    thead th.col-y.column-hover { background: color-mix(in srgb, var(--accent) 8%, transparent); }
 
     /* ── Problem statement block ── */
     .problem-statement {
@@ -451,7 +416,6 @@
           <table>
             <thead>
               <tr class="row-var">
-                <th class="row-idx"></th>
                 <th>x<sub>1</sub></th>
                 <th>x<sub>2</sub></th>
                 <th>x<sub>3</sub></th>
@@ -461,7 +425,6 @@
                 <th class="col-y">y</th>
               </tr>
               <tr class="row-name">
-                <th class="row-idx"></th>
                 <th class="has-tooltip">SquareFeet<span class="tooltip">The total area of the house in square feet. Range: 800 - 5,000 sq ft</span></th>
                 <th class="has-tooltip">Bedrooms<span class="tooltip">The number of bedrooms in the house. Range: 1 - 6</span></th>
                 <th class="has-tooltip">Bathrooms<span class="tooltip">The number of bathrooms in the house (including half-baths). Range: 1.0 - 4.0</span></th>
@@ -559,7 +522,6 @@
     DATA.forEach((row, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td class="row-idx">${i}</td>
         <td>${row[3].toLocaleString()}</td>
         <td>${row[1]}</td>
         <td>${row[2].toFixed(1)}</td>
@@ -602,7 +564,6 @@
       const cell = e.target.closest('td, th');
       if (!cell) return;
       const index = cell.cellIndex;
-      if (index === 0) return; // Skip row index column
       const rows = table.rows;
       for (let i = 0; i < rows.length; i++) {
         const c = rows[i].cells[index];
