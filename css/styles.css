@@ -173,42 +173,6 @@
       }
 
       /* ─── 02b. COLOR PALETTES (applied via hamburger menu) ─────────────────── */
-      /* Palette 1 — Warm Linen (light) */
-      .palette-warm-linen {
-        --bg: #f3f1e9;
-        --text-main: #1c1c1c;
-        --text-dim: #6b6b6b;
-        --text-gradient: linear-gradient(90deg, #1c1c1c, #1c1c1c);
-        --theme-btn-bg: rgba(0, 0, 0, 0.05);
-        --theme-btn-color: #1c1c1c;
-        --accent-main: #e27b5e;
-        --accent-dim: rgba(226, 123, 94, 0.18);
-        --hero-gradient: linear-gradient(90deg, #1c1c1c, #1c1c1c);
-        --s2-bg: #f3f1e9;
-        --s2-text: #1c1c1c;
-        --s2-gold: #4a8bdd;
-        --s2-gold-rgb: 74, 139, 221;
-        --s2-gold-dim: rgba(74, 139, 221, 0.15);
-        --s2-border: #dcd6c5;
-      }
-      /* Palette 1b — Green Linen (light) */
-      .palette-green-linen {
-        --bg: #f3f1e9;
-        --text-main: #1c1c1c;
-        --text-dim: #6b6b6b;
-        --text-gradient: linear-gradient(90deg, #1c1c1c, #1c1c1c);
-        --theme-btn-bg: rgba(0, 0, 0, 0.05);
-        --theme-btn-color: #1c1c1c;
-        --accent-main: #e27b5e;
-        --accent-dim: rgba(226, 123, 94, 0.18);
-        --hero-gradient: linear-gradient(90deg, #1c1c1c, #1c1c1c);
-        --s2-bg: #f3f1e9;
-        --s2-text: #1c1c1c;
-        --s2-gold: #15803d;
-        --s2-gold-rgb: 21, 128, 61;
-        --s2-gold-dim: rgba(21, 128, 61, 0.15);
-        --s2-border: #dcd6c5;
-      }
       /* Palette 2 — Paper White (light) */
       .palette-paper-white {
         --bg: #ffffff;
@@ -245,46 +209,53 @@
         --s2-gold-dim: rgba(34, 211, 238, 0.15);
         --s2-border: rgba(255, 255, 255, 0.1);
       }
-      /* Palette 4 — Dark (default) uses :root values, no class needed */
-
-      /* Palette 5 — Navy Lime (dark): deep navy + lime primary + light-blue secondary */
-      .palette-navy-lime {
-        --bg: #0a1428;
-        --text-main: #f1f5fb;
-        --text-dim: #94a3b8;
-        --text-gradient: linear-gradient(90deg, #a3e635, #5fb8e6);
-        --theme-btn-bg: rgba(255, 255, 255, 0.08);
-        --theme-btn-color: #f1f5fb;
-        --accent-main: #a3e635;
-        --accent-dim: rgba(163, 230, 53, 0.18);
-        --hero-gradient: linear-gradient(90deg, #a3e635, #5fb8e6);
-        --s2-bg: #0a1428;
-        --s2-text: #f1f5fb;
-        --s2-gold: #5fb8e6;
-        --s2-gold-rgb: 95, 184, 230;
-        --s2-gold-dim: rgba(95, 184, 230, 0.18);
-        --s2-border: rgba(255, 255, 255, 0.08);
+      /* Palette 4 — Dark */
+      .palette-dark {
+        --bg: #161A20;
+        --text-main: #F1EDE2;
+        --text-gradient: linear-gradient(90deg, #7FA3C6, #E0825C);
+        --theme-btn-bg: #232932;
+        --theme-btn-color: #F1EDE2;
+        --text-dim: #98A1AC;
+        --accent-main: #E0825C;
+        --accent-dim: rgba(224, 130, 92, 0.18);
+        --hero-gradient: linear-gradient(90deg, #7FA3C6, #9FBEDB, #E0825C);
+        --s2-bg: #161A20;
+        --s2-text: #F1EDE2;
+        --s2-gold: #E0825C;
+        --s2-gold-rgb: 224, 130, 92;
+        --s2-gold-dim: rgba(224, 130, 92, 0.15);
+        --s2-border: #3A434F;
+        
+        /* New custom user variables for dark theme */
+        --color-bg: #161A20;
+        --color-panel: #232932;
+        --color-ink: #F1EDE2;
+        --color-ink-soft: #98A1AC;
+        --color-line: #3A434F;
+        --color-line-soft: #2C333D;
+        --color-coral: #E0825C;
+        --color-coral-deep: #EE9468;
+        --color-slate: #7FA3C6;
+        --color-slate-deep: #9FBEDB;
+        --color-plate: #EDE7D8;
+        --color-cream: #1A1E24;
       }
-      .palette-navy-lime { background-image: none; }
-      .palette-navy-lime #slideOne { background: #0a1428; }
-      .palette-navy-lime .s3-orb-1 { background: radial-gradient(circle, #1e3a5f, transparent); }
-
       /* Match #slideOne background to the intro animation scene background per palette */
       #slideOne                        { background: #0a1428; } /* deep-navy default */
       #slideOne #mathDrift { display: none; }
       #slideOne #brain     { z-index: 1; }
-      .palette-warm-linen  #slideOne   { background: #f4ede0; }
-      .palette-green-linen #slideOne   { background: #f4ede0; }
       .palette-paper-white #slideOne   { background: #ffffff; }
       .palette-midnight    #slideOne   { background: #000000; }
+      .palette-dark        #slideOne   { background: #161A20; }
 
       /* Remove cyan/turquoise gradients from dark palettes for clean backgrounds */
       .palette-midnight { background-image: none; }
+      .palette-dark { background-image: none; }
 
       /* Adjust orb colors for each palette */
       .palette-midnight .s3-orb-1 { background: radial-gradient(circle, #1e293b, transparent); }
-      .palette-warm-linen .s3-orb-1 { background: radial-gradient(circle, #4a8bdd, transparent); }
-      .palette-green-linen .s3-orb-1 { background: radial-gradient(circle, #15803d, transparent); }
+      .palette-dark .s3-orb-1 { background: radial-gradient(circle, #232932, transparent); }
       .palette-paper-white .s3-orb-1 { background: radial-gradient(circle, #0891b2, transparent); }
 
       /* ─── 03. CORE RESET & BASE LAYOUT ─────────────────────────────────────── */

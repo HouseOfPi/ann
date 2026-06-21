@@ -2122,8 +2122,14 @@
         'slideBestFitLine': 'Best Fit Line',
         'slidePythonImplementation': 'Python Implementation',
         'slidePythonImplementationWorkflow': 'Implementation Workflow',
+        'slideMultipleLinearRegressionTitle': 'Multiple Linear Regression Title',
+        'slideMultipleLinearRegressionIntro': 'Multiple Linear Regression Intro',
         'slideMultipleLinearRegression': 'Multiple Linear Regression',
         'slideMLREquation': 'MLR Equation',
+        'slideDecisionTreeRoadmap': 'ML Roadmap',
+        'slideDecisionTreeDataTable': 'Decision Tree Data Table',
+        'slideDecisionTreeDataPlot': 'Decision Tree Data Plot',
+        'slideDecisionTreeSplitting': 'Decision Tree Splitting',
         'slideTwo': 'Historical Context',
         'slideThree': 'Pioneer: Hinton',
         'slideNine': 'The Journey',
@@ -2155,8 +2161,14 @@
         { id: 'slideBestFitLine', enabled: true },
         { id: 'slidePythonImplementation', enabled: true },
         { id: 'slidePythonImplementationWorkflow', enabled: true },
+        { id: 'slideMultipleLinearRegressionTitle', enabled: true },
+        { id: 'slideMultipleLinearRegressionIntro', enabled: true },
         { id: 'slideMultipleLinearRegression', enabled: true },
         { id: 'slideMLREquation', enabled: true },
+        { id: 'slideDecisionTreeRoadmap', enabled: true },
+        { id: 'slideDecisionTreeDataTable', enabled: true },
+        { id: 'slideDecisionTreeDataPlot', enabled: true },
+        { id: 'slideDecisionTreeSplitting', enabled: true },
 
         { id: 'slideTwo', enabled: true },
         { id: 'slideThree', enabled: true },
@@ -2779,12 +2791,9 @@
 
       // ─── Color Palette System ────────────────────────────────────────────
       const PALETTES = {
-        "warm-linen":  { light: true,  cls: "palette-warm-linen",  iframeName: "Warm Linen"  },
-        "green-linen": { light: true,  cls: "palette-green-linen", iframeName: "Green Linen" },
         "paper-white": { light: true,  cls: "palette-paper-white", iframeName: "Paper White" },
         "midnight":    { light: false, cls: "palette-midnight",    iframeName: "Midnight"    },
-        "navy-lime":   { light: false, cls: "palette-navy-lime",   iframeName: "Navy Lime"   },
-        "dark":        { light: false, cls: null,                  iframeName: "Midnight"    },
+        "dark":        { light: false, cls: "palette-dark",        iframeName: "Dark"        },
       };
 
       function setPalette(name) {

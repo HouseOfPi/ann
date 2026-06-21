@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Risk Dataset | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg: #161A20;
+      --fg: #F1EDE2;
+      --accent: #E0825C;
+      --accent2: #7FA3C6;
+      --panel: #232932;
+      --border: #3A434F;
+      --soft-text: #98A1AC;
+      --table-stripe: rgba(255, 255, 255, 0.02);
+      --grid-line: rgba(255, 255, 255, 0.05);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 60px 36px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ── Left Column: Concept ── */
+    .concept-col {
+      flex: 1;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: slideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .narrative-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .narrative-eyebrow .line {
+      width: 24px;
+      height: 2px;
+      background-color: var(--accent);
+    }
+
+    .narrative-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 3.2vw, 44px);
+      line-height: 1.25;
+      font-style: italic;
+      color: var(--fg);
+    }
+    .narrative-title em {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .narrative-subtext {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--soft-text);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Right Column: Data Table ── */
+    .table-col {
+      flex: 1.5;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    .data-table-container {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px -25px rgba(0,0,0,0.5);
+    }
+
+    .table-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: color-mix(in srgb, var(--fg) 2%, transparent);
+    }
+
+    .table-header-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .table-header-subtitle {
+      font-size: 11px;
+      color: var(--soft-text);
+      margin-left: auto;
+    }
+
+    .styled-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .styled-table th, .styled-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .styled-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--soft-text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: color-mix(in srgb, var(--fg) 1%, transparent);
+    }
+
+    .styled-table tbody tr {
+      transition: background 0.3s;
+    }
+
+    .styled-table tbody tr:nth-child(even) {
+      background: var(--table-stripe);
+    }
+
+    .styled-table tbody tr:hover {
+      background: color-mix(in srgb, var(--accent) 5%, transparent);
+    }
+
+    .styled-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .highlight-cell-high {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .highlight-cell-low {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .highlight-cell-mid {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    .var-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.05);
+      margin-left: 4px;
+      color: var(--soft-text);
+    }
+
+    /* ── Keyframes ── */
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Main tabs in header */
+    .main-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-left: 15px;
+    }
+
+    .main-tab-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--soft-text);
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .main-tab-btn:hover {
+      color: var(--fg);
+    }
+
+    .main-tab-btn.active {
+      color: var(--fg);
+      background: var(--border);
+    }
+
+    /* Sub-tabs for features */
+    .sub-tabs-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .sub-tab-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--soft-text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sub-tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--fg);
+    }
+
+    .sub-tab-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    /* Tooltip styling */
+    .plot-tooltip {
+      position: absolute;
+      background: rgba(16, 20, 26, 0.95);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--fg);
+      font-size: 12px;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+
+    /* Transitioning points */
+    .data-point {
+      transition: cx 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+      cursor: pointer;
+      stroke: var(--bg);
+      stroke-width: 1.5px;
+    }
+    
+    .data-point:hover {
+      r: 9;
+    }
+
+    .axis-line {
+      stroke: var(--border);
+      stroke-width: 1.5px;
+    }
+
+    .grid-line {
+      stroke: var(--grid-line);
+      stroke-dasharray: 4,4;
+      stroke-width: 1px;
+      transition: stroke 0.5s ease;
+    }
+
+    .axis-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      fill: var(--soft-text);
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Decision Tree Regression" title="Multi-Variable <em>Risk</em> Profiles"></page-title>
+
+  <div class="body">
+    <!-- Concept Column -->
+    <div class="concept-col">
+      <div class="narrative-eyebrow"><span class="line"></span> Credit Scoring Data</div>
+      <div class="narrative-title">
+        The Anatomy of a <em>Loan</em>
+      </div>
+      <div class="concept-desc-container narrative-subtext">
+        <p>
+          In credit risk assessment, machine learning models analyze complex customer attributes to estimate a borrower's probability of default.
+        </p>
+        <p>
+          This table displays a sample of customer credit risk profiles, tracking attributes like <span class="highlight">Age</span>, <span class="highlight">Annual Income</span>, <span class="highlight">Credit Score</span>, and <span class="highlight">Existing Loans</span>.
+        </p>
+        <p>
+          Notice how the target <span class="highlight">Default Risk Score</span> behaves: it doesn't scale linearly. Instead, credit rating cutoffs create sudden, sharp shifts in default rates.
+        </p>
+      </div>
+    </div>
+
+    <!-- Table Column -->
+    <div class="table-col">
+      <div class="data-table-container">
+        <div class="table-header">
+          <i data-lucide="database" style="width: 16px; height: 16px; color: var(--accent);"></i>
+          <span class="table-header-title">Credit Risk Observations</span>
+          
+          <!-- Main Tab Toggle -->
+          <div class="main-tabs">
+            <button id="tabBtnTable" class="main-tab-btn active" onclick="switchMainTab('table')">
+              <i data-lucide="table" style="width: 13px; height: 13px;"></i>
+              <span>Table</span>
+            </button>
+            <button id="tabBtnPlot" class="main-tab-btn" onclick="switchMainTab('plot')">
+              <i data-lucide="line-chart" style="width: 13px; height: 13px;"></i>
+              <span>Scatter Plots</span>
+            </button>
+          </div>
+
+          <span class="table-header-subtitle">Sorted by Credit Score</span>
+        </div>
+        <div id="tableView" class="styled-table-wrapper">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Age</th>
+                <th>Annual Income</th>
+                <th>Credit Score <span class="var-badge">X</span></th>
+                <th>Existing Loans</th>
+                <th>Loan Amount</th>
+                <th>Default Risk Score <span class="var-badge">Y</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>35</td>
+                <td>₹11,00,000</td>
+                <td>550</td>
+                <td>3</td>
+                <td>₹7,00,000</td>
+                <td class="highlight-cell-high">90</td>
+              </tr>
+              <tr>
+                <td>30</td>
+                <td>₹7,50,000</td>
+                <td>570</td>
+                <td>2</td>
+                <td>₹5,00,000</td>
+                <td class="highlight-cell-high">82</td>
+              </tr>
+              <tr>
+                <td>29</td>
+                <td>₹9,50,000</td>
+                <td>590</td>
+                <td>2</td>
+                <td>₹8,00,000</td>
+                <td class="highlight-cell-high">78</td>
+              </tr>
+              <tr>
+                <td>31</td>
+                <td>₹6,00,000</td>
+                <td>640</td>
+                <td>3</td>
+                <td>₹4,00,000</td>
+                <td class="highlight-cell-mid">40</td>
+              </tr>
+              <tr>
+                <td>26</td>
+                <td>₹8,00,000</td>
+                <td>680</td>
+                <td>2</td>
+                <td>₹3,00,000</td>
+                <td class="highlight-cell-mid">35</td>
+              </tr>
+              <tr>
+                <td>38</td>
+                <td>₹14,00,000</td>
+                <td>710</td>
+                <td>1</td>
+                <td>₹6,00,000</td>
+                <td class="highlight-cell-low">15</td>
+              </tr>
+              <tr>
+                <td>34</td>
+                <td>₹12,00,000</td>
+                <td>720</td>
+                <td>1</td>
+                <td>₹5,00,000</td>
+                <td class="highlight-cell-low">12</td>
+              </tr>
+              <tr>
+                <td>45</td>
+                <td>₹22,00,000</td>
+                <td>750</td>
+                <td>4</td>
+                <td>₹15,00,000</td>
+                <td class="highlight-cell-low">10</td>
+              </tr>
+              <tr>
+                <td>42</td>
+                <td>₹18,00,000</td>
+                <td>780</td>
+                <td>0</td>
+                <td>₹10,00,000</td>
+                <td class="highlight-cell-low">8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Scatter Plot View -->
+        <div id="plotView" style="display: none; padding: 20px 24px 24px;">
+          <!-- Feature Sub-Tabs Selector -->
+          <div class="sub-tabs-container">
+            <button class="sub-tab-btn active" onclick="switchFeature('age')">Age</button>
+            <button class="sub-tab-btn" onclick="switchFeature('income')">Annual Income</button>
+            <button class="sub-tab-btn" onclick="switchFeature('credit')">Credit Score</button>
+            <button class="sub-tab-btn" onclick="switchFeature('loans')">Existing Loans</button>
+            <button class="sub-tab-btn" onclick="switchFeature('loanAmt')">Loan Amount</button>
+          </div>
+
+          <!-- Scatter Plot SVG -->
+          <div class="plot-wrapper" style="position: relative; margin-top: 15px;">
+            <svg class="interactive-plot-svg" viewBox="0 0 500 325" style="width:100%; height:auto;">
+              <!-- Horizontal grid lines -->
+              <line class="grid-line" x1="60" y1="232" x2="450" y2="232" /> <!-- 20 -->
+              <line class="grid-line" x1="60" y1="184" x2="450" y2="184" /> <!-- 40 -->
+              <line class="grid-line" x1="60" y1="136" x2="450" y2="136" /> <!-- 60 -->
+              <line class="grid-line" x1="60" y1="88" x2="450" y2="88" />   <!-- 80 -->
+
+              <!-- Axes -->
+              <line class="axis-line" x1="60" y1="280" x2="450" y2="280" /> <!-- X axis -->
+              <line class="axis-line" x1="60" y1="40" x2="60" y2="280" />   <!-- Y axis -->
+
+              <!-- Axis Labels Y -->
+              <text class="axis-label" x="40" y="284" text-anchor="end">0</text>
+              <text class="axis-label" x="40" y="236" text-anchor="end">20</text>
+              <text class="axis-label" x="40" y="188" text-anchor="end">40</text>
+              <text class="axis-label" x="40" y="140" text-anchor="end">60</text>
+              <text class="axis-label" x="40" y="92" text-anchor="end">80</text>
+              <text class="axis-label" x="40" y="44" text-anchor="end">100</text>
+
+              <!-- Dynamic X-axis Ticks Container -->
+              <g id="xAxisTicks"></g>
+
+              <!-- Title Y Axis -->
+              <text class="axis-label" x="12" y="24" text-anchor="start" style="font-weight:700;">Default Risk Score</text>
+
+              <!-- Dynamic Title X Axis -->
+              <text id="xAxisTitle" class="axis-label" x="255" y="320" text-anchor="middle" style="font-weight:700;"></text>
+
+              <!-- Data Points -->
+              <g id="plotPoints"></g>
+            </svg>
+
+            <!-- Custom Tooltip -->
+            <div id="plotTooltip" class="plot-tooltip" style="opacity: 0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Dataset
+    const dataset = [
+      { age: 35, income: 1100000, credit: 550, loans: 3, loanAmt: 700000, risk: 90 },
+      { age: 30, income: 750000,  credit: 570, loans: 2, loanAmt: 500000, risk: 82 },
+      { age: 29, income: 950000,  credit: 590, loans: 2, loanAmt: 800000, risk: 78 },
+      { age: 31, income: 600000,  credit: 640, loans: 3, loanAmt: 400000, risk: 40 },
+      { age: 26, income: 800000,  credit: 680, loans: 2, loanAmt: 300000, risk: 35 },
+      { age: 38, income: 1400000, credit: 710, loans: 1, loanAmt: 600000, risk: 15 },
+      { age: 34, income: 1200000, credit: 720, loans: 1, loanAmt: 500000, risk: 12 },
+      { age: 45, income: 2200000, credit: 750, loans: 4, loanAmt: 1500000, risk: 10 },
+      { age: 42, income: 1800000, credit: 780, loans: 0, loanAmt: 1000000, risk: 8 }
+    ];
+
+    // Feature plot mapping configurations
+    const featureConfig = {
+      age: {
+        title: 'Age',
+        min: 20, max: 50,
+        getX: (val) => 60 + ((val - 20) / 30) * 390,
+        ticks: [
+          { val: 20, x: 60, label: '20' },
+          { val: 30, x: 190, label: '30' },
+          { val: 40, x: 320, label: '40' },
+          { val: 50, x: 450, label: '50' }
+        ],
+        formatVal: (val) => `${val} years`
+      },
+      income: {
+        title: 'Annual Income (₹)',
+        min: 500000, max: 2500000,
+        getX: (val) => 60 + ((val - 500000) / 2000000) * 390,
+        ticks: [
+          { val: 500000, x: 60, label: '₹5L' },
+          { val: 1000000, x: 157.5, label: '₹10L' },
+          { val: 1500000, x: 255, label: '₹15L' },
+          { val: 2000000, x: 352.5, label: '₹20L' },
+          { val: 2500000, x: 450, label: '₹25L' }
+        ],
+        formatVal: (val) => `₹${val.toLocaleString('en-IN')}`
+      },
+      credit: {
+        title: 'Credit Score',
+        min: 500, max: 800,
+        getX: (val) => 60 + ((val - 500) / 300) * 390,
+        ticks: [
+          { val: 500, x: 60, label: '500' },
+          { val: 600, x: 190, label: '600' },
+          { val: 700, x: 320, label: '700' },
+          { val: 800, x: 450, label: '800' }
+        ],
+        formatVal: (val) => val
+      },
+      loans: {
+        title: 'Existing Loans',
+        min: 0, max: 5,
+        getX: (val) => 60 + (val / 5) * 390,
+        ticks: [
+          { val: 0, x: 60, label: '0' },
+          { val: 1, x: 138, label: '1' },
+          { val: 2, x: 216, label: '2' },
+          { val: 3, x: 294, label: '3' },
+          { val: 4, x: 372, label: '4' },
+          { val: 5, x: 450, label: '5' }
+        ],
+        formatVal: (val) => `${val} loan${val !== 1 ? 's' : ''}`
+      },
+      loanAmt: {
+        title: 'Loan Amount (₹)',
+        min: 200000, max: 1700000,
+        getX: (val) => 60 + ((val - 200000) / 1500000) * 390,
+        ticks: [
+          { val: 200000, x: 60, label: '₹2L' },
+          { val: 700000, x: 190, label: '₹7L' },
+          { val: 1200000, x: 320, label: '₹12L' },
+          { val: 1700000, x: 450, label: '₹17L' }
+        ],
+        formatVal: (val) => `₹${val.toLocaleString('en-IN')}`
+      }
+    };
+
+    let currentFeature = 'age';
+
+    // Initialize scatter plot elements
+    function initPlot() {
+      initPoints();
+      switchFeature('age');
+    }
+
+    function initPoints() {
+      const container = document.getElementById('plotPoints');
+      container.innerHTML = '';
+      dataset.forEach((d, idx) => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('class', 'data-point');
+        circle.setAttribute('r', '7.5');
+        
+        // Y scale mapping (0 to 100 risk score onto y bounds 280 to 40)
+        const cy = 280 - (d.risk / 100) * 240;
+        circle.setAttribute('cy', cy);
+        circle.id = `pt-${idx}`;
+        
+        // Set colors matching risk category rules
+        if (d.risk >= 70) {
+          circle.style.fill = '#ef4444';
+        } else if (d.risk >= 30) {
+          circle.style.fill = '#f59e0b';
+        } else {
+          circle.style.fill = '#22c55e';
+        }
+        
+        // Tooltip event listeners
+        circle.addEventListener('mouseover', (e) => showTooltip(e, d, idx));
+        circle.addEventListener('mousemove', (e) => moveTooltip(e));
+        circle.addEventListener('mouseout', hideTooltip);
+
+        container.appendChild(circle);
+      });
+    }
+
+    function renderTicks(featureKey) {
+      const config = featureConfig[featureKey];
+      const container = document.getElementById('xAxisTicks');
+      container.innerHTML = '';
+      config.ticks.forEach(t => {
+        // Label node
+        const textNode = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textNode.setAttribute('class', 'axis-label');
+        textNode.setAttribute('x', t.x);
+        textNode.setAttribute('y', 296);
+        textNode.setAttribute('text-anchor', 'middle');
+        textNode.textContent = t.label;
+        container.appendChild(textNode);
+
+        // Vertical tick lines
+        const tickLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tickLine.setAttribute('x1', t.x);
+        tickLine.setAttribute('y1', 280);
+        tickLine.setAttribute('x2', t.x);
+        tickLine.setAttribute('y2', 285);
+        tickLine.setAttribute('stroke', 'var(--border)');
+        tickLine.setAttribute('stroke-width', '1');
+        container.appendChild(tickLine);
+      });
+    }
+
+    function switchFeature(featureKey) {
+      currentFeature = featureKey;
+      
+      // Update sub-tabs active state
+      const buttons = document.querySelectorAll('.sub-tab-btn');
+      buttons.forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        btn.classList.toggle('active', onclickAttr.includes(featureKey));
+      });
+
+      const config = featureConfig[featureKey];
+
+      // Update X-axis Title
+      document.getElementById('xAxisTitle').textContent = config.title;
+
+      // Render Ticks
+      renderTicks(featureKey);
+
+      // Transition points horizontally
+      dataset.forEach((d, idx) => {
+        const pt = document.getElementById(`pt-${idx}`);
+        if (pt) {
+          const cx = config.getX(d[featureKey]);
+          pt.setAttribute('cx', cx);
+        }
+      });
+    }
+
+    // Main tabs logic
+    function switchMainTab(tabName) {
+      const tableView = document.getElementById('tableView');
+      const plotView = document.getElementById('plotView');
+      const tabBtnTable = document.getElementById('tabBtnTable');
+      const tabBtnPlot = document.getElementById('tabBtnPlot');
+      
+      if (tabName === 'table') {
+        tableView.style.display = 'block';
+        plotView.style.display = 'none';
+        tabBtnTable.classList.add('active');
+        tabBtnPlot.classList.remove('active');
+      } else {
+        tableView.style.display = 'none';
+        plotView.style.display = 'block';
+        tabBtnTable.classList.remove('active');
+        tabBtnPlot.classList.add('active');
+        // Initialize/reset plots
+        initPlot();
+      }
+    }
+
+    // Tooltip helper functions
+    function showTooltip(e, data, idx) {
+      const tooltip = document.getElementById('plotTooltip');
+      const config = featureConfig[currentFeature];
+      
+      tooltip.innerHTML = `
+        <div style="font-weight: 700; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent);">Applicant #${idx + 1}</div>
+        <div style="margin-bottom: 2px;"><strong>${config.title}:</strong> ${config.formatVal(data[currentFeature])}</div>
+        <div><strong>Default Risk Score:</strong> ${data.risk}</div>
+      `;
+      tooltip.style.opacity = '1';
+      moveTooltip(e);
+    }
+
+    function moveTooltip(e) {
+      const tooltip = document.getElementById('plotTooltip');
+      const wrapper = document.querySelector('.plot-wrapper');
+      const rect = wrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left + 15;
+      const y = e.clientY - rect.top - 55;
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+    }
+
+    function hideTooltip() {
+      const tooltip = document.getElementById('plotTooltip');
+      tooltip.style.opacity = '0';
+    }
+
+    // Theme sync
+    const PALETTE_SETS = {
+      'Paper White': {
+        bg: '#ffffff',
+        fg: '#111111',
+        accent: '#d0465a',
+        accent2: '#0369a1',
+        panel: '#fcfcfc',
+        border: '#e5e5e5',
+        softText: '#555555',
+        tableStripe: '#fafafa',
+        gridLine: 'rgba(0,0,0,0.06)'
+      },
+      'Midnight': {
+        bg: '#000000',
+        fg: '#f0ece4',
+        accent: '#f59e0b',
+        accent2: '#22d3ee',
+        panel: '#111111',
+        border: 'rgba(255,255,255,0.1)',
+        softText: '#94a3b8',
+        tableStripe: '#0a0a0a',
+        gridLine: 'rgba(255,255,255,0.05)'
+      },
+      'Dark': {
+        bg: '#161A20',
+        fg: '#F1EDE2',
+        accent: '#E0825C',
+        accent2: '#7FA3C6',
+        panel: '#232932',
+        border: '#3A434F',
+        softText: '#98A1AC',
+        tableStripe: '#1A1E24',
+        gridLine: 'rgba(255,255,255,0.05)'
+      }
+    };
+
+    function applyPalette(name) {
+      const s = PALETTE_SETS[name] || PALETTE_SETS['Dark'];
+      const r = document.documentElement;
+      r.style.setProperty('--bg', s.bg);
+      r.style.setProperty('--fg', s.fg);
+      r.style.setProperty('--accent', s.accent);
+      r.style.setProperty('--accent2', s.accent2);
+      r.style.setProperty('--panel', s.panel);
+      r.style.setProperty('--border', s.border);
+      r.style.setProperty('--soft-text', s.softText);
+      r.style.setProperty('--table-stripe', s.tableStripe);
+      r.style.setProperty('--grid-line', s.gridLine);
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data || {};
+      if (d.type !== 'SET_THEME') return;
+      applyPalette(d.palette);
+    });
+
+    // Navigation bubble
+    document.addEventListener('keydown', (e) => {
+      if (window.parent === window) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+      } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Linear Regression Intro | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=STIX+Two+Math&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg: #000000;
+      --fg: #eef2f8;
+      --accent: #c97a4a;
+      --accent-rgb: 201, 122, 74;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 60px 36px;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 100px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ── Left Column: The Narrative ── */
+    .narrative-col {
+      flex: 1;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: slideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .narrative-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .narrative-eyebrow .line {
+      width: 24px;
+      height: 2px;
+      background-color: var(--accent);
+    }
+
+    .narrative-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 3.5vw, 48px);
+      line-height: 1.32;
+      font-style: italic;
+      color: var(--fg);
+    }
+    .narrative-text span.highlight {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .narrative-subtext {
+      font-size: 20px;
+      line-height: 1.7;
+      color: color-mix(in srgb, var(--fg) 55%, transparent);
+    }
+
+    /* ── Right Column: Factor Cards ── */
+    .factors-col {
+      flex: 1.15;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .factor-card {
+      position: relative;
+      background: color-mix(in srgb, var(--fg) 2.5%, transparent);
+      border: 1px solid color-mix(in srgb, var(--fg) 7%, transparent);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      opacity: 0;
+      transform: translateY(24px);
+      overflow: hidden;
+    }
+
+    /* Hover glow */
+    .factor-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .factor-card:hover::before { opacity: 1; }
+
+    .factor-card:hover {
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px -12px color-mix(in srgb, var(--accent) 15%, transparent);
+    }
+
+    .factor-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      position: relative;
+      z-index: 1;
+    }
+    .factor-icon-box svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .factor-card:hover .factor-icon-box {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      transform: scale(1.08);
+      box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .factor-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .factor-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .factor-var {
+      font-family: 'STIX Two Math', serif;
+      font-size: 16px;
+      color: var(--accent);
+      opacity: 0.95;
+      margin-left: 8px;
+      font-style: italic;
+    }
+
+    .factor-desc {
+      font-size: 15px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--fg) 75%, transparent);
+    }
+
+    /* Full span card at bottom */
+    .factor-card.full-span {
+      grid-column: span 2;
+      background: color-mix(in srgb, var(--accent) 3%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    }
+    .factor-card.full-span:hover {
+      background: color-mix(in srgb, var(--accent) 7%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .factor-card.full-span .factor-icon-box {
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
+    }
+
+    /* ── Keyframes ── */
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes cardFadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="Machine Learning Models" title="Multiple <em>Variables</em>"></page-title>
+
+  <div class="body">
+    <!-- Narrative Left Column -->
+    <div class="narrative-col">
+      <div class="narrative-eyebrow"><span class="line"></span> The Motivation</div>
+      <div class="narrative-text">
+        Think about predicting the <span class="highlight">price of a house.</span> The price doesn't just depend on one thing.
+      </div>
+
+    </div>
+
+    <!-- Factors Grid Right Column -->
+    <div class="factors-col">
+      <!-- 1. Size -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="maximize-2"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Property Size <span class="factor-var">x₁</span></span>
+          <span class="factor-desc">Total living space measured in square feet.</span>
+        </div>
+      </div>
+
+      <!-- 2. Bedrooms -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="bed"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Bedrooms <span class="factor-var">x₂</span></span>
+          <span class="factor-desc">Number of bedrooms in the home.</span>
+        </div>
+      </div>
+
+      <!-- 3. Bathrooms -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="bath"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Bathrooms <span class="factor-var">x₃</span></span>
+          <span class="factor-desc">Total count including full and half baths.</span>
+        </div>
+      </div>
+
+      <!-- 4. Age -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="calendar"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Property Age <span class="factor-var">x₄</span></span>
+          <span class="factor-desc">Years since original construction.</span>
+        </div>
+      </div>
+
+      <!-- 5. Crime Rating -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="shield-alert"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Crime Rating <span class="factor-var">x₅</span></span>
+          <span class="factor-desc">Neighborhood crime rate index.</span>
+        </div>
+      </div>
+
+      <!-- 6. Lot Size -->
+      <div class="factor-card">
+        <div class="factor-icon-box"><i data-lucide="land-plot"></i></div>
+        <div class="factor-info">
+          <span class="factor-name">Lot Size <span class="factor-var">x₆</span></span>
+          <span class="factor-desc">Total land area of the lot in acres.</span>
+        </div>
+      </div>
+
+      <!-- 7. Full Span: More factors -->
+      <div class="factor-card full-span">
+        <div class="factor-icon-box"><i data-lucide="sparkles"></i></div>
+        <div class="factor-info">
+          <span class="factor-name" style="color: var(--accent);">And many more factors <span class="factor-var">xₙ</span></span>
+          <span class="factor-desc">School districts, proximity to transit, garage size, tax rates, renovation history, market conditions…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Staggered card entry animation
+    document.querySelectorAll('.factor-card').forEach((card, i) => {
+      card.style.animation = `cardFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${0.25 + i * 0.1}s forwards`;
+    });
+
+    // Theme sync
+    const PALETTE_SETS = {
+      'Warm Linen':  { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#b84c30' },
+      'Green Linen': { bg: '#f3f1e9', fg: '#1c1c1c', accent: '#166534' },
+      'Paper White': { bg: '#ffffff', fg: '#111111', accent: '#c23348' },
+      'Midnight':    { bg: '#000000', fg: '#f0ece4', accent: '#f59e0b' },
+      'Navy Lime':   { bg: '#0a1428', fg: '#f1f5fb', accent: '#a3e635' },
+    };
+    function applyPalette(name) {
+      const s = PALETTE_SETS[name] || PALETTE_SETS['Navy Lime'];
+      document.documentElement.style.setProperty('--bg', s.bg);
+      document.documentElement.style.setProperty('--fg', s.fg);
+      document.documentElement.style.setProperty('--accent', s.accent);
+    }
+    window.addEventListener('message', (e) => {
+      const d = e.data || {};
+      if (d.type !== 'SET_THEME') return;
+      applyPalette(d.palette || (d.mode === 'dark' ? 'Navy Lime' : 'Warm Linen'));
+    });
+
+    // Forward arrow-key navigation to parent deck
+    document.addEventListener('keydown', (e) => {
+      if (window.parent === window) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+      } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+      }
+    });
+  </script>
+</body>
+</html>

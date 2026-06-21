@@ -160,26 +160,6 @@
             <svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <div class="dropdown-menu" id="paletteList">
-            <button class="palette-row" data-palette="warm-linen" onclick="setPalette('warm-linen'); closeAllDropdowns()">
-              <div class="palette-swatches">
-                <span style="background:#f3f1e9"></span>
-                <span style="background:#1c1c1c"></span>
-                <span style="background:#4a8bdd"></span>
-                <span style="background:#e27b5e"></span>
-              </div>
-              <span class="palette-name">Warm Linen</span>
-              <span class="palette-check">✓</span>
-            </button>
-            <button class="palette-row" data-palette="green-linen" onclick="setPalette('green-linen'); closeAllDropdowns()">
-              <div class="palette-swatches">
-                <span style="background:#f3f1e9"></span>
-                <span style="background:#1c1c1c"></span>
-                <span style="background:#15803d"></span>
-                <span style="background:#e27b5e"></span>
-              </div>
-              <span class="palette-name">Green Linen</span>
-              <span class="palette-check">✓</span>
-            </button>
             <button class="palette-row active" data-palette="paper-white" onclick="setPalette('paper-white'); closeAllDropdowns()">
               <div class="palette-swatches">
                 <span style="background:#ffffff;border:1px solid #ddd"></span>
@@ -200,24 +180,14 @@
               <span class="palette-name">Midnight Black</span>
               <span class="palette-check">✓</span>
             </button>
-            <button class="palette-row" data-palette="navy-lime" onclick="setPalette('navy-lime'); closeAllDropdowns()">
-              <div class="palette-swatches">
-                <span style="background:#0a1428"></span>
-                <span style="background:#f1f5fb"></span>
-                <span style="background:#a3e635"></span>
-                <span style="background:#5fb8e6"></span>
-              </div>
-              <span class="palette-name">Navy Lime</span>
-              <span class="palette-check">✓</span>
-            </button>
             <button class="palette-row" data-palette="dark" onclick="setPalette('dark'); closeAllDropdowns()">
               <div class="palette-swatches">
-                <span style="background:#07101f"></span>
-                <span style="background:#f0f6ff"></span>
-                <span style="background:#22d3ee"></span>
-                <span style="background:#34d399"></span>
+                <span style="background:#161A20"></span>
+                <span style="background:#F1EDE2"></span>
+                <span style="background:#7FA3C6"></span>
+                <span style="background:#E0825C"></span>
               </div>
-              <span class="palette-name">Deep Navy</span>
+              <span class="palette-name">Dark</span>
               <span class="palette-check">✓</span>
             </button>
           </div>
@@ -271,7 +241,7 @@
       </div>
     </div>
 
-    <nav class="side-nav-panel" id="sideNav">
+    <nav class="side-nav-panel" id="sideNav" style="display: none !important;">
       <div class="nav-ribbon" id="navRibbon">
         <div class="ribbon-line"></div>
         <div class="ribbon-text">Quick Nav</div>
@@ -438,13 +408,37 @@
               <span class="lesson-dot"></span>
               <span class="lesson-name">Implementation Workflow</span>
             </div>
-            <div class="course-lesson" onclick="goToSlide('slideMultipleLinearRegression')">
+            <div class="course-lesson" onclick="goToSlide('slideMultipleLinearRegressionTitle')">
               <span class="lesson-dot"></span>
               <span class="lesson-name">Multiple Linear Regression</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideMultipleLinearRegressionIntro')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">MLR Factors</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideMultipleLinearRegression')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">MLR Visualization</span>
             </div>
             <div class="course-lesson" onclick="goToSlide('slideMLREquation')">
               <span class="lesson-dot"></span>
               <span class="lesson-name">MLR Equation</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideDecisionTreeRoadmap')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Learning Path</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideDecisionTreeDataTable')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Non-Linear Data</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideDecisionTreeDataPlot')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Linear Failure</span>
+            </div>
+            <div class="course-lesson" onclick="goToSlide('slideDecisionTreeSplitting')">
+              <span class="lesson-dot"></span>
+              <span class="lesson-name">Decision splits</span>
             </div>
           </div>
         </div>
@@ -708,6 +702,26 @@
         ></iframe>
       </section>
 
+      <!-- SLIDE: MULTIPLE LINEAR REGRESSION TITLE -->
+      <section class="slide-why-ml" id="slideMultipleLinearRegressionTitle">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/multiple-linear-regression-title.html"
+          title="Multiple Linear Regression Title"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: MULTIPLE LINEAR REGRESSION INTRO -->
+      <section class="slide-why-ml" id="slideMultipleLinearRegressionIntro">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/multiple-linear-regression-intro.html"
+          title="Multiple Linear Regression Intro"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
       <!-- SLIDE: MULTIPLE LINEAR REGRESSION -->
       <section class="slide-why-ml" id="slideMultipleLinearRegression">
         <iframe
@@ -724,6 +738,46 @@
           class="premium-iframe"
           src="assets/chapter-4-models/mlr-equation.html"
           title="MLR Equation"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: DECISION TREE ROADMAP -->
+      <section class="slide-why-ml" id="slideDecisionTreeRoadmap">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/decision-tree-regression-roadmap.html"
+          title="The Machine Learning Path"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: DECISION TREE DATA TABLE -->
+      <section class="slide-why-ml" id="slideDecisionTreeDataTable">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/decision-tree-data-table.html"
+          title="The Non-Linear Dataset"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: DECISION TREE DATA PLOT -->
+      <section class="slide-why-ml" id="slideDecisionTreeDataPlot">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/decision-tree-data-plot.html"
+          title="Where Linear Models Fail"
+          allowtransparency="true"
+        ></iframe>
+      </section>
+
+      <!-- SLIDE: DECISION TREE SPLITTING -->
+      <section class="slide-why-ml" id="slideDecisionTreeSplitting">
+        <iframe
+          class="premium-iframe"
+          src="assets/chapter-4-models/decision-tree-splitting.html"
+          title="Segmenting the Space"
           allowtransparency="true"
         ></iframe>
       </section>

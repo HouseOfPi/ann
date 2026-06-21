@@ -63,7 +63,7 @@
     }
     .dataset-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(20px, 2vw, 25px);
+      font-size: clamp(26px, 2.5vw, 32px);
       font-weight: 500;
       line-height: 1.2;
       color: var(--fg);
@@ -94,7 +94,7 @@
     .dl-btn:hover {
       background: color-mix(in srgb, var(--fg) 10%, transparent);
       color: var(--fg);
-      border-color: color-mix(in srgb, var(--fg) 20%, transparent);
+      border-color: color-mix(in srgb, var(--fg) 85%, transparent);
     }
     .dl-btn svg {
       width: 12px; height: 12px;
@@ -143,38 +143,38 @@
     thead tr.row-var th {
       font-family: 'STIX Two Math', 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 17px;
+      font-size: 26px;
       font-weight: 400;
       letter-spacing: 0;
-      color: color-mix(in srgb, var(--fg) 32%, transparent);
+      color: var(--fg);
       padding: 14px 22px 2px;
       text-align: left;
     }
     thead tr.row-var th.col-y {
-      color: color-mix(in srgb, var(--accent) 75%, transparent);
+      color: var(--accent);
       text-align: right;
     }
     thead tr.row-var th sub {
       font-style: italic;
       font-size: 0.55em;
       font-weight: 500;
-      color: color-mix(in srgb, var(--fg) 28%, transparent);
+      color: var(--fg);
       vertical-align: baseline;
       position: relative;
       bottom: -0.2em;
       padding-left: 1px;
     }
     thead tr.row-var th.col-y sub {
-      color: color-mix(in srgb, var(--accent) 55%, transparent);
+      color: var(--accent);
     }
 
     /* Column-name row */
     thead tr.row-name th {
       font-family: 'Inter', sans-serif;
-      font-size: 13px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: 0.01em;
-      color: color-mix(in srgb, var(--fg) 55%, transparent);
+      color: var(--fg);
       text-align: left;
       padding: 3px 22px 14px;
       white-space: nowrap;
@@ -197,18 +197,18 @@
     tbody td {
       padding: 10px 22px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      font-weight: 500;
-      color: color-mix(in srgb, var(--fg) 78%, transparent);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--fg);
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
       text-align: left;
     }
 
     tbody td.col-y {
-      font-weight: 700;
+      font-weight: 800;
       color: var(--accent);
-      font-size: 14.5px;
+      font-size: 18px;
       text-align: right;
       background: color-mix(in srgb, var(--accent) 4%, transparent);
     }
@@ -255,6 +255,34 @@
     .has-tooltip:hover .tooltip {
       visibility: visible; opacity: 1;
       transform: translateX(-50%) translateY(6px);
+    }
+
+    /* Shift first column tooltip so it doesn't get cut off on the left */
+    thead th:first-child .tooltip {
+      left: 8px;
+      transform: translateX(0) translateY(-4px);
+    }
+    thead th:first-child:hover .tooltip {
+      transform: translateX(0) translateY(6px);
+    }
+    thead th:first-child .tooltip::after {
+      left: 55px;
+      margin-left: 0;
+    }
+
+    /* Shift last column tooltip so it doesn't get cut off on the right */
+    thead th:last-child .tooltip {
+      left: auto;
+      right: 8px;
+      transform: translateX(0) translateY(-4px);
+    }
+    thead th:last-child:hover .tooltip {
+      transform: translateX(0) translateY(6px);
+    }
+    thead th:last-child .tooltip::after {
+      left: auto;
+      right: 55px;
+      margin-left: 0;
     }
 
     /* Column hover highlights */
@@ -380,13 +408,14 @@
     .problem-statement.visible .feature-specs li:nth-child(6) { transition-delay: 0.7s; }
     
     .feature-specs li strong {
-      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      color: color-mix(in srgb, var(--fg) 85%, transparent);
       font-weight: 500;
-      font-size: 13px;
+      font-size: 16px;
     }
     
     .feature-specs li span {
       font-family: 'JetBrains Mono', monospace;
+      font-size: 17px;
       font-weight: 700;
       color: var(--fg);
     }
@@ -414,9 +443,9 @@
     .card-tab {
       background: transparent;
       border: none;
-      color: color-mix(in srgb, var(--fg) 50%, transparent);
+      color: color-mix(in srgb, var(--fg) 85%, transparent);
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 600;
       padding: 8px 16px;
       cursor: pointer;
@@ -448,34 +477,35 @@
       margin-bottom: 16px;
     }
     .scatter-subtab {
-      background: color-mix(in srgb, var(--fg) 3%, transparent);
-      border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
+      background: color-mix(in srgb, var(--fg) 6%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--fg) 20%, transparent);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      color: color-mix(in srgb, var(--fg) 60%, transparent);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fg);
       padding: 6px 14px;
       border-radius: 20px;
       cursor: pointer;
       transition: all 0.2s ease;
     }
     .scatter-subtab:hover {
-      background: color-mix(in srgb, var(--fg) 6%, transparent);
+      background: color-mix(in srgb, var(--fg) 10%, transparent);
+      border-color: color-mix(in srgb, var(--fg) 40%, transparent);
       color: var(--fg);
     }
     .scatter-subtab.active {
-      background: color-mix(in srgb, var(--accent) 10%, transparent);
-      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border: 2px solid var(--accent);
       color: var(--accent);
-      font-weight: 700;
+      font-weight: 800;
     }
     .scatter-canvas-container {
       flex: 1;
       width: 100%;
       position: relative;
-      background: color-mix(in srgb, var(--fg) 1%, transparent);
+      background: color-mix(in srgb, var(--fg) 2%, transparent);
       border-radius: 14px;
-      border: 1px dashed color-mix(in srgb, var(--fg) 8%, transparent);
+      border: 1.5px dashed color-mix(in srgb, var(--fg) 20%, transparent);
       overflow: hidden;
     }
     .scatter-canvas-container canvas {
@@ -497,7 +527,7 @@
       padding: 8px 12px;
       box-shadow: 0 8px 20px -4px rgba(0,0,0,0.25);
       font-family: 'Inter', sans-serif;
-      font-size: 12px;
+      font-size: 16px;
       pointer-events: none;
       opacity: 0;
       transform: scale(0.95);
@@ -510,10 +540,10 @@
     }
     .scatter-tooltip .tt-title {
       font-weight: 800;
-      font-size: 10px;
+      font-size: 14px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--fg) 45%, transparent);
+      color: color-mix(in srgb, var(--fg) 85%, transparent);
       margin-bottom: 4px;
     }
     .scatter-tooltip .tt-row {
@@ -622,10 +652,6 @@
       <div class="card-header">
         <div class="dataset-title">
           Housing <em>Prices</em>
-          <button class="dl-btn" onclick="downloadCSV()" title="Download CSV dataset">
-            <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            CSV
-          </button>
         </div>
         <div class="card-tabs">
           <button class="card-tab active" data-tab="table" onclick="switchCardTab('table')">Dataset Table</button>
@@ -671,7 +697,7 @@
           <button class="scatter-subtab" onclick="switchScatterFeature(3)">Age (x₄)</button>
           <button class="scatter-subtab" onclick="switchScatterFeature(4)">Crime Rating (x₅)</button>
           <button class="scatter-subtab" onclick="switchScatterFeature(5)">LotSize (x₆)</button>
-          <button class="scatter-subtab" onclick="switchScatterFeature(6)">Non-Linear</button>
+
         </div>
         <div class="scatter-canvas-container" id="scatterPlotArea">
           <canvas id="scatterCanvas"></canvas>
@@ -688,37 +714,7 @@
           </div>
         </div>
 
-        <!-- Non-Linear View -->
-        <div class="nonlinear-outer" id="nonlinearPlotArea">
-          <div class="nonlinear-main-area">
-            <div class="nonlinear-canvas-container">
-              <canvas id="nonlinearCanvas"></canvas>
-              <div class="scatter-tooltip" id="nonlinearTooltip">
-                <div class="tt-title">Customer Profile</div>
-                <div class="tt-row">
-                  <span id="nlXLabel">Age:</span>
-                  <span class="tt-val" id="nlXVal">0 yrs</span>
-                </div>
-                <div class="tt-row">
-                  <span id="nlYLabel">Income:</span>
-                  <span class="tt-val" id="nlYVal">$0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="nonlinear-explanation-card">
-            <div class="nl-exp-label"><span class="nl-exp-line"></span> Concept</div>
-            <div class="nl-exp-title">Why Linear Regression <span class="nl-exp-highlight">fails</span> here</div>
-            <div class="nl-exp-desc">
-              <p>
-                Linear regression is designed to predict continuous numerical values (like prices). It cannot be used directly to classify categorical outcomes (like whether a customer buys a product or not).
-              </p>
-              <p>
-                Additionally, the relationship here is non-linear—buyers are clustered in the high-age, high-income region. A straight linear boundary is mathematically incapable of cleanly separating these groups.
-              </p>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
 
@@ -932,21 +928,10 @@
       });
       // Hide tooltips on switch
       hideTooltip();
-      const nlTooltip = document.getElementById('nonlinearTooltip');
-      if (nlTooltip) nlTooltip.classList.remove('visible');
 
       const scatterArea = document.getElementById('scatterPlotArea');
-      const nonlinearArea = document.getElementById('nonlinearPlotArea');
-
-      if (index === 6) {
-        scatterArea.style.display = 'none';
-        nonlinearArea.style.display = 'flex';
-        drawNonLinearPlot();
-      } else {
-        scatterArea.style.display = 'block';
-        nonlinearArea.style.display = 'none';
-        drawScatterPlot();
-      }
+      scatterArea.style.display = 'block';
+      drawScatterPlot();
     }
 
     // Canvas management
@@ -1006,14 +991,20 @@
 
       const activeFeature = FEATURES[currentFeatureIdx];
 
-      // ── Gather Data Pairs ──
-      const points = DATA.map(row => {
+      // ── Gather Data Pairs (with cleaning for plotting) ──
+      const points = DATA.map((row, idx) => {
         const yVal = row[0]; // Price
         const xVal = activeFeature.isAge
           ? (new Date().getFullYear() - row[activeFeature.idx])
           : row[activeFeature.idx];
-        return { x: xVal, y: yVal };
-      }).filter(p => typeof p.x === 'number' && typeof p.y === 'number' && !isNaN(p.x) && !isNaN(p.y));
+        return { x: xVal, y: yVal, index: idx };
+      }).filter(p => {
+        if (typeof p.x !== 'number' || typeof p.y !== 'number' || isNaN(p.x) || isNaN(p.y)) return false;
+        // Filter out extreme outlier Price and negative feature values to ensure clean plots
+        if (p.y > 10000000 || p.y <= 0) return false;
+        if (p.x < 0) return false;
+        return true;
+      });
 
       // ── Calculate Bounds with 8% padding ──
       const xVals = points.map(p => p.x);
@@ -1052,9 +1043,9 @@
 
       // ── Draw Gridlines & Axes ticks ──
       ctx.lineWidth = 1;
-      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.05);
-      ctx.fillStyle = colorMixWithAlpha(fgColor, 0.5);
-      ctx.font = '500 10px "JetBrains Mono", monospace';
+      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.18);
+      ctx.fillStyle = colorMixWithAlpha(fgColor, 0.85);
+      ctx.font = '700 11.5px "JetBrains Mono", monospace';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
 
@@ -1070,7 +1061,7 @@
         ctx.stroke();
 
         // Label
-        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.55);
+        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.88);
         ctx.fillText(formatValue(yVal, { idx: 0 }), padLeft - 10, cy);
       }
 
@@ -1088,13 +1079,13 @@
         ctx.stroke();
 
         // Label
-        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.55);
+        ctx.fillStyle = colorMixWithAlpha(fgColor, 0.88);
         ctx.fillText(formatValue(xVal, activeFeature), cx, height - padBottom + 10);
       }
 
       // Axis borders
-      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.15);
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = colorMixWithAlpha(fgColor, 0.35);
+      ctx.lineWidth = 1.8;
       ctx.beginPath();
       ctx.moveTo(padLeft, padTop);
       ctx.lineTo(padLeft, height - padBottom);
@@ -1151,10 +1142,10 @@
       }
 
       // ── Draw Scatter Points ──
-      points.forEach((p, idx) => {
+      points.forEach((p) => {
         const cx = mapX(p.x);
         const cy = mapY(p.y);
-        const isHovered = hoveredPoint && hoveredPoint.index === idx;
+        const isHovered = hoveredPoint && hoveredPoint.index === p.index;
 
         ctx.beginPath();
         ctx.arc(cx, cy, isHovered ? 6.5 : 4.5, 0, Math.PI * 2);
@@ -1210,7 +1201,12 @@
           ? (new Date().getFullYear() - row[activeFeature.idx])
           : row[activeFeature.idx];
         return { x: xVal, y: yVal, index: idx };
-      }).filter(p => typeof p.x === 'number' && typeof p.y === 'number' && !isNaN(p.x) && !isNaN(p.y));
+      }).filter(p => {
+        if (typeof p.x !== 'number' || typeof p.y !== 'number' || isNaN(p.x) || isNaN(p.y)) return false;
+        if (p.y > 10000000 || p.y <= 0) return false;
+        if (p.x < 0) return false;
+        return true;
+      });
 
       // Layout margins
       const padLeft = 70;
@@ -1512,12 +1508,21 @@
     });
 
     function downloadCSV() {
-      let csvContent = "data:text/csv;charset=utf-8,Price,Bedrooms,Bathrooms,SquareFeet,Age,Garage,LotSize,ZipCode,CrimeRating,SchoolRating\n";
+      const headers = ["SquareFeet", "Bedrooms", "Bathrooms", "Age (yrs)", "Crime Rating", "LotSize", "Price"];
+      let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+      
       DATA.forEach(row => {
-        const exportRow = [...row];
-        const year = exportRow[4];
-        exportRow[4] = (year === null || year === 'N/A') ? year : (new Date().getFullYear() - year);
-        csvContent += exportRow.join(",") + "\n";
+        const age = (row[4] === null || row[4] === 'N/A') ? row[4] : (new Date().getFullYear() - row[4]);
+        const csvRow = [
+          row[3], // SquareFeet
+          row[1], // Bedrooms
+          row[2], // Bathrooms
+          age,    // Age (yrs)
+          row[8], // Crime Rating
+          row[6], // LotSize
+          row[0]  // Price
+        ];
+        csvContent += csvRow.join(",") + "\n";
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");

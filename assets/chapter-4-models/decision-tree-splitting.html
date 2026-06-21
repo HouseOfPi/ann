@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Decision Trees Split | Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --bg: #161A20;
+      --fg: #F1EDE2;
+      --accent: #E0825C;
+      --accent2: #7FA3C6;
+      --panel: #232932;
+      --border: #3A434F;
+      --soft-text: #98A1AC;
+      --grid-line: rgba(255, 255, 255, 0.05);
+      --point-color: #7FA3C6;
+      --split-color: #ef4444;
+      --step-color: #22c55e;
+      --node-bg: #1A1E24;
+      --glow-color: rgba(34, 197, 94, 0.3);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 60px 36px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ── Left Column: Analysis ── */
+    .analysis-col {
+      flex: 1;
+      max-width: 550px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      opacity: 0;
+      transform: translateX(-30px);
+      animation: slideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .narrative-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .narrative-eyebrow .line {
+      width: 24px;
+      height: 2px;
+      background-color: var(--accent);
+    }
+
+    .narrative-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 3.2vw, 46px);
+      line-height: 1.25;
+      font-style: italic;
+      color: var(--fg);
+    }
+    .narrative-title em {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .narrative-subtext {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--soft-text);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .split-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .split-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .split-item span.label {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 160px;
+    }
+
+    .split-item span.val {
+      font-weight: 600;
+      color: var(--fg);
+      margin-left: auto;
+    }
+
+    /* Interactive button */
+    .action-btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px -4px var(--accent);
+      transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px -3px var(--accent);
+    }
+
+    /* ── Right Column: Interactive Diagram ── */
+    .viz-col {
+      flex: 1.25;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      max-height: 600px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    .viz-card {
+      width: 100%;
+      max-width: 650px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 20px 50px -25px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .plot-area {
+      height: 240px;
+      width: 100%;
+    }
+
+    .tree-area {
+      height: 160px;
+      width: 100%;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .plot-svg, .tree-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* SVG Styling */
+    .axis-line {
+      stroke: var(--border);
+      stroke-width: 1.5px;
+    }
+
+    .grid-line {
+      stroke: var(--grid-line);
+      stroke-dasharray: 4,4;
+      stroke-width: 1px;
+    }
+
+    .axis-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      fill: var(--soft-text);
+    }
+
+    .data-point {
+      fill: var(--point-color);
+      stroke: var(--bg);
+      stroke-width: 1.5px;
+      transition: all 0.3s;
+    }
+
+    /* Boundary splits */
+    .split-boundary {
+      stroke: var(--split-color);
+      stroke-width: 2px;
+      stroke-dasharray: 6,4;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .split-boundary.active {
+      opacity: 0.85;
+    }
+
+    /* Step function predictions */
+    .step-path {
+      fill: none;
+      stroke: var(--step-color);
+      stroke-width: 3.5px;
+      stroke-linecap: square;
+      opacity: 0;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      transition: opacity 0.5s ease;
+    }
+
+    .step-path.active {
+      opacity: 1;
+      animation: drawLine 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Tree Diagram styling */
+    .tree-node-circle {
+      fill: var(--node-bg);
+      stroke: var(--border);
+      stroke-width: 1.5px;
+      transition: all 0.4s ease;
+    }
+
+    .tree-node-circle.active {
+      stroke: var(--accent);
+      fill: color-mix(in srgb, var(--accent) 15%, var(--node-bg));
+      filter: drop-shadow(0 0 6px var(--glow-color));
+    }
+
+    .tree-node-circle.step-active {
+      stroke: var(--step-color);
+      fill: color-mix(in srgb, var(--step-color) 12%, var(--node-bg));
+      filter: drop-shadow(0 0 6px var(--glow-color));
+    }
+
+    .tree-node-text {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      fill: var(--fg);
+      text-anchor: middle;
+    }
+
+    .tree-node-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 700;
+      fill: var(--step-color);
+      text-anchor: middle;
+    }
+
+    .tree-link {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1.5px;
+      transition: all 0.4s ease;
+    }
+
+    .tree-link.active {
+      stroke: var(--accent);
+      stroke-width: 2.5px;
+    }
+
+    .tree-link.step-active {
+      stroke: var(--step-color);
+      stroke-width: 2.5px;
+    }
+
+    .branch-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8.5px;
+      font-weight: 700;
+      fill: var(--soft-text);
+      text-anchor: middle;
+    }
+
+    .branch-label.active {
+      fill: var(--accent);
+    }
+
+    @keyframes drawLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── Keyframes ── */
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <link rel="stylesheet" href="../shared/page-title.css">
+  <script defer src="../shared/page-title.js"></script>
+</head>
+<body>
+  <page-title id="header" eyebrow="How Decision Trees Work" title="Segmenting the <em>Space</em>"></page-title>
+
+  <div class="body">
+    <!-- Analysis Column -->
+    <div class="analysis-col">
+      <div class="narrative-eyebrow"><span class="line"></span> Stratified Bins</div>
+      <div class="narrative-title">
+        Binary Splits &amp; <em>Averages</em>
+      </div>
+      <div class="narrative-subtext">
+        <p>
+          Instead of fitting a straight line, a Decision Tree segments the credit score space by finding optimal cutoffs. Here, it splits at Credit Scores of <strong>600</strong> and <strong>700</strong>.
+        </p>
+        <p>
+          This splits applicants into three risk segments:
+        </p>
+        <div class="split-list">
+          <div class="split-item">
+            <span class="label">Poor Credit (&lt; 600)</span>
+            <span>Avg Risk:</span>
+            <span class="val" style="color: #ef4444;">83.3</span>
+          </div>
+          <div class="split-item">
+            <span class="label">Fair Credit (600 to 700)</span>
+            <span>Avg Risk:</span>
+            <span class="val" style="color: #f59e0b;">37.5</span>
+          </div>
+          <div class="split-item">
+            <span class="label">Good Credit (&ge; 700)</span>
+            <span>Avg Risk:</span>
+            <span class="val" style="color: #22c55e;">11.3</span>
+          </div>
+        </div>
+        <p>
+          By predicting the average risk within each segment, the model forms a step function that fits the non-linear thresholds effortlessly.
+        </p>
+      </div>
+
+      <button class="action-btn" id="toggleSplitBtn" onclick="toggleSplits()">
+        <i data-lucide="scissors" style="width: 16px; height: 16px;"></i>
+        <span>Show Decision splits</span>
+      </button>
+    </div>
+
+    <!-- Visualization Card Column -->
+    <div class="viz-col">
+      <div class="viz-card">
+        <!-- 1. Plot Area -->
+        <div class="plot-area">
+          <svg class="plot-svg" viewBox="0 0 500 240">
+            <!-- Grid Lines -->
+            <line class="grid-line" x1="60" y1="174" x2="450" y2="174" /> <!-- 20% -->
+            <line class="grid-line" x1="60" y1="138" x2="450" y2="138" /> <!-- 40% -->
+            <line class="grid-line" x1="60" y1="102" x2="450" y2="102" /> <!-- 60% -->
+            <line class="grid-line" x1="60" y1="66" x2="450" y2="66" />   <!-- 80% -->
+
+            <!-- Axes -->
+            <line class="axis-line" x1="60" y1="210" x2="450" y2="210" />
+            <line class="axis-line" x1="60" y1="30" x2="60" y2="210" />
+
+            <!-- Labels Y -->
+            <text class="axis-label" x="25" y="214">0</text>
+            <text class="axis-label" x="25" y="178">20</text>
+            <text class="axis-label" x="25" y="142">40</text>
+            <text class="axis-label" x="25" y="106">60</text>
+            <text class="axis-label" x="25" y="70">80</text>
+            <text class="axis-label" x="20" y="34">100</text>
+
+            <!-- Labels X -->
+            <text class="axis-label" x="60" y="226">500</text>
+            <text class="axis-label" x="190" y="226">600</text>
+            <text class="axis-label" x="320" y="226">700</text>
+            <text class="axis-label" x="450" y="226">800</text>
+
+            <!-- Boundary split lines (600 score at X=190, 700 score at X=320) -->
+            <line class="split-boundary" id="split1" x1="190" y1="30" x2="190" y2="210" />
+            <line class="split-boundary" id="split2" x1="320" y1="30" x2="320" y2="210" />
+
+            <!-- Step function prediction line
+                 High segment: from X=60 to X=190 at Y=60 (Avg Risk = 83.3)
+                 Medium segment: from X=190 to X=320 at Y=142.5 (Avg Risk = 37.5)
+                 Low segment: from X=320 to X=450 at Y=189.7 (Avg Risk = 11.3)
+            -->
+            <path class="step-path" id="stepLine" d="M 60 60 H 190 V 142.5 H 320 V 189.7 H 450" />
+
+            <!-- Scatter points
+                 X: 60 -> 500, 450 -> 800. Formula: 60 + ((Score - 500) / 300) * 390
+                 Y: 210 -> 0, 30 -> 100. Formula: 210 - (Risk / 100) * 180
+            -->
+            <circle class="data-point" cx="125" cy="48" r="5" />      <!-- 550, 90% -->
+            <circle class="data-point" cx="151" cy="62.4" r="5" />    <!-- 570, 82% -->
+            <circle class="data-point" cx="177" cy="69.6" r="5" />    <!-- 590, 78% -->
+            <circle class="data-point" cx="242" cy="138" r="5" />     <!-- 640, 40% -->
+            <circle class="data-point" cx="294" cy="147" r="5" />     <!-- 680, 35% -->
+            <circle class="data-point" cx="333" cy="183" r="5" />     <!-- 710, 15% -->
+            <circle class="data-point" cx="346" cy="188.4" r="5" />   <!-- 720, 12% -->
+            <circle class="data-point" cx="385" cy="192" r="5" />     <!-- 750, 10% -->
+            <circle class="data-point" cx="424" cy="195.6" r="5" />   <!-- 780, 8% -->
+          </svg>
+        </div>
+
+        <!-- 2. Tree Logic Area -->
+        <div class="tree-area">
+          <svg class="tree-svg" viewBox="0 0 500 130">
+            <!-- Connecting lines -->
+            <path class="tree-link" id="link1" d="M 250 20 L 150 70" />
+            <path class="tree-link" id="link2" d="M 250 20 L 350 70" />
+            <path class="tree-link" id="link3" d="M 150 70 L 80 110" />
+            <path class="tree-link" id="link4" d="M 150 70 L 220 110" />
+
+            <!-- Branch labels -->
+            <text class="branch-label" id="t-label1" x="190" y="42">&ge; 600 Score</text>
+            <text class="branch-label" id="t-label2" x="310" y="42">&lt; 600 Score</text>
+            <text class="branch-label" id="t-label3" x="105" y="90">&ge; 700 Score</text>
+            <text class="branch-label" id="t-label4" x="195" y="90">&lt; 700 Score</text>
+
+            <!-- Nodes -->
+            <!-- Root node (split at 600) -->
+            <g>
+              <circle class="tree-node-circle" id="n-root" cx="250" cy="20" r="18" />
+              <text class="tree-node-text" x="250" y="23" style="font-size:9px;">Score &lt; 600?</text>
+            </g>
+
+            <!-- Level 1 Node (split at 700) -->
+            <g>
+              <circle class="tree-node-circle" id="n-left" cx="150" cy="70" r="18" />
+              <text class="tree-node-text" x="150" y="73" style="font-size:9px;">Score &lt; 700?</text>
+            </g>
+
+            <!-- Leaf Nodes (Predictions) -->
+            <!-- Leaf 1: Low prediction (11.3) -->
+            <g>
+              <circle class="tree-node-circle" id="n-leaf-cold" cx="80" cy="110" r="18" />
+              <text class="tree-node-value" x="80" y="114">11.3</text>
+            </g>
+
+            <!-- Leaf 2: Moderate prediction (37.5) -->
+            <g>
+              <circle class="tree-node-circle" id="n-leaf-mild" cx="220" cy="110" r="18" />
+              <text class="tree-node-value" x="220" y="114">37.5</text>
+            </g>
+
+            <!-- Leaf 3: High prediction (83.3) -->
+            <g>
+              <circle class="tree-node-circle" id="n-leaf-hot" cx="350" cy="70" r="18" />
+              <text class="tree-node-value" x="350" y="74">83.3</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    let splitsShowed = false;
+
+    function toggleSplits() {
+      splitsShowed = !splitsShowed;
+      const b1 = document.getElementById('split1');
+      const b2 = document.getElementById('split2');
+      const step = document.getElementById('stepLine');
+      const btn = document.getElementById('toggleSplitBtn');
+
+      // Tree node highlighting elements
+      const nRoot = document.getElementById('n-root');
+      const nLeft = document.getElementById('n-left');
+      const nCold = document.getElementById('n-leaf-cold');
+      const nMild = document.getElementById('n-leaf-mild');
+      const nHot = document.getElementById('n-leaf-hot');
+
+      const l1 = document.getElementById('link1');
+      const l2 = document.getElementById('link2');
+      const l3 = document.getElementById('link3');
+      const l4 = document.getElementById('link4');
+
+      const tl1 = document.getElementById('t-label1');
+      const tl2 = document.getElementById('t-label2');
+      const tl3 = document.getElementById('t-label3');
+      const tl4 = document.getElementById('t-label4');
+
+      if (splitsShowed) {
+        b1.classList.add('active');
+        b2.classList.add('active');
+        step.classList.add('active');
+
+        // Highlight visual tree paths
+        nRoot.classList.add('active');
+        nLeft.classList.add('active');
+        nCold.classList.add('step-active');
+        nMild.classList.add('step-active');
+        nHot.classList.add('step-active');
+
+        l1.classList.add('active');
+        l2.classList.add('step-active');
+        l3.classList.add('step-active');
+        l4.classList.add('step-active');
+
+        tl1.classList.add('active');
+        tl2.classList.add('active');
+        tl3.classList.add('active');
+        tl4.classList.add('active');
+
+        btn.querySelector('span').textContent = 'Hide Decision splits';
+        btn.style.background = 'var(--step-color)';
+        btn.style.boxShadow = '0 4px 15px -4px var(--step-color)';
+      } else {
+        b1.classList.remove('active');
+        b2.classList.remove('active');
+        step.classList.remove('active');
+
+        // De-highlight
+        nRoot.classList.remove('active');
+        nLeft.classList.remove('active');
+        nCold.classList.remove('step-active');
+        nMild.classList.remove('step-active');
+        nHot.classList.remove('step-active');
+
+        l1.classList.remove('active');
+        l2.classList.remove('step-active');
+        l3.classList.remove('step-active');
+        l4.classList.remove('step-active');
+
+        tl1.classList.remove('active');
+        tl2.classList.remove('active');
+        tl3.classList.remove('active');
+        tl4.classList.remove('active');
+
+        btn.querySelector('span').textContent = 'Show Decision splits';
+        btn.style.background = 'var(--accent)';
+        btn.style.boxShadow = '0 4px 15px -4px var(--accent)';
+      }
+    }
+
+    // Theme sync
+    const PALETTE_SETS = {
+      'Paper White': {
+        bg: '#ffffff',
+        fg: '#111111',
+        accent: '#d0465a',
+        accent2: '#0369a1',
+        panel: '#fcfcfc',
+        border: '#e5e5e5',
+        softText: '#555555',
+        gridLine: 'rgba(0,0,0,0.06)',
+        pointColor: '#0369a1',
+        splitColor: '#ef4444',
+        stepColor: '#16a34a',
+        nodeBg: '#fafafa',
+        glow: 'rgba(22, 163, 74, 0.25)'
+      },
+      'Midnight': {
+        bg: '#000000',
+        fg: '#f0ece4',
+        accent: '#f59e0b',
+        accent2: '#22d3ee',
+        panel: '#111111',
+        border: 'rgba(255,255,255,0.1)',
+        softText: '#94a3b8',
+        gridLine: 'rgba(255,255,255,0.05)',
+        pointColor: '#22d3ee',
+        splitColor: '#f43f5e',
+        stepColor: '#10b981',
+        nodeBg: '#080808',
+        glow: 'rgba(16, 185, 129, 0.3)'
+      },
+      'Dark': {
+        bg: '#161A20',
+        fg: '#F1EDE2',
+        accent: '#E0825C',
+        accent2: '#7FA3C6',
+        panel: '#232932',
+        border: '#3A434F',
+        softText: '#98A1AC',
+        gridLine: 'rgba(255,255,255,0.05)',
+        pointColor: '#7FA3C6',
+        splitColor: '#E0825C',
+        stepColor: '#7FA3C6',
+        nodeBg: '#1A1E24',
+        glow: 'rgba(127, 163, 198, 0.4)'
+      }
+    };
+
+    function applyPalette(name) {
+      const s = PALETTE_SETS[name] || PALETTE_SETS['Dark'];
+      const r = document.documentElement;
+      r.style.setProperty('--bg', s.bg);
+      r.style.setProperty('--fg', s.fg);
+      r.style.setProperty('--accent', s.accent);
+      r.style.setProperty('--accent2', s.accent2);
+      r.style.setProperty('--panel', s.panel);
+      r.style.setProperty('--border', s.border);
+      r.style.setProperty('--soft-text', s.softText);
+      r.style.setProperty('--grid-line', s.gridLine);
+      r.style.setProperty('--point-color', s.pointColor);
+      r.style.setProperty('--split-color', s.splitColor);
+      r.style.setProperty('--step-color', s.stepColor);
+      r.style.setProperty('--node-bg', s.nodeBg);
+      r.style.setProperty('--glow-color', s.glow);
+    }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data || {};
+      if (d.type !== 'SET_THEME') return;
+      applyPalette(d.palette);
+    });
+
+    // Navigation bubble
+    document.addEventListener('keydown', (e) => {
+      if (window.parent === window) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'next' }, '*');
+      } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+        e.preventDefault();
+        window.parent.postMessage({ type: 'NAV', dir: 'prev' }, '*');
+      }
+    });
+  </script>
+</body>
+</html>
